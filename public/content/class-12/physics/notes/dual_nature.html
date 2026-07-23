@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Chapter 11 – Dual Nature of Radiation & Matter</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"/>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  theme: { extend: {
+    colors: { ink:'#0f172a', accent:'#6366f1' },
+    fontFamily: { display:['"Playfair Display"','serif'], body:['"Inter"','sans-serif'] }
+  }}
+}
+</script>
+<style>
+body{font-family:'Inter',sans-serif;background:#f8fafc;color:#0f172a}
+.acc-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.acc-body.open{max-height:3000px}
+.acc-arrow{transition:transform .25s}
+.acc-arrow.open{transform:rotate(90deg)}
+.tab-btn{transition:all .18s;border-radius:8px;font-weight:600;font-size:.875rem;padding:8px 16px;border:none;cursor:pointer;background:transparent;color:#64748b;white-space:nowrap}
+.tab-btn.active{background:#6366f1;color:#fff}
+.box-blue{background:#eff6ff;border-left:4px solid #3b82f6;border-radius:12px;padding:14px}
+.box-amber{background:#fffbeb;border-left:4px solid #f59e0b;border-radius:12px;padding:14px}
+.box-rose{background:#fff1f2;border-left:4px solid #f43f5e;border-radius:12px;padding:14px}
+.box-green{background:#f0fdf4;border-left:4px solid #22c55e;border-radius:12px;padding:14px}
+.box-purple{background:#faf5ff;border-left:4px solid #a855f7;border-radius:12px;padding:14px}
+.box-teal{background:#f0fdfa;border-left:4px solid #14b8a6;border-radius:12px;padding:14px}
+.formula-card{background:linear-gradient(135deg,#ede9fe,#dbeafe);border-radius:14px;padding:20px}
+.blind-spot-card{border:2px dashed #f59e0b;background:#fffbeb;border-radius:12px;padding:14px}
+.quiz-opt{cursor:pointer;border:2px solid #e2e8f0;border-radius:10px;padding:10px 14px;transition:all .15s;font-size:.875rem;margin-bottom:6px}
+.quiz-opt:hover{border-color:#6366f1;background:#f5f3ff}
+.quiz-opt.correct{border-color:#22c55e !important;background:#f0fdf4 !important}
+.quiz-opt.wrong{border-color:#f43f5e !important;background:#fff1f2 !important}
+.prog-bar{background:linear-gradient(90deg,#6366f1,#0d9488);border-radius:99px;height:8px;transition:width .4s}
+.chapter-hero{background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f2b47 100%)}
+.katex-display{overflow-x:auto}
+canvas{max-width:100%;border-radius:10px}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px}
+.section-card{transition:box-shadow .2s}
+.section-card:hover{box-shadow:0 8px 32px rgba(99,102,241,.10)}
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- HERO -->
+<div class="chapter-hero text-white px-6 py-14 text-center relative overflow-hidden">
+  <div class="absolute inset-0 opacity-10">
+    <svg width="100%" height="100%"><defs><pattern id="dp" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.5" fill="#fff"/></pattern></defs><rect width="100%" height="100%" fill="url(#dp)"/></svg>
+  </div>
+  <div class="relative z-10">
+    <span class="inline-block bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-widest">Chapter 11 · Class 12 Physics</span>
+    <h1 style="font-family:'Playfair Display',serif" class="text-4xl md:text-6xl font-black mb-3 leading-tight">Dual Nature of<br/><span class="text-indigo-300">Radiation &amp; Matter</span></h1>
+    <p class="text-slate-300 text-lg max-w-xl mx-auto">Complete interactive notes · Formulas · Visuals · Blind Spots · Quiz</p>
+    <div class="mt-8 max-w-md mx-auto">
+      <div class="flex justify-between text-xs text-slate-400 mb-1"><span>Topics Explored</span><span id="prog-pct">0%</span></div>
+      <div class="bg-slate-700 rounded-full h-2"><div class="prog-bar" id="progress-bar" style="width:0%"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
+  <div class="max-w-6xl mx-auto px-4 flex gap-1 overflow-x-auto py-2">
+    <button onclick="showTab('notes',this)"    class="tab-btn active">📖 Notes</button>
+    <button onclick="showTab('formulas',this)" class="tab-btn">🔢 Formulas</button>
+    <button onclick="showTab('visuals',this)"  class="tab-btn">📊 Visuals</button>
+    <button onclick="showTab('blindspot',this)"class="tab-btn">⚠️ Blind Spots</button>
+    <button onclick="showTab('quiz',this)"     class="tab-btn">🧠 Quiz</button>
+    <button onclick="showTab('examples',this)" class="tab-btn">✏️ Solved Ex.</button>
+  </div>
+</div>
+
+<div class="max-w-6xl mx-auto px-4 py-8">
+
+<!-- ===== NOTES ===== -->
+<div id="tab-notes" class="tab-content">
+
+  <div class="section-card bg-white rounded-2xl shadow-sm border border-slate-100 mb-6 overflow-hidden">
+    <div class="flex items-center gap-3 px-6 py-4 cursor-pointer" onclick="toggleAcc(this)">
+      <span class="text-2xl">⚡</span>
+      <div class="flex-1">
+        <div class="text-xs font-bold text-slate-400 uppercase tracking-widest">Foundation</div>
+        <h2 style="font-family:'Playfair Display',serif" class="text-xl font-bold">Electron Emission</h2>
+      </div>
+      <span class="acc-arrow text-indigo-500 font-bold text-xl">›</span>
+    </div>
+    <div class="acc-body open px-6 pb-6">
+      <p class="text-slate-600 mb-4 leading-relaxed">Free electrons in metals are bound by a surface barrier. Minimum energy to escape = <strong>Work Function $(\phi_0)$</strong> measured in eV.</p>
+      <div class="grid md:grid-cols-2 gap-3 mb-4">
+        <div class="box-blue"><h3 class="font-bold text-blue-800 mb-1">🔥 Thermionic Emission</h3><p class="text-sm text-blue-700">Heating provides thermal energy. Used in CRT tubes, spark plugs. Emitted electrons = thermions.</p></div>
+        <div class="box-amber"><h3 class="font-bold text-amber-800 mb-1">⚡ Field Emission</h3><p class="text-sm text-amber-700">Very strong E-field (~$10^8$ V/m) pulls electrons out. No heating needed.</p></div>
+        <div class="box-green"><h3 class="font-bold text-green-800 mb-1">💡 Photoelectric Emission</h3><p class="text-sm text-green-700">Light of suitable frequency → electron emission. Depends on <strong>frequency, not intensity</strong>.</p></div>
+        <div class="box-purple"><h3 class="font-bold text-purple-800 mb-1">☢️ Secondary Emission</h3><p class="text-sm text-purple-700">High-energy primary electrons hit metal → secondary electrons ejected.</p></div>
+      </div>
+      <div class="box-teal">
+        <h3 class="font-bold text-teal-800 mb-2">Work Function Key Points</h3>
+        <ul class="text-sm text-teal-700 space-y-1 list-disc ml-4">
+          <li>1 eV $= 1.6\times10^{-19}$ J</li>
+          <li>Platinum: highest $\phi_0 = 5.65$ eV · Caesium: lowest $\phi_0 = 2.14$ eV</li>
+          <li>Alkali metals (Li, Na, K, Cs) → photoelectric with <em>visible light</em></li>
+          <li>Zn, Cd, Mg → need <em>UV light</em> · Non-metals: sensitive only up to limited extent</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card bg-white rounded-2xl shadow-sm border border-slate-100 mb-6 overflow-hidden">
+    <div class="flex items-center gap-3 px-6 py-4 cursor-pointer" onclick="toggleAcc(this)">
+      <span class="text-2xl">🔬</span>
+      <div class="flex-1">
+        <div class="text-xs font-bold text-slate-400 uppercase tracking-widest">11.1</div>
+        <h2 style="font-family:'Playfair Display',serif" class="text-xl font-bold">Photoelectric Effect — Experimental Study</h2>
+      </div>
+      <span class="acc-arrow text-indigo-500 font-bold text-xl">›</span>
+    </div>
+    <div class="acc-body open px-6 pb-6">
+      <div class="box-blue mb-3"><h3 class="font-bold text-blue-800 mb-1">Hertz (1887)</h3><p class="text-sm text-blue-700">Discovered EM waves. Noted UV light on negative spark-gap plate increases sparking — could not explain why.</p></div>
+      <div class="box-green mb-4"><h3 class="font-bold text-green-800 mb-1">Hallwachs & Lenard (1886–1902)</h3><ul class="text-sm text-green-700 list-disc ml-4 space-y-1"><li>UV on zinc plate → electrons emitted (current flows)</li><li>Negative emitter plate loses negative charge → confirms emission</li><li>Lenard showed: if collector is negative, current stops</li></ul></div>
+
+      <h3 class="font-bold mb-3">Effect of Potential on Photoelectric Current</h3>
+      <div class="grid md:grid-cols-3 gap-3 mb-4">
+        <div class="bg-slate-50 rounded-xl p-3 border border-slate-200"><div class="text-xl mb-1">📈</div><h4 class="font-semibold text-sm">Accelerating Potential ↑</h4><p class="text-xs text-slate-600 mt-1">Current increases until it reaches <strong>saturation</strong>. Beyond saturation, no change.</p></div>
+        <div class="bg-slate-50 rounded-xl p-3 border border-slate-200"><div class="text-xl mb-1">🔋</div><h4 class="font-semibold text-sm">Retarding Potential</h4><p class="text-xs text-slate-600 mt-1">Current decreases but is non-zero at V=0 (electrons have own KE). Becomes 0 at $-V_0$.</p></div>
+        <div class="bg-slate-50 rounded-xl p-3 border border-slate-200"><div class="text-xl mb-1">🛑</div><h4 class="font-semibold text-sm">Stopping Potential $V_0$</h4><p class="text-xs text-slate-600 mt-1">Minimum negative collector voltage that stops all electrons. $eV_0 = K_{max}$</p></div>
+      </div>
+
+      <h3 class="font-bold mb-3">Effect of Intensity</h3>
+      <div class="box-blue mb-4"><ul class="text-sm text-blue-700 list-disc ml-4 space-y-1"><li>More intensity → more photoelectrons per second → <strong>higher saturation current</strong></li><li>Stopping potential is <strong>unchanged</strong> with intensity</li><li>Photoelectric current ∝ intensity of incident light</li></ul></div>
+
+      <div class="box-amber mb-4"><h3 class="font-bold text-amber-800 mb-1">⚡ Instantaneous Emission</h3><p class="text-sm text-amber-700">Time lag &lt; $10^{-9}$ s even for very dim light — <strong>wave theory cannot explain this</strong>.</p></div>
+
+      <h3 class="font-bold mb-2">Why Wave Theory Fails</h3>
+      <div class="box-rose"><ul class="text-sm text-rose-700 list-disc ml-4 space-y-1">
+        <li>Wave theory: emission for any frequency if intensity is high enough → <strong>contradicted</strong> by threshold frequency</li>
+        <li>Wave theory: time lag for energy accumulation → <strong>contradicted</strong> by instantaneous emission</li>
+        <li>Wave theory: KE should increase with intensity → <strong>contradicted</strong> (KE depends only on ν)</li>
+        <li>No concept of threshold frequency in wave theory</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <div class="section-card bg-white rounded-2xl shadow-sm border border-slate-100 mb-6 overflow-hidden">
+    <div class="flex items-center gap-3 px-6 py-4 cursor-pointer" onclick="toggleAcc(this)">
+      <span class="text-2xl">💡</span>
+      <div class="flex-1">
+        <div class="text-xs font-bold text-slate-400 uppercase tracking-widest">Einstein (1905)</div>
+        <h2 style="font-family:'Playfair Display',serif" class="text-xl font-bold">Einstein's Photoelectric Equation</h2>
+      </div>
+      <span class="acc-arrow text-indigo-500 font-bold text-xl">›</span>
+    </div>
+    <div class="acc-body open px-6 pb-6">
+      <p class="text-slate-600 mb-4">Light consists of discrete energy packets called <strong>photons</strong>. One photon interacts with one electron.</p>
+      <div class="formula-card mb-4">
+        <h3 class="font-bold text-indigo-800 mb-2 text-center">Photon Energy</h3>
+        <div class="text-center">$$E = h\nu = \frac{hc}{\lambda}$$</div>
+        <p class="text-xs text-center text-slate-500 mt-2">$h = 6.63\times10^{-34}$ J·s (Planck's constant)</p>
+      </div>
+      <p class="text-slate-600 mb-3">Energy use by photon hitting metal:</p>
+      <ul class="list-disc ml-6 mb-4 text-slate-700 space-y-1">
+        <li><strong>Part 1:</strong> $\phi_0 = h\nu_0$ — overcomes work function (surface barrier)</li>
+        <li><strong>Part 2:</strong> Remaining energy → $K_{max}$ of emitted photoelectron</li>
+      </ul>
+      <div class="formula-card mb-4">
+        <h3 class="font-bold text-indigo-800 mb-3 text-center">Einstein's Photoelectric Equation</h3>
+        <div class="text-center mb-2">$$K_{max} = h\nu - \phi_0 = h(\nu-\nu_0)$$</div>
+        <div class="text-center mb-2">$$\frac{1}{2}mv_{max}^2 = h\nu - h\nu_0$$</div>
+        <div class="text-center">$$eV_0 = h(\nu - \nu_0)$$</div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-3">
+        <div class="box-green"><h4 class="font-bold text-green-800 mb-1">In terms of wavelength</h4><div class="text-center">$$eV_0 = hc\!\left(\frac{1}{\lambda}-\frac{1}{\lambda_0}\right)$$</div></div>
+        <div class="box-blue"><h4 class="font-bold text-blue-800 mb-1">Photon Momentum</h4><div class="text-center">$$p = \frac{h}{\lambda} = \frac{h\nu}{c}$$</div><p class="text-xs text-blue-600 mt-1">Non-zero despite zero rest mass!</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card bg-white rounded-2xl shadow-sm border border-slate-100 mb-6 overflow-hidden">
+    <div class="flex items-center gap-3 px-6 py-4 cursor-pointer" onclick="toggleAcc(this)">
+      <span class="text-2xl">📜</span>
+      <div class="flex-1">
+        <div class="text-xs font-bold text-slate-400 uppercase tracking-widest">Laws</div>
+        <h2 style="font-family:'Playfair Display',serif" class="text-xl font-bold">Laws of Photoelectric Emission</h2>
+      </div>
+      <span class="acc-arrow text-indigo-500 font-bold text-xl">›</span>
+    </div>
+    <div class="acc-body open px-6 pb-6">
+      <div class="space-y-3">
+        <div class="flex gap-3"><span class="bg-indigo-100 text-indigo-700 rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm flex-shrink-0">1</span><div class="box-blue flex-1 !py-2"><p class="text-sm text-blue-800"><strong>Current ∝ Intensity</strong> (fixed ν). More photons → more electrons per second.</p></div></div>
+        <div class="flex gap-3"><span class="bg-indigo-100 text-indigo-700 rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm flex-shrink-0">2</span><div class="box-green flex-1 !py-2"><p class="text-sm text-green-800"><strong>Saturation current ∝ intensity</strong>; stopping potential is <em>independent</em> of intensity.</p></div></div>
+        <div class="flex gap-3"><span class="bg-indigo-100 text-indigo-700 rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm flex-shrink-0">3</span><div class="box-amber flex-1 !py-2"><p class="text-sm text-amber-800"><strong>Threshold frequency $\nu_0$</strong>: below this, no emission. Characteristic of emitter material.</p></div></div>
+        <div class="flex gap-3"><span class="bg-indigo-100 text-indigo-700 rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm flex-shrink-0">4</span><div class="box-purple flex-1 !py-2"><p class="text-sm text-purple-800">Above $\nu_0$: <strong>$K_{max}$ depends only on frequency</strong>, not intensity. $K_{max}$ increases linearly with $\nu$.</p></div></div>
+        <div class="flex gap-3"><span class="bg-indigo-100 text-indigo-700 rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm flex-shrink-0">5</span><div class="box-teal flex-1 !py-2"><p class="text-sm text-teal-800"><strong>Instantaneous emission</strong>: time lag &lt; $10^{-9}$ s even for dim light.</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card bg-white rounded-2xl shadow-sm border border-slate-100 mb-6 overflow-hidden">
+    <div class="flex items-center gap-3 px-6 py-4 cursor-pointer" onclick="toggleAcc(this)">
+      <span class="text-2xl">🌟</span>
+      <div class="flex-1">
+        <div class="text-xs font-bold text-slate-400 uppercase tracking-widest">11.2</div>
+        <h2 style="font-family:'Playfair Display',serif" class="text-xl font-bold">Particle Nature of Light: The Photon</h2>
+      </div>
+      <span class="acc-arrow text-indigo-500 font-bold text-xl">›</span>
+    </div>
+    <div class="acc-body open px-6 pb-6">
+      <div class="grid md:grid-cols-3 gap-3 mb-4">
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-xs text-slate-400 uppercase font-bold mb-1">Rest Mass</div><div class="font-bold">Zero ($m_0=0$)</div></div>
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-xs text-slate-400 uppercase font-bold mb-1">Speed</div><div class="font-bold">$c = 3\times10^8$ m/s always</div></div>
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-xs text-slate-400 uppercase font-bold mb-1">Energy</div><div class="font-bold">$E = h\nu = hc/\lambda$</div></div>
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-xs text-slate-400 uppercase font-bold mb-1">Momentum</div><div class="font-bold">$p = h/\lambda \neq 0$</div></div>
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-xs text-slate-400 uppercase font-bold mb-1">Charge</div><div class="font-bold">Zero — not deflected by E,B</div></div>
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-3"><div class="text-xs text-slate-400 uppercase font-bold mb-1">Inertial mass</div><div class="font-bold">$m = h\nu/c^2$</div></div>
+      </div>
+      <div class="box-rose"><h4 class="font-bold text-rose-800 mb-1">Key characteristic</h4><p class="text-sm text-rose-700">All photons of same frequency $\nu$ have the same energy and momentum, <em>irrespective of intensity</em>. Intensity only affects the number of photons per second.</p></div>
+    </div>
+  </div>
+
+  <div class="section-card bg-white rounded-2xl shadow-sm border border-slate-100 mb-6 overflow-hidden">
+    <div class="flex items-center gap-3 px-6 py-4 cursor-pointer" onclick="toggleAcc(this)">
+      <span class="text-2xl">🌊</span>
+      <div class="flex-1">
+        <div class="text-xs font-bold text-slate-400 uppercase tracking-widest">11.3</div>
+        <h2 style="font-family:'Playfair Display',serif" class="text-xl font-bold">Matter Waves — de-Broglie Hypothesis</h2>
+      </div>
+      <span class="acc-arrow text-indigo-500 font-bold text-xl">›</span>
+    </div>
+    <div class="acc-body open px-6 pb-6">
+      <div class="box-teal mb-4"><h3 class="font-bold text-teal-800 mb-1">de-Broglie (1924)</h3><p class="text-sm text-teal-700">Since radiation has dual nature → material particles like electrons should also have wave nature. Wave associated with moving particle = <strong>matter wave / de-Broglie wave</strong>.</p></div>
+      <div class="formula-card mb-4">
+        <h3 class="font-bold text-indigo-800 mb-2 text-center">de-Broglie Wavelength</h3>
+        <div class="text-center">$$\lambda = \frac{h}{p} = \frac{h}{mv}$$</div>
+      </div>
+      <h3 class="font-bold mb-3">Special Cases</h3>
+      <div class="space-y-3 mb-4">
+        <div class="box-blue"><h4 class="font-semibold text-blue-800 text-sm mb-1">Electron accelerated through potential V</h4><div class="text-center">$$\lambda_e = \frac{1.227}{\sqrt{V}} \text{ nm}$$</div><p class="text-xs text-blue-600 mt-1">Derived from $KE = eV = p^2/2m \Rightarrow p=\sqrt{2meV}$</p></div>
+        <div class="box-green"><h4 class="font-semibold text-green-800 text-sm mb-1">Particle with kinetic energy K</h4><div class="text-center">$$\lambda = \frac{h}{\sqrt{2mK}}$$</div></div>
+        <div class="box-purple"><h4 class="font-semibold text-purple-800 text-sm mb-1">Particle at rest ($v=0$)</h4><p class="text-sm text-purple-700">$\lambda = \infty$ → de-Broglie wave cannot be visualised. Particle must be moving!</p></div>
+      </div>
+      <div class="box-amber mb-3">
+        <h3 class="font-bold text-amber-800 mb-2">Key observations</h3>
+        <ul class="text-sm text-amber-700 list-disc ml-4 space-y-1">
+          <li>$\lambda \propto 1/v$ — faster particle, shorter wavelength</li>
+          <li>$\lambda \propto 1/m$ — heavier particle, shorter wavelength (same speed)</li>
+          <li>Matter waves are NOT electromagnetic. Travel in vacuum. Not mechanical.</li>
+          <li>Same $\lambda$ → same $p$. Heavier particle moves slower, has less KE.</li>
+          <li>Matter waves are probability waves — amplitude$^2$ ∝ probability of finding particle</li>
+        </ul>
+      </div>
+      <div class="box-rose">
+        <h3 class="font-bold text-rose-800 mb-1">Heisenberg Uncertainty Principle</h3>
+        <div class="text-center my-2">$$\Delta x \cdot \Delta p \geq \frac{h}{4\pi}$$</div>
+        <p class="text-sm text-rose-700">Position and momentum cannot be determined simultaneously with perfect precision — a consequence of wave nature of particles.</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /notes -->
+
+<!-- ===== FORMULAS ===== -->
+<div id="tab-formulas" class="tab-content" style="display:none">
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mb-6">
+    <h2 style="font-family:'Playfair Display',serif" class="text-2xl font-bold mb-6">Master Formula Sheet</h2>
+    <div class="grid md:grid-cols-2 gap-4 mb-6">
+      <div class="formula-card">
+        <h3 class="font-bold text-indigo-700 mb-3">📦 Photon</h3>
+        <div class="space-y-2 text-sm">
+          <div class="bg-white rounded-lg p-2">Energy: $E = h\nu = hc/\lambda$</div>
+          <div class="bg-white rounded-lg p-2">Momentum: $p = h/\lambda = h\nu/c$</div>
+          <div class="bg-white rounded-lg p-2">Inertial mass: $m = h\nu/c^2$</div>
+          <div class="bg-white rounded-lg p-2">Rest mass = 0 · Speed = $c$ always</div>
+        </div>
+      </div>
+      <div class="formula-card">
+        <h3 class="font-bold text-indigo-700 mb-3">⚡ Photoelectric Effect</h3>
+        <div class="space-y-2 text-sm">
+          <div class="bg-white rounded-lg p-2">$K_{max} = h\nu - \phi_0 = h(\nu-\nu_0)$</div>
+          <div class="bg-white rounded-lg p-2">$eV_0 = K_{max}$</div>
+          <div class="bg-white rounded-lg p-2">$V_0 = (h/e)\nu - \phi_0/e$</div>
+          <div class="bg-white rounded-lg p-2">$eV_0 = hc(1/\lambda - 1/\lambda_0)$</div>
+          <div class="bg-white rounded-lg p-2">$\nu_0 = \phi_0/h$ (threshold)</div>
+        </div>
+      </div>
+      <div class="formula-card">
+        <h3 class="font-bold text-indigo-700 mb-3">🌊 de-Broglie</h3>
+        <div class="space-y-2 text-sm">
+          <div class="bg-white rounded-lg p-2">General: $\lambda = h/p = h/mv$</div>
+          <div class="bg-white rounded-lg p-2">For KE $K$: $\lambda = h/\sqrt{2mK}$</div>
+          <div class="bg-white rounded-lg p-2">Electron in V: $\lambda_e = 1.227/\sqrt{V}$ nm</div>
+          <div class="bg-white rounded-lg p-2">Charge $q$ in V: $\lambda = h/\sqrt{2mqV}$</div>
+        </div>
+      </div>
+      <div class="formula-card">
+        <h3 class="font-bold text-indigo-700 mb-3">📊 Graph Slopes</h3>
+        <div class="space-y-2 text-sm">
+          <div class="bg-white rounded-lg p-2">$V_0$ vs $\nu$: slope = $h/e$, x-int = $\nu_0$</div>
+          <div class="bg-white rounded-lg p-2">$K_{max}$ vs $\nu$: slope = $h$, x-int = $\nu_0$</div>
+          <div class="bg-white rounded-lg p-2">$K_{max}$ vs $\nu$: y-intercept = $-\phi_0$</div>
+          <div class="bg-white rounded-lg p-2">Same slope for any material (slope ≠ $\phi_0$)</div>
+        </div>
+      </div>
+    </div>
+    <div class="bg-slate-900 text-white rounded-2xl p-5">
+      <h3 class="font-bold text-slate-300 mb-3">📌 Physical Constants</h3>
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-sm font-mono">
+        <div class="bg-slate-800 rounded-lg p-2">$h = 6.63\times10^{-34}$ J·s</div>
+        <div class="bg-slate-800 rounded-lg p-2">$c = 3\times10^8$ m/s</div>
+        <div class="bg-slate-800 rounded-lg p-2">$e = 1.6\times10^{-19}$ C</div>
+        <div class="bg-slate-800 rounded-lg p-2">$m_e = 9.1\times10^{-31}$ kg</div>
+        <div class="bg-slate-800 rounded-lg p-2">$m_p = 1.67\times10^{-27}$ kg</div>
+        <div class="bg-slate-800 rounded-lg p-2">1 eV $= 1.6\times10^{-19}$ J</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VISUALS ===== -->
+<div id="tab-visuals" class="tab-content" style="display:none">
+
+  <div class="grid md:grid-cols-2 gap-6 mb-6">
+
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+      <h3 class="font-bold mb-3">🔬 Photoelectric Experiment Setup</h3>
+      <svg viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg" class="w-full rounded-xl bg-slate-50">
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#f59e0b"/></marker>
+          <marker id="earr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#e11d48"/></marker>
+        </defs>
+        <rect x="60" y="40" width="280" height="180" rx="20" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6,3"/>
+        <text x="200" y="30" text-anchor="middle" font-size="11" fill="#64748b" font-family="Inter">Evacuated Glass Tube</text>
+        <rect x="80" y="80" width="12" height="100" rx="3" fill="#6366f1"/>
+        <text x="50" y="128" text-anchor="middle" font-size="10" fill="#6366f1" font-weight="bold">C</text>
+        <text x="50" y="140" text-anchor="middle" font-size="8" fill="#6366f1">(Emitter)</text>
+        <rect x="310" y="90" width="12" height="80" rx="3" fill="#0d9488"/>
+        <text x="342" y="128" text-anchor="middle" font-size="10" fill="#0d9488" font-weight="bold">A</text>
+        <text x="342" y="140" text-anchor="middle" font-size="8" fill="#0d9488">(Collector)</text>
+        <line x1="28" y1="100" x2="75" y2="100" stroke="#f59e0b" stroke-width="2.5" marker-end="url(#arr)"/>
+        <line x1="28" y1="118" x2="75" y2="118" stroke="#f59e0b" stroke-width="2.5" marker-end="url(#arr)"/>
+        <line x1="28" y1="136" x2="75" y2="136" stroke="#f59e0b" stroke-width="2.5" marker-end="url(#arr)"/>
+        <text x="6" y="96" font-size="9" fill="#f59e0b" font-weight="bold">UV</text>
+        <text x="4" y="108" font-size="8" fill="#f59e0b">Light</text>
+        <circle cx="140" cy="108" r="4" fill="#e11d48" opacity=".9"/>
+        <circle cx="170" cy="122" r="4" fill="#e11d48" opacity=".85"/>
+        <circle cx="155" cy="142" r="4" fill="#e11d48" opacity=".8"/>
+        <circle cx="205" cy="105" r="3" fill="#e11d48" opacity=".65"/>
+        <circle cx="235" cy="130" r="3" fill="#e11d48" opacity=".55"/>
+        <line x1="93" y1="108" x2="135" y2="108" stroke="#e11d48" stroke-width="1.2" stroke-dasharray="4,2" marker-end="url(#earr)"/>
+        <line x1="93" y1="122" x2="165" y2="122" stroke="#e11d48" stroke-width="1.2" stroke-dasharray="4,2" marker-end="url(#earr)"/>
+        <text x="180" y="165" text-anchor="middle" font-size="9" fill="#e11d48">photoelectrons →</text>
+        <line x1="92" y1="220" x2="316" y2="220" stroke="#374151" stroke-width="1.5"/>
+        <line x1="92" y1="180" x2="92" y2="220" stroke="#374151" stroke-width="1.5"/>
+        <line x1="316" y1="170" x2="316" y2="220" stroke="#374151" stroke-width="1.5"/>
+        <circle cx="204" cy="220" r="13" fill="white" stroke="#374151" stroke-width="1.5"/>
+        <text x="204" y="224" text-anchor="middle" font-size="9" fill="#374151" font-weight="bold">μA</text>
+        <line x1="250" y1="213" x2="250" y2="227" stroke="#374151" stroke-width="3"/>
+        <line x1="258" y1="216" x2="258" y2="224" stroke="#374151" stroke-width="1.5"/>
+        <text x="255" y="210" font-size="8" fill="#374151">V</text>
+        <text x="150" y="248" font-size="10" fill="#64748b" text-anchor="middle">← Retarding | Accelerating →</text>
+      </svg>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+      <h3 class="font-bold mb-3">📊 I vs Collector Potential (3 Intensities)</h3>
+      <canvas id="ivChart" height="200"></canvas>
+      <p class="text-xs text-slate-400 mt-2 text-center">$I_3 > I_2 > I_1$ at same ν. Same stopping potential $-V_0$.</p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+      <h3 class="font-bold mb-3">📊 Stopping Potential vs Frequency (2 Metals)</h3>
+      <canvas id="v0Chart" height="200"></canvas>
+      <p class="text-xs text-slate-400 mt-2 text-center">Same slope $h/e$ for both metals. Different $\nu_0$.</p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5">
+      <h3 class="font-bold mb-3">📊 $K_{max}$ vs Frequency</h3>
+      <canvas id="kmaxChart" height="200"></canvas>
+      <p class="text-xs text-slate-400 mt-2 text-center">Slope = $h$. X-intercept = $\nu_0$. Y-intercept = $-\phi_0$.</p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 md:col-span-2">
+      <h3 class="font-bold mb-3">🌊 de-Broglie λ vs Speed (Electron)</h3>
+      <canvas id="dbChart" height="130"></canvas>
+      <p class="text-xs text-slate-400 mt-2 text-center">$\lambda \propto 1/v$ — faster the electron, shorter the wavelength</p>
+    </div>
+  </div>
+
+  <!-- Interactive Canvas -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-5 mb-6">
+    <h3 class="font-bold mb-3">🎬 Interactive Photon → Metal Simulation</h3>
+    <div class="flex flex-wrap gap-4 mb-3 text-sm">
+      <label>Frequency: <input type="range" id="freqSlider" min="1" max="10" value="5" class="ml-2 w-28 accent-indigo-500"/> <span id="freqVal">5</span>×10¹⁴ Hz</label>
+      <label>Work Function: <input type="range" id="wfSlider" min="1" max="5" step="0.1" value="2.5" class="ml-2 w-28 accent-teal-500"/> <span id="wfVal">2.5</span> eV</label>
+    </div>
+    <canvas id="animCanvas" width="600" height="200" class="w-full rounded-xl" style="background:#0f172a"></canvas>
+    <div id="animResult" class="mt-3 p-3 rounded-xl text-sm font-medium"></div>
+  </div>
+</div>
+
+<!-- ===== BLIND SPOTS ===== -->
+<div id="tab-blindspot" class="tab-content" style="display:none">
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 mb-6">
+    <h2 style="font-family:'Playfair Display',serif" class="text-2xl font-bold mb-2">⚠️ Blind Spots & Exam Traps</h2>
+    <p class="text-slate-400 text-sm mb-6">Points where students lose marks. Study these carefully!</p>
+    <div class="space-y-4">
+
+      <div class="blind-spot-card"><div class="flex gap-3"><span class="text-2xl">🚫</span><div><h4 class="font-bold text-amber-800">MYTH: More intensity = more KE of photoelectrons</h4><p class="text-sm text-amber-700 mt-1">Wrong. Intensity only increases saturation current (more electrons). $K_{max}$ depends <strong>only on frequency</strong>. Stopping potential is unchanged with intensity.</p></div></div></div>
+
+      <div class="blind-spot-card"><div class="flex gap-3"><span class="text-2xl">🚫</span><div><h4 class="font-bold text-amber-800">MYTH: At threshold frequency, no emission happens</h4><p class="text-sm text-amber-700 mt-1">At $\nu = \nu_0$, electrons ARE emitted but with <strong>zero kinetic energy</strong>. Emission starts exactly at threshold.</p></div></div></div>
+
+      <div class="blind-spot-card"><div class="flex gap-3"><span class="text-2xl">🚫</span><div><h4 class="font-bold text-amber-800">GRAPH TRAP: Slope of $V_0$ vs $\nu$ graph</h4><p class="text-sm text-amber-700 mt-1">Slope = <strong>$h/e$</strong> (NOT $h$). Y-intercept = $-\phi_0/e$. Slope is the SAME for all materials — only x-intercept ($\nu_0$) differs.</p></div></div></div>
+
+      <div class="blind-spot-card"><div class="flex gap-3"><span class="text-2xl">🚫</span><div><h4 class="font-bold text-amber-800">MYTH: Zero rest mass → zero momentum for photon</h4><p class="text-sm text-amber-700 mt-1">Photon momentum $p = h/\lambda \neq 0$. Rest mass = 0 but relativistic momentum is non-zero. This is what drives photoelectric effect.</p></div></div></div>
+
+      <div class="blind-spot-card"><div class="flex gap-3"><span class="text-2xl">🚫</span><div><h4 class="font-bold text-amber-800">FORMULA TRAP: de-Broglie wavelength for proton vs electron</h4><p class="text-sm text-amber-700 mt-1">$\lambda_e = 1.227/\sqrt{V}$ nm applies to <strong>electrons ONLY</strong>. For proton in same V: $\lambda = h/\sqrt{2m_p eV}$ — use the general formula with $m_p$.</p></div></div></div>
+
+      <div class="blind-spot-card"><div class="flex gap-3"><span class="text-2xl">🚫</span><div><h4 class="font-bold text-amber-800">UNIT TRAP: Work function in eV vs Joules</h4><p class="text-sm text-amber-700 mt-1">In $K_{max} = h\nu - \phi_0$, use consistent units. Convert $\phi_0$ from eV to J (multiply by $1.6\times10^{-19}$) when $h\nu$ is in Joules.</p></div></div></div>
+
+      <div class="blind-spot-card"><div class="flex gap-3"><span class="text-2xl">🚫</span><div><h4 class="font-bold text-amber-800">TRICK QUESTION: "Electric field of beam becomes zero with frequency f"</h4><p class="text-sm text-amber-700 mt-1">The electric field completes <em>two</em> zeros per cycle → actual optical frequency = $f/2$. So photon energy = $h \times (f/2)$.</p></div></div></div>
+
+      <div class="blind-spot-card"><div class="flex gap-3"><span class="text-2xl">🚫</span><div><h4 class="font-bold text-amber-800">COMPARISON: Same λ vs same KE vs same speed</h4><p class="text-sm text-amber-700 mt-1">
+        Same $\lambda$ → same $p$ → $v_e > v_p$ (since $m_e < m_p$) and $K_e > K_p$<br/>
+        Same KE → $\lambda_e > \lambda_p$ (since $\lambda = h/\sqrt{2mK}$, smaller $m$ → larger $\lambda$)<br/>
+        Same speed → $\lambda_e > \lambda_p$ (since $\lambda = h/mv$, smaller $m$ → larger $\lambda$)
+      </p></div></div></div>
+
+    </div>
+  </div>
+
+  <!-- Special Cases Table -->
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+    <h2 style="font-family:'Playfair Display',serif" class="text-xl font-bold mb-4">🎯 Special Cases Quick Reference</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead><tr class="bg-indigo-50"><th class="p-3 text-left font-semibold text-indigo-800">Condition</th><th class="p-3 text-left font-semibold text-indigo-800">What happens</th><th class="p-3 text-left font-semibold text-indigo-800">Key formula</th></tr></thead>
+        <tbody class="divide-y divide-slate-100">
+          <tr><td class="p-3">$\nu &lt; \nu_0$</td><td class="p-3">No emission, any intensity</td><td class="p-3">—</td></tr>
+          <tr class="bg-slate-50"><td class="p-3">$\nu = \nu_0$</td><td class="p-3">Emission, KE = 0</td><td class="p-3">$K_{max} = 0$</td></tr>
+          <tr><td class="p-3">$\nu > \nu_0$</td><td class="p-3">Emission with KE</td><td class="p-3">$K_{max} = h(\nu-\nu_0)$</td></tr>
+          <tr class="bg-slate-50"><td class="p-3">Intensity ↑ (same ν)</td><td class="p-3">More electrons, same $V_0$</td><td class="p-3">Current ↑, $V_0$ unchanged</td></tr>
+          <tr><td class="p-3">Particle at rest</td><td class="p-3">$\lambda = \infty$</td><td class="p-3">$\lambda = h/0 = \infty$</td></tr>
+          <tr class="bg-slate-50"><td class="p-3">Same λ: p vs e</td><td class="p-3">Same $p$; $v_e > v_p$; $K_e > K_p$</td><td class="p-3">$K = p^2/2m$</td></tr>
+          <tr><td class="p-3">Same KE: p vs e</td><td class="p-3">$\lambda_e > \lambda_p$</td><td class="p-3">$\lambda = h/\sqrt{2mK}$</td></tr>
+          <tr class="bg-slate-50"><td class="p-3">$V_0$ vs ν for two metals</td><td class="p-3">Same slope, different x-intercepts</td><td class="p-3">Slope = $h/e$</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== QUIZ ===== -->
+<div id="tab-quiz" class="tab-content" style="display:none">
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+    <div class="flex items-center justify-between mb-6">
+      <h2 style="font-family:'Playfair Display',serif" class="text-2xl font-bold">Quick Test</h2>
+      <div class="text-sm text-slate-500">Score: <span id="quiz-score" class="font-bold text-indigo-600 text-xl">0</span> / <span id="quiz-total">10</span></div>
+    </div>
+    <div id="quiz-container"></div>
+    <button onclick="resetQuiz()" class="mt-6 bg-indigo-600 text-white px-6 py-2 rounded-xl font-semibold hover:bg-indigo-700 transition">🔄 Reset</button>
+  </div>
+</div>
+
+<!-- ===== SOLVED EXAMPLES ===== -->
+<div id="tab-examples" class="tab-content" style="display:none">
+  <div class="space-y-6">
+
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <div class="flex gap-3 mb-4"><span class="bg-indigo-100 text-indigo-700 rounded-xl px-3 py-1 text-sm font-bold">Ex. 1</span><h3 class="font-bold">Stopping potential → max KE</h3></div>
+      <div class="box-blue mb-4"><p class="text-sm text-blue-800">Potential required to stop ejection of electrons from cathode is <strong>4 V</strong>. Find maximum kinetic energy of emitted photoelectrons.</p></div>
+      <div class="box-green"><h4 class="font-semibold text-green-800 mb-2">Solution</h4><p class="text-sm text-green-700">Using $K_{max} = eV_0$:</p><div class="text-center my-2">$$K_{max} = eV_0 = e \times 4 = 4 \text{ eV}$$</div><p class="text-sm text-green-700 font-semibold">∴ Maximum KE = 4 eV</p></div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <div class="flex gap-3 mb-4"><span class="bg-indigo-100 text-indigo-700 rounded-xl px-3 py-1 text-sm font-bold">Ex. 2</span><h3 class="font-bold">Electric field zeros trick — max KE</h3></div>
+      <div class="box-blue mb-4"><p class="text-sm text-blue-800">Electric field of monochromatic beam becomes zero with frequency $2.4\times10^{15}$ Hz. $\phi_0 = 2.0$ eV. Find $KE_{max}$.</p></div>
+      <div class="box-green">
+        <h4 class="font-semibold text-green-800 mb-2">Solution</h4>
+        <p class="text-sm text-green-700 mb-1">⚠️ E-field becomes zero <em>twice</em> per vibration. So actual optical frequency = $\frac{1}{2}\times 2.4\times10^{15} = 1.2\times10^{15}$ Hz</p>
+        <div class="text-center my-2">$$KE_{max} = h\nu - \phi_0 = \frac{6.63\times10^{-34}\times1.2\times10^{15}}{1.6\times10^{-19}} - 2.0 \approx 2.97 \text{ eV}$$</div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <div class="flex gap-3 mb-4"><span class="bg-indigo-100 text-indigo-700 rounded-xl px-3 py-1 text-sm font-bold">Ex. 3</span><h3 class="font-bold">Caesium — threshold frequency & wavelength</h3></div>
+      <div class="box-blue mb-4"><p class="text-sm text-blue-800">$\phi_0(\text{Cs}) = 2.14$ eV. Find (i) threshold frequency, (ii) wavelength if $V_0 = 0.60$ V.</p></div>
+      <div class="box-green">
+        <h4 class="font-semibold text-green-800 mb-2">Solution</h4>
+        <p class="text-sm text-green-700 font-semibold">(i) Threshold frequency:</p>
+        <div class="text-center my-2">$$\nu_0 = \frac{\phi_0}{h} = \frac{2.14\times1.6\times10^{-19}}{6.63\times10^{-34}} \approx 5.16\times10^{14} \text{ Hz}$$</div>
+        <p class="text-sm text-green-700 font-semibold">(ii) Wavelength when $V_0 = 0.60$ V:</p>
+        <div class="text-center my-2">$$\lambda = \frac{hc}{eV_0 + \phi_0} = \frac{6.63\times10^{-34}\times3\times10^8}{(0.60+2.14)\times1.6\times10^{-19}} \approx 454 \text{ nm}$$</div>
+        <p class="text-xs text-green-600 mt-1">454 nm = blue/violet visible light ✓</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <div class="flex gap-3 mb-4"><span class="bg-teal-100 text-teal-700 rounded-xl px-3 py-1 text-sm font-bold">Ex. 4</span><h3 class="font-bold">Proton & electron — same de-Broglie wavelength</h3></div>
+      <div class="box-blue mb-4"><p class="text-sm text-blue-800">Proton and electron have same $\lambda$. Which moves faster? Which has more KE?</p></div>
+      <div class="box-green">
+        <h4 class="font-semibold text-green-800 mb-2">Solution</h4>
+        <p class="text-sm text-green-700 mb-1">Same $\lambda$ → same $p$ (momentum): $p_p = p_e$</p>
+        <div class="text-center my-2">$$v = \frac{p}{m} \Rightarrow v_e = \frac{p}{m_e} \gg v_p = \frac{p}{m_p} \quad (m_e \ll m_p)$$</div>
+        <p class="text-sm text-green-700 mb-1">∴ <strong>Electron moves faster</strong></p>
+        <div class="text-center my-2">$$K = \frac{p^2}{2m} \Rightarrow K_e = \frac{p^2}{2m_e} > K_p = \frac{p^2}{2m_p}$$</div>
+        <p class="text-sm text-green-700 font-semibold">∴ <strong>Electron has more kinetic energy</strong></p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <div class="flex gap-3 mb-4"><span class="bg-teal-100 text-teal-700 rounded-xl px-3 py-1 text-sm font-bold">Ex. 5</span><h3 class="font-bold">He-Ne Laser — photon count per second</h3></div>
+      <div class="box-blue mb-4"><p class="text-sm text-blue-800">He-Ne laser: $\lambda = 632.8$ nm, power = 9.42 mW. Find (i) energy per photon, (ii) photons/sec.</p></div>
+      <div class="box-green">
+        <div class="text-center my-2">$$E = \frac{hc}{\lambda} = \frac{6.63\times10^{-34}\times3\times10^8}{632.8\times10^{-9}} \approx 3.14\times10^{-19} \text{ J}$$</div>
+        <div class="text-center my-2">$$n = \frac{P}{E} = \frac{9.42\times10^{-3}}{3.14\times10^{-19}} \approx 3\times10^{16} \text{ photons/s}$$</div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+      <div class="flex gap-3 mb-4"><span class="bg-teal-100 text-teal-700 rounded-xl px-3 py-1 text-sm font-bold">Ex. 6</span><h3 class="font-bold">Electron & photon — same wavelength 1 nm</h3></div>
+      <div class="box-blue mb-4"><p class="text-sm text-blue-800">Electron and photon each have $\lambda = 1.00$ nm. Find (i) momenta, (ii) energy of photon, (iii) KE of electron.</p></div>
+      <div class="box-green">
+        <h4 class="font-semibold text-green-800 mb-2">Solution</h4>
+        <p class="text-sm text-green-700 font-semibold">(i) Momenta are equal (same λ):</p>
+        <div class="text-center my-2">$$p = \frac{h}{\lambda} = \frac{6.63\times10^{-34}}{1\times10^{-9}} = 6.63\times10^{-25} \text{ kg·m/s}$$</div>
+        <p class="text-sm text-green-700 font-semibold">(ii) Photon energy:</p>
+        <div class="text-center my-2">$$E = \frac{hc}{\lambda} = \frac{6.63\times10^{-34}\times3\times10^8}{1\times10^{-9}} \approx 1.99\times10^{-16} \text{ J}$$</div>
+        <p class="text-sm text-green-700 font-semibold">(iii) Electron KE:</p>
+        <div class="text-center my-2">$$K = \frac{p^2}{2m_e} = \frac{(6.63\times10^{-25})^2}{2\times9.1\times10^{-31}} \approx 2.41\times10^{-19} \text{ J}$$</div>
+        <p class="text-xs text-green-600 mt-1">Note: Photon energy ≫ electron KE at same wavelength!</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /max-w container -->
+
+<div class="bg-slate-900 text-white text-center py-6 mt-10">
+  <p class="text-slate-400 text-sm">Chapter 11 · Dual Nature of Radiation & Matter · Class 12 · All-in-One Physics</p>
+  <p class="text-slate-600 text-xs mt-1">KaTeX · Chart.js · Tailwind CSS</p>
+</div>
+
+<script>
+// TAB SWITCHING
+const visited = new Set(['notes']);
+function showTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-'+name).style.display = '';
+  if(btn) btn.classList.add('active');
+  visited.add(name);
+  const pct = Math.round(visited.size / 6 * 100);
+  document.getElementById('progress-bar').style.width = pct+'%';
+  document.getElementById('prog-pct').textContent = pct+'%';
+  if(name==='visuals' && !window.chartsInited){ initCharts(); window.chartsInited=true; }
+  if(name==='quiz' && !window.quizInited){ initQuiz(); window.quizInited=true; }
+  if(name==='visuals' && !window.animInited){ setTimeout(initAnim,100); window.animInited=true; }
+}
+
+// ACCORDION
+function toggleAcc(el) {
+  const body = el.nextElementSibling;
+  const arrow = el.querySelector('.acc-arrow');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open');
+  if(arrow) arrow.classList.toggle('open');
+}
+
+// CHARTS
+function initCharts() {
+  const vVals = [-2,-1.5,-1,-0.5,0,0.5,1,2,3,4];
+  new Chart(document.getElementById('ivChart'), {
+    type:'line',
+    data:{ labels: vVals,
+      datasets:[
+        {label:'I₃ (high)',data:[0,0,0,0,3,5,7,9,9,9],borderColor:'#6366f1',fill:false,tension:.4,borderWidth:2},
+        {label:'I₂ (mid)', data:[0,0,0,0,2,3.5,5,6,6,6],borderColor:'#0d9488',fill:false,tension:.4,borderWidth:2},
+        {label:'I₁ (low)', data:[0,0,0,0,1,2,3,4,4,4],borderColor:'#f59e0b',fill:false,tension:.4,borderWidth:2},
+      ]
+    },
+    options:{plugins:{legend:{position:'top',labels:{boxWidth:12,font:{size:10}}}},
+      scales:{x:{title:{display:true,text:'Collector Voltage (V)',font:{size:10}}},
+              y:{title:{display:true,text:'Photocurrent (μA)',font:{size:10}}}}}
+  });
+
+  const freqs=[4,5,6,7,8,9,10];
+  new Chart(document.getElementById('v0Chart'), {
+    type:'line',
+    data:{ labels: freqs.map(f=>f+'×10¹⁴'),
+      datasets:[
+        {label:'Metal A (φ=2eV)',data:freqs.map(f=>Math.max(0,(f-5)*0.414)),borderColor:'#6366f1',fill:false,tension:0,borderWidth:2},
+        {label:'Metal B (φ=2.5eV)',data:freqs.map(f=>Math.max(0,(f-6.05)*0.414)),borderColor:'#e11d48',fill:false,tension:0,borderWidth:2},
+      ]
+    },
+    options:{plugins:{legend:{position:'top',labels:{boxWidth:12,font:{size:10}}}},
+      scales:{x:{title:{display:true,text:'Frequency ν',font:{size:10}}},
+              y:{title:{display:true,text:'V₀ (Volts)',font:{size:10}},min:0}}}
+  });
+
+  new Chart(document.getElementById('kmaxChart'), {
+    type:'line',
+    data:{ labels: freqs.map(f=>f+'×10¹⁴'),
+      datasets:[{label:'Kmax',data:freqs.map(f=>(f-5)*0.414),borderColor:'#0d9488',fill:false,tension:0,borderWidth:2.5,pointRadius:4}]
+    },
+    options:{plugins:{legend:{display:false}},
+      scales:{x:{title:{display:true,text:'Frequency ν',font:{size:10}}},
+              y:{title:{display:true,text:'Kmax (eV)',font:{size:10}}}}}
+  });
+
+  const speeds=[1,2,3,4,5,6,7,8];
+  new Chart(document.getElementById('dbChart'), {
+    type:'line',
+    data:{ labels: speeds.map(s=>s+'×10⁶ m/s'),
+      datasets:[{label:'λ (pm)',data:speeds.map(s=>Math.round(727/s)),borderColor:'#6366f1',
+        fill:true,backgroundColor:'rgba(99,102,241,.08)',tension:.4,borderWidth:2.5}]
+    },
+    options:{plugins:{legend:{display:false}},
+      scales:{x:{title:{display:true,text:'Electron Speed',font:{size:10}}},
+              y:{title:{display:true,text:'λ (picometers)',font:{size:10}}}}}
+  });
+}
+
+// ANIMATION
+let animRAF;
+function initAnim() {
+  const canvas = document.getElementById('animCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const freqSlider = document.getElementById('freqSlider');
+  const wfSlider = document.getElementById('wfSlider');
+
+  function draw() {
+    const freq = parseFloat(freqSlider.value);
+    const wf = parseFloat(wfSlider.value);
+    document.getElementById('freqVal').textContent = freq;
+    document.getElementById('wfVal').textContent = wf;
+
+    const photonE = (6.63e-34 * freq * 1e14) / 1.6e-19;
+    const kmax = photonE - wf;
+
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0,0,W,H);
+
+    // Metal
+    ctx.fillStyle='#1e3a5f'; ctx.fillRect(0,120,W,80);
+    ctx.fillStyle='#2d5986'; ctx.fillRect(0,120,W,6);
+    ctx.fillStyle='#94a3b8'; ctx.font='12px Inter';
+    ctx.fillText('Metal Surface  φ₀ = '+wf+' eV', 10, 148);
+
+    // Photons
+    const t = Date.now()*0.003;
+    for(let i=0;i<4;i++){
+      const x = ((t*90 + i*160) % (W+20)) - 10;
+      const y = 55 + Math.sin(t*2+i)*8;
+      ctx.beginPath(); ctx.arc(x,y,9,0,Math.PI*2);
+      ctx.fillStyle = freq>=6 ? '#fbbf24' : freq>=4 ? '#60a5fa' : '#818cf8';
+      ctx.fill();
+      ctx.fillStyle='#000'; ctx.font='bold 10px Inter'; ctx.textAlign='center';
+      ctx.fillText('γ',x,y+3);
+    }
+    ctx.textAlign='left';
+    ctx.fillStyle='#fbbf24'; ctx.font='12px Inter';
+    ctx.fillText('Photon E = '+photonE.toFixed(2)+' eV  |  Work fn = '+wf+' eV', 10, 25);
+
+    const resultDiv = document.getElementById('animResult');
+    if(kmax <= 0) {
+      ctx.fillStyle='#ef4444'; ctx.font='bold 13px Inter';
+      ctx.fillText('✗ No emission  ('+photonE.toFixed(2)+' eV < '+wf+' eV)', 10, 100);
+      resultDiv.className='mt-3 p-3 rounded-xl text-sm font-medium box-rose';
+      resultDiv.textContent='🚫 No emission. Photon energy ('+photonE.toFixed(2)+' eV) is less than work function ('+wf+' eV). Increase frequency!';
+    } else {
+      const ex = 200 + Math.cos(t*1.5)*100;
+      const ey = Math.max(15, 115 - kmax*14 - Math.abs(Math.sin(t*1.5))*30);
+      ctx.beginPath(); ctx.arc(ex,ey,6,0,Math.PI*2);
+      ctx.fillStyle='#e11d48'; ctx.fill();
+      ctx.fillStyle='#fca5a5'; ctx.font='11px Inter'; ctx.textAlign='center';
+      ctx.fillText('e⁻',ex,ey-10);
+      ctx.textAlign='left';
+      ctx.fillStyle='#4ade80'; ctx.font='bold 13px Inter';
+      ctx.fillText('✓ Emission!  Kmax = '+kmax.toFixed(2)+' eV', 10, 100);
+      resultDiv.className='mt-3 p-3 rounded-xl text-sm font-medium box-green';
+      resultDiv.innerHTML='✅ <strong>Emission occurs!</strong> K<sub>max</sub> = '+photonE.toFixed(2)+' − '+wf+' = <strong>'+kmax.toFixed(2)+' eV</strong>';
+    }
+    animRAF = requestAnimationFrame(draw);
+  }
+  if(animRAF) cancelAnimationFrame(animRAF);
+  draw();
+}
+
+// QUIZ
+const QS = [
+  {q:'Photoelectric current depends on:',opts:['Frequency of incident light','Intensity of incident light','Work function of metal','Wavelength of light'],ans:1,exp:'Saturation current ∝ intensity. More photons → more electrons per second.'},
+  {q:'Stopping potential depends on:',opts:['Intensity only','Frequency only','Both intensity and frequency','Temperature'],ans:1,exp:'V₀ = (h/e)ν − φ₀/e. Depends only on frequency, not intensity.'},
+  {q:'If frequency is doubled (same intensity), what happens to Kmax?',opts:['Doubles','Becomes more than double','Becomes less than double','Unchanged'],ans:1,exp:'Kmax = hν−φ₀. New Kmax = 2hν−φ₀ = old Kmax + hν > 2×old Kmax (since old Kmax < hν usually).'},
+  {q:'Slope of V₀ vs ν graph is:',opts:['h (Planck\'s constant)','h/e','φ₀/e','eφ₀'],ans:1,exp:'From V₀ = (h/e)ν − φ₀/e, slope = h/e. NOT h. Common exam trap!'},
+  {q:'de-Broglie wavelength of electron accelerated through V:',opts:['h/√(2meV)','1.227/√V nm','h/mv','Both A and B'],ans:3,exp:'Both are the same formula — A is general, B has values of h, m, e substituted for electrons only.'},
+  {q:'Proton vs electron at same kinetic energy. Which has larger λ?',opts:['Proton','Electron','Same','Depends on speed'],ans:1,exp:'λ = h/√(2mK). Same K → λ ∝ 1/√m. Electron (smaller m) has larger λ.'},
+  {q:'Rest mass of photon:',opts:['Very small non-zero','Zero','= mass of electron','Depends on frequency'],ans:1,exp:'Photon rest mass = 0. But it has non-zero relativistic mass m=hν/c² and momentum p=h/λ.'},
+  {q:'Which cannot be explained by wave theory?',opts:['Interference','Diffraction','Polarisation','Photoelectric effect'],ans:3,exp:'Wave theory fails to explain: threshold frequency, instantaneous emission, KE independent of intensity.'},
+  {q:'If particle is at rest, its de-Broglie wavelength is:',opts:['Zero','Infinite','h/m','Undefined'],ans:1,exp:'λ = h/mv. v=0 → λ = ∞. Cannot visualise the wave.'},
+  {q:'Proton and electron have same de-Broglie wavelength. Which has more KE?',opts:['Proton','Electron','Same KE','Cannot determine'],ans:1,exp:'Same λ → same p. K = p²/2m. Since m_e < m_p → K_e > K_p. Electron has more KE.'}
+];
+let quizScore=0, quizAnswered=new Set();
+function initQuiz(){
+  quizScore=0; quizAnswered.clear();
+  document.getElementById('quiz-score').textContent='0';
+  document.getElementById('quiz-total').textContent=QS.length;
+  const c=document.getElementById('quiz-container'); c.innerHTML='';
+  QS.forEach((q,qi)=>{
+    const d=document.createElement('div');
+    d.className='mb-8 p-5 bg-slate-50 rounded-2xl border border-slate-200';
+    d.innerHTML=`<div class="flex gap-2 items-start mb-3"><span class="bg-indigo-100 text-indigo-700 rounded-lg px-2 py-0.5 text-xs font-bold flex-shrink-0">Q${qi+1}</span><p class="text-sm font-semibold">${q.q}</p></div>
+    <div id="opts-${qi}">${q.opts.map((o,oi)=>`<div class="quiz-opt" onclick="checkAns(${qi},${oi})">${String.fromCharCode(65+oi)}. ${o}</div>`).join('')}</div>
+    <div id="exp-${qi}" style="display:none" class="mt-3 p-3 text-xs text-slate-700 bg-indigo-50 border border-indigo-200 rounded-xl">💡 <strong>Explanation:</strong> ${q.exp}</div>`;
+    c.appendChild(d);
+  });
+}
+function checkAns(qi,oi){
+  if(quizAnswered.has(qi)) return;
+  quizAnswered.add(qi);
+  const opts=document.querySelectorAll('#opts-'+qi+' .quiz-opt');
+  if(oi===QS[qi].ans){opts[oi].classList.add('correct'); quizScore++; document.getElementById('quiz-score').textContent=quizScore;}
+  else{opts[oi].classList.add('wrong'); opts[QS[qi].ans].classList.add('correct');}
+  document.getElementById('exp-'+qi).style.display='';
+}
+function resetQuiz(){window.quizInited=false; initQuiz(); window.quizInited=true;}
+</script>
+</body>
+</html>

@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ampere's Circuital Law — Complete Derivation</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#fdf8f2;--s1:#fffcf7;--s2:#fef3e2;--s3:#fde8c8;
+  --amber:#c47f17;--amber2:#e8a030;--amberd:#7a4e0a;--amberl:#faeeda;
+  --rust:#b84c1a;--rustl:#fce0d2;
+  --teal:#0f766e;--teall:#ccfbf1;
+  --ink:#2e1f0e;--ink2:#5c3d1e;--ink3:#9c7a50;
+  --border:#ecdec8;
+}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.6}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:var(--amber);border-radius:10px}
+::-webkit-scrollbar-track{background:var(--amberl)}
+
+/* Animations */
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(196,127,23,0)}50%{box-shadow:0 0 24px 6px rgba(196,127,23,.22)}}
+@keyframes dashflow{to{stroke-dashoffset:-32}}
+@keyframes dashrev{to{stroke-dashoffset:32}}
+@keyframes rotloop{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes fadein{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulseRing{0%,100%{opacity:.5;r:40}50%{opacity:1;r:48}}
+@keyframes slideRight{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes countUp{from{opacity:0}to{opacity:1}}
+@keyframes arrowMarch{to{stroke-dashoffset:-20}}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+@keyframes spinCW{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes halo{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.7;transform:scale(1.08)}}
+
+.float{animation:float 3.5s ease-in-out infinite}
+.glow{animation:glow 2.5s ease-in-out infinite}
+.breathe{animation:breathe 3s ease-in-out infinite}
+.flow{stroke-dasharray:7 4;animation:dashflow 1.2s linear infinite}
+.flowrev{stroke-dasharray:7 4;animation:dashrev 1.2s linear infinite}
+.flowslow{stroke-dasharray:7 4;animation:dashflow 2s linear infinite}
+.march{stroke-dasharray:5 3;animation:arrowMarch 1s linear infinite}
+.fadein{animation:fadein .5s ease forwards}
+.halo{animation:halo 2s ease-in-out infinite}
+
+/* Cards */
+.card{background:rgba(255,252,247,.82);border:1px solid var(--border);border-radius:18px;backdrop-filter:blur(8px);transition:box-shadow .25s,transform .2s}
+.card:hover{box-shadow:0 8px 28px rgba(196,127,23,.1)}
+.fbox{background:linear-gradient(135deg,var(--amberl),var(--s1));border:1px solid var(--border);border-left:4px solid var(--amber);border-radius:0 12px 12px 0;padding:14px 18px}
+.ibox{background:linear-gradient(135deg,var(--s2),var(--s1));border:1px solid #e8a030;border-radius:12px;padding:14px 16px}
+.wbox{background:rgba(15,118,110,.055);border:1px solid rgba(15,118,110,.2);border-radius:12px;padding:14px 16px}
+.rbox{background:rgba(184,76,26,.06);border:1px solid rgba(184,76,26,.2);border-radius:12px;padding:14px 16px}
+.svgbox{background:linear-gradient(135deg,var(--s1),#fff);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+
+/* Step nav */
+.snav-btn{font-family:'Outfit',sans-serif;font-size:12px;padding:6px 15px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--ink2);cursor:pointer;transition:all .18s;white-space:nowrap}
+.snav-btn:hover:not(.active){background:var(--amberl);border-color:var(--amber)}
+.snav-btn.active{background:var(--amber);color:#fff;border-color:var(--amber);box-shadow:0 4px 14px rgba(196,127,23,.35)}
+
+/* Range inputs */
+input[type=range]{-webkit-appearance:none;height:4px;border-radius:2px;background:var(--border);outline:none;width:100%}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--amber);cursor:pointer;box-shadow:0 2px 8px rgba(196,127,23,.4)}
+
+.hidden{display:none!important}
+.tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;padding:2px 10px;border-radius:12px;font-weight:500}
+
+/* Step number circle */
+.snum{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<!-- ══════ HERO ══════ -->
+<section style="background:linear-gradient(160deg,#fdf8f2 0%,#fef3e2 55%,#fde8c8 100%);padding:52px 16px 36px">
+  <div style="max-width:900px;margin:0 auto;text-align:center">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(250,238,218,.9);border:1px solid var(--border);border-radius:24px;padding:5px 18px;margin-bottom:18px">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c47f17" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12M2 7l10-5 10 5M2 12l10 5 10-5"/></svg>
+      <span style="font-size:11px;font-weight:500;color:#c47f17;letter-spacing:2px;text-transform:uppercase">Physics · Class 12 · Chapter 4</span>
+    </div>
+    <h1 style="font-family:'Crimson Pro',serif;font-size:clamp(28px,5vw,50px);font-weight:300;color:#2e1f0e;line-height:1.2;margin-bottom:10px">
+      Ampere&#39;s Circuital Law
+    </h1>
+    <p style="font-family:'Crimson Pro',serif;font-size:clamp(18px,3vw,26px);font-style:italic;color:#c47f17;margin-bottom:14px">
+      The magnetic equivalent of Gauss&#39;s Law
+    </p>
+    <p style="font-size:14px;color:#7a4e0a;max-width:580px;margin:0 auto 28px;line-height:1.75">
+      Complete derivation · Physical meaning at every step · Applications to solenoid &amp; toroid · Interactive visualizations
+    </p>
+
+    <!-- Hero animated diagram -->
+    <div style="max-width:420px;margin:0 auto;position:relative" class="float">
+      <div class="svgbox">
+        <svg viewBox="0 0 420 220" width="100%" id="heroSvg">
+          <defs>
+            <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+              <path d="M2 2L8 5L2 8" fill="none" stroke="#c47f17" stroke-width="1.5" stroke-linecap="round"/>
+            </marker>
+            <marker id="ahrust" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+              <path d="M2 2L8 5L2 8" fill="none" stroke="#b84c1a" stroke-width="1.5" stroke-linecap="round"/>
+            </marker>
+            <marker id="ahteal" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+              <path d="M2 2L8 5L2 8" fill="none" stroke="#0f766e" stroke-width="1.5" stroke-linecap="round"/>
+            </marker>
+          </defs>
+          <!-- Amperian loop (big circle) -->
+          <circle cx="210" cy="110" r="85" fill="none" stroke="#c47f17" stroke-width="2.5" stroke-dasharray="8 4" class="flowslow"/>
+          <!-- Wire through centre -->
+          <line x1="210" y1="10" x2="210" y2="210" stroke="#b84c1a" stroke-width="5" stroke-linecap="round" opacity=".85"/>
+          <!-- Current dot (coming out) -->
+          <circle cx="210" cy="110" r="12" fill="#b84c1a" opacity=".9"/>
+          <circle cx="210" cy="110" r="5"  fill="#fff"/>
+          <text x="224" y="106" font-size="11" fill="#b84c1a" font-family="Outfit" font-weight="600">I (out)</text>
+          <!-- B field vectors tangent to loop -->
+          <g id="bVecs"></g>
+          <!-- dl elements -->
+          <text x="286" y="34"  font-size="11" fill="#c47f17" font-family="JetBrains Mono">dl →</text>
+          <text x="300" y="190" font-size="11" fill="#c47f17" font-family="JetBrains Mono">← dl</text>
+          <!-- Radius label -->
+          <line x1="210" y1="110" x2="295" y2="110" stroke="#9c7a50" stroke-width="1.5" stroke-dasharray="4 2"/>
+          <text x="248" y="104" font-size="11" fill="#9c7a50" font-family="JetBrains Mono">r</text>
+          <!-- Statement box -->
+          <rect x="10" y="176" width="390" height="36" rx="8" fill="rgba(250,238,218,.9)" stroke="#e8d5b5"/>
+          <text x="205" y="193" font-size="11" fill="#c47f17" text-anchor="middle" font-family="Outfit" font-weight="600">Ampere&#39;s Law: ∮ B·dl = μ₀I_enc</text>
+          <text x="205" y="207" font-size="10" fill="#9c7a50" text-anchor="middle" font-family="JetBrains Mono">Line integral of B around closed loop = μ₀ × enclosed current</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Result box -->
+    <div style="display:inline-block;background:rgba(255,255,255,.85);border:2px solid #e8a030;border-radius:16px;padding:16px 32px;margin-top:20px" class="glow">
+      <div style="font-size:10px;color:#c47f17;letter-spacing:2px;text-transform:uppercase;margin-bottom:7px;font-weight:600">Ampere&#39;s Circuital Law</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:22px;color:#2e1f0e;font-weight:600">∮ B·dl = μ₀I<sub style="font-size:14px">enc</sub></div>
+      <div style="font-size:12px;color:#9c7a50;margin-top:6px">Closed line integral of B equals μ₀ times enclosed current</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ STICKY NAV ══════ -->
+<nav style="position:sticky;top:0;z-index:50;background:rgba(253,248,242,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:10px 16px">
+  <div style="max-width:900px;margin:0 auto;overflow-x:auto">
+    <div style="display:flex;gap:6px;padding:2px">
+      <button class="snav-btn active" onclick="goStep(0,this)">① Statement</button>
+      <button class="snav-btn" onclick="goStep(1,this)">② Physical Meaning</button>
+      <button class="snav-btn" onclick="goStep(2,this)">③ Proof Setup</button>
+      <button class="snav-btn" onclick="goStep(3,this)">④ Derivation</button>
+      <button class="snav-btn" onclick="goStep(4,this)">⑤ Direction Rule</button>
+      <button class="snav-btn" onclick="goStep(5,this)">⑥ Solenoid</button>
+      <button class="snav-btn" onclick="goStep(6,this)">⑦ Toroid</button>
+      <button class="snav-btn" onclick="goStep(7,this)">⑧ Comparison</button>
+      <button class="snav-btn" onclick="goStep(8,this)">⑨ Interactive</button>
+    </div>
+  </div>
+</nav>
+
+<main style="max-width:900px;margin:0 auto;padding:28px 16px 64px">
+
+<!-- ════════════════════════════════
+  PANEL 0 — Statement
+════════════════════════════════ -->
+<div class="step-panel" id="p0">
+  <div class="card p-6 mb-5">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div class="snum" style="background:#faeeda;color:#c47f17">1</div>
+      <h2 style="font-family:'Crimson Pro',serif;font-size:26px;font-weight:400">Statement of Ampere&#39;s Circuital Law</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
+      <div>
+        <div class="ibox mb-4">
+          <div style="font-size:11px;font-weight:600;color:#c47f17;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">The Law</div>
+          <p style="font-size:14px;color:#2e1f0e;line-height:1.8">
+            The <b>line integral of the magnetic field B</b> along any closed path (Amperian loop) equals <b>μ₀ times the net current</b> passing through the surface bounded by that closed path.
+          </p>
+        </div>
+        <div class="fbox mb-4">
+          <div style="font-size:11px;font-weight:600;color:#c47f17;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Mathematical form</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:18px;color:#2e1f0e;font-weight:600;line-height:2.2">∮ B·dl = μ₀I<sub style="font-size:12px">enc</sub></div>
+          <div style="font-size:12px;color:#9c7a50;margin-top:6px;line-height:1.8">
+            ∮ = closed line integral<br>
+            B = magnetic field vector<br>
+            dl = small element of the loop<br>
+            μ₀ = 4π×10⁻⁷ T·m/A (permeability)<br>
+            I_enc = net current enclosed
+          </div>
+        </div>
+        <div class="wbox">
+          <div style="font-size:11px;font-weight:600;color:#0f766e;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">💡 Analogy with Gauss&#39;s Law</div>
+          <p style="font-size:13px;color:#2e1f0e;line-height:1.7">
+            Just as <b>Gauss&#39;s Law</b> relates electric flux through a closed <i>surface</i> to enclosed charge,<br>
+            <b>Ampere&#39;s Law</b> relates the <i>line integral</i> of B around a closed <i>loop</i> to enclosed current.
+          </p>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#0f766e;margin-top:8px;line-height:2">
+            Gauss:  ∮ E·dA = q_enc/ε₀<br>
+            Ampere: ∮ B·dl = μ₀·I_enc
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="svgbox mb-4">
+          <div style="font-size:10px;color:#9c7a50;text-align:center;padding:8px 0 4px;text-transform:uppercase;letter-spacing:1px;font-family:'Outfit',sans-serif">Concept diagram</div>
+          <svg viewBox="0 0 280 260" width="100%">
+            <!-- Amperian loop -->
+            <circle cx="140" cy="130" r="88" fill="rgba(196,127,23,.04)" stroke="#c47f17" stroke-width="2.5" stroke-dasharray="9 5"/>
+            <!-- Current-carrying wire -->
+            <line x1="140" y1="10" x2="140" y2="250" stroke="#b84c1a" stroke-width="5" stroke-linecap="round" opacity=".85"/>
+            <!-- Current arrows -->
+            <polygon points="134,48 140,28 146,48" fill="#b84c1a"/>
+            <polygon points="134,88 140,68 146,88" fill="#b84c1a"/>
+            <text x="152" y="58" font-size="11" fill="#b84c1a" font-family="Outfit">I ↑</text>
+            <!-- Centre out symbol -->
+            <circle cx="140" cy="130" r="11" fill="#b84c1a" opacity=".9"/>
+            <circle cx="140" cy="130" r="4"  fill="#fff"/>
+            <!-- B tangent arrows -->
+            <path d="M228 130 A88 88 0 0 1 140 42"  fill="none" stroke="#c47f17" stroke-width="1.8" marker-end="url(#ah)" class="flowslow"/>
+            <path d="M140 218 A88 88 0 0 1 52 130"  fill="none" stroke="#c47f17" stroke-width="1.8" marker-end="url(#ah)" class="flowslow"/>
+            <!-- dl annotation -->
+            <text x="218" y="82" font-size="11" fill="#c47f17" font-family="JetBrains Mono">B∥dl</text>
+            <!-- r -->
+            <line x1="140" y1="130" x2="228" y2="130" stroke="#9c7a50" stroke-width="1.5" stroke-dasharray="4 2"/>
+            <text x="182" y="123" font-size="11" fill="#9c7a50" font-family="JetBrains Mono">r</text>
+            <!-- Surface -->
+            <ellipse cx="140" cy="130" rx="88" ry="20" fill="rgba(196,127,23,.06)" stroke="rgba(196,127,23,.2)" stroke-width="1" stroke-dasharray="4 3"/>
+            <text x="148" y="134" font-size="10" fill="#c47f17" opacity=".6" font-family="Outfit">Surface S</text>
+            <!-- Labels -->
+            <text x="18" y="238" font-size="10" fill="#9c7a50" font-family="JetBrains Mono">Amperian loop C</text>
+            <text x="18" y="252" font-size="10" fill="#9c7a50" font-family="JetBrains Mono">∮_C B·dl = μ₀I</text>
+          </svg>
+        </div>
+        <div class="rbox">
+          <div style="font-size:11px;font-weight:600;color:#b84c1a;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">⚠ Important note</div>
+          <p style="font-size:13px;color:#2e1f0e;line-height:1.7">
+            The choice of Amperian loop is <b>free</b> — you can pick any shape. But a <b>clever choice</b> that matches the symmetry of the problem makes B·dl constant, allowing you to pull B out of the integral.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+  PANEL 1 — Physical Meaning
+════════════════════════════════ -->
+<div class="step-panel hidden" id="p1">
+  <div class="card p-6 mb-5">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div class="snum" style="background:#faeeda;color:#c47f17">2</div>
+      <h2 style="font-family:'Crimson Pro',serif;font-size:26px;font-weight:400">Physical Meaning — What Does It Say?</h2>
+    </div>
+    <p style="font-size:14px;color:#5c3d1e;line-height:1.8;margin-bottom:20px">
+      Ampere&#39;s Law tells us that <b>magnetic field lines always form closed loops around currents</b>. The strength of this "circulation" is proportional to how much current passes through the loop.
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px">
+      <!-- Card A -->
+      <div style="border:1.5px solid #e8a030;border-radius:14px;background:linear-gradient(160deg,#fef3e2,#fffcf7);padding:16px">
+        <div class="svgbox mb-3">
+          <svg viewBox="0 0 160 120" width="100%">
+            <!-- Single wire, current out -->
+            <circle cx="80" cy="60" r="10" fill="#b84c1a" opacity=".9"/>
+            <circle cx="80" cy="60" r="4" fill="#fff"/>
+            <!-- Concentric loops -->
+            <circle cx="80" cy="60" r="30" fill="none" stroke="rgba(196,127,23,.4)" stroke-width="1.5" stroke-dasharray="6 3" class="flowslow"/>
+            <circle cx="80" cy="60" r="50" fill="none" stroke="rgba(196,127,23,.25)" stroke-width="1" stroke-dasharray="6 3" class="flowslow"/>
+            <!-- Arrows on outer loop -->
+            <polygon points="80,10 85,22 75,22" fill="rgba(196,127,23,.5)" transform="rotate(0,80,60)"/>
+            <text x="8" y="114" font-size="9" fill="#9c7a50" font-family="JetBrains Mono">B∝1/r</text>
+          </svg>
+        </div>
+        <div style="font-size:12px;font-weight:600;color:#c47f17;margin-bottom:6px">B-field encircles I</div>
+        <p style="font-size:12px;color:#5c3d1e;line-height:1.6">For any loop enclosing the wire, ∮B·dl = μ₀I regardless of loop shape.</p>
+      </div>
+      <!-- Card B -->
+      <div style="border:1.5px solid #b84c1a;border-radius:14px;background:linear-gradient(160deg,#fce0d2,#fffcf7);padding:16px">
+        <div class="svgbox mb-3">
+          <svg viewBox="0 0 160 120" width="100%">
+            <!-- Loop NOT enclosing wire -->
+            <rect x="10" y="20" width="60" height="80" rx="8" fill="none" stroke="#c47f17" stroke-width="2" stroke-dasharray="6 3"/>
+            <!-- Wire outside loop -->
+            <line x1="110" y1="10" x2="110" y2="110" stroke="#b84c1a" stroke-width="4" stroke-linecap="round" opacity=".8"/>
+            <circle cx="110" cy="60" r="8" fill="#b84c1a" opacity=".8"/>
+            <circle cx="110" cy="60" r="3" fill="#fff"/>
+            <text x="8" y="114" font-size="9" fill="#b84c1a" font-family="JetBrains Mono">∮B·dl = 0</text>
+            <text x="22" y="64" font-size="10" fill="#c47f17" font-family="Outfit">Loop</text>
+            <text x="22" y="78" font-size="10" fill="#c47f17" font-family="Outfit">(no I)</text>
+          </svg>
+        </div>
+        <div style="font-size:12px;font-weight:600;color:#b84c1a;margin-bottom:6px">No enclosed I → zero</div>
+        <p style="font-size:12px;color:#5c3d1e;line-height:1.6">If the loop encloses no current, ∮B·dl = 0 even though B may exist at the loop.</p>
+      </div>
+      <!-- Card C -->
+      <div style="border:1.5px solid #0f766e;border-radius:14px;background:linear-gradient(160deg,#ccfbf1,#fffcf7);padding:16px">
+        <div class="svgbox mb-3">
+          <svg viewBox="0 0 160 120" width="100%">
+            <!-- Two wires, opposite currents -->
+            <circle cx="55" cy="60" r="10" fill="#b84c1a" opacity=".85"/>
+            <circle cx="55" cy="60" r="4"  fill="#fff"/>
+            <circle cx="105" cy="60" r="10" fill="#0f766e" opacity=".85"/>
+            <text x="100" y="65" font-size="12" fill="#fff" text-anchor="middle">×</text>
+            <!-- Loop around both -->
+            <rect x="14" y="22" width="132" height="76" rx="10" fill="none" stroke="#c47f17" stroke-width="2" stroke-dasharray="7 3" class="flowslow"/>
+            <text x="8" y="114" font-size="9" fill="#0f766e" font-family="JetBrains Mono">∮B·dl = μ₀(I₁-I₂)</text>
+          </svg>
+        </div>
+        <div style="font-size:12px;font-weight:600;color:#0f766e;margin-bottom:6px">Multiple currents</div>
+        <p style="font-size:12px;color:#5c3d1e;line-height:1.6">I_enc is algebraic sum. Opposite directions subtract. ∮B·dl = μ₀(I₁−I₂).</p>
+      </div>
+    </div>
+    <div class="ibox">
+      <div style="font-size:12px;font-weight:600;color:#c47f17;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Why B·dl and not just B?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <p style="font-size:13px;color:#2e1f0e;line-height:1.75">
+            <b>B·dl = |B||dl|cosθ</b>, the dot product.<br>
+            We only count the component of <b>B parallel to the path</b>. When B is everywhere tangent to the Amperian circle (as for a long wire), cosθ = 1 everywhere, so B comes out of the integral cleanly:
+          </p>
+        </div>
+        <div class="fbox">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#2e1f0e;line-height:2.2">
+            ∮ B·dl = B ∮ dl = B(2πr)<br>
+            ∴ B(2πr) = μ₀I<br>
+            ∴ B = μ₀I/2πr ← Biot-Savart result!
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+  PANEL 2 — Proof Setup
+════════════════════════════════ -->
+<div class="step-panel hidden" id="p2">
+  <div class="card p-6 mb-5">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div class="snum" style="background:#faeeda;color:#c47f17">3</div>
+      <h2 style="font-family:'Crimson Pro',serif;font-size:26px;font-weight:400">Setting Up the Proof — Infinite Straight Wire</h2>
+    </div>
+    <p style="font-size:14px;color:#5c3d1e;line-height:1.8;margin-bottom:16px">
+      We prove Ampere&#39;s Law starting from Biot–Savart Law for the simplest case: an <b>infinitely long straight wire</b> carrying current I. We choose an <b>Amperian circle</b> of radius r centred on the wire.
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
+      <div>
+        <div class="fbox mb-4">
+          <div style="font-size:11px;font-weight:600;color:#c47f17;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">From Biot–Savart (already proved)</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:15px;color:#2e1f0e;font-weight:600;line-height:2.2">B = μ₀I / 2πr</div>
+          <div style="font-size:12px;color:#9c7a50;margin-top:6px">for any point at distance r from infinite wire</div>
+        </div>
+        <div class="ibox mb-4">
+          <div style="font-size:11px;font-weight:600;color:#c47f17;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Choice of Amperian loop</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:flex-start;gap:8px">
+              <span class="tag" style="background:#faeeda;color:#c47f17;flex-shrink:0">Why circle?</span>
+              <p style="font-size:13px;color:#2e1f0e;line-height:1.6">A circle of radius r centred on the wire exploits the cylindrical symmetry. B has the same magnitude everywhere on this circle and is always tangent to it.</p>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:8px">
+              <span class="tag" style="background:#faeeda;color:#c47f17;flex-shrink:0">B∥dl</span>
+              <p style="font-size:13px;color:#2e1f0e;line-height:1.6">Since B is tangential and dl is also tangential at every point, the angle between them is 0°, so B·dl = B·dl·cos0° = B·dl.</p>
+            </div>
+          </div>
+        </div>
+        <div class="wbox">
+          <div style="font-size:11px;font-weight:600;color:#0f766e;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">💡 Key symmetry argument</div>
+          <p style="font-size:13px;color:#2e1f0e;line-height:1.7">Because the wire is infinite and straight, the field is the same everywhere at radius r. So B is <b>constant</b> along the Amperian circle. This lets us pull B outside the integral!</p>
+        </div>
+      </div>
+      <div class="svgbox">
+        <div style="font-size:10px;color:#9c7a50;text-align:center;padding:8px 0 4px;text-transform:uppercase;letter-spacing:1px;font-family:'Outfit',sans-serif">3D view — wire + Amperian circle</div>
+        <svg viewBox="0 0 280 280" width="100%">
+          <!-- Wire vertical -->
+          <line x1="140" y1="8"  x2="140" y2="272" stroke="#b84c1a" stroke-width="5" stroke-linecap="round" opacity=".85"/>
+          <!-- Current arrows -->
+          <polygon points="134,40 140,20 146,40" fill="#b84c1a"/>
+          <polygon points="134,80 140,60 146,80" fill="#b84c1a"/>
+          <text x="152" y="50" font-size="11" fill="#b84c1a" font-family="Outfit">I ↑</text>
+          <!-- Amperian circle (perspective ellipse) -->
+          <ellipse cx="140" cy="140" rx="88" ry="22" fill="rgba(196,127,23,.05)" stroke="#c47f17" stroke-width="2.5" stroke-dasharray="8 4" class="flowslow"/>
+          <!-- B vectors tangent to ellipse at key points -->
+          <!-- right -->
+          <line x1="228" y1="140" x2="228" y2="116" stroke="#c47f17" stroke-width="2" marker-end="url(#ah)"/>
+          <text x="232" y="128" font-size="10" fill="#c47f17" font-family="JetBrains Mono">B</text>
+          <!-- left -->
+          <line x1="52"  y1="140" x2="52"  y2="164" stroke="#c47f17" stroke-width="2" marker-end="url(#ah)"/>
+          <text x="34" y="155" font-size="10" fill="#c47f17" font-family="JetBrains Mono">B</text>
+          <!-- dl markers -->
+          <circle cx="228" cy="140" r="5" fill="#c47f17" opacity=".8"/>
+          <circle cx="52"  cy="140" r="5" fill="#c47f17" opacity=".8"/>
+          <circle cx="140" cy="118" r="5" fill="#c47f17" opacity=".8"/>
+          <circle cx="140" cy="162" r="5" fill="#c47f17" opacity=".8"/>
+          <!-- r label -->
+          <line x1="140" y1="140" x2="228" y2="140" stroke="#9c7a50" stroke-width="1.5" stroke-dasharray="4 2"/>
+          <text x="182" y="134" font-size="11" fill="#9c7a50" font-family="JetBrains Mono">r</text>
+          <!-- Wire label -->
+          <text x="152" y="272" font-size="11" fill="#b84c1a" font-family="Outfit">wire (∞)</text>
+          <!-- Annotations -->
+          <text x="14" y="260" font-size="10" fill="#9c7a50" font-family="JetBrains Mono">B = μ₀I/2πr at all points</text>
+          <text x="14" y="275" font-size="10" fill="#c47f17" font-family="JetBrains Mono">∮dl = 2πr (circumference)</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+  PANEL 3 — Derivation Steps
+════════════════════════════════ -->
+<div class="step-panel hidden" id="p3">
+  <div class="card p-6 mb-5">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div class="snum" style="background:linear-gradient(135deg,#c47f17,#e8a030);color:#fff">4</div>
+      <h2 style="font-family:'Crimson Pro',serif;font-size:26px;font-weight:400">Step-by-Step Derivation</h2>
+    </div>
+    <p style="font-size:14px;color:#5c3d1e;line-height:1.8;margin-bottom:20px">
+      Starting from Biot–Savart law for an infinite wire, we derive Ampere&#39;s law rigorously. Each step is explained with the reason.
+    </p>
+    <div style="display:flex;flex-direction:column;gap:18px">
+
+      <!-- Step A -->
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <div class="snum" style="background:#faeeda;color:#c47f17;border:2px solid #e8a030;font-size:13px">A</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600;color:#2e1f0e;margin-bottom:8px">Known: field from Biot–Savart</div>
+          <div class="fbox mb-3">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#2e1f0e;line-height:2;font-weight:600">B = μ₀I / 2πr</div>
+            <div style="font-size:12px;color:#9c7a50;margin-top:4px">At every point on the Amperian circle of radius r, B has this magnitude (already proved using Biot-Savart)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step B -->
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <div class="snum" style="background:#faeeda;color:#c47f17;border:2px solid #e8a030;font-size:13px">B</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600;color:#2e1f0e;margin-bottom:8px">Write the line integral</div>
+          <div class="fbox mb-3">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#2e1f0e;line-height:2">∮ B·dl = ∮ B·dl·cosθ</div>
+          </div>
+          <div class="wbox">
+            <p style="font-size:13px;color:#2e1f0e;line-height:1.7">
+              <b>B is tangential</b> to the Amperian circle (given by right-hand rule for wire). <b>dl is also tangential</b> (it&#39;s a small arc element along the circle). So the angle θ between B and dl is <b>0°</b>.
+            </p>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#0f766e;margin-top:8px;line-height:2">
+              cosθ = cos0° = 1<br>
+              ∴ ∮ B·dl = ∮ B·dl
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step C -->
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <div class="snum" style="background:#faeeda;color:#c47f17;border:2px solid #e8a030;font-size:13px">C</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600;color:#2e1f0e;margin-bottom:8px">Pull B out of the integral (it&#39;s constant!)</div>
+          <div class="fbox mb-3">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#2e1f0e;line-height:2">∮ B·dl = B ∮ dl</div>
+          </div>
+          <div class="ibox">
+            <p style="font-size:13px;color:#2e1f0e;line-height:1.7">
+              <b>Why can B come out?</b> Due to cylindrical symmetry of the infinite wire, B has the same magnitude at every point on the circle (only r matters). So B is a constant with respect to the integration variable dl. A constant can always be taken outside an integral.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step D -->
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <div class="snum" style="background:#faeeda;color:#c47f17;border:2px solid #e8a030;font-size:13px">D</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600;color:#2e1f0e;margin-bottom:8px">Evaluate ∮ dl = circumference = 2πr</div>
+          <div class="fbox mb-3">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#2e1f0e;line-height:2">∮ dl = 2πr</div>
+          </div>
+          <div class="wbox">
+            <p style="font-size:13px;color:#2e1f0e;line-height:1.7">
+              The closed integral of dl around the full circle is simply the <b>circumference</b> of the circle = 2πr. This is always true for any circular Amperian loop.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step E -->
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <div class="snum" style="background:#faeeda;color:#c47f17;border:2px solid #e8a030;font-size:13px">E</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600;color:#2e1f0e;margin-bottom:8px">Substitute B = μ₀I/2πr</div>
+          <div class="fbox mb-3">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#2e1f0e;line-height:2.2">
+              ∮ B·dl = B × 2πr<br>
+              = (μ₀I/2πr) × 2πr
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step F — Result -->
+      <div style="display:flex;gap:16px;align-items:flex-start">
+        <div class="snum" style="background:linear-gradient(135deg,#c47f17,#e8a030);color:#fff;font-size:13px">✓</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600;color:#2e1f0e;margin-bottom:8px">Final result — 2πr cancels perfectly!</div>
+          <div style="background:linear-gradient(135deg,#faeeda,var(--s1));border:2.5px solid #c47f17;border-radius:14px;padding:18px" class="glow">
+            <div style="font-size:11px;color:#c47f17;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;font-weight:600">Ampere&#39;s Circuital Law — Derived!</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:22px;color:#2e1f0e;font-weight:700;line-height:2">
+              ∮ B·dl = μ₀I
+            </div>
+            <div style="font-size:12px;color:#9c7a50;margin-top:8px;line-height:1.8">
+              The 2πr in numerator and denominator cancel → the result is independent of r!<br>
+              This is the deep beauty: the loop integral doesn&#39;t depend on which circle you choose.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+  PANEL 4 — Direction / Sign Rule
+════════════════════════════════ -->
+<div class="step-panel hidden" id="p4">
+  <div class="card p-6 mb-5">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div class="snum" style="background:#faeeda;color:#c47f17">5</div>
+      <h2 style="font-family:'Crimson Pro',serif;font-size:26px;font-weight:400">Direction Convention &amp; Sign of I_enc</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
+      <div>
+        <div class="ibox mb-4">
+          <div style="font-size:11px;font-weight:600;color:#c47f17;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Right-hand rule for Amperian loop</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;gap:8px;align-items:flex-start">
+              <span class="tag" style="background:#faeeda;color:#c47f17;flex-shrink:0">Step 1</span>
+              <p style="font-size:13px;color:#2e1f0e;line-height:1.6">Choose a direction to traverse the Amperian loop (clockwise or anti-clockwise).</p>
+            </div>
+            <div style="display:flex;gap:8px;align-items:flex-start">
+              <span class="tag" style="background:#faeeda;color:#c47f17;flex-shrink:0">Step 2</span>
+              <p style="font-size:13px;color:#2e1f0e;line-height:1.6">Curl the fingers of the right hand in the direction of traversal → the thumb points in the <b>positive normal direction</b> of the surface.</p>
+            </div>
+            <div style="display:flex;gap:8px;align-items:flex-start">
+              <span class="tag" style="background:#faeeda;color:#c47f17;flex-shrink:0">Step 3</span>
+              <p style="font-size:13px;color:#2e1f0e;line-height:1.6">Current flowing in the <b>direction of positive normal → positive</b>. Current flowing opposite → <b>negative</b>.</p>
+            </div>
+          </div>
+        </div>
+        <div class="fbox mb-4">
+          <div style="font-size:11px;font-weight:600;color:#c47f17;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">General form with sign</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#2e1f0e;line-height:2.2">
+            ∮ B·dl = μ₀(I₁ - I₂ + I₃ …)<br>
+            I_enc = algebraic sum
+          </div>
+        </div>
+        <div class="rbox">
+          <div style="font-size:11px;font-weight:600;color:#b84c1a;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Common mistake to avoid</div>
+          <p style="font-size:13px;color:#2e1f0e;line-height:1.7">
+            <b>B on the left side is the total field</b> — from ALL sources, not just the enclosed current. But the right side only counts currents <b>passing through the loop surface</b>.
+          </p>
+        </div>
+      </div>
+      <div>
+        <div class="svgbox mb-4">
+          <div style="font-size:10px;color:#9c7a50;text-align:center;padding:8px 0 4px;text-transform:uppercase;letter-spacing:1px;font-family:'Outfit',sans-serif">Sign convention examples</div>
+          <svg viewBox="0 0 260 240" width="100%">
+            <!-- Amperian loop circle -->
+            <circle cx="130" cy="120" r="80" fill="rgba(196,127,23,.04)" stroke="#c47f17" stroke-width="2" stroke-dasharray="7 4"/>
+            <!-- Loop traversal direction (anti-clockwise arrows) -->
+            <path d="M210 120 A80 80 0 0 0 130 40" fill="none" stroke="#c47f17" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ah)"/>
+            <path d="M130 200 A80 80 0 0 0 50 120"  fill="none" stroke="#c47f17" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ah)"/>
+            <!-- Thumb pointing up label -->
+            <text x="136" y="122" font-size="10" fill="#c47f17" font-family="Outfit">⬆ n̂</text>
+            <!-- Wire 1: out (+) -->
+            <circle cx="95" cy="100" r="10" fill="#b84c1a" opacity=".9"/>
+            <circle cx="95" cy="100" r="4"  fill="#fff"/>
+            <text x="82" y="87" font-size="10" fill="#b84c1a" font-family="JetBrains Mono">I₁(+)</text>
+            <!-- Wire 2: into page (-) -->
+            <circle cx="165" cy="100" r="10" fill="#0f766e" opacity=".85"/>
+            <text x="160" y="105" font-size="12" fill="#fff" text-anchor="middle">×</text>
+            <text x="168" y="87" font-size="10" fill="#0f766e" font-family="JetBrains Mono">I₂(−)</text>
+            <!-- Wire 3: outside loop (0) -->
+            <circle cx="130" cy="220" r="10" fill="#9c7a50" opacity=".7"/>
+            <circle cx="130" cy="220" r="4"  fill="#fff"/>
+            <text x="144" y="225" font-size="10" fill="#9c7a50" font-family="JetBrains Mono">I₃ (outside=0)</text>
+            <!-- Result -->
+            <rect x="8" y="175" width="244" height="28" rx="7" fill="rgba(250,238,218,.9)" stroke="#e8d5b5"/>
+            <text x="130" y="192" font-size="11" fill="#c47f17" text-anchor="middle" font-family="JetBrains Mono">∮B·dl = μ₀(I₁ - I₂)  [I₃ not enclosed]</text>
+          </svg>
+        </div>
+        <div class="wbox">
+          <div style="font-size:11px;font-weight:600;color:#0f766e;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">💡 Why the result is independent of loop shape?</div>
+          <p style="font-size:13px;color:#2e1f0e;line-height:1.7">
+            For any closed path (circle, square, irregular), ∮B·dl = μ₀I_enc. This is because the magnetic field of a current has the property that its circulation depends only on how many current lines pierce the enclosed surface — not the shape of the boundary.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+  PANEL 5 — Solenoid Application
+════════════════════════════════ -->
+<div class="step-panel hidden" id="p5">
+  <div class="card p-6 mb-5">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div class="snum" style="background:#faeeda;color:#c47f17">6</div>
+      <h2 style="font-family:'Crimson Pro',serif;font-size:26px;font-weight:400">Application 1 — Magnetic Field of a Solenoid</h2>
+    </div>
+    <p style="font-size:14px;color:#5c3d1e;line-height:1.8;margin-bottom:16px">
+      A <b>solenoid</b> is a long helical coil of wire. We use Ampere&#39;s law with a rectangular Amperian loop to find B inside.
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
+      <div>
+        <div class="ibox mb-4">
+          <div style="font-size:11px;font-weight:600;color:#c47f17;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Assumptions (ideal solenoid)</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="font-size:13px;color:#2e1f0e;line-height:1.6">• Length L ≫ radius → field uniform inside</div>
+            <div style="font-size:13px;color:#2e1f0e;line-height:1.6">• n turns per unit length</div>
+            <div style="font-size:13px;color:#2e1f0e;line-height:1.6">• B is parallel to axis (by symmetry)</div>
+            <div style="font-size:13px;color:#2e1f0e;line-height:1.6">• B = 0 outside (for ideal solenoid)</div>
+          </div>
+        </div>
+
+        <!-- Rectangular loop steps -->
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span class="tag" style="background:#faeeda;color:#c47f17;flex-shrink:0">Side ab</span>
+            <div>
+              <div style="font-size:13px;color:#2e1f0e;font-weight:500">Inside solenoid, B∥dl</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#9c7a50;margin-top:3px">Contribution = B·L</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span class="tag" style="background:#fce0d2;color:#b84c1a;flex-shrink:0">Side cd</span>
+            <div>
+              <div style="font-size:13px;color:#2e1f0e;font-weight:500">Outside solenoid, B = 0</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#9c7a50;margin-top:3px">Contribution = 0</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;align-items:flex-start">
+            <span class="tag" style="background:#ccfbf1;color:#0f766e;flex-shrink:0">Sides bc, da</span>
+            <div>
+              <div style="font-size:13px;color:#2e1f0e;font-weight:500">B ⊥ dl (perpendicular)</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#9c7a50;margin-top:3px">Contribution = 0 (cos90°=0)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="fbox mt-4 mb-4">
+          <div style="font-size:11px;font-weight:600;color:#c47f17;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Applying Ampere&#39;s Law</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#2e1f0e;line-height:2.4">
+            ∮ B·dl = B·L + 0 + 0 + 0 = BL<br>
+            I_enc = n·L·I  (n turns in length L)<br>
+            ∴ BL = μ₀·n·L·I
+          </div>
+        </div>
+        <div style="background:linear-gradient(135deg,#faeeda,var(--s1));border:2.5px solid #c47f17;border-radius:14px;padding:16px" class="glow">
+          <div style="font-size:11px;color:#c47f17;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;font-weight:600">Field inside solenoid</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#2e1f0e;font-weight:700;line-height:2">B = μ₀nI</div>
+          <div style="font-size:12px;color:#9c7a50;margin-top:4px">n = turns per unit length, L cancels</div>
+        </div>
+      </div>
+      <div class="svgbox">
+        <div style="font-size:10px;color:#9c7a50;text-align:center;padding:8px 0 4px;text-transform:uppercase;letter-spacing:1px;font-family:'Outfit',sans-serif">Solenoid + rectangular Amperian loop</div>
+        <svg viewBox="0 0 280 290" width="100%">
+          <!-- Solenoid coils (schematic) -->
+          <g opacity=".85">
+            <ellipse cx="140" cy="80"  rx="55" ry="12" fill="none" stroke="#c47f17" stroke-width="2"/>
+            <ellipse cx="140" cy="100" rx="55" ry="12" fill="none" stroke="#c47f17" stroke-width="2"/>
+            <ellipse cx="140" cy="120" rx="55" ry="12" fill="none" stroke="#c47f17" stroke-width="2"/>
+            <ellipse cx="140" cy="140" rx="55" ry="12" fill="none" stroke="#c47f17" stroke-width="2"/>
+            <ellipse cx="140" cy="160" rx="55" ry="12" fill="none" stroke="#c47f17" stroke-width="2"/>
+            <ellipse cx="140" cy="180" rx="55" ry="12" fill="none" stroke="#c47f17" stroke-width="2"/>
+          </g>
+          <!-- B field arrows inside -->
+          <line x1="92" y1="130" x2="130" y2="130" stroke="#b84c1a" stroke-width="2" marker-end="url(#ahrust)" class="march"/>
+          <line x1="152" y1="130" x2="190" y2="130" stroke="#b84c1a" stroke-width="2" marker-end="url(#ahrust)" class="march"/>
+          <text x="134" y="124" font-size="10" fill="#b84c1a" font-family="JetBrains Mono">B→</text>
+          <!-- Rectangular Amperian loop abcda -->
+          <rect x="88" y="88" width="104" height="84" fill="rgba(196,127,23,.07)" stroke="#9c7a50" stroke-width="2" stroke-dasharray="5 3"/>
+          <!-- Side labels -->
+          <text x="112" y="102" font-size="11" fill="#c47f17" font-family="Outfit" font-weight="600">ab (inside, B∥dl)</text>
+          <text x="112" y="183" font-size="11" fill="#9c7a50" font-family="Outfit">cd (outside, B=0)</text>
+          <text x="56"  y="138" font-size="10" fill="#0f766e" font-family="Outfit">bc</text>
+          <text x="200" y="138" font-size="10" fill="#0f766e" font-family="Outfit">da</text>
+          <!-- a,b,c,d labels -->
+          <circle cx="88"  cy="88"  r="4" fill="#c47f17"/><text x="76"  y="84"  font-size="10" fill="#c47f17" font-family="Outfit">a</text>
+          <circle cx="192" cy="88"  r="4" fill="#c47f17"/><text x="196" y="84"  font-size="10" fill="#c47f17" font-family="Outfit">b</text>
+          <circle cx="192" cy="172" r="4" fill="#9c7a50"/><text x="196" y="176" font-size="10" fill="#9c7a50" font-family="Outfit">c</text>
+          <circle cx="88"  cy="172" r="4" fill="#9c7a50"/><text x="76"  y="176" font-size="10" fill="#9c7a50" font-family="Outfit">d</text>
+          <!-- L label -->
+          <line x1="88" y1="200" x2="192" y2="200" stroke="#9c7a50" stroke-width="1" stroke-dasharray="3 2"/>
+          <text x="136" y="213" font-size="11" fill="#9c7a50" font-family="JetBrains Mono" text-anchor="middle">L</text>
+          <!-- Outside zero B label -->
+          <text x="40" y="195" font-size="10" fill="#9c7a50" opacity=".7" font-family="Outfit">B=0</text>
+          <text x="200" y="195" font-size="10" fill="#9c7a50" opacity=".7" font-family="Outfit">outside</text>
+          <!-- Summary -->
+          <rect x="8" y="240" width="264" height="42" rx="8" fill="rgba(250,238,218,.9)" stroke="#e8d5b5"/>
+          <text x="140" y="257" font-size="11" fill="#c47f17" text-anchor="middle" font-family="JetBrains Mono">∮B·dl = BL = μ₀(nL)I</text>
+          <text x="140" y="275" font-size="13" fill="#2e1f0e" text-anchor="middle" font-family="JetBrains Mono" font-weight="600">∴ B = μ₀nI</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+  PANEL 6 — Toroid Application
+════════════════════════════════ -->
+<div class="step-panel hidden" id="p6">
+  <div class="card p-6 mb-5">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div class="snum" style="background:#faeeda;color:#c47f17">7</div>
+      <h2 style="font-family:'Crimson Pro',serif;font-size:26px;font-weight:400">Application 2 — Magnetic Field of a Toroid</h2>
+    </div>
+    <p style="font-size:14px;color:#5c3d1e;line-height:1.8;margin-bottom:16px">
+      A <b>toroid</b> is a solenoid bent into a donut (torus) shape. The field is confined inside the toroid core.
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px">
+      <div>
+        <div class="fbox mb-4">
+          <div style="font-size:11px;font-weight:600;color:#c47f17;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Three Amperian loops to consider</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="background:rgba(255,255,255,.6);border-radius:8px;padding:10px">
+              <div style="font-size:13px;font-weight:600;color:#c47f17;margin-bottom:4px">Loop 1: r &lt; r₁ (inside hole)</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#2e1f0e;line-height:1.9">I_enc = 0 (no current pierces)<br>∴ B = 0 inside the hole</div>
+            </div>
+            <div style="background:rgba(196,127,23,.08);border-radius:8px;padding:10px;border:1px solid #e8a030">
+              <div style="font-size:13px;font-weight:600;color:#c47f17;margin-bottom:4px">Loop 2: r₁ &lt; r &lt; r₂ (inside core)</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#2e1f0e;line-height:1.9">I_enc = N·I (N turns enclosed)<br>B·2πr = μ₀NI<br><span style="color:#c47f17;font-weight:600">∴ B = μ₀NI / 2πr</span></div>
+            </div>
+            <div style="background:rgba(255,255,255,.6);border-radius:8px;padding:10px">
+              <div style="font-size:13px;font-weight:600;color:#9c7a50;margin-bottom:4px">Loop 3: r &gt; r₂ (outside toroid)</div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#2e1f0e;line-height:1.9">I_enc = NI − NI = 0 (net current = 0)<br>∴ B = 0 outside</div>
+            </div>
+          </div>
+        </div>
+        <div class="wbox">
+          <div style="font-size:11px;font-weight:600;color:#0f766e;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">💡 Why B=0 outside toroid?</div>
+          <p style="font-size:13px;color:#2e1f0e;line-height:1.7">
+            For a loop outside the toroid, the current goes up through one side of each turn and down through the other. Net enclosed current = NI − NI = 0. So B = 0 outside. This is why toroids are used in transformers — no external field leakage!
+          </p>
+        </div>
+      </div>
+      <div class="svgbox">
+        <div style="font-size:10px;color:#9c7a50;text-align:center;padding:8px 0 4px;text-transform:uppercase;letter-spacing:1px;font-family:'Outfit',sans-serif">Toroid cross-section with three loops</div>
+        <svg viewBox="0 0 280 280" width="100%">
+          <!-- Toroid (annulus) -->
+          <circle cx="140" cy="140" r="105" fill="rgba(196,127,23,.06)" stroke="#c47f17" stroke-width="2" opacity=".5"/>
+          <circle cx="140" cy="140" r="58"  fill="var(--bg)" stroke="#c47f17" stroke-width="2" opacity=".5"/>
+          <!-- Winding coils schematic -->
+          <g opacity=".7">
+            <ellipse cx="245" cy="140" rx="10" ry="18" fill="none" stroke="#c47f17" stroke-width="1.5"/>
+            <ellipse cx="35"  cy="140" rx="10" ry="18" fill="none" stroke="#c47f17" stroke-width="1.5"/>
+            <ellipse cx="140" cy="35"  rx="18" ry="10" fill="none" stroke="#c47f17" stroke-width="1.5"/>
+            <ellipse cx="140" cy="245" rx="18" ry="10" fill="none" stroke="#c47f17" stroke-width="1.5"/>
+          </g>
+          <!-- Loop 1: inner -->
+          <circle cx="140" cy="140" r="38" fill="none" stroke="#9c7a50" stroke-width="1.5" stroke-dasharray="5 3"/>
+          <text x="148" y="112" font-size="10" fill="#9c7a50" font-family="JetBrains Mono">Loop 1</text>
+          <text x="148" y="124" font-size="10" fill="#9c7a50" font-family="JetBrains Mono">B=0</text>
+          <!-- Loop 2: inside core -->
+          <circle cx="140" cy="140" r="82" fill="none" stroke="#c47f17" stroke-width="2" stroke-dasharray="7 4" class="flowslow"/>
+          <text x="215" y="90" font-size="10" fill="#c47f17" font-family="JetBrains Mono">Loop 2</text>
+          <text x="215" y="102" font-size="10" fill="#c47f17" font-family="JetBrains Mono">B=μ₀NI/2πr</text>
+          <!-- B arrows in core (tangential) -->
+          <path d="M222 140 A82 82 0 0 0 140 58" fill="none" stroke="#b84c1a" stroke-width="1.5" marker-end="url(#ahrust)" class="flowslow"/>
+          <!-- r labels -->
+          <line x1="140" y1="140" x2="178" y2="140" stroke="#9c7a50" stroke-width="1" stroke-dasharray="3 2"/>
+          <text x="157" y="135" font-size="10" fill="#9c7a50" font-family="JetBrains Mono">r</text>
+          <!-- r1 and r2 labels -->
+          <text x="185" y="141" font-size="10" fill="#c47f17" font-family="JetBrains Mono">r₁&lt;r&lt;r₂</text>
+          <!-- Summary -->
+          <rect x="8" y="250" width="264" height="24" rx="6" fill="rgba(250,238,218,.9)" stroke="#e8d5b5"/>
+          <text x="140" y="265" font-size="10" fill="#c47f17" text-anchor="middle" font-family="JetBrains Mono">Inside core: B = μ₀NI/2πr  |  Elsewhere: B = 0</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+  PANEL 7 — Comparison Table
+════════════════════════════════ -->
+<div class="step-panel hidden" id="p7">
+  <div class="card p-6 mb-5">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div class="snum" style="background:#faeeda;color:#c47f17">8</div>
+      <h2 style="font-family:'Crimson Pro',serif;font-size:26px;font-weight:400">Comparison &amp; Summary</h2>
+    </div>
+    <div style="overflow-x:auto;margin-bottom:20px">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="background:linear-gradient(135deg,#faeeda,var(--s2))">
+            <th style="padding:12px 16px;text-align:left;font-family:'Outfit',sans-serif;color:#7a4e0a;font-weight:600;border-radius:8px 0 0 0;border-bottom:2px solid var(--border)">Aspect</th>
+            <th style="padding:12px 16px;text-align:left;font-family:'Outfit',sans-serif;color:#7a4e0a;font-weight:600;border-bottom:2px solid var(--border)">Biot–Savart Law</th>
+            <th style="padding:12px 16px;text-align:left;font-family:'Outfit',sans-serif;color:#7a4e0a;font-weight:600;border-radius:0 8px 0 0;border-bottom:2px solid var(--border)">Ampere&#39;s Law</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:11px 16px;font-weight:500;color:#2e1f0e">Formula</td>
+            <td style="padding:11px 16px;font-family:'JetBrains Mono',monospace;color:#b84c1a">dB = (μ₀/4π)Idl×r̂/r²</td>
+            <td style="padding:11px 16px;font-family:'JetBrains Mono',monospace;color:#c47f17">∮ B·dl = μ₀I_enc</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);background:rgba(253,246,237,.4)">
+            <td style="padding:11px 16px;font-weight:500;color:#2e1f0e">Type</td>
+            <td style="padding:11px 16px;color:#5c3d1e">Differential / local</td>
+            <td style="padding:11px 16px;color:#5c3d1e">Integral / global</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:11px 16px;font-weight:500;color:#2e1f0e">When to use</td>
+            <td style="padding:11px 16px;color:#5c3d1e">Any shape — arbitrary geometry. Computationally heavy.</td>
+            <td style="padding:11px 16px;color:#5c3d1e">High symmetry (straight wire, solenoid, toroid). Very elegant.</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);background:rgba(253,246,237,.4)">
+            <td style="padding:11px 16px;font-weight:500;color:#2e1f0e">Electric analog</td>
+            <td style="padding:11px 16px;font-family:'JetBrains Mono',monospace;color:#9c7a50">Coulomb&#39;s law</td>
+            <td style="padding:11px 16px;font-family:'JetBrains Mono',monospace;color:#9c7a50">Gauss&#39;s law</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:11px 16px;font-weight:500;color:#2e1f0e">Requires</td>
+            <td style="padding:11px 16px;color:#5c3d1e">Integration over source</td>
+            <td style="padding:11px 16px;color:#5c3d1e">Clever Amperian loop choice</td>
+          </tr>
+          <tr>
+            <td style="padding:11px 16px;font-weight:500;color:#2e1f0e">Validity</td>
+            <td style="padding:11px 16px;color:#5c3d1e">Steady currents only</td>
+            <td style="padding:11px 16px;color:#5c3d1e">Extended by Maxwell (displacement current)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Applications summary grid -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <div style="border:2px solid #c47f17;border-radius:14px;background:linear-gradient(160deg,#faeeda,#fffcf7);padding:16px;text-align:center">
+        <div style="font-size:10px;font-weight:600;color:#c47f17;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">Infinite wire</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:16px;color:#2e1f0e;font-weight:600;line-height:2">B = μ₀I/2πr</div>
+        <div style="font-size:11px;color:#9c7a50;margin-top:4px">circular Amperian loop, radius r</div>
+      </div>
+      <div style="border:2px solid #b84c1a;border-radius:14px;background:linear-gradient(160deg,#fce0d2,#fffcf7);padding:16px;text-align:center">
+        <div style="font-size:10px;font-weight:600;color:#b84c1a;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">Solenoid</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:16px;color:#2e1f0e;font-weight:600;line-height:2">B = μ₀nI</div>
+        <div style="font-size:11px;color:#9c7a50;margin-top:4px">rectangular loop, n = turns/length</div>
+      </div>
+      <div style="border:2px solid #0f766e;border-radius:14px;background:linear-gradient(160deg,#ccfbf1,#fffcf7);padding:16px;text-align:center">
+        <div style="font-size:10px;font-weight:600;color:#0f766e;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">Toroid (core)</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:16px;color:#2e1f0e;font-weight:600;line-height:2">B = μ₀NI/2πr</div>
+        <div style="font-size:11px;color:#9c7a50;margin-top:4px">circular loop in core, N total turns</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+  PANEL 8 — Interactive
+════════════════════════════════ -->
+<div class="step-panel hidden" id="p8">
+  <div class="card p-6 mb-5">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <div class="snum" style="background:linear-gradient(135deg,#c47f17,#e8a030);color:#fff">9</div>
+      <h2 style="font-family:'Crimson Pro',serif;font-size:26px;font-weight:400">Interactive Calculator</h2>
+    </div>
+    <!-- Tabs -->
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="snav-btn active" id="tab-wire"     onclick="switchCalc('wire',this)">Infinite Wire</button>
+      <button class="snav-btn"        id="tab-solenoid" onclick="switchCalc('solenoid',this)">Solenoid</button>
+      <button class="snav-btn"        id="tab-toroid"   onclick="switchCalc('toroid',this)">Toroid</button>
+    </div>
+
+    <!-- Wire calculator -->
+    <div id="calc-wire">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div>
+          <div style="background:rgba(255,255,255,.55);border-radius:16px;padding:16px;border:1px solid var(--border);margin-bottom:16px">
+            <div style="font-size:12px;font-weight:600;color:#7a4e0a;margin-bottom:12px;font-family:'Outfit',sans-serif">Parameters</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+              <label style="font-size:12px;color:#7a4e0a;min-width:96px">Current I (A)</label>
+              <input type="range" id="wI" min="1" max="50" value="10" oninput="updateWire()">
+              <span id="wIv" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c47f17;min-width:44px;text-align:right;font-weight:600">10 A</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <label style="font-size:12px;color:#7a4e0a;min-width:96px">Distance r (cm)</label>
+              <input type="range" id="wR" min="1" max="20" value="5" oninput="updateWire()">
+              <span id="wRv" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c47f17;min-width:44px;text-align:right;font-weight:600">5 cm</span>
+            </div>
+          </div>
+          <div style="background:linear-gradient(135deg,#faeeda,var(--s1));border:2.5px solid #c47f17;border-radius:14px;padding:16px;text-align:center;margin-bottom:12px" class="glow">
+            <div style="font-size:10px;color:#c47f17;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;font-weight:600">B = μ₀I / 2πr</div>
+            <div id="wResult" style="font-family:'JetBrains Mono',monospace;font-size:22px;color:#2e1f0e;font-weight:700">40.0 μT</div>
+            <div style="font-size:11px;color:#9c7a50;margin-top:4px">∮B·dl = μ₀I = <span id="wCurl">12.6 μT·m</span></div>
+          </div>
+          <div class="fbox">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#2e1f0e;line-height:2">
+              B·2πr = μ₀I<br>
+              ∮B·dl = B × 2πr = μ₀I
+            </div>
+          </div>
+        </div>
+        <canvas id="wireCanvas" width="340" height="280" style="border-radius:14px;border:1px solid var(--border);width:100%"></canvas>
+      </div>
+    </div>
+
+    <!-- Solenoid calculator -->
+    <div id="calc-solenoid" class="hidden">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div>
+          <div style="background:rgba(255,255,255,.55);border-radius:16px;padding:16px;border:1px solid var(--border);margin-bottom:16px">
+            <div style="font-size:12px;font-weight:600;color:#7a4e0a;margin-bottom:12px">Parameters</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+              <label style="font-size:12px;color:#7a4e0a;min-width:96px">Current I (A)</label>
+              <input type="range" id="sI" min="1" max="20" value="5" oninput="updateSol()">
+              <span id="sIv" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c47f17;min-width:44px;text-align:right;font-weight:600">5 A</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+              <label style="font-size:12px;color:#7a4e0a;min-width:96px">n (turns/cm)</label>
+              <input type="range" id="sN" min="1" max="50" value="10" oninput="updateSol()">
+              <span id="sNv" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c47f17;min-width:44px;text-align:right;font-weight:600">10/cm</span>
+            </div>
+          </div>
+          <div style="background:linear-gradient(135deg,#faeeda,var(--s1));border:2.5px solid #c47f17;border-radius:14px;padding:16px;text-align:center;margin-bottom:12px" class="glow">
+            <div style="font-size:10px;color:#c47f17;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;font-weight:600">B = μ₀nI</div>
+            <div id="sResult" style="font-family:'JetBrains Mono',monospace;font-size:22px;color:#2e1f0e;font-weight:700">6.28 mT</div>
+            <div style="font-size:11px;color:#9c7a50;margin-top:4px">uniform inside solenoid</div>
+          </div>
+          <div class="wbox">
+            <p style="font-size:12px;color:#2e1f0e;line-height:1.7">B is uniform inside and zero outside. It&#39;s independent of position along axis (for infinite solenoid).</p>
+          </div>
+        </div>
+        <canvas id="solCanvas" width="340" height="280" style="border-radius:14px;border:1px solid var(--border);width:100%"></canvas>
+      </div>
+    </div>
+
+    <!-- Toroid calculator -->
+    <div id="calc-toroid" class="hidden">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div>
+          <div style="background:rgba(255,255,255,.55);border-radius:16px;padding:16px;border:1px solid var(--border);margin-bottom:16px">
+            <div style="font-size:12px;font-weight:600;color:#7a4e0a;margin-bottom:12px">Parameters</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+              <label style="font-size:12px;color:#7a4e0a;min-width:96px">Current I (A)</label>
+              <input type="range" id="tI" min="1" max="20" value="5" oninput="updateTor()">
+              <span id="tIv" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c47f17;min-width:44px;text-align:right;font-weight:600">5 A</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+              <label style="font-size:12px;color:#7a4e0a;min-width:96px">N (turns)</label>
+              <input type="range" id="tN" min="10" max="500" value="100" oninput="updateTor()">
+              <span id="tNv" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c47f17;min-width:44px;text-align:right;font-weight:600">100</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <label style="font-size:12px;color:#7a4e0a;min-width:96px">r (cm)</label>
+              <input type="range" id="tR" min="3" max="20" value="8" oninput="updateTor()">
+              <span id="tRv" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c47f17;min-width:44px;text-align:right;font-weight:600">8 cm</span>
+            </div>
+          </div>
+          <div style="background:linear-gradient(135deg,#faeeda,var(--s1));border:2.5px solid #c47f17;border-radius:14px;padding:16px;text-align:center" class="glow">
+            <div style="font-size:10px;color:#c47f17;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;font-weight:600">B = μ₀NI / 2πr</div>
+            <div id="tResult" style="font-family:'JetBrains Mono',monospace;font-size:22px;color:#2e1f0e;font-weight:700">1.25 mT</div>
+            <div style="font-size:11px;color:#9c7a50;margin-top:4px">inside toroid core at radius r</div>
+          </div>
+        </div>
+        <canvas id="torCanvas" width="340" height="280" style="border-radius:14px;border:1px solid var(--border);width:100%"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer style="text-align:center;padding:20px 16px;font-size:11px;color:#9c7a50;border-top:1px solid var(--border);font-family:'Outfit',sans-serif">
+  Chapter 4 · Ampere&#39;s Circuital Law · Complete Derivation &amp; Applications · CBSE &amp; ISC · Class 12 Physics
+</footer>
+
+<script>
+/* ─── Nav ─── */
+function goStep(idx, btn) {
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.add('hidden'));
+  document.querySelectorAll('.snav-btn').forEach(b => {
+    if (b.closest('nav')) b.classList.remove('active');
+  });
+  document.getElementById('p' + idx).classList.remove('hidden');
+  btn.classList.add('active');
+  const panel = document.getElementById('p' + idx);
+  panel.style.opacity = '0'; panel.style.transform = 'translateY(14px)';
+  panel.style.transition = 'opacity .35s ease, transform .35s ease';
+  requestAnimationFrame(() => { panel.style.opacity = '1'; panel.style.transform = 'translateY(0)'; });
+  if (idx === 8) { setTimeout(() => { updateWire(); updateSol(); updateTor(); }, 80); }
+}
+
+/* ─── Hero B-vectors animation ─── */
+(function heroAnim() {
+  const svg = document.getElementById('heroSvg');
+  const g = document.getElementById('bVecs');
+  const cx = 210, cy = 110, r = 85;
+  const angles = [0, 45, 90, 135, 180, 225, 270, 315];
+  angles.forEach(a => {
+    const rad = a * Math.PI / 180;
+    const px = cx + r * Math.cos(rad), py = cy + r * Math.sin(rad);
+    // tangent direction (90° to radius) = (-sin, cos)
+    const tx = -Math.sin(rad) * 18, ty = Math.cos(rad) * 18;
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', px - tx * 0.4); line.setAttribute('y1', py - ty * 0.4);
+    line.setAttribute('x2', px + tx * 0.6); line.setAttribute('y2', py + ty * 0.6);
+    line.setAttribute('stroke', '#c47f17'); line.setAttribute('stroke-width', '2');
+    line.setAttribute('marker-end', 'url(#ah)'); line.setAttribute('opacity', '.75');
+    g.appendChild(line);
+  });
+})();
+
+/* ─── Calculator tab switch ─── */
+function switchCalc(id, btn) {
+  ['wire','solenoid','toroid'].forEach(k => {
+    document.getElementById('calc-' + k).classList.add('hidden');
+    document.getElementById('tab-' + k).classList.remove('active');
+  });
+  document.getElementById('calc-' + id).classList.remove('hidden');
+  btn.classList.add('active');
+  if (id === 'wire')     { updateWire(); }
+  if (id === 'solenoid') { updateSol(); }
+  if (id === 'toroid')   { updateTor(); }
+}
+
+const mu0 = 4 * Math.PI * 1e-7;
+function fmt(B) {
+  const uT = B * 1e6, mT = B * 1e3;
+  if (mT >= 1)   return mT.toFixed(3) + ' mT';
+  if (uT >= 0.1) return uT.toFixed(2) + ' μT';
+  return (B * 1e9).toFixed(2) + ' nT';
+}
+
+/* ─── Wire ─── */
+function updateWire() {
+  const I = +document.getElementById('wI').value;
+  const r = +document.getElementById('wR').value / 100;
+  document.getElementById('wIv').textContent = I + ' A';
+  document.getElementById('wRv').textContent = Math.round(r * 100) + ' cm';
+  const B = mu0 * I / (2 * Math.PI * r);
+  const curl = mu0 * I;
+  document.getElementById('wResult').textContent = fmt(B);
+  document.getElementById('wCurl').textContent = (curl * 1e6).toFixed(2) + ' μT·m';
+  drawWire(I, r);
+}
+function drawWire(I, r) {
+  const c = document.getElementById('wireCanvas');
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#fdf9f4'; ctx.fillRect(0, 0, W, H);
+  const cx = W / 2, cy = H / 2;
+  const maxR = Math.min(W, H) * 0.44;
+  // Concentric B-field rings
+  const rScale = maxR / 0.20;
+  for (let ri = 0.02; ri <= 0.22; ri += 0.03) {
+    const rpx = ri * rScale;
+    const B = mu0 * I / (2 * Math.PI * ri);
+    const alpha = Math.max(0.1, 0.85 - ri * 3.5);
+    const sw = Math.max(0.7, 2.2 - ri * 8);
+    ctx.strokeStyle = `rgba(196,127,23,${alpha})`;
+    ctx.lineWidth = sw; ctx.setLineDash([6, 4]);
+    ctx.beginPath(); ctx.arc(cx, cy, rpx, 0, Math.PI * 2); ctx.stroke();
+    ctx.setLineDash([]);
+    if (ri < 0.14) {
+      ctx.fillStyle = `rgba(196,127,23,${alpha * 0.9})`;
+      ctx.font = '9px JetBrains Mono';
+      ctx.fillText(fmt(B), cx + rpx + 3, cy - 4);
+    }
+  }
+  // Amperian circle at r
+  const rpx = r * rScale;
+  ctx.strokeStyle = '#b84c1a'; ctx.lineWidth = 2.5; ctx.setLineDash([8, 4]);
+  ctx.beginPath(); ctx.arc(cx, cy, rpx, 0, Math.PI * 2); ctx.stroke();
+  ctx.setLineDash([]);
+  // Wire at centre
+  ctx.fillStyle = '#b84c1a';
+  ctx.beginPath(); ctx.arc(cx, cy, 10, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#c47f17'; ctx.font = '10px Outfit'; ctx.textAlign = 'center';
+  ctx.fillText('I = ' + I + 'A', cx, cy - 16);
+  ctx.fillStyle = '#b84c1a'; ctx.font = '10px JetBrains Mono';
+  ctx.fillText('Amperian r=' + Math.round(r * 100) + 'cm', cx, cy + rpx + 14);
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#9c7a50'; ctx.font = '10px JetBrains Mono';
+  ctx.fillText('B = ' + fmt(mu0 * I / (2 * Math.PI * r)), 10, H - 10);
+}
+
+/* ─── Solenoid ─── */
+function updateSol() {
+  const I = +document.getElementById('sI').value;
+  const n = +document.getElementById('sN').value * 100; // per meter
+  document.getElementById('sIv').textContent = I + ' A';
+  document.getElementById('sNv').textContent = document.getElementById('sN').value + '/cm';
+  const B = mu0 * n * I;
+  document.getElementById('sResult').textContent = fmt(B);
+  drawSolenoid(I, n, B);
+}
+function drawSolenoid(I, n, B) {
+  const c = document.getElementById('solCanvas');
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#fdf9f4'; ctx.fillRect(0, 0, W, H);
+  const ox = 30, ow = W - 60, oh = H * 0.55, oy = (H - oh) / 2;
+  // Coils
+  const nCoils = 16;
+  const cw = ow / nCoils;
+  for (let i = 0; i <= nCoils; i++) {
+    const x = ox + i * cw;
+    ctx.strokeStyle = '#c47f17'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.ellipse(x, oy + oh / 2, cw * 0.5, oh / 2, 0, 0, Math.PI * 2); ctx.stroke();
+  }
+  // Solenoid bore outline
+  ctx.strokeStyle = 'rgba(196,127,23,.3)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.rect(ox, oy, ow, oh); ctx.stroke();
+  // B-field arrows inside
+  const nArrows = 7;
+  const bScale = Math.min(1, B / 0.02);
+  for (let i = 0; i < nArrows; i++) {
+    const y = oy + (i + 0.5) * oh / nArrows;
+    ctx.strokeStyle = '#b84c1a'; ctx.lineWidth = 2;
+    ctx.setLineDash([5, 3]);
+    ctx.beginPath(); ctx.moveTo(ox + 10, y); ctx.lineTo(ox + ow - 10, y); ctx.stroke();
+    ctx.setLineDash([]);
+    // arrowhead
+    ctx.fillStyle = '#b84c1a';
+    ctx.beginPath(); ctx.moveTo(ox + ow - 10, y); ctx.lineTo(ox + ow - 20, y - 4); ctx.lineTo(ox + ow - 20, y + 4); ctx.fill();
+  }
+  ctx.fillStyle = '#b84c1a'; ctx.font = '11px JetBrains Mono'; ctx.textAlign = 'center';
+  ctx.fillText('B = ' + fmt(B) + ' (uniform)', W / 2, oy + oh + 22);
+  ctx.fillStyle = '#9c7a50'; ctx.font = '10px Outfit';
+  ctx.fillText('B = μ₀nI = μ₀ × ' + Math.round(n) + ' × ' + I, W / 2, oy + oh + 38);
+  ctx.fillStyle = '#9c7a50'; ctx.font = '10px JetBrains Mono';
+  ctx.fillText('B = 0 outside solenoid', W / 2, H - 10);
+  ctx.textAlign = 'left';
+}
+
+/* ─── Toroid ─── */
+function updateTor() {
+  const I = +document.getElementById('tI').value;
+  const N = +document.getElementById('tN').value;
+  const r = +document.getElementById('tR').value / 100;
+  document.getElementById('tIv').textContent = I + ' A';
+  document.getElementById('tNv').textContent = N;
+  document.getElementById('tRv').textContent = Math.round(r * 100) + ' cm';
+  const B = mu0 * N * I / (2 * Math.PI * r);
+  document.getElementById('tResult').textContent = fmt(B);
+  drawToroid(I, N, r, B);
+}
+function drawToroid(I, N, r, B) {
+  const c = document.getElementById('torCanvas');
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#fdf9f4'; ctx.fillRect(0, 0, W, H);
+  const cx = W / 2, cy = H / 2;
+  const rScale = Math.min(W, H) * 0.38;
+  const r2px = rScale, r1px = rScale * 0.52;
+  // Toroid body
+  ctx.fillStyle = 'rgba(196,127,23,.08)';
+  ctx.beginPath(); ctx.arc(cx, cy, r2px, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#fdf9f4';
+  ctx.beginPath(); ctx.arc(cx, cy, r1px, 0, Math.PI * 2); ctx.fill();
+  // Borders
+  ctx.strokeStyle = 'rgba(196,127,23,.4)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(cx, cy, r2px, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy, r1px, 0, Math.PI * 2); ctx.stroke();
+  // B field arrows in core (circular, dashed)
+  const rm = (r1px + r2px) / 2;
+  ctx.strokeStyle = '#b84c1a'; ctx.lineWidth = 2; ctx.setLineDash([7, 4]);
+  ctx.beginPath(); ctx.arc(cx, cy, rm, 0, Math.PI * 2); ctx.stroke();
+  ctx.setLineDash([]);
+  // Arrow on field circle
+  const ang = -Math.PI / 4;
+  ctx.strokeStyle = '#b84c1a'; ctx.lineWidth = 2;
+  const ax = cx + rm * Math.cos(ang), ay = cy + rm * Math.sin(ang);
+  ctx.beginPath(); ctx.moveTo(ax - 8, ay - 4); ctx.lineTo(ax, ay); ctx.lineTo(ax - 8, ay + 4); ctx.stroke();
+  // Labels
+  ctx.fillStyle = '#9c7a50'; ctx.font = '10px JetBrains Mono'; ctx.textAlign = 'center';
+  ctx.fillText('B = 0 (hole)', cx, cy + 6);
+  ctx.fillText('B = 0 (outside)', cx, cy + r2px + 16);
+  ctx.fillStyle = '#b84c1a'; ctx.font = '10px JetBrains Mono';
+  ctx.fillText('B = ' + fmt(B), cx, cy - r1px + (r2px - r1px) * 0.25);
+  ctx.fillStyle = '#c47f17'; ctx.font = '11px JetBrains Mono';
+  ctx.fillText('B = μ₀NI/2πr', cx, H - 22);
+  ctx.fillStyle = '#9c7a50'; ctx.font = '10px Outfit';
+  ctx.fillText('N=' + N + ', I=' + I + 'A, r=' + Math.round(r * 100) + 'cm', cx, H - 8);
+  ctx.textAlign = 'left';
+}
+
+// Init
+setTimeout(() => { updateWire(); updateSol(); updateTor(); }, 300);
+document.addEventListener('keydown', e => {
+  const btns = Array.from(document.querySelectorAll('nav .snav-btn'));
+  const idx = btns.findIndex(b => b.classList.contains('active'));
+  if (e.key === 'ArrowRight' && idx < btns.length - 1) btns[idx + 1].click();
+  if (e.key === 'ArrowLeft'  && idx > 0)               btns[idx - 1].click();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Optics Lab — Lenses & Mirrors Visualizer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"/>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})"></script>
+<style>
+  :root {
+    --bg: #f0f4f8;
+    --panel: #e8edf3;
+    --card: #ffffff;
+    --border: #cbd5e1;
+    --accent: #2563eb;
+    --accent2: #0891b2;
+    --accent3: #7c3aed;
+    --green: #059669;
+    --yellow: #d97706;
+    --red: #dc2626;
+    --orange: #ea580c;
+    --text: #1e293b;
+    --muted: #64748b;
+    --ray1: #d97706;
+    --ray2: #059669;
+    --ray3: #7c3aed;
+    --obj: #0891b2;
+    --img-real: #dc2626;
+    --img-virtual: #7c3aed;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #f0f4f8 0%, #e8edf3 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-icon {
+    width: 40px; height: 40px;
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+  }
+  .header h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+  .header p { font-size: 0.8rem; color: var(--muted); }
+  .badge {
+    margin-left: auto;
+    background: rgba(37,99,235,0.10);
+    border: 1px solid rgba(37,99,235,0.25);
+    color: var(--accent);
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  /* MODE TABS */
+  .mode-bar {
+    display: flex;
+    gap: 8px;
+    padding: 16px 24px 0;
+  }
+  .mode-btn {
+    padding: 10px 24px;
+    border-radius: 8px 8px 0 0;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    background: var(--panel);
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mode-btn.active {
+    background: var(--bg);
+    color: var(--accent);
+    border-color: var(--accent);
+    border-bottom: 1px solid var(--bg);
+    margin-bottom: -1px;
+    font-weight: 600;
+  }
+  /* MAIN LAYOUT */
+  .main {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    min-height: calc(100vh - 100px);
+  }
+  /* CANVAS AREA */
+  .canvas-area {
+    background: var(--bg);
+    border-right: 1px solid var(--border);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .canvas-wrap {
+    position: relative;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(37,99,235,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(37,99,235,0.07) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+  /* SLIDER SECTION */
+  .slider-section {
+    background: var(--panel);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 20px;
+  }
+  .slider-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .slider-label { font-size: 0.85rem; color: var(--muted); font-weight: 500; }
+  .slider-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  input[type="range"] {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 100px;
+    background: linear-gradient(to right, var(--accent) var(--pct, 50%), var(--border) var(--pct, 50%));
+    outline: none;
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid var(--accent);
+    box-shadow: 0 2px 8px rgba(37,99,235,0.30);
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+  }
+  input[type="range"]::-webkit-slider-thumb:hover {
+    box-shadow: 0 2px 16px rgba(37,99,235,0.55);
+  }
+  /* CASE INDICATOR */
+  .case-track {
+    display: flex;
+    gap: 4px;
+    margin-top: 12px;
+  }
+  .case-pip {
+    flex: 1;
+    height: 4px;
+    border-radius: 100px;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+  .case-pip.active { background: var(--accent); }
+  .case-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+  }
+  .case-labels span {
+    font-size: 0.65rem;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  /* SIDEBAR */
+  .sidebar {
+    background: var(--panel);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+    max-height: calc(100vh - 100px);
+  }
+  .info-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .info-card h3 {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .case-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent2);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .case-desc {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  /* PROPERTIES */
+  .prop-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.82rem;
+  }
+  .prop-row:last-child { border-bottom: none; }
+  .prop-key { color: var(--muted); }
+  .prop-val {
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+  .tag-real { background: rgba(220,38,38,0.10); color: var(--red); }
+  .tag-virtual { background: rgba(124,58,237,0.10); color: var(--accent3); }
+  .tag-inverted { background: rgba(217,119,6,0.12); color: var(--yellow); }
+  .tag-upright { background: rgba(5,150,105,0.10); color: var(--green); }
+  .tag-magnified { background: rgba(8,145,178,0.10); color: var(--accent2); }
+  .tag-diminished { background: rgba(100,116,139,0.12); color: var(--muted); }
+  .tag-same { background: rgba(37,99,235,0.10); color: var(--accent); }
+  .tag-inf { background: rgba(234,88,12,0.10); color: var(--orange); }
+  /* EQUATION */
+  .eq-box {
+    background: rgba(37,99,235,0.06);
+    border: 1px solid rgba(37,99,235,0.18);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+  /* EXAMPLES */
+  .example-list { display: flex; flex-wrap: wrap; gap: 6px; }
+  .example-tag {
+    background: rgba(5,150,105,0.08);
+    border: 1px solid rgba(5,150,105,0.22);
+    color: var(--green);
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-weight: 500;
+  }
+  /* LEGEND */
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; }
+  .leg-item { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--muted); }
+  .leg-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .leg-line { width: 20px; height: 2px; flex-shrink: 0; }
+  .leg-dashed {
+    width: 20px; height: 2px; flex-shrink: 0;
+    background: repeating-linear-gradient(90deg, var(--muted) 0, var(--muted) 3px, transparent 3px, transparent 6px);
+  }
+  /* TOGGLE CONTROLS */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .toggle {
+    width: 36px; height: 20px;
+    background: var(--border);
+    border-radius: 100px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle.on { background: var(--accent); }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 14px; height: 14px;
+    background: white;
+    border-radius: 50%;
+    top: 3px; left: 3px;
+    transition: left 0.2s;
+  }
+  .toggle.on::after { left: 19px; }
+  /* MIRROR TYPE SELECT */
+  .type-select {
+    display: flex;
+    gap: 6px;
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 4px;
+  }
+  .type-btn {
+    flex: 1;
+    padding: 6px 0;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-family: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+  .type-btn.active {
+    background: var(--accent);
+    color: white;
+  }
+  @media (max-width: 900px) {
+    .main { grid-template-columns: 1fr; }
+    .sidebar { max-height: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon">🔭</div>
+  <div>
+    <h1>Optics Lab</h1>
+    <p>Interactive Ray Diagrams — Class 12 Physics</p>
+  </div>
+  <div class="badge">ISC / CBSE</div>
+</div>
+
+<div class="mode-bar">
+  <button class="mode-btn active" onclick="setMode('lens')">🔷 Convex Lens</button>
+  <button class="mode-btn" onclick="setMode('concave_lens')">🔶 Concave Lens</button>
+  <button class="mode-btn" onclick="setMode('concave_mirror')">🪞 Concave Mirror</button>
+  <button class="mode-btn" onclick="setMode('convex_mirror')">🔮 Convex Mirror</button>
+</div>
+
+<div class="main">
+  <div class="canvas-area">
+    <div class="canvas-wrap">
+      <div class="grid-bg"></div>
+      <canvas id="rayCanvas" width="900" height="440"></canvas>
+    </div>
+
+    <div class="slider-section">
+      <div class="slider-header">
+        <span class="slider-label">Object Distance — drag to move object</span>
+        <span class="slider-value" id="sliderVal">∞</span>
+      </div>
+      <input type="range" id="objSlider" min="0" max="100" value="0"
+             oninput="onSlider(this)"/>
+      <div class="case-track" id="casePips"></div>
+      <div class="case-labels" id="caseLabels"></div>
+    </div>
+
+    <div class="legend">
+      <div class="leg-item"><div class="leg-line" style="background:var(--ray1)"></div> Incident ray</div>
+      <div class="leg-item"><div class="leg-line" style="background:var(--ray2)"></div> Refracted/Reflected ray</div>
+      <div class="leg-item"><div class="leg-line" style="background:var(--ray3)"></div> Extended ray</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--obj)"></div> Object</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--img-real)"></div> Real image</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--img-virtual)"></div> Virtual image</div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="info-card">
+      <h3>Current Case</h3>
+      <div class="case-name" id="caseName">Object at Infinity</div>
+      <div class="case-desc" id="caseDesc">Parallel rays from a very distant object converge at the focal point.</div>
+    </div>
+
+    <div class="info-card">
+      <h3>Image Properties</h3>
+      <div id="imageProps"></div>
+    </div>
+
+    <div class="info-card">
+      <h3>Mirror / Lens Formula</h3>
+      <div class="eq-box" id="formulaBox"></div>
+    </div>
+
+    <div class="info-card">
+      <h3>Calculated Values</h3>
+      <div id="calcValues"></div>
+    </div>
+
+    <div class="info-card">
+      <h3>Real-World Uses</h3>
+      <div class="example-list" id="realExamples"></div>
+    </div>
+
+    <div class="info-card">
+      <h3>Display Options</h3>
+      <div class="toggle-row">
+        Show normals / axis labels
+        <div class="toggle on" id="tgLabels" onclick="toggleOpt('labels',this)"></div>
+      </div>
+      <div class="toggle-row">
+        Show measurements
+        <div class="toggle on" id="tgMeasure" onclick="toggleOpt('measure',this)"></div>
+      </div>
+      <div class="toggle-row">
+        Animate rays
+        <div class="toggle on" id="tgAnimate" onclick="toggleOpt('animate',this)"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let mode = 'lens';
+let sliderPct = 0;
+let opts = { labels: true, measure: true, animate: true };
+let animFrame = 0;
+let rafId = null;
+
+const canvas = document.getElementById('rayCanvas');
+const ctx = canvas.getContext('2d');
+const W = 900, H = 440;
+canvas.width = W; canvas.height = H;
+
+// ─────────────────────────────────────────────
+// MODE CONFIG
+// ─────────────────────────────────────────────
+const CONFIGS = {
+  lens: {
+    label: 'Convex Lens',
+    formula: '$\\dfrac{1}{v} - \\dfrac{1}{u} = \\dfrac{1}{f}$',
+    signConvention: 'New Cartesian (lens): distances right of lens +ve',
+    cases: [
+      { label: 'u=∞', desc: 'Object at Infinity', range: [0, 5] },
+      { label: 'u>2f', desc: 'Beyond 2F', range: [5, 30] },
+      { label: 'u=2f', desc: 'At 2F', range: [30, 35] },
+      { label: 'f<u<2f', desc: 'Between F and 2F', range: [35, 60] },
+      { label: 'u=f', desc: 'At Focus F', range: [60, 65] },
+      { label: 'u<f', desc: 'Inside F', range: [65, 100] },
+    ]
+  },
+  concave_lens: {
+    label: 'Concave Lens',
+    formula: '$\\dfrac{1}{v} - \\dfrac{1}{u} = \\dfrac{1}{f}$',
+    signConvention: 'New Cartesian: f is negative for concave lens',
+    cases: [
+      { label: 'u=∞', desc: 'Object at Infinity', range: [0, 5] },
+      { label: 'u>2f', desc: 'Far Object', range: [5, 50] },
+      { label: 'u<2f', desc: 'Near Object', range: [50, 100] },
+    ]
+  },
+  concave_mirror: {
+    label: 'Concave Mirror',
+    formula: '$\\dfrac{1}{v} + \\dfrac{1}{u} = \\dfrac{1}{f} = \\dfrac{2}{R}$',
+    signConvention: 'New Cartesian (mirror): distances in front of mirror −ve',
+    cases: [
+      { label: 'u=∞', desc: 'Object at Infinity', range: [0, 5] },
+      { label: 'u>R', desc: 'Beyond Centre C', range: [5, 30] },
+      { label: 'u=R', desc: 'At Centre C', range: [30, 35] },
+      { label: 'R>u>f', desc: 'Between C and F', range: [35, 60] },
+      { label: 'u=f', desc: 'At Focus F', range: [60, 65] },
+      { label: 'u<f', desc: 'Between F and Mirror', range: [65, 100] },
+    ]
+  },
+  convex_mirror: {
+    label: 'Convex Mirror',
+    formula: '$\\dfrac{1}{v} + \\dfrac{1}{u} = \\dfrac{1}{f}$',
+    signConvention: 'New Cartesian: f is positive for convex mirror',
+    cases: [
+      { label: 'u=∞', desc: 'Object at Infinity', range: [0, 5] },
+      { label: 'Any u', desc: 'Object in front', range: [5, 100] },
+    ]
+  }
+};
+
+// ─────────────────────────────────────────────
+// CASE DETECTION
+// ─────────────────────────────────────────────
+function getCase(pct) {
+  const cfg = CONFIGS[mode];
+  for (let c of cfg.cases) {
+    if (pct >= c.range[0] && pct < c.range[1]) return c;
+  }
+  return cfg.cases[cfg.cases.length - 1];
+}
+
+// ─────────────────────────────────────────────
+// PHYSICS CALCULATION
+// ─────────────────────────────────────────────
+function calcOptics(pct) {
+  // Returns: { u, v, m, nature, orientation, size, examples }
+  const f = 120; // focal length in canvas pixels
+  let u_real, v_real;
+
+  if (mode === 'lens') {
+    // u goes from ∞ down to just beyond 0
+    if (pct < 2) u_real = Infinity;
+    else u_real = -(3000 / (pct)); // negative by sign convention, object on left
+    const f_sign = f;
+    if (Math.abs(u_real) === Infinity) {
+      v_real = f_sign;
+    } else {
+      v_real = 1 / (1/f_sign + 1/u_real); // lens formula: 1/v - 1/u = 1/f => 1/v = 1/f + 1/u
+    }
+    // magnification
+    const m = Math.abs(u_real) === Infinity ? 0 : v_real / u_real;
+    return buildInfo_lens(u_real, v_real, m, f_sign);
+  }
+  if (mode === 'concave_lens') {
+    if (pct < 2) u_real = Infinity;
+    else u_real = -(3000 / pct);
+    const f_sign = -f;
+    if (Math.abs(u_real) === Infinity) {
+      v_real = f_sign;
+    } else {
+      v_real = 1 / (1/f_sign + 1/u_real);
+    }
+    const m = Math.abs(u_real) === Infinity ? 0 : v_real / u_real;
+    return buildInfo_concave_lens(u_real, v_real, m, f_sign);
+  }
+  if (mode === 'concave_mirror') {
+    if (pct < 2) u_real = Infinity;
+    else u_real = -(3000 / pct); // negative = in front
+    const f_sign = -f/2;
+    if (Math.abs(u_real) === Infinity) {
+      v_real = f_sign;
+    } else {
+      v_real = 1 / (1/f_sign - 1/u_real); // 1/v = 1/f - 1/u => mirror: 1/v + 1/u = 1/f => 1/v = 1/f - 1/u
+    }
+    const m = Math.abs(u_real) === Infinity ? 0 : -v_real / u_real;
+    return buildInfo_concave_mirror(u_real, v_real, m, f_sign);
+  }
+  if (mode === 'convex_mirror') {
+    if (pct < 2) u_real = Infinity;
+    else u_real = -(3000 / pct);
+    const f_sign = f/2;
+    if (Math.abs(u_real) === Infinity) {
+      v_real = f_sign;
+    } else {
+      v_real = 1 / (1/f_sign - 1/u_real);
+    }
+    const m = Math.abs(u_real) === Infinity ? 0 : -v_real / u_real;
+    return buildInfo_convex_mirror(u_real, v_real, m, f_sign);
+  }
+}
+
+function buildInfo_lens(u, v, m, f) {
+  let nature, orientation, sizeDesc, examples, position;
+  if (!isFinite(u)) {
+    nature = 'Real'; orientation = 'Inverted'; sizeDesc = 'Highly Diminished';
+    examples = ['Telescope objective', 'Camera (far subject)'];
+    position = 'At focus F₂';
+  } else if (v > 0 && m < 0) {
+    if (Math.abs(m) < 1) {
+      sizeDesc = 'Diminished'; examples = ['Camera', 'Human Eye'];
+      position = 'Between F₂ and 2F₂';
+    } else if (Math.abs(m) === 1) {
+      sizeDesc = 'Same Size'; examples = ['Photocopier'];
+      position = 'At 2F₂';
+    } else {
+      sizeDesc = 'Magnified'; examples = ['Projector', 'Photo Enlarger'];
+      position = 'Beyond 2F₂';
+    }
+    nature = 'Real'; orientation = 'Inverted';
+  } else if (!isFinite(v)) {
+    nature = 'Real'; orientation = 'Inverted'; sizeDesc = 'Highly Magnified';
+    examples = ['Searchlight', 'Spotlight'];
+    position = 'At Infinity';
+  } else {
+    nature = 'Virtual'; orientation = 'Upright'; sizeDesc = 'Magnified';
+    examples = ['Magnifying glass', 'Reading lens', 'Loupe'];
+    position = 'Same side as object';
+  }
+  return { u, v, m, nature, orientation, sizeDesc, examples, position };
+}
+
+function buildInfo_concave_lens(u, v, m, f) {
+  return {
+    u, v, m,
+    nature: 'Virtual', orientation: 'Upright', sizeDesc: 'Diminished',
+    examples: ['Spectacles (myopia)', 'Peephole', 'Galilean telescope eyepiece'],
+    position: 'Same side as object, between F and lens'
+  };
+}
+
+function buildInfo_concave_mirror(u, v, m, f) {
+  let nature, orientation, sizeDesc, examples, position;
+  if (!isFinite(u)) {
+    nature='Real'; orientation='Inverted'; sizeDesc='Highly Diminished';
+    examples=['Reflecting telescope']; position='At focus F';
+  } else if (v < 0 && Math.abs(v) < Math.abs(2*f)) {
+    nature='Real'; orientation='Inverted'; sizeDesc='Diminished';
+    examples=['Headlight reflector']; position='Between F and C';
+  } else if (v < 0 && Math.abs(v) === Math.abs(2*f)) {
+    nature='Real'; orientation='Inverted'; sizeDesc='Same Size';
+    examples=['Used in labs to verify f']; position='At C (centre of curvature)';
+  } else if (v < 0 && Math.abs(v) > Math.abs(2*f)) {
+    nature='Real'; orientation='Inverted'; sizeDesc='Magnified';
+    examples=['Shaving/makeup mirror','Dentist mirror','Solar furnace']; position='Beyond C';
+  } else if (!isFinite(v)) {
+    nature='—'; orientation='—'; sizeDesc='At Infinity';
+    examples=['Searchlight','Torch']; position='At Infinity';
+  } else {
+    nature='Virtual'; orientation='Upright'; sizeDesc='Magnified';
+    examples=['Shaving mirror','Dentist mirror','ENT doctor mirror']; position='Behind mirror';
+  }
+  return { u, v, m, nature, orientation, sizeDesc, examples, position };
+}
+
+function buildInfo_convex_mirror(u, v, m, f) {
+  return {
+    u, v, m,
+    nature: 'Virtual', orientation: 'Upright', sizeDesc: 'Diminished',
+    examples: ['Rear-view mirrors', 'Security/surveillance mirrors', 'Shop convex mirrors'],
+    position: 'Between P and F (behind mirror)'
+  };
+}
+
+// ─────────────────────────────────────────────
+// DRAWING
+// ─────────────────────────────────────────────
+const CX = 480; // optical center X
+const CY = H / 2; // optical axis Y
+
+function draw(pct) {
+  ctx.clearRect(0, 0, W, H);
+
+  // Light background
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(37,99,235,0.07)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  // Principal axis
+  ctx.strokeStyle = 'rgba(71,85,105,0.45)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([]);
+  ctx.beginPath(); ctx.moveTo(0, CY); ctx.lineTo(W, CY); ctx.stroke();
+
+  if (mode === 'lens' || mode === 'concave_lens') drawLensScene(pct);
+  else drawMirrorScene(pct);
+}
+
+// ── LENS ──────────────────────────────────────
+function drawLensScene(pct) {
+  const f_px = 130; // focal length in pixels
+  const isConvex = mode === 'lens';
+  const f_sign = isConvex ? f_px : -f_px;
+
+  // Compute object position
+  let objX;
+  if (pct < 2) {
+    objX = 20; // effectively at infinity
+  } else {
+    // map pct 2..100 -> objX from 20 to CX-10
+    objX = 20 + (pct - 2) / 98 * (CX - 30);
+  }
+  const objH = 80; // object height
+  const objY = CY - objH;
+
+  // Focal points
+  const F1x = CX - f_px; // left focal point
+  const F2x = CX + f_px; // right focal point
+  const F1x2 = CX - 2*f_px;
+  const F2x2 = CX + 2*f_px;
+
+  // Draw lens
+  drawLens(CX, CY, isConvex);
+
+  // Mark focal points
+  markPoint(F1x, CY, isConvex ? 'F₁' : 'F₁', '#f59e0b');
+  markPoint(F2x, CY, isConvex ? 'F₂' : 'F₂', '#f59e0b');
+  if (opts.labels) {
+    if (isConvex) {
+      markPoint(F1x2, CY, '2F₁', '#64748b');
+      markPoint(F2x2, CY, '2F₂', '#64748b');
+    }
+  }
+
+  // Compute image
+  let u_sign = -(CX - objX); // negative
+  let v_sign;
+  if (Math.abs(u_sign) > 5000 || pct < 2) {
+    v_sign = f_sign;
+  } else {
+    v_sign = 1 / (1/f_sign + 1/u_sign);
+  }
+
+  const imgX = CX + v_sign;
+  const m_val = Math.abs(u_sign) > 5000 ? 0 : v_sign / u_sign;
+  const imgH_px = m_val * objH;
+
+  // Draw object arrow
+  if (pct >= 2) {
+    drawArrow(objX, CY, objX, objY, '#06b6d4', 2.5);
+    if (opts.labels) label(objX - 14, objY - 8, 'Object', '#06b6d4');
+  } else {
+    if (opts.labels) label(20, CY - 90, 'Object at ∞\n(Parallel rays)', '#06b6d4');
+  }
+
+  // Draw rays
+  const anim = opts.animate ? Math.min(animFrame / 40, 1) : 1;
+
+  if (pct < 2) {
+    // Parallel rays → converge at F₂ (convex) or diverge from F₁ (concave)
+    const rays = [CY - 60, CY - 30, CY + 30, CY + 60];
+    rays.forEach(ry => {
+      if (isConvex) {
+        drawAnimatedRay(0, ry, CX, ry, '#f59e0b', anim);
+        drawAnimatedRay(CX, ry, F2x, CY, '#10b981', anim, isConvex ? false : true);
+        drawDot(F2x, CY, '#ef4444', 6);
+      } else {
+        drawAnimatedRay(0, ry, CX, ry, '#f59e0b', anim);
+        // diverge as if from F1 (virtual F)
+        const slope = (CY - ry) / (CX - F1x);
+        const endX = W;
+        const endY = ry + slope * (W - CX);
+        drawAnimatedRay(CX, ry, endX, endY, '#10b981', anim);
+        // dashed back to virtual F
+        drawDashed(CX, ry, F1x, CY, '#a855f7', anim);
+      }
+    });
+    if (isConvex) {
+      markPoint(F2x, CY, '', '#ef4444');
+      if (opts.labels) label(F2x + 8, CY - 20, 'Image at F₂', '#ef4444');
+    } else {
+      markPoint(F1x, CY, '', '#a855f7');
+      if (opts.labels) label(F1x - 50, CY - 20, 'Virtual image at F₁', '#a855f7');
+    }
+  } else {
+    // Standard 3-ray construction
+    const r1y = objY; // ray parallel to axis from tip
+    const r2y = CY;   // ray through optical centre
+
+    // Ray 1: parallel to axis, passes through tip of object
+    drawAnimatedRay(objX, r1y, CX, r1y, '#f59e0b', anim);
+    if (isConvex) {
+      if (isFinite(v_sign)) {
+        drawAnimatedRay(CX, r1y, imgX, CY - imgH_px, '#10b981', anim);
+      } else {
+        drawAnimatedRay(CX, r1y, W, r1y + (CY - r1y) * (W-CX)/100, '#10b981', anim);
+      }
+    } else {
+      // diverge as from F1
+      const slope = (r1y - CY) / (CX - F1x);
+      drawAnimatedRay(CX, r1y, W, r1y + slope*(W-CX), '#10b981', anim);
+      drawDashed(CX, r1y, F1x, CY, '#a855f7', anim);
+    }
+
+    // Ray 2: through optical centre, undeviated
+    const slope2 = (r1y - CY) / (objX - CX);
+    drawAnimatedRay(objX, r1y, CX, CY, '#f59e0b', anim);
+    if (isFinite(v_sign)) {
+      drawAnimatedRay(CX, CY, imgX, CY - imgH_px, '#10b981', anim);
+    } else {
+      drawAnimatedRay(CX, CY, W, CY + slope2*(W-CX), '#10b981', anim);
+    }
+
+    // Ray 3: through F1 (convex) → emerges parallel; or toward F2 (concave)
+    if (isConvex && F1x > objX) {
+      // Object is beyond 2F1, ray through F1
+    }
+    if (isConvex) {
+      const slopeF1 = (r1y - CY) / (objX - F1x);
+      const y_at_lens = r1y + slopeF1 * (CX - objX);
+      drawAnimatedRay(objX, r1y, CX, y_at_lens, '#f59e0b', anim);
+      drawAnimatedRay(CX, y_at_lens, W, y_at_lens, '#10b981', anim);
+    }
+
+    // Draw image
+    if (isFinite(v_sign) && isFinite(imgH_px)) {
+      const imgColor = v_sign > 0 ? '#ef4444' : '#a855f7';
+      const imgYtip = CY - imgH_px;
+      drawArrow(imgX, CY, imgX, imgYtip, imgColor, 2.5);
+      if (opts.labels) {
+        const lbl = v_sign > 0 ? 'Real Image' : 'Virtual Image';
+        label(imgX + 8, Math.min(imgYtip, CY - 10) - 8, lbl, imgColor);
+      }
+
+      // Dashed construction for virtual image
+      if (v_sign < 0) {
+        drawDashed(CX, r1y, imgX, imgYtip, '#a855f7', 1);
+        drawDashed(CX, CY, imgX, imgYtip, '#a855f7', 1);
+      }
+
+      // Measurements
+      if (opts.measure) {
+        drawBrace(objX, CY+10, CX, CY+10, Math.round(Math.abs(CX-objX)) + 'px (u)', '#64748b');
+        if (v_sign > 0) drawBrace(CX, CY+22, imgX, CY+22, Math.round(Math.abs(v_sign)) + 'px (v)', '#64748b');
+      }
+    }
+  }
+}
+
+// ── MIRROR ─────────────────────────────────────
+function drawMirrorScene(pct) {
+  const isConcave = mode === 'concave_mirror';
+  const R_px = 200;
+  const f_px = R_px / 2;
+  const f_sign = isConcave ? -f_px : f_px; // concave f negative (in front)
+
+  const Px = CX + 160; // pole of mirror (right side)
+  const Fx = Px - (isConcave ? f_px : -f_px); // focus
+  const Rx = Px - (isConcave ? R_px : -R_px); // centre of curvature
+
+  let objX;
+  if (pct < 2) {
+    objX = 20;
+  } else {
+    objX = 20 + (pct - 2) / 98 * (Px - 40);
+  }
+  const objH = 70;
+
+  // Draw mirror
+  drawMirrorCurve(Px, CY, R_px, isConcave);
+
+  // Mark axis points
+  markPoint(Fx, CY, isConcave ? 'F' : 'F', '#f59e0b');
+  if (isConcave) markPoint(Rx, CY, 'C', '#64748b');
+  if (opts.labels) label(Px + 8, CY - 12, 'P', '#94a3b8');
+
+  // Object
+  if (pct >= 2) {
+    drawArrow(objX, CY, objX, CY - objH, '#06b6d4', 2.5);
+    if (opts.labels) label(objX - 14, CY - objH - 10, 'Object', '#06b6d4');
+  }
+
+  // Calculate image position
+  const u_px = -(Px - objX); // negative in front
+  let v_px;
+  if (pct < 2 || Math.abs(u_px) > 5000) {
+    v_px = f_sign;
+  } else {
+    v_px = 1 / (1/f_sign - 1/u_px);
+  }
+
+  const m_val = pct < 2 ? 0 : -v_px / u_px;
+  const imgX = Px + v_px;
+  const imgH_px = m_val * objH;
+  const anim = opts.animate ? Math.min(animFrame / 40, 1) : 1;
+
+  if (pct < 2) {
+    // Parallel rays
+    const rays = [CY - 55, CY - 28, CY + 28, CY + 55];
+    rays.forEach(ry => {
+      drawAnimatedRay(0, ry, Px, ry, '#f59e0b', anim);
+      if (isConcave) {
+        drawAnimatedRay(Px, ry, Fx, CY, '#10b981', anim);
+        drawDot(Fx, CY, '#ef4444', 6);
+      } else {
+        const slope = (CY - ry) / (Px - Fx);
+        drawAnimatedRay(Px, ry, 0, ry - slope*Px, '#10b981', anim);
+        drawDashed(Px, ry, Fx, CY, '#a855f7', anim);
+      }
+    });
+    if (isConcave) {
+      if (opts.labels) label(Fx - 10, CY - 24, 'Image at F', '#ef4444');
+    } else {
+      if (opts.labels) label(Fx + 6, CY - 24, 'Virtual image at F', '#a855f7');
+    }
+  } else {
+    // 2-ray construction
+    const tipY = CY - objH;
+
+    // Ray 1: parallel to axis → after reflection, passes through F (concave) or appears from F (convex)
+    drawAnimatedRay(objX, tipY, Px, tipY, '#f59e0b', anim);
+    if (isConcave) {
+      if (isFinite(v_px) && imgX < Px) {
+        drawAnimatedRay(Px, tipY, imgX, CY - imgH_px, '#10b981', anim);
+      } else if (!isFinite(v_px)) {
+        drawAnimatedRay(Px, tipY, 0, tipY + (CY - tipY) * (Px) / f_px, '#10b981', anim);
+      } else {
+        // virtual image behind mirror
+        drawAnimatedRay(Px, tipY, 0, CY - (tipY - CY) * 0.5, '#10b981', anim);
+        drawDashed(Px, tipY, imgX, CY - imgH_px, '#a855f7', anim);
+      }
+    } else {
+      // Convex: diverges as if from F behind
+      const slope = (tipY - CY) / (Px - Fx);
+      drawAnimatedRay(Px, tipY, 0, tipY - slope*Px, '#10b981', anim);
+      drawDashed(Px, tipY, Fx, CY, '#a855f7', anim);
+    }
+
+    // Ray 2: through pole at angle
+    const slopeP = (tipY - CY) / (objX - Px);
+    drawAnimatedRay(objX, tipY, Px, CY, '#f59e0b', anim);
+    if (isConcave) {
+      if (isFinite(v_px) && imgX < Px) {
+        drawAnimatedRay(Px, CY, imgX, CY - imgH_px, '#10b981', anim);
+      } else if (v_px > 0) {
+        drawAnimatedRay(Px, CY, 0, CY + slopeP*Px, '#10b981', anim);
+        drawDashed(Px, CY, imgX, CY - imgH_px, '#a855f7', anim);
+      } else {
+        drawAnimatedRay(Px, CY, 0, CY + slopeP*Px, '#10b981', anim);
+      }
+    } else {
+      drawAnimatedRay(Px, CY, 0, CY + slopeP*Px, '#10b981', anim);
+      drawDashed(Px, CY, imgX, CY - imgH_px, '#a855f7', anim);
+    }
+
+    // Draw image
+    if (isFinite(v_px) && isFinite(imgH_px)) {
+      const imgColor = imgX < Px ? '#ef4444' : '#a855f7';
+      drawArrow(imgX, CY, imgX, CY - imgH_px, imgColor, 2.5);
+      if (opts.labels) {
+        const lbl = imgX < Px ? 'Real Image' : 'Virtual Image';
+        label(imgX + 8, CY - Math.abs(imgH_px) - 10, lbl, imgColor);
+      }
+      if (opts.measure) {
+        drawBrace(objX, CY+10, Px, CY+10, Math.round(Math.abs(u_px)) + 'px (u)', '#64748b');
+        if (imgX < Px) drawBrace(imgX, CY+22, Px, CY+22, Math.round(Math.abs(v_px)) + 'px (v)', '#64748b');
+      }
+    }
+  }
+}
+
+// ─────────────────────────────────────────────
+// DRAW HELPERS
+// ─────────────────────────────────────────────
+function drawLens(x, cy, isConvex) {
+  ctx.save();
+  ctx.strokeStyle = isConvex ? '#3b82f6' : '#f97316';
+  ctx.lineWidth = 3;
+
+  if (isConvex) {
+    // Biconvex lens shape
+    ctx.fillStyle = 'rgba(37,99,235,0.12)';
+    ctx.beginPath();
+    ctx.moveTo(x, cy - 110);
+    ctx.bezierCurveTo(x+35, cy-110, x+35, cy+110, x, cy+110);
+    ctx.bezierCurveTo(x-35, cy+110, x-35, cy-110, x, cy-110);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    // arrows
+    arrowHead(x, cy-110, 'up', '#3b82f6');
+    arrowHead(x, cy+110, 'down', '#3b82f6');
+  } else {
+    // Biconcave lens
+    ctx.fillStyle = 'rgba(234,88,12,0.10)';
+    ctx.beginPath();
+    ctx.moveTo(x, cy-110);
+    ctx.bezierCurveTo(x-28, cy-110, x-28, cy+110, x, cy+110);
+    ctx.bezierCurveTo(x+28, cy+110, x+28, cy-110, x, cy-110);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    arrowHead(x, cy-110, 'in-up', '#f97316');
+    arrowHead(x, cy+110, 'in-down', '#f97316');
+  }
+  ctx.restore();
+}
+
+function drawMirrorCurve(px, cy, R, isConcave) {
+  ctx.save();
+  ctx.strokeStyle = isConcave ? '#a855f7' : '#10b981';
+  ctx.lineWidth = 4;
+  const span = 120;
+
+  if (isConcave) {
+    // Concave: opens to left
+    ctx.beginPath();
+    ctx.arc(px + R, cy, R, Math.PI - 0.65, Math.PI + 0.65);
+    ctx.stroke();
+    // Hatching behind
+    ctx.strokeStyle = 'rgba(124,58,237,0.25)';
+    ctx.lineWidth = 1;
+    for (let i = -5; i <= 5; i++) {
+      const angle = Math.PI - 0.55 + (i/5)*0.5;
+      const sx = (px+R) + R*Math.cos(angle);
+      const sy = cy + R*Math.sin(angle);
+      ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx+12, sy-8); ctx.stroke();
+    }
+  } else {
+    // Convex: opens to left (facing left)
+    ctx.beginPath();
+    ctx.arc(px - R, cy, R, -0.65, 0.65);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(5,150,105,0.30)';
+    ctx.lineWidth = 1;
+    for (let i = -5; i <= 5; i++) {
+      const angle = -0.55 + (i/5)*0.5;
+      const sx = (px-R) + R*Math.cos(angle);
+      const sy = cy + R*Math.sin(angle);
+      ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx+12, sy+8); ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
+function drawArrow(x1, y1, x2, y2, color, lw) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = lw || 2;
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  // arrowhead at (x2,y2)
+  const angle = Math.atan2(y2-y1, x2-x1);
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - 10*Math.cos(angle-0.4), y2 - 10*Math.sin(angle-0.4));
+  ctx.lineTo(x2 - 10*Math.cos(angle+0.4), y2 - 10*Math.sin(angle+0.4));
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
+function arrowHead(x, y, dir, color) {
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.beginPath();
+  if (dir === 'up') {
+    ctx.moveTo(x, y-2); ctx.lineTo(x-7, y+10); ctx.lineTo(x+7, y+10);
+  } else if (dir === 'down') {
+    ctx.moveTo(x, y+2); ctx.lineTo(x-7, y-10); ctx.lineTo(x+7, y-10);
+  } else if (dir === 'in-up') {
+    ctx.moveTo(x, y-2); ctx.lineTo(x-7, y-12); ctx.lineTo(x+7, y-12);
+  } else {
+    ctx.moveTo(x, y+2); ctx.lineTo(x-7, y+12); ctx.lineTo(x+7, y+12);
+  }
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
+function drawAnimatedRay(x1, y1, x2, y2, color, t, dashed) {
+  if (t <= 0) return;
+  const px = x1 + (x2-x1)*t;
+  const py = y1 + (y2-y1)*t;
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.8;
+  if (dashed) ctx.setLineDash([5,4]);
+  ctx.shadowColor = 'transparent';
+  ctx.shadowBlur = 0;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(px,py); ctx.stroke();
+  ctx.setLineDash([]);
+  if (t >= 1) {
+    // arrowhead
+    const angle = Math.atan2(y2-y1, x2-x1);
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(px, py);
+    ctx.lineTo(px - 8*Math.cos(angle-0.4), py - 8*Math.sin(angle-0.4));
+    ctx.lineTo(px - 8*Math.cos(angle+0.4), py - 8*Math.sin(angle+0.4));
+    ctx.closePath(); ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawDashed(x1, y1, x2, y2, color, t) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.2;
+  ctx.setLineDash([5, 5]);
+  ctx.globalAlpha = 0.6;
+  const px = x1 + (x2-x1)*(t||1);
+  const py = y1 + (y2-y1)*(t||1);
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(px,py); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+
+function drawDot(x, y, color, r) {
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.shadowColor = 'transparent';
+  ctx.shadowBlur = 0;
+  ctx.beginPath(); ctx.arc(x, y, r||5, 0, Math.PI*2); ctx.fill();
+  ctx.restore();
+}
+
+function markPoint(x, y, lbl, color) {
+  drawDot(x, y, color, 4);
+  if (opts.labels && lbl) {
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.font = '500 13px Space Grotesk';
+    ctx.fillText(lbl, x - 6, y - 12);
+    ctx.restore();
+  }
+}
+
+function label(x, y, text, color) {
+  ctx.save();
+  ctx.fillStyle = color || '#94a3b8';
+  ctx.font = '500 12px Space Grotesk';
+  const lines = text.split('\n');
+  lines.forEach((l, i) => ctx.fillText(l, x, y + i*16));
+  ctx.restore();
+}
+
+function drawBrace(x1, y, x2, y2, text, color) {
+  const mx = (x1+x2)/2;
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3,3]);
+  ctx.beginPath();
+  ctx.moveTo(x1, y); ctx.lineTo(x2, y2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = color;
+  ctx.font = '11px JetBrains Mono';
+  ctx.fillText(text, Math.min(x1,x2)+4, y-4);
+  ctx.restore();
+}
+
+// ─────────────────────────────────────────────
+// UI UPDATE
+// ─────────────────────────────────────────────
+function updateSidebar(pct) {
+  const c = getCase(pct);
+  document.getElementById('caseName').textContent = c.desc;
+  document.getElementById('caseDesc').textContent = getCaseDescription(c, pct);
+
+  const info = calcOptics(pct);
+  renderProps(info);
+  renderFormula();
+  renderCalcValues(info, pct);
+  renderExamples(info);
+
+  // After KaTeX load
+  if (window.renderMathInElement) {
+    renderMathInElement(document.getElementById('formulaBox'), {
+      delimiters:[{left:'$',right:'$',display:false},{left:'$$',right:'$$',display:true}]
+    });
+  }
+}
+
+function getCaseDescription(c, pct) {
+  const descs = {
+    'Object at Infinity': 'Parallel rays strike the optical element. Image forms at the focal point.',
+    'Beyond 2F': 'Object is farther than twice the focal length. Produces real, inverted, diminished image.',
+    'At 2F': 'Object exactly at twice the focal length. Image is real, inverted, and same size.',
+    'Between F and 2F': 'Object between focal and twice-focal length. Produces magnified real image.',
+    'At Focus F': 'Object at focal point — refracted/reflected rays become parallel. Image at infinity.',
+    'Inside F': 'Object inside focal length — acts like magnifying glass. Virtual, upright, magnified.',
+    'Beyond Centre C': 'Object beyond centre of curvature. Produces diminished real image.',
+    'At Centre C': 'Object at centre of curvature (R = 2f). Image forms at same point, same size.',
+    'Between C and F': 'Object between C and F. Image is real, inverted, magnified, beyond C.',
+    'Between F and Mirror': 'Object between focus and mirror. Virtual, upright, magnified image behind mirror.',
+    'Far Object': 'Concave/diverging lens — always produces virtual, upright, diminished image.',
+    'Near Object': 'Even close objects produce only virtual, upright, diminished images in diverging lens.',
+    'Object in front': 'Convex mirror: always virtual, upright, diminished regardless of object distance.',
+  };
+  return descs[c.desc] || c.desc;
+}
+
+function renderProps(info) {
+  const el = document.getElementById('imageProps');
+  const rows = [
+    ['Nature', info.nature, info.nature === 'Real' ? 'tag-real' : 'tag-virtual'],
+    ['Orientation', info.orientation, info.orientation === 'Inverted' ? 'tag-inverted' : 'tag-upright'],
+    ['Size', info.sizeDesc, info.sizeDesc === 'Magnified' ? 'tag-magnified' : info.sizeDesc === 'Diminished' ? 'tag-diminished' : info.sizeDesc === 'Same Size' ? 'tag-same' : 'tag-inf'],
+    ['Position', info.position, 'tag-same'],
+  ];
+  el.innerHTML = rows.map(([k,v,cls]) =>
+    `<div class="prop-row"><span class="prop-key">${k}</span><span class="prop-val ${cls}">${v}</span></div>`
+  ).join('');
+}
+
+function renderFormula() {
+  const cfg = CONFIGS[mode];
+  const el = document.getElementById('formulaBox');
+  el.innerHTML = `<div style="margin-bottom:8px">${cfg.formula}</div>
+    <div style="font-size:0.7rem;color:var(--muted);margin-top:6px">$m = \\dfrac{v}{u}$ (lens) &nbsp;|&nbsp; $m = -\\dfrac{v}{u}$ (mirror)</div>
+    <div style="font-size:0.68rem;color:var(--muted);margin-top:6px;text-align:left">${cfg.signConvention}</div>`;
+  if (window.renderMathInElement) {
+    renderMathInElement(el, {delimiters:[{left:'$',right:'$',display:false}]});
+  }
+}
+
+function renderCalcValues(info, pct) {
+  const el = document.getElementById('calcValues');
+  let uStr, vStr, mStr;
+  if (pct < 2) {
+    uStr = '∞'; vStr = 'f'; mStr = '≈ 0';
+  } else if (!isFinite(info.v)) {
+    uStr = fmt(info.u); vStr = '∞'; mStr = '∞';
+  } else {
+    uStr = fmt(info.u); vStr = fmt(info.v); mStr = isFinite(info.m) ? info.m.toFixed(2) : '∞';
+  }
+  el.innerHTML = `
+    <div class="prop-row"><span class="prop-key">Object dist (u)</span><span class="prop-val" style="color:var(--obj)">${uStr}</span></div>
+    <div class="prop-row"><span class="prop-key">Image dist (v)</span><span class="prop-val" style="color:${info.nature==='Real'?'var(--red)':'var(--accent3)'}">${vStr}</span></div>
+    <div class="prop-row"><span class="prop-key">Magnification (m)</span><span class="prop-val" style="color:var(--accent2)">${mStr}</span></div>
+  `;
+}
+
+function fmt(n) {
+  if (!isFinite(n)) return '∞';
+  return Math.round(n) + ' units';
+}
+
+function renderExamples(info) {
+  const el = document.getElementById('realExamples');
+  el.innerHTML = info.examples.map(e => `<span class="example-tag">📌 ${e}</span>`).join('');
+}
+
+// ─────────────────────────────────────────────
+// CASE PIPS
+// ─────────────────────────────────────────────
+function buildCasePips() {
+  const cfg = CONFIGS[mode];
+  const pipsEl = document.getElementById('casePips');
+  const labelsEl = document.getElementById('caseLabels');
+  pipsEl.innerHTML = cfg.cases.map((c,i) =>
+    `<div class="case-pip" id="pip${i}"></div>`
+  ).join('');
+  labelsEl.innerHTML = `
+    <span>${cfg.cases[0].label}</span>
+    <span>${cfg.cases[cfg.cases.length-1].label}</span>
+  `;
+}
+
+function updatePips(pct) {
+  const cfg = CONFIGS[mode];
+  cfg.cases.forEach((c, i) => {
+    const el = document.getElementById('pip'+i);
+    if (el) el.classList.toggle('active', pct >= c.range[0]);
+  });
+}
+
+// ─────────────────────────────────────────────
+// ANIMATION LOOP
+// ─────────────────────────────────────────────
+let lastPct = -1;
+function loop() {
+  const pct = parseInt(document.getElementById('objSlider').value);
+  if (opts.animate) {
+    if (pct !== lastPct) { animFrame = 0; lastPct = pct; }
+    animFrame = Math.min(animFrame + 1.5, 40);
+  } else {
+    animFrame = 40;
+  }
+  draw(pct);
+  rafId = requestAnimationFrame(loop);
+}
+
+// ─────────────────────────────────────────────
+// EVENT HANDLERS
+// ─────────────────────────────────────────────
+function onSlider(el) {
+  const pct = parseInt(el.value);
+  // Update gradient
+  el.style.setProperty('--pct', pct + '%');
+
+  // Slider value label
+  const valEl = document.getElementById('sliderVal');
+  if (pct < 2) valEl.textContent = 'u = ∞';
+  else {
+    const u = Math.round(3000 / pct);
+    valEl.textContent = `u ≈ ${u} units`;
+  }
+
+  updatePips(pct);
+  updateSidebar(pct);
+  lastPct = -1; // reset animation
+}
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.mode-btn').forEach((b,i) => {
+    b.classList.toggle('active', ['lens','concave_lens','concave_mirror','convex_mirror'][i] === m);
+  });
+  buildCasePips();
+  document.getElementById('objSlider').value = 0;
+  document.getElementById('objSlider').style.setProperty('--pct', '0%');
+  document.getElementById('sliderVal').textContent = 'u = ∞';
+  updatePips(0);
+  updateSidebar(0);
+  lastPct = -1;
+}
+
+function toggleOpt(key, el) {
+  opts[key] = !opts[key];
+  el.classList.toggle('on', opts[key]);
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+window.addEventListener('load', () => {
+  buildCasePips();
+  updateSidebar(0);
+  // init slider gradient
+  document.getElementById('objSlider').style.setProperty('--pct', '0%');
+  loop();
+});
+</script>
+</body>
+</html>

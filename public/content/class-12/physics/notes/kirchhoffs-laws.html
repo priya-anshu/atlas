@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Kirchhoff's Laws — Complete Question Bank</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;700&family=JetBrains+Mono:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #080810;
+    --surface: #0e0e1a;
+    --surface2: #131320;
+    --border: #1e1e30;
+    --cyan: #00e5ff;
+    --orange: #ff6d00;
+    --purple: #9d6fff;
+    --green: #00e676;
+    --red: #ff3d57;
+    --text: #dde0f0;
+    --muted: #6a6a88;
+    --dim: #2a2a40;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 44px 44px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Glow orbs */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -200px; left: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(0,229,255,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    padding: 56px 0 36px;
+    border-bottom: 1px solid var(--border);
+    animation: fadeDown 0.7s ease both;
+  }
+  .badge {
+    display: inline-block;
+    border: 1px solid rgba(0,229,255,0.3);
+    background: rgba(0,229,255,0.06);
+    color: var(--cyan);
+    font-size: 10px;
+    letter-spacing: 3px;
+    padding: 4px 14px;
+    border-radius: 3px;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+  }
+  h1 {
+    font-family: 'EB Garamond', serif;
+    font-size: clamp(32px, 6vw, 54px);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    margin-bottom: 10px;
+  }
+  header p {
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 2px;
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 28px 0 0;
+    animation: fadeUp 0.5s 0.2s ease both;
+  }
+  .tab-btn {
+    padding: 10px 30px;
+    border-radius: 4px;
+    border: 1px solid var(--dim);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+  .tab-btn.active {
+    border-color: var(--cyan);
+    background: rgba(0,229,255,0.08);
+    color: var(--cyan);
+  }
+
+  /* ── PANELS ── */
+  .panel { display: none; margin-top: 36px; animation: fadeUp 0.4s ease both; }
+  .panel.active { display: block; }
+
+  /* ── THEORY CARDS ── */
+  .theory-grid { display: grid; gap: 24px; }
+  .theory-card {
+    background: rgba(255,255,255,0.015);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    padding: 28px 30px;
+    animation: slideIn 0.5s ease both;
+  }
+  .theory-card.kcl { border-left: 4px solid var(--cyan); }
+  .theory-card.kvl { border-left: 4px solid var(--orange); }
+
+  .law-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .law-icon {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .kcl .law-icon { background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.3); color: var(--cyan); }
+  .kvl .law-icon { background: rgba(255,109,0,0.1); border: 1px solid rgba(255,109,0,0.3); color: var(--orange); }
+
+  .law-title { font-family: 'EB Garamond', serif; font-size: 22px; color: #fff; font-weight: 700; }
+  .law-subtitle { font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
+
+  .statement-box {
+    background: rgba(0,0,0,0.3);
+    border-radius: 6px;
+    padding: 16px 20px;
+    font-size: 13px;
+    line-height: 1.75;
+    color: #c0c8e0;
+    margin-bottom: 18px;
+    border: 1px solid var(--border);
+  }
+  .formula-box {
+    text-align: center;
+    border-radius: 6px;
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 18px;
+  }
+  .kcl .formula-box { background: rgba(0,229,255,0.07); border: 1px solid rgba(0,229,255,0.2); color: var(--cyan); }
+  .kvl .formula-box { background: rgba(255,109,0,0.07); border: 1px solid rgba(255,109,0,0.2); color: var(--orange); }
+
+  .basis-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    font-size: 11px;
+  }
+  .basis-label { color: var(--muted); letter-spacing: 1px; }
+  .kcl .basis-tag { background: rgba(0,229,255,0.1); color: var(--cyan); padding: 2px 10px; border-radius: 3px; }
+  .kvl .basis-tag { background: rgba(255,109,0,0.1); color: var(--orange); padding: 2px 10px; border-radius: 3px; }
+
+  .key-points {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 8px;
+  }
+  .kp {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--dim);
+    border-radius: 5px;
+    padding: 9px 12px;
+    font-size: 12px;
+    color: #9a9ab8;
+    line-height: 1.5;
+  }
+  .kcl .kp::before { content: '▸ '; color: var(--cyan); }
+  .kvl .kp::before { content: '▸ '; color: var(--orange); }
+
+  /* ── FILTERS ── */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 28px;
+  }
+  .filter-label { font-size: 10px; color: var(--muted); letter-spacing: 2px; }
+  .filter-btn {
+    padding: 5px 14px;
+    border-radius: 3px;
+    border: 1px solid var(--dim);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+  .filter-btn.active-law { border-color: var(--cyan); background: rgba(0,229,255,0.08); color: var(--cyan); }
+  .filter-btn.active-level { border-color: var(--purple); background: rgba(157,111,255,0.08); color: var(--purple); }
+  .filter-sep { width: 1px; height: 22px; background: var(--dim); }
+
+  /* ── QUESTION CARDS ── */
+  .q-card {
+    background: rgba(255,255,255,0.015);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 14px;
+    transition: border-color 0.2s;
+  }
+  .q-card:hover { border-color: var(--dim); }
+  .q-card.open { border-color: rgba(0,229,255,0.2); }
+
+  .q-header {
+    padding: 18px 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    user-select: none;
+  }
+  .q-num {
+    min-width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: var(--cyan);
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .q-meta { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; align-items: center; }
+  .tag {
+    font-size: 9px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .tag-law { background: rgba(0,229,255,0.08); color: var(--cyan); border: 1px solid rgba(0,229,255,0.2); }
+  .tag-type { background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--dim); }
+  .tag-beginner { background: rgba(0,230,118,0.08); color: var(--green); border: 1px solid rgba(0,230,118,0.2); }
+  .tag-intermediate { background: rgba(255,109,0,0.08); color: var(--orange); border: 1px solid rgba(255,109,0,0.2); }
+  .tag-advanced { background: rgba(255,61,87,0.08); color: var(--red); border: 1px solid rgba(255,61,87,0.2); }
+
+  .q-title {
+    font-family: 'EB Garamond', serif;
+    font-size: 16px;
+    color: #e0e8ff;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+  .q-preview { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .q-arrow {
+    margin-left: auto;
+    color: var(--dim);
+    font-size: 18px;
+    transition: transform 0.3s;
+    flex-shrink: 0;
+    margin-top: 8px;
+  }
+  .q-card.open .q-arrow { transform: rotate(180deg); color: var(--cyan); }
+
+  /* ── EXPANDED BODY ── */
+  .q-body {
+    display: none;
+    padding: 0 22px 22px;
+    border-top: 1px solid var(--border);
+  }
+  .q-card.open .q-body { display: block; }
+
+  .question-block {
+    background: rgba(157,111,255,0.05);
+    border: 1px solid rgba(157,111,255,0.18);
+    border-radius: 6px;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: #c8cce8;
+    line-height: 1.8;
+    margin: 18px 0;
+  }
+  .qb-label { font-size: 10px; color: var(--purple); letter-spacing: 2px; display: block; margin-bottom: 8px; }
+
+  /* Diagram */
+  .diagram-box {
+    background: rgba(0,0,0,0.45);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .diagram-label { font-size: 9px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+  .diagram-box svg { max-width: 320px; width: 100%; }
+
+  /* Solution toggle */
+  .sol-toggle {
+    width: 100%;
+    padding: 11px;
+    background: transparent;
+    border: 1px solid var(--dim);
+    border-radius: 6px;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    transition: all 0.2s;
+  }
+  .sol-toggle:hover, .sol-toggle.revealed {
+    border-color: rgba(0,229,255,0.35);
+    background: rgba(0,229,255,0.06);
+    color: var(--cyan);
+  }
+
+  /* Solution steps */
+  .solution-steps { margin-top: 14px; }
+  .step {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .step-num {
+    min-width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(0,229,255,0.1);
+    border: 1px solid rgba(0,229,255,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: var(--cyan);
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-content {
+    background: rgba(0,229,255,0.025);
+    border: 1px solid rgba(0,229,255,0.1);
+    border-radius: 6px;
+    padding: 12px 16px;
+    flex: 1;
+  }
+  .step-heading {
+    font-size: 10px;
+    color: var(--cyan);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .step-text {
+    font-size: 12.5px;
+    color: #c0c8e0;
+    line-height: 1.8;
+    white-space: pre-wrap;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    margin-top: 60px;
+    font-size: 10px;
+    color: #2a2a40;
+    letter-spacing: 3px;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-18px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  /* hidden class for filter */
+  .q-card.hidden { display: none; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--dim); border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <header>
+    <div class="badge">Physics · Circuit Theory</div>
+    <h1>Kirchhoff's Laws</h1>
+    <p>Theory &nbsp;·&nbsp; Diagrams &nbsp;·&nbsp; Numericals &nbsp;·&nbsp; Beginner to Advanced</p>
+  </header>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('theory',this)">📖 &nbsp;Theory</button>
+    <button class="tab-btn" onclick="switchTab('questions',this)">⚡ &nbsp;Questions</button>
+  </div>
+
+  <!-- ════════ THEORY PANEL ════════ -->
+  <div class="panel active" id="panel-theory">
+    <div class="theory-grid">
+
+      <!-- KCL -->
+      <div class="theory-card kcl" style="animation-delay:0.1s">
+        <div class="law-header">
+          <div class="law-icon">⬡</div>
+          <div>
+            <div class="law-subtitle">First Law — Junction Rule</div>
+            <div class="law-title">Kirchhoff's Current Law (KCL)</div>
+          </div>
+        </div>
+        <div class="statement-box">
+          At any junction (node) in an electrical circuit, the algebraic sum of all currents meeting at the node is <strong style="color:#e0e8ff">zero</strong>. Equivalently, the total current entering a node equals the total current leaving it.
+        </div>
+        <div class="formula-box">ΣI<sub>in</sub> = ΣI<sub>out</sub> &nbsp;&nbsp;&nbsp; OR &nbsp;&nbsp;&nbsp; ΣI = 0 (at node)</div>
+        <div class="basis-row">
+          <span class="basis-label">BASIS:</span>
+          <span class="basis-tag">Conservation of Electric Charge</span>
+        </div>
+        <div class="key-points">
+          <div class="kp">Current entering a node → taken as positive (+)</div>
+          <div class="kp">Current leaving a node → taken as negative (−)</div>
+          <div class="kp">Applies to every node in any network, DC or AC</div>
+          <div class="kp">Charge cannot be created or destroyed at a node</div>
+        </div>
+      </div>
+
+      <!-- KVL -->
+      <div class="theory-card kvl" style="animation-delay:0.25s">
+        <div class="law-header">
+          <div class="law-icon">↻</div>
+          <div>
+            <div class="law-subtitle">Second Law — Loop Rule</div>
+            <div class="law-title">Kirchhoff's Voltage Law (KVL)</div>
+          </div>
+        </div>
+        <div class="statement-box">
+          The algebraic sum of all EMFs and voltage drops around any <strong style="color:#e0e8ff">closed loop</strong> in a circuit is zero. Energy gained by charges from EMF sources equals energy lost in resistances.
+        </div>
+        <div class="formula-box">ΣE = ΣIR &nbsp;&nbsp;&nbsp; OR &nbsp;&nbsp;&nbsp; ΣV = 0 (around loop)</div>
+        <div class="basis-row">
+          <span class="basis-label">BASIS:</span>
+          <span class="basis-tag">Conservation of Energy</span>
+        </div>
+        <div class="key-points">
+          <div class="kp">Choose a traversal direction (CW or CCW)</div>
+          <div class="kp">EMF traversed − to + → positive; + to − → negative</div>
+          <div class="kp">Resistor in current direction → −IR; against → +IR</div>
+          <div class="kp">A charge completing a loop returns to same potential</div>
+        </div>
+      </div>
+
+      <!-- Sign Convention Summary -->
+      <div class="theory-card" style="border-left:4px solid var(--purple); animation-delay:0.4s">
+        <div class="law-header">
+          <div class="law-icon" style="background:rgba(157,111,255,0.1);border:1px solid rgba(157,111,255,0.3);color:var(--purple)">±</div>
+          <div>
+            <div class="law-subtitle" style="color:var(--purple)">Quick Reference</div>
+            <div class="law-title">Sign Convention Summary</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12px;">
+          <div style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:6px;padding:14px;">
+            <div style="color:var(--cyan);font-size:10px;letter-spacing:2px;margin-bottom:10px">KCL SIGN RULE</div>
+            <div style="color:#9a9ab8;line-height:1.8">Currents IN → +ve<br>Currents OUT → −ve<br>ΣI = 0 at every node</div>
+          </div>
+          <div style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:6px;padding:14px;">
+            <div style="color:var(--orange);font-size:10px;letter-spacing:2px;margin-bottom:10px">KVL SIGN RULE</div>
+            <div style="color:#9a9ab8;line-height:1.8">EMF (−→+) → +E<br>EMF (+→−) → −E<br>Resistor (with I) → −IR</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;font-size:11px;color:var(--muted);line-height:1.8;background:rgba(157,111,255,0.04);border:1px solid rgba(157,111,255,0.15);border-radius:6px;padding:12px 16px;">
+          <strong style="color:var(--purple)">Tip:</strong> Always assign current directions before applying KVL. If the solved value is negative, it simply means the actual direction is opposite to your assumed direction — the magnitude is still correct.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ════════ QUESTIONS PANEL ════════ -->
+  <div class="panel" id="panel-questions">
+
+    <!-- Filters -->
+    <div class="filter-bar">
+      <span class="filter-label">LAW:</span>
+      <button class="filter-btn active-law" data-law="All" onclick="filterLaw(this)">All</button>
+      <button class="filter-btn" data-law="KCL" onclick="filterLaw(this)">KCL</button>
+      <button class="filter-btn" data-law="KVL" onclick="filterLaw(this)">KVL</button>
+      <button class="filter-btn" data-law="BOTH" onclick="filterLaw(this)">Both</button>
+      <span class="filter-sep"></span>
+      <span class="filter-label">LEVEL:</span>
+      <button class="filter-btn active-level" data-level="All" onclick="filterLevel(this)">All</button>
+      <button class="filter-btn" data-level="Beginner" onclick="filterLevel(this)">Beginner</button>
+      <button class="filter-btn" data-level="Intermediate" onclick="filterLevel(this)">Intermediate</button>
+      <button class="filter-btn" data-level="Advanced" onclick="filterLevel(this)">Advanced</button>
+    </div>
+
+    <!-- Q1 -->
+    <div class="q-card" data-law="KCL" data-level="Beginner">
+      <div class="q-header" onclick="toggleQ(this)">
+        <div class="q-num">1</div>
+        <div style="flex:1">
+          <div class="q-meta">
+            <span class="tag tag-beginner">Beginner</span>
+            <span class="tag tag-law">KCL</span>
+            <span class="tag tag-type">Theoretical</span>
+          </div>
+          <div class="q-title">State KCL and its physical basis</div>
+          <div class="q-preview">State Kirchhoff's Current Law. What physical principle is it based on? Give a real-world analogy.</div>
+        </div>
+        <div class="q-arrow">▾</div>
+      </div>
+      <div class="q-body">
+        <div class="question-block">
+          <span class="qb-label">◈ QUESTION</span>
+          State Kirchhoff's Current Law. What physical principle is it based on? Give a real-world analogy to help understand it.
+        </div>
+        <button class="sol-toggle" onclick="toggleSol(this)">▾ &nbsp;SHOW COMPLETE SOLUTION</button>
+        <div class="solution-steps" style="display:none">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-heading">Statement of KCL</div>
+              <div class="step-text">At any junction (node) in an electrical circuit, the algebraic sum of all currents is zero.
+
+ΣI = 0 at a node
+OR: ΣI_in = ΣI_out
+
+Convention: Currents entering the node are positive (+); currents leaving are negative (−).</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-heading">Physical Basis</div>
+              <div class="step-text">KCL is based on the Law of Conservation of Electric Charge.
+
+Electric charge is neither created nor destroyed at a junction. Since current is rate of flow of charge (I = dq/dt), whatever charge flows into a node per unit time must flow out in the same time — giving ΣI = 0.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-heading">Real-World Analogy</div>
+              <div class="step-text">Think of water pipes meeting at a junction (T-joint):
+• Pipe 1 supplies 10 L/s into the joint
+• Pipe 2 supplies 5 L/s into the joint
+• Pipe 3 must drain 15 L/s out of the joint
+
+No water is created or destroyed at the joint — it all balances. Exactly the same logic applies to electric current at a circuit node.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="q-card" data-law="KVL" data-level="Beginner">
+      <div class="q-header" onclick="toggleQ(this)">
+        <div class="q-num">2</div>
+        <div style="flex:1">
+          <div class="q-meta">
+            <span class="tag tag-beginner">Beginner</span>
+            <span class="tag tag-law">KVL</span>
+            <span class="tag tag-type">Theoretical</span>
+          </div>
+          <div class="q-title">State KVL and explain sign convention</div>
+          <div class="q-preview">State Kirchhoff's Voltage Law. Explain the sign convention for EMF sources and resistors in a loop.</div>
+        </div>
+        <div class="q-arrow">▾</div>
+      </div>
+      <div class="q-body">
+        <div class="question-block">
+          <span class="qb-label">◈ QUESTION</span>
+          State Kirchhoff's Voltage Law. Explain the sign convention used when traversing a closed loop containing EMF sources and resistors. What is its physical basis?
+        </div>
+        <button class="sol-toggle" onclick="toggleSol(this)">▾ &nbsp;SHOW COMPLETE SOLUTION</button>
+        <div class="solution-steps" style="display:none">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-heading">Statement of KVL</div>
+              <div class="step-text">The algebraic sum of all potential differences (EMFs and resistive drops) around any closed loop in a circuit is zero.
+
+ΣE − ΣIR = 0   OR   ΣV = 0 (around the loop)
+
+This is true for any closed path in any network, regardless of complexity.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-heading">Sign Convention — EMF Sources</div>
+              <div class="step-text">Choose a traversal direction (clockwise or anticlockwise) for the loop.
+
+• Traverse EMF from (−) terminal to (+) terminal → take as +E  [going with the EMF rise]
+• Traverse EMF from (+) terminal to (−) terminal → take as −E  [going against the EMF]
+
+Simple rule: if the EMF "helps" you move in the traversal direction → positive.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-heading">Sign Convention — Resistors</div>
+              <div class="step-text">• Traverse resistor in the SAME direction as assumed current I → voltage DROP = −IR
+• Traverse resistor OPPOSITE to assumed current I → voltage RISE = +IR
+
+Simple rule: moving in the direction of current → you're going "downhill" in potential → negative.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-heading">Physical Basis</div>
+              <div class="step-text">KVL is based on Conservation of Energy.
+
+When a unit charge makes a complete loop, it returns to its starting potential. So the net work done on the charge = net work done by the charge → net energy gain = net energy loss → ΣV = 0.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="q-card" data-law="KCL" data-level="Intermediate">
+      <div class="q-header" onclick="toggleQ(this)">
+        <div class="q-num">3</div>
+        <div style="flex:1">
+          <div class="q-meta">
+            <span class="tag tag-intermediate">Intermediate</span>
+            <span class="tag tag-law">KCL</span>
+            <span class="tag tag-type">Numerical</span>
+          </div>
+          <div class="q-title">KCL at a 4-branch node</div>
+          <div class="q-preview">At node P: I₁=3A and I₂=5A flow in, I₃=4A flows out. Find magnitude and direction of I₄.</div>
+        </div>
+        <div class="q-arrow">▾</div>
+      </div>
+      <div class="q-body">
+        <div class="question-block">
+          <span class="qb-label">◈ QUESTION</span>
+          At a node P, four branches meet. Currents I₁ = 3A and I₂ = 5A flow INTO node P. Current I₃ = 4A flows OUT of P. Using KCL, find the magnitude and direction of I₄.
+        </div>
+        <div class="diagram-box">
+          <div class="diagram-label">Circuit Diagram — Node P</div>
+          <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arr-in" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                <path d="M0,0 L6,3 L0,6 Z" fill="#00e5ff"/>
+              </marker>
+              <marker id="arr-out" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                <path d="M0,0 L6,3 L0,6 Z" fill="#ff6d00"/>
+              </marker>
+              <marker id="arr-unk" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                <path d="M0,0 L6,3 L0,6 Z" fill="#888"/>
+              </marker>
+            </defs>
+            <!-- node -->
+            <circle cx="120" cy="120" r="11" fill="#00e5ff" opacity="0.85"/>
+            <text x="129" y="117" fill="#00e5ff" font-size="13" font-family="'JetBrains Mono',monospace">P</text>
+            <!-- I1 top-left IN -->
+            <line x1="50" y1="50" x2="112" y2="112" stroke="#00e5ff" stroke-width="2" marker-end="url(#arr-in)"/>
+            <text x="22" y="46" fill="#00e5ff" font-size="12" font-family="monospace">I₁=3A</text>
+            <!-- I2 top-right IN -->
+            <line x1="190" y1="50" x2="128" y2="112" stroke="#00e5ff" stroke-width="2" marker-end="url(#arr-in)"/>
+            <text x="178" y="44" fill="#00e5ff" font-size="12" font-family="monospace">I₂=5A</text>
+            <!-- I3 left OUT -->
+            <line x1="120" y1="120" x2="36" y2="155" stroke="#ff6d00" stroke-width="2" marker-end="url(#arr-out)"/>
+            <text x="8" y="174" fill="#ff6d00" font-size="12" font-family="monospace">I₃=4A</text>
+            <!-- I4 bottom UNKNOWN -->
+            <line x1="120" y1="131" x2="120" y2="210" stroke="#888" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arr-unk)"/>
+            <text x="94" y="228" fill="#888" font-size="12" font-family="monospace">I₄ = ?</text>
+          </svg>
+        </div>
+        <button class="sol-toggle" onclick="toggleSol(this)">▾ &nbsp;SHOW COMPLETE SOLUTION</button>
+        <div class="solution-steps" style="display:none">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-heading">Apply KCL at Node P</div>
+              <div class="step-text">ΣI_in = ΣI_out
+
+I₁ + I₂ = I₃ + I₄
+
+Assume I₄ is leaving the node (downward). We will verify from the sign of the answer.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-heading">Substitute known values</div>
+              <div class="step-text">3 + 5 = 4 + I₄
+8 = 4 + I₄
+I₄ = 8 − 4
+I₄ = 4 A</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-heading">Interpret the result</div>
+              <div class="step-text">I₄ = +4 A → positive value confirms our assumed direction is correct.
+
+∴ I₄ = 4A flows OUT of node P (downward in the diagram).
+
+Verification: Currents IN = 3 + 5 = 8 A
+              Currents OUT = 4 + 4 = 8 A ✓</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="q-card" data-law="KVL" data-level="Intermediate">
+      <div class="q-header" onclick="toggleQ(this)">
+        <div class="q-num">4</div>
+        <div style="flex:1">
+          <div class="q-meta">
+            <span class="tag tag-intermediate">Intermediate</span>
+            <span class="tag tag-law">KVL</span>
+            <span class="tag tag-type">Numerical</span>
+          </div>
+          <div class="q-title">Single-loop series circuit</div>
+          <div class="q-preview">Series circuit: 12V battery, R₁=2Ω, R₂=4Ω, R₃=6Ω. Find current and voltage across each resistor using KVL.</div>
+        </div>
+        <div class="q-arrow">▾</div>
+      </div>
+      <div class="q-body">
+        <div class="question-block">
+          <span class="qb-label">◈ QUESTION</span>
+          A series circuit has a 12V battery (negligible internal resistance), R₁ = 2Ω, R₂ = 4Ω, and R₃ = 6Ω all connected in series. Using Kirchhoff's Voltage Law, find:
+          (a) The current I flowing in the circuit.
+          (b) The voltage drop across each resistor.
+          (c) Verify your answer using KVL.
+        </div>
+        <div class="diagram-box">
+          <div class="diagram-label">Series Loop Circuit</div>
+          <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+            <!-- Outer loop wires -->
+            <rect x="30" y="30" width="260" height="145" rx="10" fill="none" stroke="#2a2a40" stroke-width="1.5"/>
+            <!-- Battery (left side) -->
+            <line x1="30" y1="90" x2="30" y2="68" stroke="#ff6d00" stroke-width="3"/>
+            <line x1="18" y1="68" x2="42" y2="68" stroke="#ff6d00" stroke-width="3"/>
+            <line x1="22" y1="60" x2="38" y2="60" stroke="#ff6d00" stroke-width="2"/>
+            <line x1="30" y1="60" x2="30" y2="30" stroke="#ff6d00" stroke-width="2.5"/>
+            <text x="44" y="65" fill="#ff6d00" font-size="11" font-family="monospace">12V</text>
+            <text x="35" y="67" fill="#00e676" font-size="10">+</text>
+            <text x="35" y="83" fill="#ff3d57" font-size="10">−</text>
+            <!-- Current arrow (top) -->
+            <text x="115" y="22" fill="#888" font-size="11" font-family="monospace">→ I</text>
+            <!-- R1 (top) -->
+            <rect x="85" y="20" width="55" height="18" rx="4" fill="none" stroke="#00e5ff" stroke-width="1.8"/>
+            <text x="92" y="33" fill="#00e5ff" font-size="10" font-family="monospace">R₁=2Ω</text>
+            <!-- R2 (right side) -->
+            <rect x="262" y="68" width="18" height="62" rx="4" fill="none" stroke="#00e5ff" stroke-width="1.8"/>
+            <text x="240" y="100" fill="#00e5ff" font-size="10" font-family="monospace">R₂=4Ω</text>
+            <!-- R3 (bottom) -->
+            <rect x="120" y="158" width="55" height="18" rx="4" fill="none" stroke="#00e5ff" stroke-width="1.8"/>
+            <text x="126" y="171" fill="#00e5ff" font-size="10" font-family="monospace">R₃=6Ω</text>
+          </svg>
+        </div>
+        <button class="sol-toggle" onclick="toggleSol(this)">▾ &nbsp;SHOW COMPLETE SOLUTION</button>
+        <div class="solution-steps" style="display:none">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-heading">Apply KVL (traversing clockwise)</div>
+              <div class="step-text">Starting from the negative terminal of the battery, going clockwise:
+
++12 − I·R₁ − I·R₂ − I·R₃ = 0
+
+12 − 2I − 4I − 6I = 0</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-heading">Solve for current I</div>
+              <div class="step-text">12 − 12I = 0
+12I = 12
+I = 1 A
+
+∴ Current in the circuit = 1 A</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-heading">Voltage across each resistor</div>
+              <div class="step-text">V₁ = I × R₁ = 1 × 2 = 2 V
+V₂ = I × R₂ = 1 × 4 = 4 V
+V₃ = I × R₃ = 1 × 6 = 6 V</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-heading">Verification (KVL check)</div>
+              <div class="step-text">Sum of all voltage drops = V₁ + V₂ + V₃
+= 2 + 4 + 6 = 12 V
+
+This equals the EMF (12V) ✓
+
+KVL confirmed: 12 − 2 − 4 − 6 = 0 ✓</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="q-card" data-law="BOTH" data-level="Intermediate">
+      <div class="q-header" onclick="toggleQ(this)">
+        <div class="q-num">5</div>
+        <div style="flex:1">
+          <div class="q-meta">
+            <span class="tag tag-intermediate">Intermediate</span>
+            <span class="tag tag-law">KCL + KVL</span>
+            <span class="tag tag-type">Numerical</span>
+          </div>
+          <div class="q-title">Two-mesh circuit — Branch Current Method</div>
+          <div class="q-preview">E₁=10V, E₂=6V, R₁=2Ω, R₂=4Ω, R₃=3Ω. Find branch currents using KCL and KVL simultaneously.</div>
+        </div>
+        <div class="q-arrow">▾</div>
+      </div>
+      <div class="q-body">
+        <div class="question-block">
+          <span class="qb-label">◈ QUESTION</span>
+          In the two-loop circuit shown: E₁ = 10V, E₂ = 6V, R₁ = 2Ω (left branch), R₂ = 4Ω (shared middle branch), R₃ = 3Ω (right branch). Using Kirchhoff's Laws (KCL + KVL), find the current through each branch. State the equations clearly.
+        </div>
+        <div class="diagram-box">
+          <div class="diagram-label">Two-Mesh Circuit</div>
+          <svg viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg">
+            <!-- outer rect -->
+            <rect x="20" y="25" width="300" height="150" rx="6" fill="none" stroke="#2a2a40" stroke-width="1.5"/>
+            <!-- middle vertical -->
+            <line x1="170" y1="25" x2="170" y2="175" stroke="#2a2a40" stroke-width="2"/>
+            <!-- E1 left side -->
+            <line x1="20" y1="100" x2="20" y2="78" stroke="#ff6d00" stroke-width="2.5"/>
+            <line x1="11" y1="78" x2="29" y2="78" stroke="#ff6d00" stroke-width="2.5"/>
+            <line x1="14" y1="70" x2="26" y2="70" stroke="#ff6d00" stroke-width="2"/>
+            <line x1="20" y1="70" x2="20" y2="25" stroke="#ff6d00" stroke-width="2.5"/>
+            <text x="28" y="73" fill="#ff6d00" font-size="10" font-family="monospace">E₁=10V</text>
+            <!-- R1 top-left -->
+            <rect x="50" y="15" width="55" height="18" rx="3" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+            <text x="57" y="28" fill="#00e5ff" font-size="10" font-family="monospace">R₁=2Ω</text>
+            <!-- R2 middle -->
+            <rect x="158" y="70" width="24" height="60" rx="3" fill="none" stroke="#9d6fff" stroke-width="1.8"/>
+            <text x="138" y="65" fill="#9d6fff" font-size="10" font-family="monospace">R₂=4Ω</text>
+            <!-- E2 right side -->
+            <line x1="320" y1="100" x2="320" y2="78" stroke="#ff6d00" stroke-width="2.5"/>
+            <line x1="311" y1="78" x2="329" y2="78" stroke="#ff6d00" stroke-width="2.5"/>
+            <line x1="314" y1="70" x2="326" y2="70" stroke="#ff6d00" stroke-width="2"/>
+            <line x1="320" y1="70" x2="320" y2="25" stroke="#ff6d00" stroke-width="2.5"/>
+            <text x="270" y="73" fill="#ff6d00" font-size="10" font-family="monospace">E₂=6V</text>
+            <!-- R3 bottom-right -->
+            <rect x="215" y="162" width="55" height="18" rx="3" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+            <text x="222" y="175" fill="#00e5ff" font-size="10" font-family="monospace">R₃=3Ω</text>
+            <!-- loop labels -->
+            <text x="70" y="115" fill="#00e5ff" font-size="11" font-family="monospace" opacity="0.4">Loop 1</text>
+            <text x="195" y="115" fill="#ff6d00" font-size="11" font-family="monospace" opacity="0.4">Loop 2</text>
+            <!-- current labels -->
+            <text x="58" y="14" fill="#888" font-size="10" font-family="monospace">→ I₁</text>
+            <text x="222" y="160" fill="#888" font-size="10" font-family="monospace">← I₂</text>
+            <text x="174" y="107" fill="#9d6fff" font-size="10" font-family="monospace">I₃↓</text>
+          </svg>
+        </div>
+        <button class="sol-toggle" onclick="toggleSol(this)">▾ &nbsp;SHOW COMPLETE SOLUTION</button>
+        <div class="solution-steps" style="display:none">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-heading">Assign Branch Currents</div>
+              <div class="step-text">I₁ = current through left branch (E₁ and R₁)
+I₂ = current through right branch (E₂ and R₃)
+I₃ = current through middle branch (R₂)
+
+KCL at top node:
+I₁ = I₂ + I₃
+→ I₃ = I₁ − I₂  ... (KCL)</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-heading">KVL — Loop 1 (Left loop, clockwise)</div>
+              <div class="step-text">+E₁ − I₁·R₁ − I₃·R₂ = 0
+10 − 2I₁ − 4(I₁ − I₂) = 0
+10 − 2I₁ − 4I₁ + 4I₂ = 0
+10 = 6I₁ − 4I₂   ... (1)</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-heading">KVL — Loop 2 (Right loop, clockwise)</div>
+              <div class="step-text">+E₂ + I₃·R₂ − I₂·R₃ = 0
+(Note: traversing R₂ upward against I₃ → +I₃R₂)
+6 + 4(I₁ − I₂) − 3I₂ = 0
+6 + 4I₁ − 4I₂ − 3I₂ = 0
+4I₁ − 7I₂ = −6   ... (2)</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-heading">Solve Simultaneous Equations</div>
+              <div class="step-text">Eq (1): 6I₁ − 4I₂ = 10   → multiply by 7:  42I₁ − 28I₂ = 70
+Eq (2): 4I₁ − 7I₂ = −6  → multiply by 4:  16I₁ − 28I₂ = −24
+
+Subtract: (42−16)I₁ = 70−(−24) = 94
+26I₁ = 94
+I₁ = 94/26 ≈ 3.62 A
+
+From Eq (1): 6(3.62) − 4I₂ = 10
+21.69 − 4I₂ = 10
+I₂ = 11.69/4 ≈ 2.92 A</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <div class="step-heading">Find I₃ and Final Answers</div>
+              <div class="step-text">I₃ = I₁ − I₂ = 3.62 − 2.92 = 0.70 A
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+I₁ ≈ 3.62 A  (left branch, downward through E₁)
+I₂ ≈ 2.92 A  (right branch, downward through E₂)
+I₃ ≈ 0.70 A  (middle branch R₂, downward)
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Verification (KCL): I₁ = I₂ + I₃
+3.62 ≈ 2.92 + 0.70 = 3.62 ✓</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="q-card" data-law="BOTH" data-level="Advanced">
+      <div class="q-header" onclick="toggleQ(this)">
+        <div class="q-num">6</div>
+        <div style="flex:1">
+          <div class="q-meta">
+            <span class="tag tag-advanced">Advanced</span>
+            <span class="tag tag-law">KCL + KVL</span>
+            <span class="tag tag-type">Numerical</span>
+          </div>
+          <div class="q-title">Unbalanced Wheatstone Bridge</div>
+          <div class="q-preview">E=20V, r=1Ω, P=3Ω, Q=6Ω, R=6Ω, S=3Ω, G=5Ω. Bridge NOT balanced. Find galvanometer current using Kirchhoff's Laws.</div>
+        </div>
+        <div class="q-arrow">▾</div>
+      </div>
+      <div class="q-body">
+        <div class="question-block">
+          <span class="qb-label">◈ QUESTION</span>
+          In a Wheatstone bridge: battery EMF E = 20V with internal resistance r = 1Ω, P = 3Ω, Q = 6Ω, R = 6Ω, S = 3Ω, galvanometer resistance G = 5Ω. The bridge is NOT balanced. Using Kirchhoff's Laws, find:
+          (a) Verify the bridge is unbalanced.
+          (b) Find the current through the galvanometer.
+        </div>
+        <div class="diagram-box">
+          <div class="diagram-label">Wheatstone Bridge Circuit</div>
+          <svg viewBox="0 0 300 250" xmlns="http://www.w3.org/2000/svg">
+            <!-- Diamond shape -->
+            <polygon points="150,20 255,120 150,220 45,120" fill="none" stroke="#2a2a40" stroke-width="1"/>
+            <!-- Top-left arm: P -->
+            <line x1="150" y1="20" x2="45" y2="120" stroke="#00e5ff" stroke-width="2"/>
+            <text x="62" y="63" fill="#00e5ff" font-size="11" font-family="monospace">P=3Ω</text>
+            <!-- Top-right arm: Q -->
+            <line x1="150" y1="20" x2="255" y2="120" stroke="#00e5ff" stroke-width="2"/>
+            <text x="210" y="63" fill="#00e5ff" font-size="11" font-family="monospace">Q=6Ω</text>
+            <!-- Bottom-left arm: R -->
+            <line x1="45" y1="120" x2="150" y2="220" stroke="#00e5ff" stroke-width="2"/>
+            <text x="62" y="183" fill="#00e5ff" font-size="11" font-family="monospace">R=6Ω</text>
+            <!-- Bottom-right arm: S -->
+            <line x1="255" y1="120" x2="150" y2="220" stroke="#00e5ff" stroke-width="2"/>
+            <text x="200" y="183" fill="#00e5ff" font-size="11" font-family="monospace">S=3Ω</text>
+            <!-- Galvanometer (B to C horizontal) -->
+            <line x1="45" y1="120" x2="125" y2="120" stroke="#9d6fff" stroke-width="2" stroke-dasharray="4,2"/>
+            <circle cx="150" cy="120" r="14" fill="#0e0e1a" stroke="#9d6fff" stroke-width="2"/>
+            <text x="143" y="125" fill="#9d6fff" font-size="12" font-family="monospace">G</text>
+            <line x1="164" y1="120" x2="255" y2="120" stroke="#9d6fff" stroke-width="2" stroke-dasharray="4,2"/>
+            <text x="85" y="113" fill="#9d6fff" font-size="10" font-family="monospace">5Ω</text>
+            <!-- Battery A-D external -->
+            <line x1="150" y1="220" x2="150" y2="240" stroke="#ff6d00" stroke-width="2"/>
+            <line x1="150" y1="20" x2="150" y2="5" stroke="#ff6d00" stroke-width="2"/>
+            <!-- Node labels -->
+            <circle cx="150" cy="20" r="5" fill="#ff6d00"/>
+            <text x="158" y="19" fill="#aaa" font-size="11" font-family="monospace">A (+)</text>
+            <circle cx="45" cy="120" r="5" fill="#888"/>
+            <text x="15" y="119" fill="#aaa" font-size="11" font-family="monospace">B</text>
+            <circle cx="255" cy="120" r="5" fill="#888"/>
+            <text x="261" y="119" fill="#aaa" font-size="11" font-family="monospace">C</text>
+            <circle cx="150" cy="220" r="5" fill="#ff6d00"/>
+            <text x="158" y="233" fill="#ff6d00" font-size="10" font-family="monospace">D E=20V,r=1Ω</text>
+          </svg>
+        </div>
+        <button class="sol-toggle" onclick="toggleSol(this)">▾ &nbsp;SHOW COMPLETE SOLUTION</button>
+        <div class="solution-steps" style="display:none">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-heading">Check Balance Condition</div>
+              <div class="step-text">Wheatstone bridge is balanced when: P/Q = R/S
+
+P/Q = 3/6 = 0.5
+R/S = 6/3 = 2.0
+
+0.5 ≠ 2.0  → Bridge is NOT balanced ✓
+Therefore, galvanometer current ≠ 0.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-heading">Assign Mesh Currents</div>
+              <div class="step-text">Use mesh analysis with 3 mesh currents:
+I₁ = mesh current in left mesh A-B-D (clockwise)
+I₂ = mesh current in right mesh A-C-D (clockwise)
+I_G = current through galvanometer B→C
+
+KCL at node B: I_G = I₁ − I₁' (handled by mesh method)
+
+Total current from battery = I₁ + I₂</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-heading">KVL — Mesh 1 (A→B→D→A, clockwise)</div>
+              <div class="step-text">E − r(I₁+I₂) − P·I₁ − G(I₁−I₂) = 0
+
+Substituting values:
+20 − 1(I₁+I₂) − 3I₁ − 5(I₁−I₂) = 0
+20 − I₁ − I₂ − 3I₁ − 5I₁ + 5I₂ = 0
+20 = 9I₁ − 4I₂   ... (1)</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-heading">KVL — Mesh 2 (A→C→D→A, clockwise)</div>
+              <div class="step-text">E − r(I₁+I₂) − Q·I₂ + G(I₁−I₂) = 0
+(G term is positive because I₁−I₂ opposes mesh 2)
+
+20 − (I₁+I₂) − 6I₂ + 5(I₁−I₂) = 0
+20 − I₁ − I₂ − 6I₂ + 5I₁ − 5I₂ = 0
+20 = −4I₁ + 13I₂
+→ 4I₁ − 13I₂ = −20   ... (2)</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <div class="step-heading">Solve the Equations</div>
+              <div class="step-text">Eq (1): 9I₁ − 4I₂ = 20   → ×13:  117I₁ − 52I₂ = 260
+Eq (2): 4I₁ − 13I₂ = −20 → ×4:   16I₁ − 52I₂ = −80
+
+Subtract: 101I₁ = 340
+I₁ = 340/101 ≈ 3.37 A
+
+From (1): 9(3.37) − 4I₂ = 20
+30.33 − 4I₂ = 20
+I₂ = 10.33/4 ≈ 2.58 A</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">6</div>
+            <div class="step-content">
+              <div class="step-heading">Galvanometer Current</div>
+              <div class="step-text">I_G = I₁ − I₂ = 3.37 − 2.58
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+I_G ≈ 0.79 A  (from B to C through galvanometer)
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Note: If bridge were balanced (P/Q = R/S), then I_G = 0.
+The unbalance causes this 0.79A deflection current.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="q-card" data-law="BOTH" data-level="Advanced">
+      <div class="q-header" onclick="toggleQ(this)">
+        <div class="q-num">7</div>
+        <div style="flex:1">
+          <div class="q-meta">
+            <span class="tag tag-advanced">Advanced</span>
+            <span class="tag tag-law">KCL + KVL</span>
+            <span class="tag tag-type">Numerical</span>
+          </div>
+          <div class="q-title">Node Voltage Method — 5-resistor network</div>
+          <div class="q-preview">Two nodes A and B. R₁=5Ω, R₂=10Ω, R₃=20Ω, R₄=4Ω, R₅=8Ω connected to 24V source. Find VA, VB, and all branch currents.</div>
+        </div>
+        <div class="q-arrow">▾</div>
+      </div>
+      <div class="q-body">
+        <div class="question-block">
+          <span class="qb-label">◈ QUESTION</span>
+          In the circuit: R₁=5Ω connects node A to 24V supply. R₂=10Ω connects node A to ground. R₃=20Ω connects node A to node B. R₄=4Ω connects node B to ground. R₅=8Ω connects node B to 24V supply. Using the Node Voltage Method (Kirchhoff's Laws), find:
+          (a) Voltages VA and VB.
+          (b) Current through each resistor.
+          (c) Verify using KCL.
+        </div>
+        <div class="diagram-box">
+          <div class="diagram-label">Node Voltage Circuit</div>
+          <svg viewBox="0 0 340 195" xmlns="http://www.w3.org/2000/svg">
+            <!-- ground line -->
+            <line x1="40" y1="165" x2="300" y2="165" stroke="#444" stroke-width="2"/>
+            <line x1="155" y1="165" x2="155" y2="178"/> <!-- gnd symbol -->
+            <line x1="145" y1="178" x2="165" y2="178" stroke="#555" stroke-width="1.5"/>
+            <line x1="149" y1="183" x2="161" y2="183" stroke="#555" stroke-width="1.5"/>
+            <text x="140" y="195" fill="#555" font-size="10" font-family="monospace">GND = 0V</text>
+            <!-- 24V source left -->
+            <line x1="60" y1="165" x2="60" y2="108" stroke="#ff6d00" stroke-width="2"/>
+            <line x1="50" y1="108" x2="70" y2="108" stroke="#ff6d00" stroke-width="2.5"/>
+            <line x1="53" y1="100" x2="67" y2="100" stroke="#ff6d00" stroke-width="2"/>
+            <line x1="60" y1="100" x2="60" y2="38" stroke="#ff6d00" stroke-width="2"/>
+            <text x="24" y="103" fill="#ff6d00" font-size="10" font-family="monospace">24V</text>
+            <!-- R1 top-left (60→node A) -->
+            <rect x="75" y="28" width="50" height="18" rx="3" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+            <text x="82" y="41" fill="#00e5ff" font-size="10" font-family="monospace">R₁=5Ω</text>
+            <line x1="60" y1="38" x2="75" y2="38" stroke="#888" stroke-width="1.5"/>
+            <line x1="125" y1="38" x2="160" y2="38" stroke="#888" stroke-width="1.5"/>
+            <!-- Node A -->
+            <circle cx="167" cy="38" r="8" fill="#9d6fff" opacity="0.9"/>
+            <text x="178" y="34" fill="#9d6fff" font-size="12" font-family="monospace" font-weight="bold">A</text>
+            <!-- R2 A to ground -->
+            <line x1="167" y1="46" x2="167" y2="70" stroke="#888" stroke-width="1.5"/>
+            <rect x="155" y="70" width="24" height="50" rx="3" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+            <text x="137" y="92" fill="#00e5ff" font-size="10" font-family="monospace">R₂</text>
+            <text x="134" y="104" fill="#00e5ff" font-size="10" font-family="monospace">10Ω</text>
+            <line x1="167" y1="120" x2="167" y2="165" stroke="#888" stroke-width="1.5"/>
+            <!-- R3 A to B -->
+            <rect x="185" y="28" width="50" height="18" rx="3" fill="none" stroke="#9d6fff" stroke-width="1.5"/>
+            <text x="190" y="41" fill="#9d6fff" font-size="10" font-family="monospace">R₃=20Ω</text>
+            <line x1="175" y1="38" x2="185" y2="38" stroke="#888" stroke-width="1.5"/>
+            <line x1="235" y1="38" x2="258" y2="38" stroke="#888" stroke-width="1.5"/>
+            <!-- Node B -->
+            <circle cx="265" cy="38" r="8" fill="#9d6fff" opacity="0.9"/>
+            <text x="276" y="34" fill="#9d6fff" font-size="12" font-family="monospace" font-weight="bold">B</text>
+            <!-- R4 B to ground -->
+            <line x1="265" y1="46" x2="265" y2="70" stroke="#888" stroke-width="1.5"/>
+            <rect x="253" y="70" width="24" height="50" rx="3" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+            <text x="236" y="92" fill="#00e5ff" font-size="10" font-family="monospace">R₄</text>
+            <text x="233" y="104" fill="#00e5ff" font-size="10" font-family="monospace">4Ω</text>
+            <line x1="265" y1="120" x2="265" y2="165" stroke="#888" stroke-width="1.5"/>
+            <!-- R5 B to 24V (right side) -->
+            <line x1="265" y1="38" x2="300" y2="38" stroke="#888" stroke-width="1.5"/>
+            <line x1="300" y1="38" x2="300" y2="90" stroke="#888" stroke-width="1.5"/>
+            <rect x="288" y="90" width="24" height="45" rx="3" fill="none" stroke="#00e5ff" stroke-width="1.5"/>
+            <text x="272" y="108" fill="#00e5ff" font-size="10" font-family="monospace">R₅</text>
+            <text x="270" y="120" fill="#00e5ff" font-size="10" font-family="monospace">8Ω</text>
+            <line x1="300" y1="135" x2="300" y2="165" stroke="#888" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <button class="sol-toggle" onclick="toggleSol(this)">▾ &nbsp;SHOW COMPLETE SOLUTION</button>
+        <div class="solution-steps" style="display:none">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <div class="step-heading">Set up Node Voltage Equations</div>
+              <div class="step-text">Reference node: GND = 0V
+Unknown voltages: VA, VB
+
+At node A — KCL (sum of currents LEAVING node A = 0):
+(VA − 24)/R₁ + VA/R₂ + (VA − VB)/R₃ = 0
+(VA − 24)/5 + VA/10 + (VA − VB)/20 = 0</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <div class="step-heading">Simplify Node A equation</div>
+              <div class="step-text">Multiply through by LCM = 20:
+4(VA − 24) + 2VA + (VA − VB) = 0
+4VA − 96 + 2VA + VA − VB = 0
+7VA − VB = 96   ... (1)</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <div class="step-heading">Node B equation</div>
+              <div class="step-text">KCL at node B (sum of currents LEAVING = 0):
+(VB − VA)/R₃ + VB/R₄ + (VB − 24)/R₅ = 0
+(VB − VA)/20 + VB/4 + (VB − 24)/8 = 0
+
+Multiply by LCM = 40:
+2(VB − VA) + 10VB + 5(VB − 24) = 0
+2VB − 2VA + 10VB + 5VB − 120 = 0
+−2VA + 17VB = 120   ... (2)</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <div class="step-heading">Solve Equations (1) and (2)</div>
+              <div class="step-text">From (1): VB = 7VA − 96
+
+Substitute into (2):
+−2VA + 17(7VA − 96) = 120
+−2VA + 119VA − 1632 = 120
+117VA = 1752
+VA = 1752/117 = 14.97 V ≈ 15 V
+
+VB = 7(15) − 96 = 105 − 96 = 9 V
+
+━━━━━━━━━━━━━━━━━━━━━━━━
+VA = 15 V,   VB = 9 V
+━━━━━━━━━━━━━━━━━━━━━━━━</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <div class="step-heading">Calculate Branch Currents</div>
+              <div class="step-text">I₁ = (24 − VA)/R₁ = (24 − 15)/5  = 9/5  = 1.80 A
+I₂ = VA/R₂         = 15/10        = 15/10 = 1.50 A
+I₃ = (VA − VB)/R₃  = (15 − 9)/20  = 6/20  = 0.30 A
+I₄ = VB/R₄         = 9/4          = 9/4   = 2.25 A
+I₅ = (24 − VB)/R₅  = (24 − 9)/8   = 15/8  = 1.875 A</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">6</div>
+            <div class="step-content">
+              <div class="step-heading">Verification using KCL</div>
+              <div class="step-text">At node A: I₁ = I₂ + I₃
+1.80 = 1.50 + 0.30 = 1.80 ✓
+
+At node B: I₃ + I₅ = I₄
+0.30 + 1.875 = 2.175 ≈ 2.25 (small rounding error due to VA≈15)
+
+Exact: VA = 14.974, VB = 8.818
+I₄ = 8.818/4 = 2.205 A
+I₃ = (14.974−8.818)/20 = 0.308 A
+I₅ = (24−8.818)/8 = 1.898 A
+I₃ + I₅ = 0.308 + 1.898 = 2.206 ≈ I₄ ✓</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end questions panel -->
+
+  <footer>KIRCHHOFF'S LAWS &nbsp;·&nbsp; COMPLETE QUESTION BANK &nbsp;·&nbsp; BEGINNER TO ADVANCED</footer>
+</div>
+
+<script>
+  let activeLaw = 'All';
+  let activeLevel = 'All';
+
+  function switchTab(id, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function toggleQ(header) {
+    const card = header.closest('.q-card');
+    card.classList.toggle('open');
+  }
+
+  function toggleSol(btn) {
+    const stepsDiv = btn.nextElementSibling;
+    const isShown = stepsDiv.style.display === 'block';
+    stepsDiv.style.display = isShown ? 'none' : 'block';
+    btn.classList.toggle('revealed', !isShown);
+    btn.textContent = isShown ? '▾  SHOW COMPLETE SOLUTION' : '▴  HIDE SOLUTION';
+  }
+
+  function filterLaw(btn) {
+    document.querySelectorAll('[data-law].filter-btn').forEach(b => b.classList.remove('active-law'));
+    btn.classList.add('active-law');
+    activeLaw = btn.dataset.law;
+    applyFilters();
+  }
+
+  function filterLevel(btn) {
+    document.querySelectorAll('[data-level].filter-btn').forEach(b => b.classList.remove('active-level'));
+    btn.classList.add('active-level');
+    activeLevel = btn.dataset.level;
+    applyFilters();
+  }
+
+  function applyFilters() {
+    document.querySelectorAll('.q-card').forEach(card => {
+      const lawMatch = activeLaw === 'All' || card.dataset.law === activeLaw;
+      const levelMatch = activeLevel === 'All' || card.dataset.level === activeLevel;
+      card.classList.toggle('hidden', !(lawMatch && levelMatch));
+    });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vedavan Wellness Assessment</title>
+<meta name="description" content="Vedavan Wellness Assessment — discover your Ayurvedic archetype, focus areas, and the herbs suited to your constitution.">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>if(window.tailwind){tailwind.config={theme:{extend:{colors:{forest:"#0F1E17",ivory:"#F5F0E4",ivory2:"#ECE5D2",ink:"#17211B",inksoft:"#5B6359",gold:"#C2922E",goldsoft:"#E4C77E",clay:"#8B4A35",sage:"#6E8F6B",line:"#DED5B8"},fontFamily:{display:['"Fraunces"','Georgia','serif'],sans:['"Inter"','system-ui','sans-serif'],mono:['"IBM Plex Mono"','monospace']}}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--forest:#0F1E17;--ivory:#F5F0E4;--ivory2:#ECE5D2;--ink:#17211B;--inksoft:#5B6359;--inkfaint:#9a9580;--gold:#C2922E;--goldsoft:#E4C77E;--clay:#8B4A35;--sage:#6E8F6B;--line:#DED5B8;--red:#A4503D}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:Inter,system-ui,sans-serif;background:var(--ivory);color:var(--ink);-webkit-font-smoothing:antialiased}
+::selection{background:var(--gold);color:var(--forest)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
+
+/* screens */
+.screen{display:none}.screen.active{display:block}
+
+/* radio pills */
+.opt-input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.opt-label{display:flex;align-items:center;gap:.75rem;cursor:pointer;border:1.5px solid var(--line);border-radius:14px;padding:13px 16px;background:#fff;transition:border-color .15s,background .15s,transform .1s;font-size:14px;color:var(--ink);line-height:1.3}
+.opt-label:hover{border-color:var(--gold);background:#fdf9f1}
+.opt-label:active{transform:scale(.99)}
+.opt-dot{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--line);flex:none;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.opt-dot::after{content:'';width:7px;height:7px;border-radius:50%;background:#fff;opacity:0;transform:scale(.4);transition:all .15s}
+.opt-input:checked+.opt-label{border-color:var(--gold);background:#FBF6E9;box-shadow:inset 0 0 0 1px var(--gold)}
+.opt-input:checked+.opt-label .opt-dot{border-color:var(--gold);background:var(--gold)}
+.opt-input:checked+.opt-label .opt-dot::after{opacity:1;transform:scale(1)}
+.opt-input:focus-visible+.opt-label{outline:2px solid var(--gold);outline-offset:2px}
+
+/* buttons */
+.btn-gold{display:inline-flex;align-items:center;gap:.6rem;background:var(--gold);color:var(--forest);font-family:Inter,sans-serif;font-weight:500;font-size:15px;padding:13px 26px;border-radius:999px;border:none;cursor:pointer;transition:background .15s,transform .1s;text-decoration:none}
+.btn-gold:hover{background:var(--goldsoft)}.btn-gold:active{transform:scale(.98)}.btn-gold:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-ghost{display:inline-flex;align-items:center;gap:.5rem;background:transparent;color:var(--ink);font-family:Inter,sans-serif;font-weight:500;font-size:14px;padding:10px 18px;border-radius:999px;border:1.5px solid var(--line);cursor:pointer;transition:border-color .15s,background .15s}
+.btn-ghost:hover{border-color:var(--gold);background:#fff}.btn-ghost:disabled{opacity:.4;cursor:not-allowed}
+
+/* progress */
+.prog-wrap{height:4px;background:var(--ivory2);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+/* report */
+.dim-row{display:flex;align-items:center;gap:10px}
+.dim-name{font-size:12.5px;color:var(--inksoft);width:80px;flex:none;line-height:1.25}
+.dim-track{flex:1;height:7px;border-radius:4px;background:var(--ivory2);overflow:hidden}
+.dim-fill{height:100%;border-radius:4px;width:0%;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.dim-val{font-family:'IBM Plex Mono',monospace;font-size:12px;width:28px;text-align:right;flex:none;color:var(--ink)}
+.rec-item{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.6;color:#3c4339;padding:8px 0;border-bottom:1px solid var(--ivory2)}
+.rec-item:last-child{border-bottom:none}
+.rec-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);margin-top:9px;flex:none}
+
+/* grain */
+.grain{pointer-events:none;position:absolute;inset:0;opacity:.05;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+
+/* animations */
+@keyframes floatin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes drawline{to{stroke-dashoffset:0}}
+.fade-in{animation:floatin .55s ease-out both}
+.hero-line path{stroke-dasharray:620;stroke-dashoffset:620;animation:drawline 2.4s ease-out .4s forwards}
+@media(prefers-reduced-motion:reduce){.fade-in{animation:none;opacity:1}.hero-line path{animation:none;stroke-dashoffset:0}}
+
+/* product card */
+.prod-card{display:flex;gap:14px;align-items:flex-start;padding:15px 0;border-bottom:1px solid var(--ivory2)}
+.prod-card:last-child{border-bottom:none}
+.prod-thumb{width:60px;height:60px;border-radius:10px;object-fit:cover;flex:none;background:var(--ivory2)}
+.prod-thumb-fb{width:60px;height:60px;border-radius:10px;background:#F0EAD9;flex:none;display:none;align-items:center;justify-content:center;font-size:24px}
+.prod-tag{display:inline-block;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:20px;background:#FBF6E9;color:var(--clay);margin-bottom:5px}
+.prod-name{font-size:14.5px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:2px}
+.prod-sub{font-size:11.5px;color:var(--inkfaint);margin-bottom:5px;line-height:1.4}
+.prod-reason{font-size:12.5px;color:var(--inksoft);line-height:1.55}
+.prod-price-row{display:flex;align-items:center;gap:12px;margin-top:8px}
+.prod-price{font-size:13px;font-weight:600;color:var(--gold)}
+.prod-btn{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--clay);text-decoration:none;border:1.5px solid var(--clay);padding:5px 13px;border-radius:999px;transition:background .15s,color .15s}
+.prod-btn:hover{background:var(--clay);color:#fff}
+
+/* report card */
+.rpt-card{background:#fff;border-radius:20px;padding:22px 22px;box-shadow:0 1px 2px rgba(23,33,27,.04),0 8px 28px -10px rgba(23,33,27,.12);margin-bottom:14px}
+.rpt-eyebrow{font-size:10.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--clay);margin-bottom:16px}
+
+/* layout */
+.wrap{max-width:660px;margin:0 auto;padding:0 20px}
+.wrap-wide{max-width:860px;margin:0 auto;padding:0 20px}
+
+/* archetype badge */
+.arch-sub{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:rgba(245,240,228,.5);margin-bottom:.5rem}
+
+/* ayurvedic term tooltips */
+.ayur-term{border-bottom:1px dashed rgba(194,146,46,.65);cursor:help;white-space:nowrap;transition:border-color .15s}
+.ayur-term:hover,.ayur-term.tip-open{border-color:var(--gold)}
+/* on dark backgrounds the dash needs to be lighter */
+.scr-dark .ayur-term{border-bottom-color:rgba(228,199,126,.5)}
+.scr-dark .ayur-term:hover,.scr-dark .ayur-term.tip-open{border-color:#E4C77E}
+
+#ayur-tip{
+  position:fixed;z-index:9999;max-width:240px;min-width:180px;
+  background:var(--forest);border:1px solid rgba(228,199,126,.2);
+  border-radius:12px;padding:12px 15px;
+  box-shadow:0 8px 32px rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.04);
+  pointer-events:none;opacity:0;
+  transition:opacity .18s ease,transform .18s ease;
+  transform:translateY(4px);
+}
+#ayur-tip.visible{opacity:1;transform:translateY(0);pointer-events:auto}
+#ayur-tip-label{display:block;font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--goldsoft);margin-bottom:6px}
+#ayur-tip-def{display:block;font-size:12.5px;color:rgba(245,240,228,.82);line-height:1.6}
+#ayur-tip-close{display:none;position:absolute;top:8px;right:10px;background:none;border:none;color:rgba(245,240,228,.4);font-size:16px;cursor:pointer;padding:2px 4px;line-height:1}
+@media(hover:none){#ayur-tip-close{display:block}}
+</style>
+</head>
+<body style="background:var(--ivory)">
+<div id="app">
+
+<!-- ============================================================ SPLASH -->
+<section id="screen-splash" class="screen active">
+<div class="relative min-h-screen flex items-center overflow-hidden" style="background:var(--forest)">
+  <div class="grain"></div>
+  <svg class="absolute right-0 top-1/2 opacity-50" style="transform:translateY(-50%)" width="400" height="520" viewBox="0 0 400 520" aria-hidden="true">
+    <circle cx="400" cy="260" r="70"  fill="none" stroke="#E4C77E" stroke-opacity=".18" stroke-width="1.2"/>
+    <circle cx="400" cy="260" r="130" fill="none" stroke="#E4C77E" stroke-opacity=".13" stroke-width="1.2"/>
+    <circle cx="400" cy="260" r="195" fill="none" stroke="#E4C77E" stroke-opacity=".08" stroke-width="1.2"/>
+    <circle cx="400" cy="260" r="260" fill="none" stroke="#E4C77E" stroke-opacity=".05" stroke-width="1.2"/>
+  </svg>
+  <div class="wrap relative z-10 w-full py-28">
+    <p class="fade-in" style="animation-delay:.04s;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:#E4C77E;margin-bottom:1.4rem">Vedavan &nbsp;·&nbsp; Wellness Assessment</p>
+    <h1 class="fade-in" style="animation-delay:.12s;font-family:'Fraunces',Georgia,serif;font-size:clamp(40px,8vw,68px);line-height:1.04;font-style:italic;font-weight:500;color:#F5F0E4;margin-bottom:1.1rem">Know your<br>wellness score.</h1>
+    <p class="fade-in" style="animation-delay:.2s;font-size:15px;color:rgba(245,240,228,.65);max-width:370px;line-height:1.72;margin-bottom:2.2rem">Discover your Ayurvedic archetype, your focus areas, and your Prakriti.</p>
+    <svg class="hero-line fade-in" style="animation-delay:.08s;display:block;margin-bottom:2rem" width="264" height="36" viewBox="0 0 264 36" aria-hidden="true">
+      <path d="M0 18 H62 L76 5 L90 31 L104 18 H148 L158 11 L168 25 L178 18 H264" fill="none" stroke="#C2922E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div class="fade-in" style="animation-delay:.3s">
+      <button onclick="App.start()" class="btn-gold" style="font-size:15px">Begin the check-in <span style="margin-left:2px">→</span></button>
+      <p style="margin-top:14px;font-size:12px;color:rgba(245,240,228,.35)">~2 minutes &nbsp;·&nbsp; no account needed</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ============================================================= STEPS -->
+<section id="screen-step" class="screen">
+<div class="min-h-screen flex flex-col" style="background:var(--ivory)">
+  <div class="wrap-wide w-full pt-6 pb-3">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <span id="step-label" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--clay)"></span>
+      <span id="step-dim" style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--inkfaint)"></span>
+    </div>
+    <div class="prog-wrap"><div class="prog-fill" id="prog-fill"></div></div>
+  </div>
+  <div class="wrap flex-1 w-full py-10" id="step-content"></div>
+  <div class="wrap-wide w-full pb-8 pt-5" style="border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between">
+    <button onclick="App.prev()" class="btn-ghost">← Back</button>
+    <button onclick="App.next()" id="btn-next" class="btn-gold" disabled>Continue →</button>
+  </div>
+</div>
+</section>
+
+<!-- ========================================================= LEAD GATE -->
+<section id="screen-lead" class="screen">
+<div class="min-h-screen flex flex-col items-center justify-center" style="background:var(--forest);position:relative;overflow:hidden;">
+  <div class="grain"></div>
+  <svg class="absolute right-0 bottom-0 opacity-30" width="320" height="320" viewBox="0 0 320 320" aria-hidden="true">
+    <circle cx="320" cy="320" r="90"  fill="none" stroke="#E4C77E" stroke-opacity=".2" stroke-width="1"/>
+    <circle cx="320" cy="320" r="160" fill="none" stroke="#E4C77E" stroke-opacity=".1" stroke-width="1"/>
+    <circle cx="320" cy="320" r="240" fill="none" stroke="#E4C77E" stroke-opacity=".06" stroke-width="1"/>
+  </svg>
+
+  <div class="wrap relative z-10 w-full py-16" style="max-width:520px">
+    <!-- pulse line motif -->
+    <svg width="120" height="24" viewBox="0 0 120 24" style="display:block;margin-bottom:1.8rem" aria-hidden="true">
+      <path d="M0 12 H28 L36 3 L44 21 L52 12 H80 L86 7 L92 17 L98 12 H120" fill="none" stroke="#C2922E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+
+    <p style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:#E4C77E;margin-bottom:1rem">Your report is ready</p>
+    <h2 style="font-family:'Fraunces',Georgia,serif;font-size:clamp(26px,5vw,38px);font-style:italic;font-weight:500;color:#F5F0E4;margin-bottom:.75rem;line-height:1.1">Where shall we<br>send your results?</h2>
+    <p style="font-size:14px;color:rgba(245,240,228,.6);line-height:1.7;margin-bottom:2rem;max-width:360px">Enter your details and we'll also send you a personalised 7-day Ayurvedic routine based on your scores.</p>
+
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px">
+      <div>
+        <label for="lead-name" style="display:block;font-size:12px;font-weight:500;color:rgba(245,240,228,.55);margin-bottom:6px;letter-spacing:.04em">Your name</label>
+        <input id="lead-name" type="text" autocomplete="given-name" placeholder="e.g. Arjun"
+          style="width:100%;padding:13px 16px;border-radius:12px;border:1.5px solid rgba(222,213,184,.25);background:rgba(245,240,228,.07);color:#F5F0E4;font-size:15px;font-family:Inter,sans-serif;outline:none;transition:border-color .15s"
+          oninput="Lead.validate()" onfocus="this.style.borderColor='rgba(194,146,46,.7)'" onblur="this.style.borderColor='rgba(222,213,184,.25)'">
+      </div>
+      <div>
+        <label for="lead-email" style="display:block;font-size:12px;font-weight:500;color:rgba(245,240,228,.55);margin-bottom:6px;letter-spacing:.04em">Email address</label>
+        <input id="lead-email" type="email" autocomplete="email" placeholder="you@example.com"
+          style="width:100%;padding:13px 16px;border-radius:12px;border:1.5px solid rgba(222,213,184,.25);background:rgba(245,240,228,.07);color:#F5F0E4;font-size:15px;font-family:Inter,sans-serif;outline:none;transition:border-color .15s"
+          oninput="Lead.validate()" onfocus="this.style.borderColor='rgba(194,146,46,.7)'" onblur="this.style.borderColor='rgba(222,213,184,.25)'">
+        <p id="lead-email-err" style="display:none;font-size:12px;color:#E4836A;margin-top:5px">Please enter a valid email address.</p>
+      </div>
+      <div>
+        <label for="lead-phone" style="display:block;font-size:12px;font-weight:500;color:rgba(245,240,228,.55);margin-bottom:6px;letter-spacing:.04em">
+          Phone number <span style="color:rgba(245,240,228,.28);font-weight:400">(optional)</span>
+        </label>
+        <div style="display:flex;gap:0">
+          <span style="display:flex;align-items:center;padding:0 12px;background:rgba(245,240,228,.07);border:1.5px solid rgba(222,213,184,.25);border-right:none;border-radius:12px 0 0 12px;color:rgba(245,240,228,.55);font-size:14px;font-family:Inter,sans-serif;white-space:nowrap">🇮🇳 +91</span>
+          <input id="lead-phone" type="tel" autocomplete="tel-national" placeholder="98765 43210"
+            style="flex:1;padding:13px 16px;border-radius:0 12px 12px 0;border:1.5px solid rgba(222,213,184,.25);background:rgba(245,240,228,.07);color:#F5F0E4;font-size:15px;font-family:Inter,sans-serif;outline:none;transition:border-color .15s;min-width:0"
+            oninput="Lead.validate()" onfocus="this.style.borderColor='rgba(194,146,46,.7)'" onblur="this.style.borderColor='rgba(222,213,184,.25)'">
+        </div>
+        <p id="lead-phone-err" style="display:none;font-size:12px;color:#E4836A;margin-top:5px">Please enter a valid 10-digit mobile number.</p>
+      </div>
+    </div>
+
+    <button id="lead-submit" onclick="Lead.submit()" class="btn-gold" style="width:100%;justify-content:center;font-size:15px;padding:14px 26px;margin-bottom:16px" disabled>
+      See my Prakriti report →
+    </button>
+
+    <div style="text-align:center">
+      <button onclick="Lead.skip()" style="background:none;border:none;cursor:pointer;font-size:13px;color:rgba(245,240,228,.38);text-decoration:underline;text-underline-offset:3px;font-family:Inter,sans-serif;padding:4px 8px;transition:color .15s" onmouseover="this.style.color='rgba(245,240,228,.65)'" onmouseout="this.style.color='rgba(245,240,228,.38)'">
+        Skip and see my results
+      </button>
+    </div>
+
+    <p style="font-size:11.5px;color:rgba(245,240,228,.28);margin-top:20px;line-height:1.6;text-align:center">
+      Your name, email, and phone stay with Vedavan. We'll only contact you about your wellness results and occasional Ayurvedic guidance — no spam, ever.
+    </p>
+  </div>
+</div>
+</section>
+
+
+<section id="screen-report" class="screen">
+<!-- hero -->
+<div class="relative overflow-hidden" style="background:var(--forest)">
+  <div class="grain"></div>
+  <svg class="absolute right-0 top-0 opacity-40" width="260" height="260" viewBox="0 0 260 260" aria-hidden="true">
+    <circle cx="260" cy="0" r="90"  fill="none" stroke="#E4C77E" stroke-opacity=".2" stroke-width="1"/>
+    <circle cx="260" cy="0" r="155" fill="none" stroke="#E4C77E" stroke-opacity=".1" stroke-width="1"/>
+  </svg>
+  <div class="wrap relative z-10 w-full py-14 text-center">
+    <p style="font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:#E4C77E;margin-bottom:1.5rem">Your Prakriti Report</p>
+    <!-- score ring -->
+    <div class="relative mx-auto" style="width:164px;height:164px;margin-bottom:1.5rem">
+      <svg width="164" height="164" viewBox="0 0 164 164" style="transform:rotate(-90deg)">
+        <circle cx="82" cy="82" r="70" fill="none" stroke="rgba(245,240,228,.1)" stroke-width="9"/>
+        <circle id="score-ring" cx="82" cy="82" r="70" fill="none" stroke="#C2922E" stroke-width="9" stroke-linecap="round" stroke-dasharray="440" stroke-dashoffset="440"/>
+      </svg>
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <span id="score-num" style="font-family:'IBM Plex Mono',monospace;font-size:42px;line-height:1;color:#F5F0E4">0</span>
+        <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(245,240,228,.4)">/100</span>
+      </div>
+    </div>
+    <div id="arch-sub" class="arch-sub" style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:.5rem">
+      <div id="score-band" style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:3px 14px;border-radius:20px;border:1px solid rgba(222,213,184,.25);color:rgba(245,240,228,.55)"></div>
+      <p style="font-size:11px;color:rgba(245,240,228,.3);letter-spacing:.03em">based on how you feel right now</p>
+    </div>
+    <div id="arch-archetype-sub" class="arch-sub" style="color:rgba(245,240,228,.5)"></div>
+    <h2 id="arch-name" style="font-family:'Fraunces',Georgia,serif;font-size:clamp(24px,5vw,36px);font-style:italic;font-weight:500;color:#F5F0E4;margin-bottom:.8rem"></h2>
+    <p id="arch-desc" style="font-size:14.5px;color:rgba(245,240,228,.68);max-width:430px;margin:0 auto;line-height:1.72"></p>
+  </div>
+</div>
+<!-- cards -->
+<div style="background:var(--ivory2);padding:28px 0 40px">
+  <div class="wrap" style="max-width:660px">
+
+    <div class="rpt-card">
+      <p class="rpt-eyebrow">Where Prana is leaking</p>
+      <div id="focus-list" style="display:flex;flex-direction:column;gap:13px"></div>
+    </div>
+
+    <div class="rpt-card">
+      <p class="rpt-eyebrow">Your first Ayurvedic steps</p>
+      <div id="rec-list"></div>
+    </div>
+
+    <div class="rpt-card">
+      <p class="rpt-eyebrow">Prakriti Wheel</p>
+      <svg id="radar-svg" viewBox="0 0 440 440" style="width:100%;max-width:440px;height:auto;display:block;margin:8px auto 0"></svg>
+    </div>
+
+    <div class="rpt-card">
+      <p class="rpt-eyebrow">All eight scores</p>
+      <div id="all-dims" style="display:flex;flex-direction:column;gap:11px"></div>
+    </div>
+
+    <div id="prod-section" class="rpt-card" style="display:none">
+      <p class="rpt-eyebrow">From the Vedavan apothecary</p>
+      <p style="font-size:12.5px;color:var(--inkfaint);margin-bottom:14px;margin-top:-6px">Matched to your scores. Products appear after lifestyle recommendations — always.</p>
+      <div id="prod-list"></div>
+    </div>
+
+    </div>
+
+    <div style="text-align:center;padding:10px 0 18px">
+      <p style="font-size:13px;color:var(--inkfaint);margin-bottom:14px">Reassess in 30 days — small shifts compound.</p>
+      <button onclick="App.retake()" class="btn-ghost">↺ Take it again</button>
+    </div>
+
+    <div style="border-top:1px solid var(--line);padding:18px 8px 28px;text-align:center">
+      <p style="font-size:11px;color:var(--inkfaint);line-height:1.7;max-width:520px;margin:0 auto">
+        This assessment offers general wellness guidance rooted in Ayurvedic tradition. It is not medical advice, diagnosis, or treatment. Product suggestions are not intended to prevent, treat, or cure any health condition. Please consult a qualified healthcare practitioner for any medical concerns.
+      </p>
+    </div>
+  </div>
+</div>
+</section>
+<!-- ======================================================= TOOLTIP -->
+<div id="ayur-tip" role="tooltip" aria-live="polite">
+  <button id="ayur-tip-close" onclick="Tip.hide()" aria-label="Close">×</button>
+  <span id="ayur-tip-label"></span>
+  <span id="ayur-tip-def"></span>
+</div>
+</div><!-- #app -->
+<script>
+// ==========================================================================
+// DATA — AYURVEDIC EDITION v2.1 · 13 questions · 8 dimensions
+// Products: live from vedavan.com, June 2026
+// ==========================================================================
+
+const PROFILE={key:"about",title:"About you",subtitle:"Three quick fields — they shape your archetype, nothing else.",
+  fields:[
+    {id:"age",  label:"Age group",  opts:["18–24","25–34","35–44","45–54","55+"]},
+    {id:"gender",label:"Gender",    opts:["Male","Female","Prefer not to say"]},
+    {id:"occ",  label:"Occupation", opts:["Student","Working Professional","Entrepreneur","Homemaker","Retired"]},
+  ]};
+
+// 8 dimensions × 13 questions total
+const DIMS=[
+  {key:"energy",   label:"Prana",    eng:"Energy",       subtitle:"Your life-force day to day.", questions:[
+    {id:"e1",text:"How is your energy through the day?",       opts:[["Exhausted",20],["Low",40],["Variable",60],["Good",80],["Excellent",100]]},
+    {id:"e2",text:"How often do you crash in the afternoon?",  opts:[["Daily",20],["Often",40],["Sometimes",60],["Rarely",80],["Never",100]]},
+  ]},
+  {key:"sleep",    label:"Nidra",    eng:"Sleep",         subtitle:"The quality of your rest.", questions:[
+    {id:"s1",text:"How many hours do you typically sleep?",    opts:[["Under 5 hrs",20],["5–6 hrs",40],["6–7 hrs",60],["7–8 hrs",100],["Over 8 hrs",70]]},
+    {id:"s2",text:"How rested do you feel on waking?",         opts:[["Never",20],["Rarely",40],["Sometimes",60],["Often",80],["Always",100]]},
+  ]},
+  {key:"sattva",   label:"Sattva",   eng:"Mind & Calm",   subtitle:"Higher score = calmer mind.", questions:[
+    {id:"st1",text:"How stressed do you feel on a typical day?",opts:[["Extremely",20],["High",40],["Moderate",60],["Low",80],["Very Low",100]]},
+    {id:"st2",text:"How clear is your mind through the day?",  opts:[["Very foggy",20],["Foggy",40],["Mixed",60],["Mostly clear",80],["Crystal clear",100]]},
+  ]},
+  {key:"recovery", label:"Ojas",     eng:"Recovery",      subtitle:"Your vital essence and resilience.", questions:[
+    {id:"r1",text:"How quickly do you recover from exertion?", opts:[["Very slowly",20],["Slowly",40],["Average",60],["Quickly",80],["Very quickly",100]]},
+    {id:"r2",text:"How often do you feel physically depleted?",opts:[["Daily",20],["Often",40],["Sometimes",60],["Rarely",80],["Never",100]]},
+  ]},
+  {key:"fitness",  label:"Bala",     eng:"Fitness",       subtitle:"Your physical strength.", questions:[
+    {id:"f1",text:"How often do you exercise per week?",       opts:[["Never",20],["Once",40],["2–3 times",60],["4–5 times",100],["Daily",80]]},
+    {id:"f2",text:"How would you rate your physical strength and endurance overall?",opts:[["Very poor",20],["Poor",40],["Average",60],["Good",80],["Excellent",100]]},
+  ]},
+  {key:"nutrition",label:"Ahara",    eng:"Nutrition",     subtitle:"What and how you eat.", questions:[
+    {id:"n1",text:"How balanced and nourishing is your diet?", opts:[["Poor",20],["Fair",40],["Average",60],["Good",80],["Excellent",100]]},
+    {id:"n2",text:"How much water do you drink daily?",        opts:[["Under 1 L",20],["1–2 L",40],["2–3 L",60],["3–4 L",100],["Over 4 L",80]]},
+  ]},
+  {key:"longevity",label:"Ayu",      eng:"Longevity",     subtitle:"Your investment in long-term health.", questions:[
+    {id:"l1",text:"How actively do you invest in your long-term health?",opts:[["Never",20],["Rarely",40],["Sometimes",60],["Often",80],["Always",100]]},
+    {id:"l2",text:"How consistent are you with preventive health habits — sleep routine, diet, and check-ups?",opts:[["Never consistent",20],["Rarely",40],["Sometimes",60],["Often",80],["Very consistent",100]]},
+  ]},
+  {key:"balance",  label:"Sama",     eng:"Balance",       subtitle:"Harmony across your whole life.", questions:[
+    {id:"b1",text:"How balanced does your daily life feel?",   opts:[["Very poor",20],["Poor",40],["Average",60],["Good",80],["Excellent",100]]},
+    {id:"b2",text:"How often do you have time for things that genuinely restore you?",opts:[["Never",20],["Rarely",40],["Sometimes",60],["Often",80],["Always",100]]},
+  ]},
+];
+
+// ARCHETYPES — evaluated in order 1→7, first match wins, #7 always-true fallback
+// IMPORTANT: Sattva/stress is a CALMNESS scale — 100 = least stressed
+const ARCHETYPES=[
+  {key:"depleted_fire",  name:"The Depleted Fire",   sub:"Pitta exhausted · Ojas running low",
+   test:(s,p)=>s.sattva<50&&s.energy<50&&s.sleep<50&&["Working Professional","Entrepreneur"].includes(p.occ),
+   desc:"Your inner fire has been burning hard and the Ojas is running thin. Before you build, you must first restore. Rest is not a reward — it is the medicine."},
+  {key:"scattered_wind", name:"The Scattered Wind",  sub:"Vata imbalanced · seeking grounding",
+   test:(s)=>s.recovery<50&&s.sleep<60,
+   desc:"Vata is high — the body is asking to be grounded. Consistent sleep, warm foods, and stillness are more powerful than any effort right now."},
+  {key:"driven_pitta",   name:"The Driven Pitta",    sub:"High fire · needs cooling and recovery",
+   test:(s)=>s.energy>70&&s.fitness>70&&s.sattva<60,
+   desc:"Strong and ambitious — but Pitta unchecked burns its own roots. Cooling recovery and a calmer mind will extend what your fire can sustain long-term."},
+  {key:"long_view",      name:"The Long-View Keeper", sub:"Kapha stability · focused on Ayu",
+   test:(s,p)=>s.longevity>80&&s.balance>60&&["35–44","45–54","55+"].includes(p.age),
+   desc:"You understand that wellness is not a sprint. Your Kapha gives you the patience to build what lasts — keep refining the foundations you have already laid."},
+  {key:"sattvic_warrior",name:"The Sattvic Warrior",  sub:"All three doshas in good flow",
+   test:(s)=>s.energy>80&&s.fitness>80&&s.sattva>70&&s.recovery>70,
+   desc:"All three doshas are in reasonable balance. From here the work is subtle — optimise, deepen, sustain what is working."},
+  {key:"balanced_soma",  name:"The Balanced Soma",   sub:"True Tridosha harmony",
+   test:(s)=>Object.values(s).every(v=>v>70),
+   desc:"You have built real harmony across all eight dimensions. Continue the consistency — and share what you know."},
+  {key:"seeker",         name:"The Seeker",          sub:"Beginning the path",
+   test:()=>true,
+   desc:"Every sage was once a seeker. Pick one focus area below, practise it for 21 days, and see what changes. The path begins with a single step."},
+];
+
+// RECOMMENDATIONS — Ayurvedic voice, max 6 shown from the 3 lowest dimensions
+const RECS={
+  energy:[
+    "Start each morning with a glass of warm water — in Ayurveda this is a simple way to gently prepare the body and mind for the day ahead",
+    "Eat your largest meal at midday when digestive fire is naturally at its peak; go lighter after sunset",
+    "Vedavan Pure Shilajit — dissolve a pea-sized amount (roughly 300mg) in warm water or A2 milk each morning. Use warm, never boiling, liquid. Add one teaspoon of Vedavan Honey to the same cup — honey is a classical Anupan (carrier) traditionally paired with Shilajit to deepen its absorption.",
+  ],
+  sleep:[
+    "Vedavan Himalayan Honey — one teaspoon dissolved in a cup of warm (not hot) water 20 minutes before bed. Never heat honey above 40°C as high heat changes its composition. The same honey in warm lemon water each morning is a gentle way to start the day.",
+    "Oil the soles of your feet with sesame or coconut oil before sleep — a classical Vata-grounding practice from the Ayurvedic daily routine",
+    "Hold a consistent wake time even on weekends — Ayurveda places great value on regularity as a foundation of steady energy",
+  ],
+  sattva:[
+    "A 20-minute Surya walk before 8 AM — in Ayurveda, early morning movement is traditionally associated with a grounded, steady Prana through the day",
+    "Vedavan Shilajit Gold — dissolve a pea-sized amount in warm A2 milk each evening. Fat in milk acts as an Anupan traditionally used to deepen absorption. The Kesar (saffron) in the formula activates best in warm liquid. Stir in one teaspoon of Vedavan Ghee for a classical evening recovery drink.",
+    "5 minutes of Nadi Shodhana (alternate nostril breathing) before your first screen — a classical pranayama practice traditionally used to settle the mind and balance Vata",
+  ],
+  recovery:[
+    "Favour warm, cooked meals — in Ayurveda, warm and nourishing Ahara is traditionally associated with supporting recovery and reducing Vata imbalance",
+    "Genuine rest is part of the practice, not a break from it — Ayurveda considers adequate rest essential to the gradual building of Ojas",
+    "Vedavan Shilajit Gold — a pea-sized amount in warm A2 milk before sleep is a traditional Ojas-building ritual. Add one teaspoon of Vedavan Ghee to the same milk: ghee as Anupan is classically used to carry the Rasayana deeper into the tissues. Avoid mixing with cold water or caffeine within the same hour.",
+  ],
+  fitness:[
+    "Begin with 3 consistent sessions a week — Ayurveda values regularity over intensity, especially early in a new Bala practice",
+    "Combine strength and walking — Bala and Prana are considered complementary in classical Ayurvedic movement guidance",
+    "Vedavan Moringa — empty one 5g sachet into 200ml of water, coconut water, or a smoothie 30 minutes before a session. A squeeze of lemon is a good pairing. Avoid cooking at high heat as it degrades the nutritional profile.",
+  ],
+  nutrition:[
+    "Favour warm, cooked Ahara over raw and cold — one of the most consistent principles across classical Ayurvedic dietary guidance",
+    "Vedavan A2 Bilona Ghee — use 1–2 teaspoons daily: stirred into dal, spread on roti, or mixed into rice. One teaspoon in warm water on an empty stomach each morning is a classical Agni-kindling practice. For a nourishing evening drink: warm A2 milk with one teaspoon of ghee, a pinch of turmeric, and a pinch of nutmeg.",
+    "Vedavan Moringa — one 5g sachet stirred into warm water with a teaspoon of Vedavan Honey makes a simple morning tonic. It can also be mixed into ghee-enriched warm milk in the evening. Avoid high-heat cooking to preserve its nutritional profile.",
+  ],
+  longevity:[
+    "Schedule one health check-up this year — in Ayurveda, self-awareness and preventive attention are the starting point of Ayu",
+    "Vedavan Pure Shilajit — for long-term Rasayana use, take a pea-sized amount in warm milk or water each morning for 30–40 days, then take a short break before continuing. Traditionally paired with Vedavan Honey as Anupan in the morning, or Vedavan Ghee in warm milk in the evening for deeper tissue nourishment.",
+    "Add one daily ritual you can sustain for life — Ayurveda holds that small, consistent practices are more valuable than occasional intensive ones",
+  ],
+  balance:[
+    "Block two hours of personal time on your calendar this week — Ayurveda views Sama not as something that happens by chance, but something actively created",
+    "Set one firm boundary around digital use each evening — reducing Rajas (mental agitation) before sleep is a consistent theme in classical Ayurvedic evening routine",
+    "Vedavan Ghee warm milk ritual — one teaspoon of Vedavan A2 Bilona Ghee stirred into warm milk at night. Add a pinch of nutmeg. Once the milk has cooled slightly, add one teaspoon of Vedavan Honey (never add honey directly to boiling liquid). This three-ingredient combination is a classical Ayurvedic Sama practice used to settle the mind before sleep.",
+  ],
+  mind:[
+    "Journal for 5 minutes each evening — a simple way to begin processing the day’s Rajas before moving toward rest",
+    "Keep the first hour after waking screen-free at least twice a week — a practical way to cultivate a more Sattvic start to the day",
+  ],
+};
+
+// PRODUCTS — live from vedavan.com · June 2026 · max 3 shown
+const PRODUCTS=[
+  // Combo — evaluated FIRST. Fires when BOTH stress/recovery AND energy/longevity
+  // signals are present simultaneously. Replaces showing two individual Shilajit
+  // products. Saves the user ₹129 vs buying separately.
+  {key:"combo",
+   name:"Shilajit Starter Combo",
+   sub:"Pure Shilajit + Shilajit Gold (2 × 20g) · Save ₹129",
+   price:"₹1,370",tag:"Complete Foundation",
+   url:"https://vedavan.com/products/pure-himalayan-shilajit-resin-plus-shilajit-gold-resin",
+   img:"https://vedavan.com/cdn/shop/files/him_gold.png?v=1766492681&width=200",
+   reason:"Your scores show both a stress/recovery need and an energy/longevity need — the two Shilajit formulas address these from different angles. Pure Shilajit each morning for the mineral and energy foundation; Shilajit Gold each evening for Ashwagandha-led stress support and Ojas rebuilding. Together ₹129 less than buying separately.",
+   test:(s)=>{
+     const srSignal=s.sattva<60||s.recovery<60||(s.fitness>75&&s.recovery<65);
+     const elSignal=s.energy<70||s.longevity<65;
+     return srSignal&&elSignal;
+   }},
+
+  // Shilajit Gold — fires when stress/recovery signal is present BUT NOT energy/longevity.
+  // Ashwagandha (adaptogen), Swarna Bhasma (Ojas rebuilder), Safed Musli (stamina),
+  // Kesar (mood clarity). The right Shilajit for mental and physical burnout.
+  {key:"shilajit_gold",
+   name:"Shilajit Gold Resin",
+   sub:"Ashwagandha · Swarna Bhasma · Kesar · Safed Musli · 20g",
+   price:"₹800",tag:"Sattva & Ojas",
+   url:"https://vedavan.com/products/vedavan-shilajit-gold-resin-premium-strength-stamina-formula",
+   img:"https://vedavan.com/cdn/shop/files/Subtitle_1.jpg?v=1762951406&width=200",
+   reason:"Your scores point to stress and recovery as the primary areas of focus. Shilajit Gold's Ashwagandha is classically used in Ayurveda as an adaptogen; Safed Musli and Swarna Bhasma are traditionally associated with rebuilding Ojas after physical or mental depletion. Dissolve a pea-sized amount in warm A2 milk each evening.",
+   test:(s)=>{
+     const srSignal=s.sattva<60||s.recovery<60||(s.fitness>75&&s.recovery<65);
+     const elSignal=s.energy<70||s.longevity<65;
+     return srSignal&&!elSignal;
+   }},
+
+  // Pure Shilajit — fires when energy/longevity signal is present BUT NOT stress/recovery.
+  // The foundational daily Rasayana: 80+ minerals, Fulvic Acid, anti-aging.
+  // Correct pick when energy is depleted but mind is calm and recovery is adequate.
+  {key:"pure_shilajit",
+   name:"Pure Himalayan Shilajit",
+   sub:"Fulvic Acid >70% · 80+ Trace Minerals · 20g",
+   price:"₹680",tag:"Prana & Ayu",
+   url:"https://vedavan.com/products/vedavan-pure-himalayan-shilajit-resin-100-authentic-shilajeet",
+   img:"https://vedavan.com/cdn/shop/files/1_4d049a3b-16ae-4673-89ba-5946632bf2aa.jpg?v=1762951441&width=200",
+   // Pure Shilajit — Vedavan's hero product. Always shown when Combo and Gold
+   // are not already covering the Shilajit need. This means Pure Shilajit is
+   // recommended to EVERY user whose profile doesn't warrant the composite formula.
+   // A peak performer, a balanced person, a longevity-focused person — all benefit
+   // from the foundational daily Rasayana. srSignal fires → Combo or Gold shows
+   // instead. !srSignal → Pure is the right (and always-present) recommendation.
+   reason:"Vedavan\u2019s foundational Rasayana \u2014 Pure Shilajit is a classical Ayurvedic daily tonic traditionally used to maintain natural vitality and long-term wellness. A pea-sized amount dissolved in warm water or A2 milk each morning, paired with Vedavan Honey as the classical Anupan (carrier).",
+   test:(s)=>{
+     const srSignal=s.sattva<60||s.recovery<60||(s.fitness>75&&s.recovery<65);
+     return !srSignal; // Pure shows whenever Gold/Combo are not the right fit
+   }},
+
+  // Honey — sleep + mild energy
+  {key:"honey",
+   name:"Raw Multifloral Himalayan Honey",
+   sub:"Unfiltered · Wild-harvested wildflowers",
+   price:"₹299",tag:"Nidra & Prana",
+   url:"https://vedavan.com/products/vedavan-raw-multifloral-himalayan-honey",
+   img:"https://vedavan.com/cdn/shop/files/01Multifloral-Honey.png?v=1782571662&width=200",
+   reason:"One jar, two rituals — a spoonful in warm water before bed as a traditional Nidra support, and the same honey in warm water each morning as a gentle way to begin the day. Also the classical Anupan (carrier) for Shilajit.",
+   test:(s)=>s.sleep<60||(s.energy<70&&s.sleep<75)},
+
+  // Ghee — nutrition + balance
+  {key:"ghee",
+   name:"A2 Bilona Ghee",
+   sub:"Hand-churned · High-altitude pasture-raised A2 cows",
+   price:"₹699",tag:"Ahara & Sama",
+   url:"https://vedavan.com/products/vedavan-authentic-himalayan-a2-bilona-ghee",
+   img:"https://vedavan.com/cdn/shop/files/01HimalayanGhee.png?v=1782571292&width=200",
+   reason:"The cornerstone Ahara fat in Ayurveda — traditionally used to support Agni, nourish the tissues, and bring a grounding quality to daily life. Also the classical Anupan (carrier) for Shilajit Gold in warm evening milk.",
+   test:(s)=>s.nutrition<60||s.balance<60},
+
+  // Moringa — recovery + nutrition + longevity (widest trigger net)
+  {key:"moringa",
+   name:"Himalayan Moringa Powder",
+   sub:"5g daily sachets · 92 nutrients · caffeine-free",
+   price:"₹399",tag:"Ojas & Recovery",
+   url:"https://vedavan.com/products/vedavan-moringa",
+   img:"https://vedavan.com/cdn/shop/files/01Moringa.png?v=1782570635&width=200",
+   reason:"A plant traditionally valued across wellness traditions for its broad nutritional profile — a natural, caffeine-free addition to your daily Ahara routine. One 5g sachet in water, juice, or a smoothie each morning.",
+   test:(s)=>s.recovery<65||s.nutrition<65||s.longevity<65},
+];// ==========================================================================
+// AYURVEDIC GLOSSARY — definitions shown in tooltip on hover / tap
+// ==========================================================================
+const GLOSSARY={
+  "Prakriti":       "Your innate constitution — the unique ratio of Vata, Pitta, and Kapha you were born with. Understanding Prakriti is the foundation of personalised Ayurvedic care.",
+  "Pitta":          "The fire and water dosha — governs metabolism, digestion, and intensity. High Pitta shows as ambition, heat, and burnout when unchecked.",
+  "Vata":           "The air and space dosha — governs movement, creativity, and the nervous system. High Vata shows as anxiety, dryness, and scattered energy.",
+  "Kapha":          "The earth and water dosha — governs structure, stability, and endurance. High Kapha shows as steadiness, groundedness, and slow-to-change energy.",
+  "Ojas":           "Your vital essence — the refined output of good digestion, deep sleep, and emotional balance. When Ojas is full, you feel luminous and resilient.",
+  "Prana":          "Life-force energy — the animating breath that flows through all living things. In Ayurveda, Prana is what makes food nourishing and breath healing.",
+  "Nidra":          "Sleep — one of the three pillars of health in Ayurveda. Deep, consistent Nidra is how the body rebuilds Ojas overnight.",
+  "Sattva":         "Mental clarity and purity — the quality of mind that enables calm perception. Sattvic living is the Ayurvedic path to lasting mental health.",
+  "Agni":           "Digestive fire — the transformative force that converts food into nourishment. Strong Agni is the single most important marker of health in Ayurveda.",
+  "Ama":            "Undigested residue — toxins that build up from poor digestion, stress, or broken sleep. Clearing Ama is the first step in any Ayurvedic protocol.",
+  "Rasayana":       "Rejuvenating tonic — classical Ayurvedic formulas that rebuild Ojas and slow cellular ageing. Shilajit is considered one of the greatest Rasayanas.",
+  "Tridosha":       "The three doshas — Vata, Pitta, and Kapha — that together govern all bodily and mental functions. True health is balance across all three.",
+  "Ahara":          "Food and nourishment — in Ayurveda, the right Ahara for your constitution is more powerful than any supplement.",
+  "Bala":           "Physical strength and immunity — the capacity to do, endure, and recover. Bala is built through consistent movement, nourishing food, and adequate rest.",
+  "Sama":           "Balance and equilibrium — the Ayurvedic state where all three doshas are in harmony with each other and with the seasons.",
+  "Ayu":            "Lifespan — the Ayurvedic science of living well for the full measure of your years. Ayu is not just longevity, but vitality at every age.",
+  "Nadi Shodhana":  "Alternate nostril breathing — a pranayama practice that balances the left and right nervous system channels. 5 minutes has measurable effects on cortisol.",
+  "Surya":          "The sun — in Ayurveda, aligning activity with solar cycles (Surya) is key to stable energy and digestion.",
+  "Soma":           "The cooling, nourishing lunar principle — the polar complement to the sun's heat. A Soma nature is calm, receptive, and deeply restorative.",
+};
+
+// Wrap known Ayurvedic terms in a text string with tooltip spans.
+// Called AFTER x() escaping, so the output contains safe HTML + our spans.
+function wrapTerms(escapedText){
+  // Sort longest first so "Nadi Shodhana" matches before "Nadi"
+  const terms=Object.keys(GLOSSARY).sort((a,b)=>b.length-a.length);
+  let out=escapedText;
+  terms.forEach(term=>{
+    // Word-boundary aware; handles multi-word terms via literal space match
+    const escaped=term.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const re=new RegExp(`(?<![a-zA-Z])(${escaped})(?![a-zA-Z])`,'g');
+    out=out.replace(re,`<span class="ayur-term" data-term="${term}">$1</span>`);
+  });
+  return out;
+}
+
+// ==========================================================================
+// SCORING ENGINE
+// ==========================================================================
+function calcScores(ans){
+  const s={};
+  DIMS.forEach(d=>{
+    const vals=d.questions.map(q=>ans[q.id]||60);
+    s[d.key]=Math.round(vals.reduce((a,b)=>a+b,0)/vals.length);
+  });
+  return s;
+}
+function calcOverall(s){
+  return Math.round(DIMS.map(d=>s[d.key]).reduce((a,b)=>a+b,0)/DIMS.length);
+}
+function pickArchetype(s,p){
+  for(const a of ARCHETYPES)if(a.test(s,p))return a;
+  return ARCHETYPES[ARCHETYPES.length-1];
+}
+function focus3(s){
+  return DIMS.map(d=>({key:d.key,label:d.label,eng:d.eng,score:s[d.key]}))
+    .sort((a,b)=>a.score-b.score).slice(0,3);
+}
+function pickRecs(focus,s){
+  const keys=focus.map(f=>f.key),out=[],seen=new Set();
+  for(const k of keys)for(const r of(RECS[k]||[]))if(!seen.has(r)&&out.length<6){seen.add(r);out.push(r);}
+  if(keys.includes("sattva"))for(const r of RECS.mind||[])if(!seen.has(r)&&out.length<7){seen.add(r);out.push(r);break;}
+  return out;
+}
+function pickProducts(s){return PRODUCTS.filter(p=>p.test(s)).slice(0,3);}
+
+// ==========================================================================
+// APP
+// ==========================================================================
+const STEPS=[PROFILE,...DIMS];
+const App={
+  idx:0,ans:{},prof:{},
+  start(){this.idx=0;this.ans={};this.prof={};show("step");this.render();},
+  render(){
+    const step=STEPS[this.idx],isP=this.idx===0;
+    document.getElementById("step-label").textContent=`Step ${this.idx+1} of ${STEPS.length}`;
+    document.getElementById("step-dim").textContent=isP?"Profile":step.label+" · "+step.eng;
+    document.getElementById("prog-fill").style.width=((this.idx/(STEPS.length-1))*100)+"%";
+    const w=document.getElementById("step-content");
+    let h=`<h2 style="font-family:'Fraunces',Georgia,serif;font-size:clamp(22px,5vw,30px);font-style:italic;font-weight:500;margin-bottom:6px;color:var(--ink)">${x(isP?"About you":step.label)}</h2>
+            <p style="font-size:13.5px;color:var(--inkfaint);margin-bottom:28px">${x(isP?step.subtitle:step.eng+" · "+step.subtitle)}</p>`;
+    if(isP){
+      step.fields.forEach(f=>{
+        h+=`<div style="margin-bottom:22px"><p style="font-size:13px;font-weight:500;margin-bottom:10px;color:var(--inksoft)">${x(f.label)}</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:8px">`;
+        f.opts.forEach((o,i)=>{
+          const chk=this.prof[f.id]===o;
+          h+=`<input type="radio" class="opt-input" name="pf_${f.id}" id="pf_${f.id}_${i}" value="${x(o)}" ${chk?"checked":""} onchange="App.onP('${f.id}',this.value)">
+              <label class="opt-label" for="pf_${f.id}_${i}" style="padding:10px 13px;font-size:13px"><span class="opt-dot"></span><span>${x(o)}</span></label>`;
+        });
+        h+=`</div></div>`;
+      });
+    }else{
+      step.questions.forEach(q=>{
+        h+=`<div style="margin-bottom:22px"><p style="font-size:15px;font-weight:500;margin-bottom:11px;color:var(--ink);line-height:1.45">${x(q.text)}</p>
+            <div style="display:flex;flex-direction:column;gap:8px">`;
+        q.opts.forEach(([label,val],i)=>{
+          const chk=this.ans[q.id]===val;
+          h+=`<input type="radio" class="opt-input" name="q_${q.id}" id="q_${q.id}_${i}" value="${val}" ${chk?"checked":""} onchange="App.onA('${q.id}',this.value)">
+              <label class="opt-label" for="q_${q.id}_${i}"><span class="opt-dot"></span><span>${x(label)}</span></label>`;
+        });
+        h+=`</div></div>`;
+      });
+    }
+    w.innerHTML=h;
+    const isLast=this.idx===STEPS.length-1;
+    document.getElementById("btn-next").textContent=isLast?"See my Prakriti →":"Continue →";
+    this.check();
+  },
+  onP(id,v){this.prof[id]=v;this.check();},
+  onA(id,v){this.ans[id]=Number(v);this.check();},
+  check(){
+    const step=STEPS[this.idx],isP=this.idx===0;
+    const ok=isP?step.fields.every(f=>this.prof[f.id]):step.questions.every(q=>this.ans[q.id]!==undefined);
+    document.getElementById("btn-next").disabled=!ok;
+  },
+  next(){if(this.idx===STEPS.length-1){this.finish();return;}this.idx++;this.render();window.scrollTo(0,0);},
+  prev(){if(this.idx===0){show("splash");return;}this.idx--;this.render();window.scrollTo(0,0);},
+  retake(){this.idx=0;this.ans={};this.prof={};show("splash");},
+  finish(){
+    // Store computed results on App so Lead can access them after capture
+    App._results = {
+      s:calcScores(this.ans),
+      get overall(){ return calcOverall(this.s); },
+      get arch(){ return pickArchetype(this.s, App.prof); },
+      get foc(){ return focus3(this.s); },
+      get recs(){ return pickRecs(focus3(this.s), this.s); },
+      get prods(){ return pickProducts(this.s); },
+    };
+    show("lead");
+    document.getElementById("lead-name").value  = "";
+    document.getElementById("lead-email").value = "";
+    document.getElementById("lead-phone").value = "";
+    document.getElementById("lead-email-err").style.display = "none";
+    document.getElementById("lead-phone-err").style.display = "none";
+    document.getElementById("lead-submit").disabled = true;
+  }
+};
+
+// ==========================================================================
+// LEAD CAPTURE
+// ==========================================================================
+const Lead = {
+  validate(){
+    const name  = document.getElementById("lead-name").value.trim();
+    const email = document.getElementById("lead-email").value.trim();
+    const phone = document.getElementById("lead-phone").value.trim().replace(/\s|-/g,"");
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    // phone is optional — but if entered must be 10 digits
+    const phoneOk = phone === "" || /^\d{10}$/.test(phone);
+    document.getElementById("lead-submit").disabled = !(name.length > 0 && emailOk && phoneOk);
+  },
+
+  submit(){
+    const name  = document.getElementById("lead-name").value.trim();
+    const email = document.getElementById("lead-email").value.trim();
+    const phone = document.getElementById("lead-phone").value.trim().replace(/\s|-/g,"");
+
+    // Re-validate on submit in case JS was bypassed
+    let valid = true;
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      document.getElementById("lead-email-err").style.display = "block"; valid = false;
+    } else {
+      document.getElementById("lead-email-err").style.display = "none";
+    }
+    if(phone !== "" && !/^\d{10}$/.test(phone)){
+      document.getElementById("lead-phone-err").style.display = "block"; valid = false;
+    } else {
+      document.getElementById("lead-phone-err").style.display = "none";
+    }
+    if(!valid) return;
+
+    const lead = {
+      name,
+      email,
+      phone: phone ? "+91" + phone : "",
+      overall:   App._results.overall,
+      archetype: App._results.arch.key,
+      scores:    App._results.s,
+      focus:     App._results.foc.map(f=>f.key),
+      timestamp: new Date().toISOString(),
+    };
+    console.log("Vedavan lead captured:", lead);
+    // TODO: POST to your backend / Klaviyo / Mailchimp / CRM:
+    // fetch("/api/leads", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(lead)});
+    this._showReport();
+  },
+
+  skip(){ this._showReport(); },
+
+  _showReport(){
+    const r = App._results;
+    Report.render(r.s, r.overall, r.arch, r.foc, r.recs, r.prods);
+    show("report");
+  }
+};
+
+// ==========================================================================
+// REPORT RENDERER
+// ==========================================================================
+function bc(v){return v<50?"#A4503D":v<70?"#C2922E":"#6E8F6B";}
+
+const Report={
+  render(scores,ov,arch,foc,recs,prods){
+    // ring + counter + score band
+    const ring=document.getElementById("score-ring"),circ=440;
+    requestAnimationFrame(()=>{ring.style.transition="stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)";ring.style.strokeDashoffset=String(circ*(1-ov/100));});
+    const el=document.getElementById("score-num");let n=0,step=Math.max(1,Math.round(ov/48));
+    const tick=()=>{n=Math.min(ov,n+step);el.textContent=n;if(n<ov)requestAnimationFrame(tick);};tick();
+
+    // score band label
+    const bands=[[90,"Optimised","#0F6E56"],[75,"Strong","#1D9E75"],[60,"Growing","#6E8F6B"],[40,"Building","#BA7517"],[0,"Depleted","#A4503D"]];
+    const [,bandLabel,bandColor]=bands.find(([min])=>ov>=min);
+    const bandEl=document.getElementById("score-band");
+    bandEl.textContent=bandLabel;
+    bandEl.style.color=bandColor;
+    bandEl.style.borderColor=bandColor+"88";
+
+    // Use innerHTML so wrapTerms() tooltip spans render.
+    const archEl=document.getElementById("arch-archetype-sub");
+    archEl.innerHTML=wrapTerms(x(arch.sub));
+    document.getElementById("arch-name").textContent=arch.name;
+    const descEl=document.getElementById("arch-desc");
+    descEl.innerHTML=wrapTerms(x(arch.desc));
+
+    // focus bars
+    // focus bars — Ayurvedic label is a known term, wrap it
+    document.getElementById("focus-list").innerHTML=foc.map(f=>`
+      <div class="dim-row">
+        <span class="dim-name" style="width:82px">${wrapTerms(x(f.label))}<br><span style="font-size:10px;color:var(--inkfaint)">${x(f.eng)}</span></span>
+        <div class="dim-track"><div class="dim-fill" data-v="${f.score}" style="background:${bc(f.score)}"></div></div>
+        <span class="dim-val">${f.score}</span>
+      </div>`).join("");
+
+    // recommendations — many mention Agni, Ama, Vata etc.
+    document.getElementById("rec-list").innerHTML=recs.map(r=>`<div class="rec-item"><span class="rec-dot"></span><span>${wrapTerms(x(r))}</span></div>`).join("");
+
+    // all dims bar chart — wrap the Ayurvedic label
+    document.getElementById("all-dims").innerHTML=DIMS.map(d=>`
+      <div class="dim-row">
+        <span class="dim-name">${wrapTerms(x(d.label))}</span>
+        <div class="dim-track"><div class="dim-fill" data-v="${scores[d.key]}" style="background:${bc(scores[d.key])}"></div></div>
+        <span class="dim-val">${scores[d.key]}</span>
+      </div>`).join("");
+
+    // products
+    const ps=document.getElementById("prod-section"),pl=document.getElementById("prod-list");
+    if(!prods.length){ps.style.display="none";}else{
+      ps.style.display="block";
+      pl.innerHTML=prods.map(p=>`
+        <div class="prod-card">
+          <img class="prod-thumb" src="${p.img}" alt="${x(p.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="prod-thumb-fb">🌿</div>
+          <div style="flex:1;min-width:0">
+            <span class="prod-tag">${x(p.tag)}</span>
+            <div class="prod-name">${x(p.name)}</div>
+            <div class="prod-sub">${x(p.sub)}</div>
+            <div class="prod-reason">${wrapTerms(x(p.reason))}</div>
+            <div class="prod-price-row">
+              <span class="prod-price">${x(p.price)}</span>
+              <a class="prod-btn" href="${p.url}" target="_blank" rel="noopener noreferrer">Shop now ↗</a>
+            </div>
+          </div>
+        </div>`).join("");
+    }
+
+    // radar
+    this.drawRadar(scores);
+
+    // animate bars
+    setTimeout(()=>{document.querySelectorAll(".dim-fill").forEach(el=>{el.style.width=(el.getAttribute("data-v")||0)+"%";});},150);
+  },
+
+  drawRadar(sc){
+    const CX=220,CY=220,MR=148,N=DIMS.length;
+    const ang=i=>-90+i*(360/N);
+    // IMPORTANT: separate helpers — ptData maps 0-100 score, ptRad uses absolute radius
+    const ptD=(a,v)=>{const r=MR*(v/100),rd=(Math.PI/180)*a;return[CX+r*Math.cos(rd),CY+r*Math.sin(rd)];};
+    const ptR=(a,r)=>{const rd=(Math.PI/180)*a;return[CX+r*Math.cos(rd),CY+r*Math.sin(rd)];};
+    let s="";
+    // grid
+    [.25,.5,.75,1].forEach(f=>{s+=`<circle cx="${CX}" cy="${CY}" r="${MR*f}" fill="none" stroke="#DED5B8" stroke-width=".7" stroke-dasharray="3 5"/>`;});
+    // grid value labels
+    [25,50,75,100].forEach(v=>{s+=`<text x="${CX+3}" y="${(CY-MR*(v/100)+4).toFixed(1)}" font-size="7.5" fill="#b0a98a" font-family="monospace">${v}</text>`;});
+    // spokes + axis labels
+    DIMS.forEach((d,i)=>{
+      const a=ang(i),[ex,ey]=ptD(a,100);
+      s+=`<line x1="${CX}" y1="${CY}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}" stroke="#DED5B8" stroke-width=".7"/>`;
+      // label placed at fixed radius 32px outside the grid
+      const [lx,ly]=ptR(a,MR+32);
+      // Ayurvedic name in italic serif
+      s+=`<text x="${lx.toFixed(1)}" y="${(ly-4).toFixed(1)}" font-size="11.5" font-family="Fraunces,Georgia,serif" font-style="italic" fill="#5B6359" text-anchor="middle">${x(d.label)}</text>`;
+      // English sub-label in mono
+      s+=`<text x="${lx.toFixed(1)}" y="${(ly+10).toFixed(1)}" font-size="8" font-family="monospace" fill="#9a9580" text-anchor="middle">${x(d.eng.split(" ")[0])}</text>`;
+    });
+    // data polygon
+    const pts=DIMS.map((d,i)=>ptD(ang(i),sc[d.key]));
+    const path=pts.map((p,i)=>(i===0?"M":"L")+p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ")+"Z";
+    s+=`<path d="${path}" fill="#C2922E" fill-opacity=".15" stroke="#C2922E" stroke-width="2"/>`;
+    pts.forEach(p=>{s+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.5" fill="#C2922E"/>`;});
+    const svg=document.getElementById("radar-svg");
+    svg.setAttribute("viewBox","0 0 440 440");
+    svg.innerHTML=s;
+  }
+};
+
+// ==========================================================================
+// TOOLTIP CONTROLLER
+// ==========================================================================
+const Tip={
+  el:null, label:null, def:null,
+  active:null,   // currently open .ayur-term element (touch)
+  _hoverTimer:null,
+
+  init(){
+    this.el    = document.getElementById("ayur-tip");
+    this.label = document.getElementById("ayur-tip-label");
+    this.def   = document.getElementById("ayur-tip-def");
+  },
+
+  show(term, anchorEl){
+    const def = GLOSSARY[term];
+    if(!def) return;
+    this.label.textContent = term;
+    this.def.textContent   = def;
+    this.el.classList.add("visible");
+    this._position(anchorEl);
+    this.active = anchorEl;
+    anchorEl.classList.add("tip-open");
+  },
+
+  hide(){
+    this.el.classList.remove("visible");
+    if(this.active){ this.active.classList.remove("tip-open"); this.active=null; }
+  },
+
+  // Position the tooltip above (preferred) or below the anchor,
+  // and clamp horizontally so it never overflows the viewport.
+  // NOTE: tooltip is position:fixed → all coords are viewport (CSS px), no scrollY needed.
+  _position(anchor){
+    const PAD=12, TIP_W=240, TIP_H=120; // generous height estimate
+    const r   = anchor.getBoundingClientRect();
+    const vw  = window.innerWidth, vh = window.innerHeight;
+
+    // Horizontal: centre on anchor, clamp to viewport edges
+    let left = r.left + r.width/2 - TIP_W/2;
+    left = Math.max(PAD, Math.min(left, vw - TIP_W - PAD));
+
+    // Vertical: prefer above; flip below if not enough room
+    const ARROW_GAP = 8;
+    let top;
+    if(r.top - TIP_H - ARROW_GAP > 0){
+      top = r.top - TIP_H - ARROW_GAP;
+    } else {
+      top = r.bottom + ARROW_GAP;
+    }
+
+    this.el.style.left    = left + "px";
+    this.el.style.top     = top  + "px";
+    this.el.style.maxWidth= Math.min(TIP_W, vw - PAD*2) + "px";
+  },
+};
+
+// Global delegation — handles both mouse (hover) and touch (tap-to-toggle)
+document.addEventListener("DOMContentLoaded", ()=>{
+  Tip.init();
+
+  // Mouse: show on enter, hide on leave
+  document.addEventListener("mouseover", e=>{
+    const t = e.target.closest(".ayur-term");
+    if(!t) return;
+    clearTimeout(Tip._hoverTimer);
+    Tip.show(t.dataset.term, t);
+  });
+  document.addEventListener("mouseout", e=>{
+    const t = e.target.closest(".ayur-term");
+    if(!t) return;
+    // small delay so moving mouse into the tooltip itself doesn't close it
+    Tip._hoverTimer = setTimeout(()=>Tip.hide(), 120);
+  });
+  // Keep open when hovering the tooltip panel itself
+  Tip.el.addEventListener("mouseover", ()=>clearTimeout(Tip._hoverTimer));
+  Tip.el.addEventListener("mouseout",  ()=>{ Tip._hoverTimer=setTimeout(()=>Tip.hide(),120); });
+
+  // Touch: tap term to open, tap again or tap elsewhere to close
+  document.addEventListener("touchstart", e=>{
+    const t = e.target.closest(".ayur-term");
+    if(t){
+      e.preventDefault(); // prevent ghost click
+      if(Tip.active===t){ Tip.hide(); return; }
+      Tip.hide();
+      Tip.show(t.dataset.term, t);
+    } else if(!e.target.closest("#ayur-tip")){
+      Tip.hide();
+    }
+  }, {passive:false});
+
+  // Keyboard: Enter / Space on focused term
+  document.addEventListener("keydown", e=>{
+    const t = e.target.closest(".ayur-term");
+    if(t && (e.key==="Enter"||e.key===" ")){
+      e.preventDefault();
+      Tip.active===t ? Tip.hide() : Tip.show(t.dataset.term, t);
+    }
+    if(e.key==="Escape") Tip.hide();
+  });
+
+  // Make terms focusable for keyboard users
+  document.addEventListener("focusin", e=>{
+    const t = e.target.closest(".ayur-term");
+    if(t){ t.setAttribute("tabindex","0"); }
+  });
+});
+
+// ==========================================================================
+// UTILS
+// ==========================================================================
+function show(name){document.querySelectorAll(".screen").forEach(el=>el.classList.remove("active"));document.getElementById("screen-"+name).classList.add("active");window.scrollTo(0,0);}
+function x(str){return String(str||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+</script>
+</body>
+</html>

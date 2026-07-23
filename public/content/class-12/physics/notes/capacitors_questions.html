@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Capacitors & Capacitance — Practice Question Bank | Ch.2</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Code+Pro:wght@400;500&family=Mulish:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        display: ['Lora', 'Georgia', 'serif'],
+        body: ['Mulish', 'sans-serif'],
+        mono: ['Source Code Pro', 'monospace'],
+      }
+    }
+  }
+}
+</script>
+<style>
+  :root {
+    --bg: #f8f6f1;
+    --card: #fffefb;
+    --border: #e8e4da;
+    --text: #2d2a24;
+    --muted: #6b6459;
+    --accent-blue: #2e5fa3;
+    --accent-teal: #1a7a6e;
+    --accent-rose: #b94040;
+    --accent-amber: #9a6b1a;
+    --accent-violet: #5c3d9e;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { background: var(--bg); color: var(--text); font-family: 'Mulish', sans-serif; }
+
+  /* answer reveal animation */
+  .sol-body { display: none; }
+  .sol-body.open { display: block; animation: fadeSlide 0.35s ease; }
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* step reveal */
+  .step { border-left: 2px solid #e8e4da; padding-left: 14px; margin-bottom: 12px; }
+  .step:last-child { margin-bottom: 0; }
+
+  /* formula block */
+  .fbox {
+    font-family: 'Source Code Pro', monospace;
+    background: #f0eee8;
+    border: 1px solid #ddd8cd;
+    border-radius: 7px;
+    padding: 8px 14px;
+    display: inline-block;
+    font-size: 13px;
+    color: #2e5fa3;
+    margin: 4px 0;
+  }
+  .fbox.green { color: #1a7a6e; background: #edfaf7; border-color: #bde8e0; }
+  .fbox.rose  { color: #b94040; background: #fdf3f3; border-color: #f2c4c4; }
+  .fbox.amber { color: #9a6b1a; background: #fdf8ed; border-color: #e8d5a0; }
+  .fbox.violet { color: #5c3d9e; background: #f4f1fb; border-color: #ccc0ed; }
+
+  /* tab active */
+  .qtab.active { background: #2e5fa3; color: #fff; border-color: #2e5fa3; }
+
+  /* progress bar */
+  .prog-fill { transition: width 0.4s ease; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: #f0ede5; }
+  ::-webkit-scrollbar-thumb { background: #c9c3b6; border-radius: 3px; }
+
+  /* sticky header */
+  .sticky-header { position: sticky; top: 0; z-index: 50; background: #fffefb; border-bottom: 1px solid #e8e4da; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- ══ HEADER ══ -->
+<div class="sticky-header px-4 py-3 shadow-sm">
+  <div class="max-w-5xl mx-auto">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <div>
+        <h1 class="font-display text-lg sm:text-xl font-semibold" style="color:#2d2a24;">
+          Capacitors &amp; Capacitance — Practice Bank
+        </h1>
+        <p class="text-xs font-body mt-0.5" style="color:#6b6459;">
+          Chapter 2 · Electrostatic Potential &amp; Capacitance · ISC/CBSE Class 12
+        </p>
+      </div>
+      <div class="flex gap-2 items-center">
+        <div class="text-right">
+          <div class="text-xs" style="color:#6b6459;">Attempted</div>
+          <div class="font-display font-semibold text-base" id="stat-done" style="color:#2e5fa3;">0 / 35</div>
+        </div>
+        <div class="w-16 h-1.5 rounded-full" style="background:#e8e4da;">
+          <div class="h-full rounded-full prog-fill" id="prog" style="width:0%;background:#2e5fa3;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="flex flex-wrap gap-2 mt-3" id="tabs">
+      <button onclick="filter('all',this)" class="qtab active text-xs font-body font-semibold px-3 py-1.5 rounded-full border border-gray-300 transition-all" style="color:#6b6459;">All (35)</button>
+      <button onclick="filter('numerical',this)" class="qtab text-xs font-body font-semibold px-3 py-1.5 rounded-full border border-gray-300 transition-all" style="color:#6b6459;">Numerical (10)</button>
+      <button onclick="filter('conceptual',this)" class="qtab text-xs font-body font-semibold px-3 py-1.5 rounded-full border border-gray-300 transition-all" style="color:#6b6459;">Conceptual (7)</button>
+      <button onclick="filter('ar',this)" class="qtab text-xs font-body font-semibold px-3 py-1.5 rounded-full border border-gray-300 transition-all" style="color:#6b6459;">Assertion-Reason (8)</button>
+      <button onclick="filter('hypothetical',this)" class="qtab text-xs font-body font-semibold px-3 py-1.5 rounded-full border border-gray-300 transition-all" style="color:#6b6459;">Hypothetical (5)</button>
+      <button onclick="filter('challenge',this)" class="qtab text-xs font-body font-semibold px-3 py-1.5 rounded-full border border-gray-300 transition-all" style="color:#6b6459;">Challenge (5)</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ QUESTION LIST ══ -->
+<div class="max-w-5xl mx-auto px-4 py-6" id="qlist"></div>
+
+<!-- ══ FOOTER ══ -->
+<div class="text-center py-6 text-xs font-mono" style="color:#a09890;">
+  Ch.2 · Capacitors &amp; Capacitance · ISC/CBSE Class 12 · Practice Bank
+</div>
+
+<script>
+const QS = [
+// ══════════════════════════════════════
+// NUMERICAL (10)
+// ══════════════════════════════════════
+{
+  id:1, cat:'numerical', topic:'Parallel Plate Capacitor', marks:3,
+  title:'Capacitance, Charge and Energy',
+  q:`A parallel plate capacitor has plate area 6×10⁻³ m² and separation 3 mm. It is connected to a 100 V battery. Calculate:
+(i) Capacitance C
+(ii) Charge Q on each plate
+(iii) Energy stored U
+(iv) If a mica sheet (K = 6) is inserted while battery remains connected, find new Q′ and U′.`,
+  given:['A = 6×10⁻³ m²','d = 3×10⁻³ m','V = 100 V','ε₀ = 8.85×10⁻¹² C²/N·m²','K(mica) = 6'],
+  steps:[
+    {h:'(i) Capacitance without dielectric',v:`C = ε₀A/d
+= (8.85×10⁻¹²×6×10⁻³)/(3×10⁻³)
+= 17.7×10⁻¹²  F  = 1.77×10⁻¹¹ F`},
+    {h:'(ii) Charge on plates',v:`Q = CV = 1.77×10⁻¹¹ × 100 = 1.77×10⁻⁹ C = 1.77 nC`},
+    {h:'(iii) Energy stored',v:`U = ½CV² = ½ × 1.77×10⁻¹¹ × 100²
+= ½ × 1.77×10⁻⁷ = 8.85×10⁻⁸ J`},
+    {h:'(iv) With mica, battery connected (V = constant)',v:`New C′ = KC = 6 × 1.77×10⁻¹¹ = 1.062×10⁻¹⁰ F
+Q′ = C′V = 1.062×10⁻¹⁰ × 100 = 1.062×10⁻⁸ C = 10.62 nC
+U′ = ½C′V² = KU = 6 × 8.85×10⁻⁸ = 5.31×10⁻⁷ J
+Energy INCREASES (battery supplies extra charge)`},
+  ],
+  ans:'C = 1.77×10⁻¹¹ F | Q = 1.77 nC | U = 8.85×10⁻⁸ J | Q′ = 10.62 nC | U′ = 5.31×10⁻⁷ J',
+  insight:'Battery connected → V constant → inserting dielectric increases Q, C, and U by factor K. Extra energy comes from battery, not capacitor itself.'
+},
+{
+  id:2, cat:'numerical', topic:'Series & Parallel Combination', marks:4,
+  title:'Three Capacitors — Series then Parallel',
+  q:`Three capacitors C₁ = 1 μF, C₂ = 2 μF, C₃ = 3 μF are joined in series and connected to a 120 V supply.
+(i) Find equivalent capacitance.
+(ii) Find potential difference across each capacitor.
+(iii) Now, same capacitors are connected in parallel. Find equivalent capacitance and charge supplied by battery.`,
+  given:['C₁=1μF, C₂=2μF, C₃=3μF','V = 120 V'],
+  steps:[
+    {h:'(i) Series: 1/C_eq = 1/C₁+1/C₂+1/C₃',v:`1/C_s = 1/1 + 1/2 + 1/3 = 6/6+3/6+2/6 = 11/6
+C_s = 6/11 μF ≈ 0.545 μF`},
+    {h:'(ii) Series: same charge q on all',v:`q = C_s × V = (6/11)×10⁻⁶ × 120 = 720/11 μC ≈ 65.45 μC
+V₁ = q/C₁ = 65.45/1 = 65.45 V
+V₂ = q/C₂ = 65.45/2 = 32.73 V
+V₃ = q/C₃ = 65.45/3 = 21.82 V
+Check: 65.45+32.73+21.82 ≈ 120 V ✓`},
+    {h:'(iii) Parallel: C_eq = C₁+C₂+C₃',v:`C_p = 1+2+3 = 6 μF
+Total Q = C_p × V = 6×10⁻⁶ × 120 = 720 μC`},
+  ],
+  ans:'C_series = 6/11 μF | V₁=65.5V, V₂=32.7V, V₃=21.8V | C_parallel = 6μF | Q_total = 720μC',
+  insight:'In series: smaller capacitor gets larger share of voltage. In parallel: C_eq always exceeds the largest individual capacitor.'
+},
+{
+  id:3, cat:'numerical', topic:'Energy Loss — Charge Sharing', marks:3,
+  title:'Energy Dissipated When Capacitors Share Charge',
+  q:`A 600 pF capacitor charged to 200 V is disconnected from the battery and connected to another uncharged 600 pF capacitor. Find:
+(i) Common potential V_c
+(ii) Energy before and after
+(iii) Energy lost. Express as percentage of initial energy.`,
+  given:['C₁ = C₂ = 600 pF = 6×10⁻¹⁰ F','V₁ = 200 V, V₂ = 0'],
+  steps:[
+    {h:'(i) Common potential',v:`V_c = (C₁V₁+C₂V₂)/(C₁+C₂) = (6×10⁻¹⁰×200+0)/(12×10⁻¹⁰) = 100 V`},
+    {h:'(ii) Energy before and after',v:`U_i = ½C₁V₁² = ½×6×10⁻¹⁰×200² = 1.2×10⁻⁵ J
+U_f = ½(C₁+C₂)V_c² = ½×12×10⁻¹⁰×100² = 6×10⁻⁶ J`},
+    {h:'(iii) Energy lost',v:`ΔU = U_i − U_f = 1.2×10⁻⁵ − 6×10⁻⁶ = 6×10⁻⁶ J
+Using formula: ΔU = C₁C₂(V₁−V₂)²/[2(C₁+C₂)]
+= (6×6×10⁻²⁰ × 200²)/(2×12×10⁻¹⁰) = 6×10⁻⁶ J ✓
+% lost = 6×10⁻⁶/1.2×10⁻⁵ × 100 = 50%`},
+  ],
+  ans:'V_c = 100 V | U_i = 1.2×10⁻⁵ J | U_f = 6×10⁻⁶ J | ΔU = 6×10⁻⁶ J (50% lost!)',
+  insight:'When two equal capacitors share charge, exactly 50% energy is always lost regardless of initial V. Energy goes as heat/light in connecting wire — unavoidable thermodynamic loss.'
+},
+{
+  id:4, cat:'numerical', topic:'Dielectric — Battery Disconnected', marks:3,
+  title:'Dielectric Inserted After Disconnecting Battery',
+  q:`A parallel plate capacitor (plate area A = 25 cm², separation d = 2 mm) is connected to 12 V battery, charged, then disconnected. A dielectric slab of K = 5 is inserted between plates. Find:
+(i) Charge before and after insertion (ii) New capacitance, voltage and electric field (iii) Change in energy.`,
+  given:['A = 25×10⁻⁴ m²','d = 2×10⁻³ m','V₀ = 12 V','K = 5'],
+  steps:[
+    {h:'Initial (before dielectric)',v:`C₀ = ε₀A/d = 8.85×10⁻¹²×25×10⁻⁴/2×10⁻³ = 11.06×10⁻¹² F ≈ 11.06 pF
+Q = C₀V₀ = 11.06×10⁻¹² × 12 = 1.33×10⁻¹⁰ C
+U₀ = ½C₀V₀² = ½×11.06×10⁻¹²×144 = 7.96×10⁻¹⁰ J`},
+    {h:'After dielectric (Q = constant, battery disconnected)',v:`C′ = KC₀ = 5×11.06×10⁻¹² = 55.3 pF
+V′ = Q/C′ = 1.33×10⁻¹⁰/55.3×10⁻¹² = 2.4 V = V₀/K ✓
+E′ = V′/d = 2.4/2×10⁻³ = 1200 V/m = E₀/K`},
+    {h:'Change in energy',v:`U′ = Q²/2C′ = (1.33×10⁻¹⁰)²/(2×55.3×10⁻¹²) = 1.59×10⁻¹⁰ J
+ΔU = U′ − U₀ = 1.59×10⁻¹⁰ − 7.96×10⁻¹⁰ = −6.37×10⁻¹⁰ J
+Energy DECREASES by factor K. The dielectric is pulled in by electric force — it does work.`},
+  ],
+  ans:'Q unchanged = 1.33×10⁻¹⁰ C | C′=55.3pF | V′=2.4V | E′=1200V/m | U decreases by 80%',
+  insight:'Disconnected battery → Q constant → dielectric insertion REDUCES V, E, and U. The energy decrease equals work done by electric force pulling in the dielectric slab.'
+},
+{
+  id:5, cat:'numerical', topic:'Plates Pulled Apart — Work Done', marks:4,
+  title:'Work Done Separating Plates After Battery Disconnect',
+  q:`A parallel plate capacitor (A = ε₀ m², d = 1 m, C = ε₀ F) is charged to V₀ = 1 V by a battery which is then disconnected. The plates are pulled apart to d′ = 3d.
+(i) Find work done against electric force.
+(ii) What if battery remained connected?`,
+  given:['C = ε₀A/d','Q = C×V₀ (constant after disconnect)'],
+  steps:[
+    {h:'(i) Battery disconnected — Q constant',v:`C₀ = ε₀A/d, Q = C₀V₀
+New C′ = ε₀A/3d = C₀/3
+U₀ = Q²/2C₀
+U′ = Q²/2C′ = Q²/(2C₀/3) = 3Q²/2C₀ = 3U₀
+Work done = U′ − U₀ = 3U₀ − U₀ = 2U₀ = 2×(½C₀V₀²) = C₀V₀²
+The work done by external agent equals energy increase.`},
+    {h:'(ii) Battery connected — V constant',v:`C′ = C₀/3
+U₀ = ½C₀V₀², U′ = ½C′V₀² = ½(C₀/3)V₀² = U₀/3
+Energy DECREASES from U₀ to U₀/3.
+Charge lost: ΔQ = (C₀−C′)V₀ = (2C₀/3)V₀ → returns to battery
+Work done against force = ΔU_field − W_battery
+= (U₀/3 − U₀) + V₀×ΔQ = −2U₀/3 + 2U₀V₀²/3... net = U₀/3`},
+  ],
+  ans:'Battery off: Work = C₀V₀² (energy increases) | Battery on: Work = U₀/3 (energy decreases; charge returns to battery)',
+  insight:'Critical difference: disconnected → Q conserved, work increases stored energy. Connected → V conserved, work done is returned partly to battery as energy flows back.'
+},
+{
+  id:6, cat:'numerical', topic:'Common Potential', marks:3,
+  title:'Two Unequally Charged Capacitors Connected',
+  q:`Capacitor C₁ = 4 μF is charged to 500 V. Capacitor C₂ = 2 μF is charged to 200 V. They are connected with positive plate of C₁ to negative plate of C₂ (unlike plates). Find common potential and energy lost.`,
+  given:['C₁=4μF, V₁=500V','C₂=2μF, V₂=200V','Unlike plates connected'],
+  steps:[
+    {h:'Charge signs (unlike plates → charges partially cancel)',v:`Q₁ = C₁V₁ = 4×500 = 2000 μC
+Q₂ = C₂V₂ = 2×200 = 400 μC
+Unlike plates: net charge = Q₁ − Q₂ = 2000 − 400 = 1600 μC`},
+    {h:'Common potential',v:`V_c = Net Q / Total C = 1600/(4+2) = 1600/6 ≈ 266.7 V`},
+    {h:'Energy before and after',v:`U_i = ½C₁V₁²+½C₂V₂² = ½×4×500²+½×2×200² = 500000+40000 = 540000 μJ
+U_f = ½(C₁+C₂)V_c² = ½×6×266.7² = 213378 μJ
+Energy lost = 540000−213378 = 326622 μJ ≈ 0.327 J`},
+  ],
+  ans:'V_common ≈ 266.7 V | Energy lost ≈ 0.327 J',
+  insight:'Unlike-plate connection reduces net charge — V_common is LESS than either initial voltage. Energy is always lost (heat in wire) whenever charge redistributes between capacitors.'
+},
+{
+  id:7, cat:'numerical', topic:'16 Capacitors Design Problem', marks:4,
+  title:'Designing a 10 μF Capacitor from 10 μF/50V Units',
+  q:`A technician needs a 10 μF capacitor that can withstand 200 V. Available capacitors: each 10 μF, max 50 V. Design the arrangement needed (minimum capacitors) and verify it meets specifications.`,
+  given:['Available: 10 μF, max 50 V each','Required: 10 μF, 200 V'],
+  steps:[
+    {h:'Step 1: Determine series string length for voltage',v:`200 V needed; each cap handles 50 V.
+Series string length n = 200/50 = 4 capacitors per row.
+C_series_row = 10/4 = 2.5 μF`},
+    {h:'Step 2: Number of rows for required capacitance',v:`Need C_eq = 10 μF in parallel.
+Each row = 2.5 μF.
+Number of rows = 10/2.5 = 4 rows.
+Total capacitors = 4 rows × 4 per row = 16 capacitors`},
+    {h:'Verification',v:`Series: 4 caps → C_row = 10/4 = 2.5 μF, Voltage: 4×50 = 200 V ✓
+Parallel: 4 rows → C_eq = 4×2.5 = 10 μF ✓
+Each capacitor sees 200/4 = 50 V exactly. ✓`},
+  ],
+  ans:'Need 16 capacitors: 4 rows × 4 in series. C_eq = 10μF, withstands 200V.',
+  insight:'Golden rule for capacitor design: series for voltage division, parallel for capacitance addition. Always place equal capacitors so voltage divides equally.'
+},
+{
+  id:8, cat:'numerical', topic:'Energy Density', marks:2,
+  title:'Energy Density Between Capacitor Plates',
+  q:`A parallel plate capacitor has plate area 10 cm² and separation 5 mm. Electric field between plates is 3×10⁵ V/m. Calculate:
+(i) Energy density u between the plates
+(ii) Total energy stored U`,
+  given:['A = 10⁻³ m²','d = 5×10⁻³ m','E = 3×10⁵ V/m','ε₀ = 8.85×10⁻¹²'],
+  steps:[
+    {h:'(i) Energy density',v:`u = ½ε₀E² = ½ × 8.85×10⁻¹² × (3×10⁵)²
+= ½ × 8.85×10⁻¹² × 9×10¹⁰
+= ½ × 796.5×10⁻³ = 0.398 J/m³`},
+    {h:'(ii) Total energy (volume = A×d)',v:`Volume = A×d = 10⁻³ × 5×10⁻³ = 5×10⁻⁶ m³
+U = u × Volume = 0.398 × 5×10⁻⁶ = 1.99×10⁻⁶ J ≈ 2 μJ`},
+  ],
+  ans:'u ≈ 0.398 J/m³ | U ≈ 2 μJ',
+  insight:'Energy density depends only on E field — it is a property of the field, not just the capacitor. This is why a stronger field stores more energy per unit volume.'
+},
+{
+  id:9, cat:'numerical', topic:'Spherical Capacitor', marks:3,
+  title:'Capacitance of Spherical Shell Capacitor',
+  q:`Two concentric conducting spherical shells have inner radius r₁ = 10 cm and outer radius r₂ = 15 cm. Calculate capacitance. Also calculate capacitance of the inner sphere treated as isolated (r₂ → ∞).`,
+  given:['r₁ = 0.1 m','r₂ = 0.15 m','k = 9×10⁹ N·m²/C²'],
+  steps:[
+    {h:'Spherical shell capacitor',v:`C = 4πε₀ × r₁r₂/(r₂−r₁)
+= r₁r₂/[k(r₂−r₁)]
+= (0.1×0.15)/[9×10⁹×0.05]
+= 0.015/4.5×10⁸
+= 3.33×10⁻¹¹ F = 33.3 pF`},
+    {h:'Isolated sphere (r₂ → ∞)',v:`C_isolated = 4πε₀r₁ = r₁/k = 0.1/(9×10⁹) = 1.11×10⁻¹¹ F = 11.1 pF`},
+    {h:'Compare',v:`C_shell / C_isolated = 33.3/11.1 = 3 × (because r₂/(r₂−r₁) = 0.15/0.05 = 3)
+The outer shell increases capacitance by bringing a grounded conductor nearby.`},
+  ],
+  ans:'C_shell = 33.3 pF | C_isolated = 11.1 pF | Shell has 3× higher capacitance',
+  insight:'Any grounded conductor near a charged sphere increases its capacitance — it provides "image" charges that reduce the potential for same charge stored.'
+},
+{
+  id:10, cat:'numerical', topic:'Q-V Graph Analysis', marks:3,
+  title:'Identifying Capacitances from Q-V Graph',
+  q:`A Q–V graph shows two straight lines A and B passing through the origin. Line A makes angle 60° with V-axis and Line B makes angle 30° with V-axis. C₂ > C₁. Which line corresponds to which capacitor? If Line B shows Q = 30 μC at V = 10 V, find C₂.`,
+  given:['Line A: 60° with V-axis','Line B: 30° with V-axis'],
+  steps:[
+    {h:'Understanding Q-V graph slope',v:`C = Q/V = slope of Q-V line (Q on y-axis, V on x-axis)
+Slope = tanθ where θ is angle with V-axis (x-axis)
+Line A: slope = tan60° = √3 ≈ 1.73 (steeper)
+Line B: slope = tan30° = 1/√3 ≈ 0.577 (less steep)`},
+    {h:'Identifying capacitors',v:`Higher slope = higher C.
+Line A has slope √3 > slope of B (1/√3)
+∴ Line A → C₂ (larger capacitor)
+Line B → C₁ (smaller capacitor)`},
+    {h:'Finding C₂ from Line B... wait — B is C₁',v:`Correction: Line B → C₁.
+From Line B: C₁ = Q/V = 30μC/10V = 3μF
+C₂ > C₁, so C₂ = C₁ × (slope_A/slope_B) = 3 × (√3/1/√3) = 3×3 = 9 μF`},
+  ],
+  ans:'Line A = C₂ (larger), Line B = C₁ | C₁ = 3 μF | C₂ = 9 μF',
+  insight:'On a Q-V graph: steeper slope = higher capacitance. The ratio of capacitances equals the ratio of slopes. Graph reading is a critical CBSE skill.'
+},
+
+// ══════════════════════════════════════
+// CONCEPTUAL (7)
+// ══════════════════════════════════════
+{
+  id:11, cat:'conceptual', topic:'Conductor Properties', marks:2,
+  title:'Why Does Charge Reside Only on Outer Surface?',
+  q:`A charged hollow conductor (no charge inside cavity) has all its charge on the outer surface. Prove this using Gauss's law. Also explain why a conductor placed in an electric field acts as a shield for the interior.`,
+  steps:[
+    {h:'Proof: charge on outer surface only',v:`Consider a Gaussian surface S just inside the conducting material (not the cavity).
+In electrostatic equilibrium: E_inside = 0 (by definition).
+By Gauss's law: Φ = ∮E·dA = Q_enc/ε₀
+Since E = 0 everywhere on S: Φ = 0 → Q_enc = 0.
+The conductor material itself has no net charge → all charge must be on surfaces.
+Since inner surface Q_enc = 0, all charge is on OUTER surface. ✓`},
+    {h:'Electrostatic shielding mechanism',v:`When external E field is applied:
+1. Free electrons in conductor redistribute.
+2. This creates an internal opposing field E_induced.
+3. Redistribution continues until E_net inside = 0.
+4. The cavity inside is completely shielded — E_cavity = 0.
+5. Example: Faraday cage, car body, aircraft fuselage.
+Important: This works only for static fields. A hollow conductor does NOT shield magnetic fields or changing E fields.`},
+  ],
+  ans:'Charge on outer surface proven by Gauss\'s law (E=0 inside conductor). Shielding: induced charges cancel external field inside.',
+  insight:'A charged object placed INSIDE the cavity induces charges on the inner surface. But interior of a conductor with NO cavity charge is always field-free.'
+},
+{
+  id:12, cat:'conceptual', topic:'Dielectric', marks:2,
+  title:'Why Does Water Have Such a High Dielectric Constant (K=80)?',
+  q:`Water has K = 80 while mica has K ≈ 6. Explain at the molecular level why water has such a high dielectric constant. What property makes a molecule a good dielectric? Also, why can't water be used as a dielectric in practical capacitors?`,
+  steps:[
+    {h:'Molecular explanation of high K for water',v:`Water (H₂O) is a POLAR molecule — the oxygen attracts electrons more strongly than hydrogen, creating a permanent electric dipole.
+When placed in an external E field:
+1. Millions of water dipoles align with the field.
+2. This alignment creates a strong internal polarisation P.
+3. Induced field E_in opposes external field E₀.
+4. Net field inside = E₀ − E_in (much reduced).
+5. The dielectric constant K = E₀/E_net ≈ 80.
+This is far higher than mica (K=6) because water molecules can rotate freely and align almost perfectly, while mica's polarisation comes only from bond distortion.`},
+    {h:'Why water is impractical as a dielectric',v:`Despite K=80, water cannot be used in capacitors because:
+1. It is a conductor at normal conditions (contains dissolved ions).
+2. Electrolytic dissociation causes leakage current.
+3. Boiling point too low for many applications.
+4. Corrodes metal plates.
+Good dielectrics need: high K + very low conductivity (good insulator) + high breakdown strength.`},
+  ],
+  ans:'Water K=80 due to freely rotating polar molecules. Unusable as dielectric because it conducts due to dissolved ions.',
+  insight:'A dielectric must be BOTH polarisable (high K) AND insulating (low conductivity). Water fails the second condition.'
+},
+{
+  id:13, cat:'conceptual', topic:'Common Potential', marks:2,
+  title:'Is Charge Conserved? Is Energy Conserved? Where Does Energy Go?',
+  q:`When two charged capacitors at different potentials are connected by a wire, charge redistributes. (a) Is total charge conserved? (b) Is total energy conserved? If not, where does the "lost" energy go? (c) Can the lost energy ever be zero?`,
+  steps:[
+    {h:'(a) Charge conservation',v:`YES — charge is always conserved.
+Q_before = C₁V₁ + C₂V₂ = Q_after = (C₁+C₂)V_c
+This is a fundamental law of nature (conservation of charge). The charge doesn't disappear — it redistributes.`},
+    {h:'(b) Energy conservation',v:`NO — energy is NOT conserved in this process.
+ΔU = C₁C₂(V₁−V₂)²/[2(C₁+C₂)] > 0 is always lost.
+The energy is converted to heat (I²R losses in the wire) and electromagnetic radiation.
+This is analogous to two tanks of water at different levels connected by a pipe — some potential energy always converts to heat due to viscous flow.`},
+    {h:'(c) Can energy loss be zero?',v:`Only when V₁ = V₂. If both capacitors are at the same potential, no charge flows, so zero heat is produced.
+Even if the wire has zero resistance (superconductor), energy would be lost as electromagnetic radiation (oscillating LC circuit — but in a pure resistor-free case, it would oscillate and radiate).
+In practice: energy loss is always positive whenever V₁ ≠ V₂.`},
+  ],
+  ans:'Charge: conserved always. Energy: NOT conserved — lost as heat. Loss = 0 only if V₁ = V₂.',
+  insight:'This is a profound thermodynamic result — whenever two systems at different "potentials" (electric, thermal, gravitational) are connected, entropy increases and energy is "degraded".'
+},
+{
+  id:14, cat:'conceptual', topic:'Energy Stored', marks:2,
+  title:'Three Equivalent Formulas for Capacitor Energy — When to Use Which?',
+  q:`The energy in a capacitor is given by U = ½CV² = Q²/2C = QV/2. These are all equivalent. Explain which formula is most useful when: (a) Battery remains connected and plates are pulled apart (b) Battery is disconnected and dielectric is inserted (c) Charge Q is known but capacitance changes.`,
+  steps:[
+    {h:'(a) Battery connected — V is constant',v:`Use U = ½CV² because V doesn't change.
+C changes (plates pulled apart: C = ε₀A/d decreases as d increases).
+U = ½CV² → U decreases as C decreases.
+Example: Pulling plates apart with battery connected → C↓, V=constant, Q↓, U↓`},
+    {h:'(b) Battery disconnected — Q is constant',v:`Use U = Q²/2C because Q doesn't change.
+C changes (inserting dielectric: C = KC₀ increases).
+U = Q²/2C → U decreases as C increases.
+Example: Dielectric inserted after disconnect → C↑, Q=constant, V↓, U↓`},
+    {h:'(c) Q known, C changes',v:`Use U = Q²/2C → plug in new C directly.
+Most useful when tracking initial charge through circuit changes.
+Note: QV/2 is useful when both Q and V are known at the same instant (e.g., just before or after an event).`},
+  ],
+  ans:'V constant → use ½CV². Q constant → use Q²/2C. Both known → use QV/2.',
+  insight:'Choosing the right formula avoids unnecessary calculation. The "constant" variable is always the one that doesn\'t change during the process — use the formula that makes that variable appear explicitly.'
+},
+{
+  id:15, cat:'conceptual', topic:'Force Between Plates', marks:2,
+  title:'Force Between Plates of a Parallel Plate Capacitor',
+  q:`Show that the attractive force between the plates of a parallel plate capacitor is F = Q²/(2ε₀A) = σ²A/(2ε₀). Why does the electric field used in this formula (σ/2ε₀) differ from the total field between the plates (σ/ε₀)?`,
+  steps:[
+    {h:'Derivation of force formula',v:`Each plate has surface charge density σ = Q/A.
+The electric field created by ONE plate alone = σ/(2ε₀) (half the total field).
+Force on other plate = charge × field due to first plate
+F = Q × E_one_plate = Q × σ/(2ε₀) = Q × Q/(2ε₀A) = Q²/(2ε₀A)
+Also: F = σ²A/(2ε₀) [since Q = σA]`},
+    {h:'Why σ/2ε₀, not σ/ε₀?',v:`The total field between plates E = σ/ε₀ is the superposition of fields from BOTH plates.
+Each plate contributes σ/(2ε₀) in the region between them.
+A plate CANNOT exert a force on itself — only the OTHER plate's field acts on it.
+Therefore the force on plate 1 = Q₁ × (field due to plate 2 only) = Q × σ/(2ε₀).
+Using the full field σ/ε₀ would double-count and give wrong answer.`},
+  ],
+  ans:'F = Q²/(2ε₀A). The factor of 2 appears because each plate can only be accelerated by the OTHER plate\'s field — self-force is zero.',
+  insight:'This is a subtle but important principle: a charge cannot exert force on itself. Only the external contribution to the field counts for force calculation.'
+},
+{
+  id:16, cat:'conceptual', topic:'Capacitance Definition', marks:1,
+  title:'Can Capacitance Be Negative? What Is the Physical Meaning of C?',
+  q:`A student says "A capacitor with C = 0 would store no charge for any voltage, while C = ∞ would store infinite charge at zero voltage." Evaluate these statements. Can C ever be negative in practice?`,
+  steps:[
+    {h:'Physical meaning of capacitance',v:`C = Q/V means: charge stored per unit potential difference.
+C → 0: Even a large voltage V gives negligible charge Q → capacitor is almost useless.
+C → ∞: Even tiny voltage stores huge charge; V → 0 for same charge → perfect short circuit.
+An isolated conductor far from everything has smallest C (C = 4πε₀r).
+A parallel plate capacitor with d → 0 has C → ∞ (and breaks down practically).
+Both statements are correct physically.`},
+    {h:'Can C be negative?',v:`In classical circuit theory, C is always positive for passive capacitors.
+However, in quantum systems, small quantum dots can show "negative capacitance" — an increase in charge can DECREASE voltage due to quantum tunnelling effects. This is exploited in modern transistors (negative capacitance FETs) to achieve sub-threshold swing below 60 mV/decade.
+In classical electrostatics: C = ε₀A/d > 0 always (all quantities positive).`},
+  ],
+  ans:'Both statements correct. C=0 → useless capacitor. C→∞ → short circuit. Classical C always positive; quantum systems can show negative C.',
+  insight:'Negative capacitance is a real quantum effect being actively used in next-generation semiconductor transistors (Intel, TSMC research programs).'
+},
+{
+  id:17, cat:'conceptual', topic:'Special Cases', marks:2,
+  title:'What Happens to a Capacitor if Plates Touch?',
+  q:`(a) What happens to the capacitance if plate separation d → 0? (b) What happens physically if plates actually touch? (c) If a metallic slab of thickness t = d is inserted (completely filling the gap), what is the new capacitance? Explain.`,
+  steps:[
+    {h:'(a) As d → 0',v:`C = ε₀A/d → ∞ as d → 0.
+This suggests infinite capacitance — physically: electric field E = σ/ε₀ remains finite, but since V = Ed → 0, the potential difference approaches zero while Q remains finite, giving C = Q/V → ∞.`},
+    {h:'(b) If plates actually touch',v:`The capacitor becomes a short circuit.
+All stored charge Q flows from one plate to the other through the contact point — instantaneous discharge.
+If connected to a battery: battery provides current continuously as long as plates touch.
+The "capacitor" stores no energy — it is simply a wire.`},
+    {h:'(c) Metallic slab t = d (completely fills gap)',v:`A metallic slab of K = ∞ (conductor).
+New C = ε₀A/(d−t) = ε₀A/(d−d) = ε₀A/0 → ∞
+Formula: C = ε₀A/(d−t+t/K). As K→∞: t/K→0, so C = ε₀A/(d−t).
+When t = d: C → ∞.
+Physically: the conductor completely connects the two plates internally. No gap means no potential difference possible — again a short circuit.`},
+  ],
+  ans:'d→0: C→∞. Plates touch: short circuit, discharge. Metal slab t=d: C→∞ (equivalent to no gap).',
+  insight:'C→∞ corresponds to a short circuit — this is the limiting case of a perfect conductor between the plates. The dielectric strength limits how thin d can actually be.'
+},
+
+// ══════════════════════════════════════
+// ASSERTION-REASON (8)
+// ══════════════════════════════════════
+{
+  id:18, cat:'ar', topic:'Capacitance', marks:1,
+  title:'A-R: Capacitance is an Intrinsic Property',
+  q:`<strong>Assertion (A):</strong> The capacitance of a capacitor depends only on its geometry (shape, size, separation) and the medium between the plates — NOT on the charge stored or the voltage applied.<br><br>
+<strong>Reason (R):</strong> By definition, C = Q/V, and for a given capacitor, both Q and V increase proportionally, keeping C constant.`,
+  opts:['(a) Both A and R true; R correctly explains A','(b) Both A and R true; R does not correctly explain A','(c) A is true; R is false','(d) A is false; R is true'],
+  steps:[
+    {h:'Analyse Assertion A',v:`TRUE. Capacitance is a geometric property.
+C = ε₀KA/d — depends on A (area), d (separation), K (dielectric).
+C does NOT depend on Q or V (in the linear regime).
+Changing Q changes V proportionally, keeping C = Q/V constant.`},
+    {h:'Analyse Reason R',v:`TRUE. The proportionality Q ∝ V (for fixed C) is exactly why C is constant.
+If we double Q, V doubles, so C = 2Q/2V = Q/V remains the same.`},
+    {h:'Does R explain A?',v:`YES. R correctly identifies that Q and V change proportionally, which is why C is independent of them.
+Answer: (a)`},
+  ],
+  ans:'Answer: (a) — Both A and R are true; R correctly explains A.',
+  insight:'Capacitance is the proportionality constant in Q = CV. It is fixed by geometry alone (assuming linear dielectric). This is exactly analogous to resistance in Ohm\'s law.'
+},
+{
+  id:19, cat:'ar', topic:'Energy', marks:1,
+  title:'A-R: Energy Stored vs Energy Dissipated During Charging',
+  q:`<strong>Assertion (A):</strong> When a capacitor C is charged from a battery of EMF V, the energy stored in the capacitor is ½CV², but the energy supplied by the battery is CV². Therefore, 50% of the energy is always lost during charging, regardless of resistance.<br><br>
+<strong>Reason (R):</strong> The energy lost (½CV²) is dissipated as heat in the connecting resistance.`,
+  opts:['(a) Both A and R true; R correctly explains A','(b) Both A and R true; R does not correctly explain A','(c) A is true; R is false','(d) A is false; R is true'],
+  steps:[
+    {h:'Analyse A',v:`TRUE. Battery supplies energy = QV = CV×V = CV².
+Capacitor stores ½CV². Lost = CV² − ½CV² = ½CV².
+This 50% loss is independent of resistance R — it is a topological result.`},
+    {h:'Analyse R',v:`PARTIALLY TRUE, but incomplete/misleading.
+If R > 0: heat in resistor = ½CV². Correct.
+If R = 0 (superconductor): charge reaches capacitor without I²R heating. But 50% energy is then radiated as electromagnetic radiation (oscillations, then radiation).
+So R explains WHERE the energy goes only for resistive case, not generally.`},
+    {h:'Conclusion',v:`A is true. R is partially true (correct for resistive circuits, not for lossless circuits).
+Best answer: (b) — Both true but R doesn't fully/correctly explain A in the general case.`},
+  ],
+  ans:'Answer: (b) — Both true but R doesn\'t fully explain A (R=0 case: energy radiated, not just heated).',
+  insight:'The 50% loss during capacitor charging is a universal result — it comes from the mismatch between the constant battery voltage and the rising capacitor voltage, not just resistance.'
+},
+{
+  id:20, cat:'ar', topic:'Dielectric', marks:1,
+  title:'A-R: Inserting Dielectric Decreases Electric Field',
+  q:`<strong>Assertion (A):</strong> When a dielectric is inserted between the plates of an isolated (battery disconnected) charged capacitor, the electric field between the plates decreases.<br><br>
+<strong>Reason (R):</strong> The dielectric gets polarised and the induced surface charges on the dielectric create an electric field that opposes the original field.`,
+  opts:['(a) Both A and R true; R correctly explains A','(b) Both A and R true; R does not correctly explain A','(c) A is true; R is false','(d) A is false; R is true'],
+  steps:[
+    {h:'Analyse A',v:`TRUE. Battery disconnected → Q constant.
+E₀ = σ/ε₀ (without dielectric)
+E = σ/(Kε₀) = E₀/K < E₀ for K > 1.
+Electric field decreases by factor K.`},
+    {h:'Analyse R',v:`TRUE and correct. The mechanism:
+1. External field E₀ polarises dielectric molecules.
+2. Polarised dielectric develops surface charges (−σ_p on one face, +σ_p on other).
+3. These induced charges create a field E_p = σ_p/ε₀ opposing E₀.
+4. Net field = E₀ − E_p = E₀/K.
+This is the correct molecular explanation.`},
+    {h:'Conclusion',v:`Both true; R correctly explains A. Answer: (a)`},
+  ],
+  ans:'Answer: (a) — Both true; R correctly explains the mechanism of field reduction.',
+  insight:'The dielectric constant K represents the ratio E₀/E = 1 + χ, where χ is electric susceptibility. Higher χ = more polarisation = more field reduction.'
+},
+{
+  id:21, cat:'ar', topic:'Combination', marks:1,
+  title:'A-R: Series Capacitors Have Same Charge',
+  q:`<strong>Assertion (A):</strong> When capacitors are connected in series, each capacitor stores the same charge regardless of their capacitances.<br><br>
+<strong>Reason (R):</strong> The current that charges each capacitor in series must be the same (charge continuity), so equal charge accumulates on each capacitor's plates.`,
+  opts:['(a) Both A and R true; R correctly explains A','(b) Both A and R true; R does not correctly explain A','(c) A is true; R is false','(d) A is false; R is true'],
+  steps:[
+    {h:'Analyse A',v:`TRUE. In series, the same charge q appears on all capacitors.
+This is because the inner conductors (middle sections) are isolated — charge induced on one side must equal charge on the other.`},
+    {h:'Analyse R',v:`TRUE. Charge conservation on isolated inner conductors ensures equal charge.
+The "current continuity" argument is correct: the charge that flows to charge one plate of C₁ is the same current that comes from one plate of C₂ (they are connected in series without branching).`},
+    {h:'Does R explain A?',v:`YES. R correctly gives the physical mechanism (charge continuity / conservation).
+Answer: (a)`},
+  ],
+  ans:'Answer: (a) — Both true; R correctly explains A via charge conservation.',
+  insight:'The inner conductors between series capacitors are electrically isolated — whatever charge appears on one face must be balanced by equal and opposite on the other.'
+},
+{
+  id:22, cat:'ar', topic:'Conductor', marks:1,
+  title:'A-R: Sharp Points Have High Charge Density',
+  q:`<strong>Assertion (A):</strong> On the surface of a charged conductor, the surface charge density σ is highest at points of minimum radius of curvature (sharp points) and lowest at flat regions.<br><br>
+<strong>Reason (R):</strong> At electrostatic equilibrium, the potential V is constant over the entire conductor surface, and this requires higher charge concentration at sharper regions to maintain equal potential.`,
+  opts:['(a) Both A and R true; R correctly explains A','(b) Both A and R true; R does not correctly explain A','(c) A is true; R is false','(d) A is false; R is true'],
+  steps:[
+    {h:'Analyse A',v:`TRUE. This is a well-established result of electrostatics.
+For a sphere: σ = Q/4πR². For smaller R, σ ∝ 1/R (approximately).
+Sharp points have extremely high σ → very high E → corona discharge.
+Application: Lightning rods exploit this to safely discharge clouds.`},
+    {h:'Analyse R',v:`TRUE. The equipotential condition requires adjustment of charge density with geometry.
+Near a sharp point, charge must concentrate more to "match" the potential of the flatter region at the same V.
+Mathematical proof requires solving Laplace's equation with boundary conditions.`},
+    {h:'Conclusion',v:`Both true; R correctly provides the electrostatic basis. Answer: (a)`},
+  ],
+  ans:'Answer: (a) — Both true; R correctly explains the physical basis of high σ at sharp points.',
+  insight:'The electric field E = σ/ε₀ at conductor surface. High σ at tip → E can exceed dielectric strength of air (~3×10⁶ V/m) → ionisation → corona discharge.'
+},
+{
+  id:23, cat:'ar', topic:'Dielectric', marks:1,
+  title:'A-R: Capacitance Becomes Infinite with Metallic Slab',
+  q:`<strong>Assertion (A):</strong> If a metallic slab of thickness equal to the plate separation d is inserted between the plates, the capacitance becomes infinite.<br><br>
+<strong>Reason (R):</strong> A metallic slab is a conductor with K = ∞. Using the formula C = ε₀A/(d−t+t/K), when K→∞, t/K→0, so C = ε₀A/(d−t) = ε₀A/(d−d) → ∞.`,
+  opts:['(a) Both A and R true; R correctly explains A','(b) Both A and R true; R does not correctly explain A','(c) A is true; R is false','(d) A is false; R is true'],
+  steps:[
+    {h:'Analyse A',v:`TRUE (conceptually). When the metallic slab completely fills the gap, the two original plates are internally connected — no potential difference can be maintained. C = Q/V → Q/0 → ∞. Physically it's a short circuit.`},
+    {h:'Analyse R',v:`TRUE and correct. The formula C = ε₀A/(d−t) for metallic slab (t/K→0 as K→∞) is correct.
+When t = d: C = ε₀A/(d−d) = ε₀A/0 → ∞.
+The derivation using K→∞ is the correct mathematical approach.`},
+    {h:'Conclusion',v:`Both true; R correctly explains A. Answer: (a)`},
+  ],
+  ans:'Answer: (a) — Both true; R gives correct mathematical explanation.',
+  insight:'A metallic slab effectively reduces the gap by its thickness. At t=d, the gap vanishes and capacitance diverges — corresponding to a short circuit.'
+},
+{
+  id:24, cat:'ar', topic:'Energy', marks:1,
+  title:'A-R: Capacitor Stores Energy, Not Charge',
+  q:`<strong>Assertion (A):</strong> A capacitor stores electrical energy, not charge — the net charge on a capacitor (considering both plates) is always zero.<br><br>
+<strong>Reason (R):</strong> The positive charge on one plate is exactly equal to negative charge on the other, so net charge = 0. But these separated charges represent stored potential energy.`,
+  opts:['(a) Both A and R true; R correctly explains A','(b) Both A and R true; R does not correctly explain A','(c) A is true; R is false','(d) A is false; R is true'],
+  steps:[
+    {h:'Analyse A',v:`TRUE but requires nuance.
+"Stores charge" in the sense used in Q=CV means it stores separated charge (±Q on plates).
+Net charge = +Q + (−Q) = 0. Correct.
+The energy is stored in the electric field between the plates — not in the charges themselves.`},
+    {h:'Analyse R',v:`TRUE. The mechanism is exactly as described.
++Q and −Q separated by distance d → potential energy = ½QV stored in E field.
+Energy density u = ½ε₀E².`},
+    {h:'Conclusion',v:`Both true; R correctly explains A. Answer: (a)`},
+  ],
+  ans:'Answer: (a) — Both true; a capacitor has zero net charge but stores energy in its electric field.',
+  insight:'When people say a capacitor "stores charge Q", they mean Q of each polarity, not net charge. The actual storage is energy in the E field — a field phenomenon, not a charge phenomenon.'
+},
+{
+  id:25, cat:'ar', topic:'Parallel Plate', marks:1,
+  title:'A-R: Electric Field Outside Parallel Plate Capacitor',
+  q:`<strong>Assertion (A):</strong> For an ideal infinite parallel plate capacitor, the electric field outside the capacitor (beyond the plates) is exactly zero.<br><br>
+<strong>Reason (R):</strong> The field from the positive plate (+σ) and negative plate (−σ) cancel exactly in the regions outside the capacitor, just as they add up inside.`,
+  opts:['(a) Both A and R true; R correctly explains A','(b) Both A and R true; R does not correctly explain A','(c) A is true; R is false','(d) A is false; R is true'],
+  steps:[
+    {h:'Analyse A',v:`TRUE for ideal infinite plates. Field outside = 0.
+Real capacitors have fringing fields near edges — but for ideal infinite plates, A is correct.`},
+    {h:'Analyse R',v:`TRUE. Using superposition:
+Field from +σ plate: σ/(2ε₀) everywhere (outward)
+Field from −σ plate: σ/(2ε₀) everywhere (inward toward negative plate)
+Outside (left of +plate): E_+ points left, E_− points right → they cancel → E = 0.
+Inside: E_+ points right, E_− also points right → they add → E = σ/ε₀.
+R correctly explains A.`},
+    {h:'Conclusion',v:`Both true; R correctly explains using field superposition. Answer: (a)`},
+  ],
+  ans:'Answer: (a) — Both true; superposition of fields from two plates cancels outside, adds inside.',
+  insight:'This is why capacitors "contain" their field — a beautiful consequence of superposition. Real capacitors have fringing fields at edges, reducing this ideal cancellation.'
+},
+
+// ══════════════════════════════════════
+// HYPOTHETICAL (5)
+// ══════════════════════════════════════
+{
+  id:26, cat:'hypothetical', topic:'Modified Physics', marks:3,
+  title:'What if ε₀ were 10× larger?',
+  q:`[Hypothetical] Suppose the permittivity of free space ε₀ were 10 times larger than its actual value.
+(a) How would the capacitance of a parallel plate capacitor change?
+(b) How would the energy stored in a capacitor (at fixed voltage) change?
+(c) How would the electric force between two charges (Coulomb's law) change?
+(d) What practical consequence would this have for electrical engineering?`,
+  steps:[
+    {h:'(a) Effect on capacitance',v:`C = ε₀A/d → if ε₀ becomes 10ε₀: C becomes 10C.
+Capacitance of ALL capacitors would increase 10×.
+Same physical size → 10× the charge storage capability.`},
+    {h:'(b) Effect on stored energy at fixed V',v:`U = ½CV² = ½(10C)V² = 10 × ½CV² = 10U.
+Energy stored at same voltage would be 10× higher.
+A 1 μF capacitor at 10V stores 50 μJ today → would store 500 μJ.`},
+    {h:'(c) Effect on Coulomb force',v:`k = 1/(4πε₀). If ε₀ → 10ε₀: k → k/10.
+Coulomb force F = kq₁q₂/r² → F/10.
+All electrostatic forces become 10× weaker.
+Consequence: atoms would be less tightly bound (electron-proton attraction weaker) → larger atomic radii → very different chemistry.`},
+    {h:'(d) Engineering consequences',v:`Positive: Capacitors 10× smaller for same storage → electronics miniaturise dramatically.
+Negative: Coulomb attraction weaker → all electrical motors, speakers, sensors weaker.
+Also: propagation speed of light c = 1/√(ε₀μ₀) → if ε₀ larger: c smaller → universe would look different (shorter light-second).
+Basically: a very different universe with weaker electromagnetic coupling.`},
+  ],
+  ans:'ε₀ ×10 → C×10, U×10 at fixed V, Coulomb force ÷10, c smaller. A fundamentally different electromagnetic universe.',
+  insight:'ε₀ is a fundamental constant that determines the "strength" of electromagnetism. It appears in Maxwell\'s equations and determines the speed of light c = 1/√(ε₀μ₀).'
+},
+{
+  id:27, cat:'hypothetical', topic:'2D Universe', marks:2,
+  title:'Capacitors in a 2-Dimensional Universe',
+  q:`[Hypothetical] Imagine a 2D universe (flat plane). How would a "parallel plate capacitor" work?
+(a) What would be the 2D Gauss's law?
+(b) What would replace "plate area A" in 2D?
+(c) How would capacitance depend on "plate length" L and separation d?
+(d) Would energy density still be ½ε₀E²?`,
+  steps:[
+    {h:'(a) 2D Gauss\'s law',v:`In 3D: ∮E·dA = Q_enc/ε₀ (flux through a closed surface)
+In 2D: ∮E·dl = λ/ε₀(2D) (flux through a closed curve, λ = charge per unit length)
+For a 2D "point charge": E × 2πr = λ/ε₀(2D) → E = λ/(2πε₀r)
+Electric field falls as 1/r, not 1/r² !`},
+    {h:'(b) and (c) 2D Capacitor',v:`In 2D, plates are LINE SEGMENTS, not surfaces.
+"Area A" → replaced by "length L".
+For 2D parallel plates: E = σ_2D/ε₀(2D) (constant between plates, like 3D)
+where σ_2D = charge per unit length.
+Capacitance: C_2D = ε₀(2D) × L/d (analogous to ε₀A/d)
+C_2D depends on LINE DENSITY of charge.`},
+    {h:'(d) Energy density in 2D',v:`Energy density in 3D: u = ½ε₀E²  [J/m³]
+In 2D, "volume" → "area", so energy density: u_2D = ½ε₀(2D)E²  [J/m²]
+Total energy: U_2D = u_2D × (area between plates) = ½ε₀(2D)E² × L×d
+Same mathematical form, but dimensionally different.
+So YES, the form ½ε₀E² persists but with 2D constants.`},
+  ],
+  ans:'2D Gauss: line integral. C_2D ∝ L/d. E ∝ 1/r for point charges. Energy density form identical but with 2D ε₀.',
+  insight:'The mathematical structure of electrostatics (Gauss\'s law, capacitance formula) is preserved across dimensions, but the specific relationships and power laws change with dimension.'
+},
+{
+  id:28, cat:'hypothetical', topic:'Negative Capacitance', marks:2,
+  title:'A Capacitor with "Negative Capacitance" — What Would It Do?',
+  q:`[Hypothetical] In advanced transistor research, "negative capacitance" (C < 0) is observed in ferroelectric materials. If a capacitor had C = −1 μF:
+(a) What does Q = CV mean if C < 0?
+(b) If connected in series with a normal C = 2 μF: what is C_eq?
+(c) Could C_eq > C_normal? What would this mean?
+(d) Why is this being researched in semiconductor industry?`,
+  steps:[
+    {h:'(a) Meaning of C < 0',v:`Q = CV with C < 0: for positive voltage V, Q < 0 (negative charge accumulates on the positive plate).
+Equivalently: applying charge → voltage DECREASES (opposite of normal).
+This is thermodynamically unstable in isolation but can be stabilised by external constraints.
+Physically: the system is in an unstable polarisation state where adding charge reduces energy.`},
+    {h:'(b) Series combination',v:`1/C_eq = 1/C₁ + 1/C₂ = 1/2 + 1/(−1) = 1/2 − 1 = −1/2
+C_eq = −2 μF (negative!)`},
+    {h:'(c) Parallel combination',v:`C_eq_parallel = C₁ + C₂ = 2 + (−1) = 1 μF < 2 μF (C_normal).
+But what if a ferroelectric (C_NC = −5 μF) in series with normal (C = 10 μF)?
+1/C_eq = 1/10 + 1/(−5) = 0.1 − 0.2 = −0.1 → C_eq = −10 μF
+Still negative! But in special configurations: C_eq = C_normal/(1 − C_normal/|C_NC|) → can be > C_normal.
+This "capacitance amplification" is the key concept.`},
+    {h:'(d) Semiconductor application',v:`Normal transistors: minimum "swing" = 60 mV/decade (Boltzmann limit).
+With negative capacitance ferroelectric gate: effective capacitance appears amplified.
+Result: transistor switches at <60 mV/decade → lower voltage → lower power.
+Intel, TSMC, and Samsung are researching NC-FETs for sub-1nm nodes.
+Goal: 10× lower power consumption in processors.`},
+  ],
+  ans:'C<0 means Q and V have opposite signs. Series with 2μF: C_eq = −2μF. NC is used for ultra-low power transistors in modern chips.',
+  insight:'Negative capacitance is not science fiction — it\'s in active R&D at Intel and TSMC. It could enable processors that run at much lower voltages, dramatically reducing heat and power consumption.'
+},
+{
+  id:29, cat:'hypothetical', topic:'Cosmic Scale', marks:2,
+  title:'The Earth-Moon System as a Capacitor',
+  q:`[Hypothetical] Model the Earth (radius R_E = 6.4×10⁶ m) and ionosphere (height h = 100 km) as a spherical capacitor. The total atmospheric charge separation is about 500,000 C. 
+(a) Estimate the capacitance of this natural capacitor.
+(b) Estimate the voltage between Earth's surface and ionosphere.
+(c) Calculate energy stored.
+(d) Why doesn't this capacitor fully discharge?`,
+  steps:[
+    {h:'(a) Capacitance: spherical shell capacitor',v:`r₁ = R_E = 6.4×10⁶ m (Earth's surface)
+r₂ = R_E + h = 6.5×10⁶ m (ionosphere)
+C = 4πε₀r₁r₂/(r₂−r₁) = r₁r₂/[k(r₂−r₁)]
+= (6.4×10⁶ × 6.5×10⁶)/(9×10⁹ × 10⁵)
+= 4.16×10¹³/(9×10¹⁴) ≈ 0.046 F = 46 mF`},
+    {h:'(b) Voltage',v:`Q = 5×10⁵ C (estimate)
+V = Q/C = 5×10⁵/0.046 ≈ 10.9 MV ≈ 300,000 V (actual measured: ~300 kV at surface)
+Our estimate matches order of magnitude! ✓`},
+    {h:'(c) Energy stored',v:`U = ½QV = ½ × 5×10⁵ × 3×10⁵ = 7.5×10¹⁰ J = 75 GJ
+Equivalent to ~21 million kWh — enough to power a city for a day.`},
+    {h:'(d) Why no complete discharge',v:`The Earth-atmosphere system is continuously "recharged" by:
+1. ~2000 thunderstorms globally at any moment → lightning carries negative charge to ground.
+2. ~100 lightning bolts per second maintaining global circuit.
+3. Solar wind ionises upper atmosphere → creates ionosphere current.
+It is a dynamic equilibrium, not a static capacitor — continuously charging and discharging.`},
+  ],
+  ans:'C ≈ 46 mF | V ≈ 300 kV | U ≈ 75 GJ. Maintained by global thunderstorm circuit (~100 lightning bolts/second).',
+  insight:'Earth\'s atmosphere IS a giant capacitor. The global atmospheric electric circuit — discovered by Whipple in 1929 — is one of the most elegant natural phenomena in geophysics.'
+},
+{
+  id:30, cat:'hypothetical', topic:'Energy Harvesting', marks:2,
+  title:'Can a Capacitor Be Used to Store Solar Energy?',
+  q:`[Hypothetical + Applied] A supercapacitor has C = 3000 F and maximum voltage 2.7 V. A solar panel generates 5 W continuously.
+(a) How long to fully charge the supercapacitor?
+(b) How much energy does it store?
+(c) Compare to a typical AA battery (1.5 V, 2 Ah).
+(d) Why aren't supercapacitors replacing batteries in phones despite higher power density?`,
+  steps:[
+    {h:'(a) Charging time',v:`Energy stored = ½CV² = ½ × 3000 × 2.7² = ½ × 3000 × 7.29 = 10935 J
+Time = Energy/Power = 10935/5 = 2187 s ≈ 36.5 minutes`},
+    {h:'(b) Energy stored vs (c) AA battery',v:`Supercapacitor: 10935 J ≈ 10.9 kJ
+AA battery: Energy = V × Q = 1.5 V × 2 Ah × 3600 s/h = 10800 J ≈ 10.8 kJ
+They are comparable in energy! But the supercapacitor can deliver it in seconds while the battery delivers over hours.`},
+    {h:'(d) Why not replace phone batteries',v:`Supercapacitors have:
+✓ Higher power density (can charge/discharge in seconds)
+✓ More charge cycles (>1,000,000 vs ~500 for Li-ion)
+✗ Lower energy density per volume (3× less than Li-ion per m³)
+✗ Voltage drops as charge decreases (V = Q/C) — hard to maintain stable voltage for electronics.
+✗ Self-discharge rate higher than batteries.
+Solution being developed: Hybrid systems — supercapacitor for burst power, battery for baseline. Used in regenerative braking of electric vehicles and trains.`},
+  ],
+  ans:'Charge time: ~37 min | Energy: 10.9 kJ (similar to AA battery) | Supercaps: better power, worse energy density than Li-ion batteries.',
+  insight:'Supercapacitors are NOT the same as batteries — they excel at rapid energy delivery/storage (seconds), not sustained energy release (hours). They\'re critical in EVs for regenerative braking.'
+},
+
+// ══════════════════════════════════════
+// CHALLENGE (5)
+// ══════════════════════════════════════
+{
+  id:31, cat:'challenge', topic:'Multi-formula Fusion', marks:5,
+  title:'Complete Analysis: Dielectric Slab Pulled Out vs Pushed In',
+  q:`A parallel plate capacitor (A = ε₀ m², d = 1 m, so C₀ = ε₀²/1 = ε₀ F — use ε₀ = 1 for simplicity) is charged to V = 1 V with battery connected, then battery is disconnected.
+A dielectric (K = 3, fully filling gap) is now:
+(i) Case A: Pulled OUT (removed). Find ΔU, ΔV, ΔE, and work done by external agent.
+(ii) Case B: Now (instead) the battery is reconnected after initial charging. Dielectric is pushed IN. Find same quantities.
+(iii) Which case requires more work?`,
+  steps:[
+    {h:'Initial state (both cases)',v:`C₀ = ε₀ F (use ε₀ = 1 for numbers), V₀ = 1V
+Q₀ = C₀V₀ = 1 C, E₀ = V₀/d = 1 V/m
+U₀ = ½C₀V₀² = 0.5 J`},
+    {h:'Case A: Dielectric removed, battery off (Q constant)',v:`After: No dielectric, C_f = C₀ = 1 F... wait, dielectric was in initially.
+Let's redo: Start WITH dielectric (K=3).
+C_with = KC₀ = 3 F, charge to V₀=1V, battery disconnects.
+Q = 3 C, U_i = ½×3×1 = 1.5 J
+Remove dielectric: C_f = C₀ = 1 F, Q stays = 3 C
+V_f = Q/C_f = 3 V, E_f = 3 V/m
+U_f = Q²/2C_f = 9/2 = 4.5 J
+ΔU = +3 J (increase), Work by agent = ΔU = +3 J (agent must pull against attraction)`},
+    {h:'Case B: Battery reconnected, dielectric pushed in (V constant)',v:`Start: No dielectric, C₀=1F, V=1V, Q=1C, U=0.5J
+Reconnect battery (V=1V constant). Push dielectric (K=3) in.
+C_f = KC₀ = 3F, V_f = 1V (battery keeps it), Q_f = 3C
+U_f = ½×3×1 = 1.5J
+Energy from battery = QΔV×... Battery supplies charge: ΔQ = 3-1 = 2C at V=1V → W_battery = 2J
+Work by agent = ΔU_cap − W_battery = (1.5−0.5) − 2 = 1−2 = −1J
+Negative! Agent does −1J work → dielectric is PULLED IN, agent must RESTRAIN it.
+|Work by agent| = 1J`},
+    {h:'(iii) Comparison',v:`Case A: Agent does +3 J (pulls dielectric OUT against attractive force)
+Case B: Agent does −1 J (must RESTRAIN dielectric being pulled IN)
+Case A requires more external work. 
+The dielectric is always attracted toward the stronger field region (between plates) — in Case B the battery maintains a stronger field, enhancing the attraction.`},
+  ],
+  ans:'Case A (battery off, remove dielectric): W = +3J. Case B (battery on, insert dielectric): W = −1J (dielectric pulled in!). Case A requires more work.',
+  insight:'Dielectrics are always attracted INTO capacitors when battery is connected (field maintained). Removing them requires work. This is why dielectrics "snap in" if you place them near charged capacitors.'
+},
+{
+  id:32, cat:'challenge', topic:'Circuit Analysis', marks:4,
+  title:'K₁ Open then Closed — Charge on Multiple Capacitors',
+  q:`Circuit: C₁ = 6μF connected to battery E=9V through switch K₁. C₂ = 3μF and C₃ = 3μF in parallel, connected through switch K₂. Initially: K₁ closed, K₂ open.
+(i) Find charge on C₁ when only K₁ is closed.
+(ii) K₁ is then opened. K₂ is then closed. Find charges on C₂ and C₃ (charge on C₁ cannot change once K₁ opens).`,
+  given:['C₁ = 6μF','C₂ = C₃ = 3μF','E = 9V','K₁ closed initially, K₂ open'],
+  steps:[
+    {h:'(i) K₁ closed, K₂ open',v:`C₂ and C₃ are isolated (K₂ open) → no charge on them.
+C₁ charges to full battery voltage.
+Q₁ = C₁ × E = 6×10⁻⁶ × 9 = 54 μC
+V₁ = 9 V`},
+    {h:'(ii) K₁ opened, K₂ closed — charge redistribution',v:`K₁ opens → C₁ is now isolated from battery.
+K₂ closes → C₂ and C₃ connect to C₁ (in parallel with each other, sharing charge with C₁).
+The circuit now: C₁ in series... actually K₂ connects C₂‖C₃ across C₁.
+C₂₃ = C₂+C₃ = 6μF (parallel)
+Total charge: Q = Q₁ + 0 = 54 μC (conserved)
+Total capacitance: C₁ + C₂₃ = 6+6 = 12μF... No — they are in PARALLEL sharing the same voltage.
+V_common = Q/(C₁+C₂₃) = 54/(6+6) = 4.5 V
+Q₁_new = C₁ × 4.5 = 27 μC
+Q₂₃ = C₂₃ × 4.5 = 27 μC
+Q₂ = Q₃ = 13.5 μC (equal since C₂ = C₃)`},
+  ],
+  ans:'(i) Q₁ = 54μC | (ii) V_common = 4.5V, Q₁=27μC, Q₂=Q₃=13.5μC',
+  insight:'When K₁ opens, C₁ becomes an isolated charge reservoir. When K₂ closes, C₁ shares charge with C₂‖C₃. Key: track charge conservation, not energy conservation (energy is lost).'
+},
+{
+  id:33, cat:'challenge', topic:'Multi-dielectric', marks:4,
+  title:'Capacitor with Two Dielectric Slabs Side-by-Side vs Stacked',
+  q:`A parallel plate capacitor (plate area A, separation d) has two dielectrics K₁=2 and K₂=3 inserted:
+Configuration 1: Side by side (each occupying A/2 area, full height d)
+Configuration 2: One above other (each occupying full area A, height d/2)
+Find C_eq for each configuration. Which is larger?`,
+  given:['Plate area A','Separation d','K₁ = 2, K₂ = 3'],
+  steps:[
+    {h:'Configuration 1: Side by side (parallel capacitors)',v:`C₁ = ε₀K₁(A/2)/d = ε₀K₁A/(2d)
+C₂ = ε₀K₂(A/2)/d = ε₀K₂A/(2d)
+C_eq = C₁ + C₂ = ε₀A/(2d) × (K₁+K₂) = ε₀A(K₁+K₂)/(2d)
+= ε₀A(2+3)/(2d) = 5ε₀A/(2d) = 2.5ε₀A/d`},
+    {h:'Configuration 2: Stacked (series capacitors)',v:`C₁ = ε₀K₁A/(d/2) = 2ε₀K₁A/d = 4ε₀A/d
+C₂ = ε₀K₂A/(d/2) = 2ε₀K₂A/d = 6ε₀A/d
+1/C_eq = 1/C₁ + 1/C₂ = d/(4ε₀A) + d/(6ε₀A) = d/ε₀A × (1/4+1/6) = d/ε₀A × 5/12
+C_eq = 12ε₀A/(5d) = 2.4ε₀A/d`},
+    {h:'Comparison',v:`Config 1 (parallel): C = 2.5ε₀A/d
+Config 2 (series): C = 2.4ε₀A/d
+Config 1 > Config 2
+General rule: K_eff(parallel) = (K₁+K₂)/2 = 2.5 (arithmetic mean)
+K_eff(series) = 2K₁K₂/(K₁+K₂) = 2×2×3/5 = 2.4 (harmonic mean)
+Arithmetic mean ≥ Harmonic mean always (AM-HM inequality) → parallel always ≥ series.`},
+  ],
+  ans:'Side-by-side (parallel): C = 2.5ε₀A/d | Stacked (series): C = 2.4ε₀A/d | Parallel configuration is larger.',
+  insight:'This is a beautiful application of AM ≥ HM inequality from mathematics to physics. Parallel combination of dielectrics always gives higher (or equal) effective K than series combination.'
+},
+{
+  id:34, cat:'challenge', topic:'Energy Analysis', marks:5,
+  title:'Complete Energy Budget: Charging a Capacitor Through a Resistor',
+  q:`A capacitor C is charged from battery EMF ε through resistor R. 
+(i) Show that charge supplied by battery Q_total = Cε.
+(ii) Show that total work done by battery W = Cε².
+(iii) Show that energy stored in capacitor U = ½Cε².
+(iv) Show that heat in resistor H = ½Cε² (regardless of R).
+(v) This means 50% is always wasted. How can efficiency be improved?`,
+  steps:[
+    {h:'(i) Final charge',v:`When fully charged: no current flows, V_cap = ε.
+Q_f = Cε ✓`},
+    {h:'(ii) Work by battery',v:`Battery does work for every bit of charge dq flowing at EMF ε.
+W_battery = ∫ε dq from 0 to Q_f = ε × Q_f = ε × Cε = Cε²`},
+    {h:'(iii) Energy in capacitor',v:`U = Q²/(2C) = (Cε)²/(2C) = C²ε²/(2C) = ½Cε² ✓`},
+    {h:'(iv) Heat in resistor',v:`H = W_battery − U = Cε² − ½Cε² = ½Cε²
+Note: H does NOT depend on R!
+If R large: current small but for longer time → same total heat.
+If R small: current large but for shorter time → same total heat.
+This is a fundamental thermodynamic result.`},
+    {h:'(v) Improving efficiency',v:`Option 1: Use an inductor (LC circuit) — energy oscillates between L and C. Theoretically 100% efficient transfer but energy stays oscillating.
+Option 2: Switch-mode power supply (SMPS) — efficiently charges at varying voltage rather than constant EMF.
+Option 3: Charge at current proportional to (ε−V_cap) — this doesn't actually help; the loss is fundamental for resistive charging.
+Option 4: Use smaller ε to charge to intermediate stages (multi-step charging) — reduces loss. Some sophisticated chargers do this.
+The 50% loss is unavoidable for simple R-C charging from constant voltage source.`},
+  ],
+  ans:'Q=Cε, W=Cε², U=½Cε², H=½Cε². 50% heat is R-independent. Improvement: SMPS, LC circuits, or staged voltage charging.',
+  insight:'The 50% charging loss is one of the most important "unavoidable inefficiencies" in electronics. It\'s why SMPS (switching power supplies) exist — they work at the timing scale of LC oscillations to minimize dissipation.'
+},
+{
+  id:35, cat:'challenge', topic:'Special Case Synthesis', marks:5,
+  title:'The "Grounded Conductor" Problem — Capacitance to Ground',
+  q:`A conducting sphere of radius R = 10 cm carries charge Q = 100 nC. A large grounded conducting plane is placed at perpendicular distance d = 50 cm from the sphere's center.
+(i) Using the method of images, what is the "image charge" and where is it?
+(ii) What is the force between the sphere and the plane?
+(iii) Estimate the effective capacitance between sphere and plane.
+(iv) How does this relate to the formula C = 4πε₀R for an isolated sphere?`,
+  steps:[
+    {h:'(i) Method of images',v:`A grounded conducting plane at distance d from charge Q can be replaced by an image charge −Q at the mirror position (distance d on the other side of the plane).
+Image charge: −Q = −100 nC at distance d = 50 cm on other side of plane.
+Distance between real charge and image: 2d = 1 m.`},
+    {h:'(ii) Force between sphere and plane',v:`F = k×Q×|−Q|/(2d)² = 9×10⁹ × 100×10⁻⁹ × 100×10⁻⁹ / (1)²
+= 9×10⁹ × 10⁻¹⁴ = 9×10⁻⁵ N = 90 μN (attractive)
+The plane always attracts the charged sphere regardless of sign of Q (induced charges always provide attraction).`},
+    {h:'(iii) Effective capacitance',v:`Capacitance of sphere near grounded plane ≈ 4πε₀R/[1 − R/(2d)] (for R << d)
+Since R=0.1m << d=0.5m:
+C ≈ 4πε₀ × 0.1 / [1 − 0.1/1.0] = 4πε₀ × 0.1/0.9
+= 0.1/(9×10⁹×0.9) = 0.1/8.1×10⁸ = 1.23×10⁻¹¹ F ≈ 12.3 pF
+Compare: C_isolated = 4πε₀R = 0.1/(9×10⁹) = 11.1 pF
+Nearby ground plane increases C by ~11%.`},
+    {h:'(iv) Relationship to isolated sphere formula',v:`Isolated sphere: C = 4πε₀R (capacitance "to infinity").
+Near a grounded plane: effective C increases because the grounded plane acts as the "other electrode" at a finite distance.
+As d → ∞: C → 4πε₀R (isolated sphere result).
+As d → R (plane very close to sphere surface): C → ∞ (becomes like a parallel plate capacitor).
+This shows that ALL capacitance formulas are limiting cases of the same physics — the geometry of conductors determines C.`},
+  ],
+  ans:'Image charge: −100nC at 1m from sphere. F = 90μN (attractive). C ≈ 12.3pF (> isolated sphere 11.1pF). Grounded plane increases C.',
+  insight:'Method of images is one of the most elegant techniques in electrostatics — replacing complex boundary conditions with fictitious charges. Used in circuit board design and antenna engineering.'
+},
+];
+
+// ══════════ RENDERING ══════════
+let attempted = new Set();
+let currentFilter = 'all';
+
+const catColors = {
+  numerical:    {bg:'#eef4ff', border:'#c5d8f8', text:'#2e5fa3', label:'Numerical'},
+  conceptual:   {bg:'#edfaf5', border:'#b0e8d4', text:'#1a7a6e', label:'Conceptual'},
+  ar:           {bg:'#f4f1fb', border:'#c5b8ed', text:'#5c3d9e', label:'Assertion-Reason'},
+  hypothetical: {bg:'#fff8ed', border:'#f0d499', text:'#9a6b1a', label:'Hypothetical'},
+  challenge:    {bg:'#fff1f1', border:'#f5c0c0', text:'#b94040', label:'Challenge'},
+};
+
+const diffDots = {'1':'●○○○○','2':'●●○○○','3':'●●●○○','4':'●●●●○','5':'●●●●●'};
+
+function renderCards(filter) {
+  const list = document.getElementById('qlist');
+  const filtered = filter === 'all' ? QS : QS.filter(q => q.cat === filter);
+
+  list.innerHTML = filtered.map(q => {
+    const col = catColors[q.cat];
+    const isAR = q.cat === 'ar';
+    return `
+<div class="rounded-2xl border mb-4 overflow-hidden shadow-sm hover:shadow-md transition-shadow" 
+     id="card-${q.id}" 
+     style="background:${col.bg};border-color:${col.border};">
+  
+  <!-- Card header -->
+  <div class="px-4 sm:px-5 pt-4 pb-3">
+    <div class="flex flex-wrap items-start gap-2 mb-2">
+      <span class="font-mono text-xs font-semibold px-2 py-0.5 rounded-full" 
+            style="background:white;border:1px solid ${col.border};color:${col.text};">Q${q.id}</span>
+      <span class="text-xs font-semibold px-2 py-0.5 rounded-full"
+            style="background:white;border:1px solid ${col.border};color:${col.text};">${col.label}</span>
+      <span class="text-xs px-2 py-0.5 rounded-full" 
+            style="background:white;border:1px solid ${col.border};color:#6b6459;">${q.topic}</span>
+      <span class="text-xs ml-auto" style="color:${col.text};" title="Marks">${diffDots[q.marks] || ''} ${q.marks}m</span>
+    </div>
+
+    <h3 class="font-display font-semibold text-base mb-3" style="color:#2d2a24;">${q.title}</h3>
+    
+    <!-- Question text -->
+    <div class="text-sm font-body leading-relaxed mb-3" style="color:#3a3530;">
+      ${isAR ? q.q : `<p>${q.q.replace(/\n/g,'<br/>')}</p>`}
+    </div>
+
+    <!-- AR options -->
+    ${isAR && q.opts ? `
+    <div class="flex flex-col gap-1.5 mb-3">
+      ${q.opts.map(o=>`<div class="text-xs font-mono px-3 py-1.5 rounded-lg" style="background:white;border:1px solid ${col.border};color:#3a3530;">${o}</div>`).join('')}
+    </div>` : ''}
+
+    <!-- Given section -->
+    ${q.given ? `
+    <div class="rounded-lg px-3 py-2 mb-3 text-xs font-mono" style="background:rgba(255,255,255,0.7);border:1px solid ${col.border};">
+      <span class="font-semibold" style="color:${col.text};">Given: </span>
+      <span style="color:#3a3530;">${q.given.join(' · ')}</span>
+    </div>` : ''}
+
+    <!-- Solution toggle button -->
+    <button onclick="toggleSol(${q.id})" 
+            class="flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-xl border transition-all"
+            id="btn-${q.id}"
+            style="background:white;border-color:${col.border};color:${col.text};">
+      <span id="icon-${q.id}">▶</span>
+      <span id="btxt-${q.id}">Show Detailed Solution</span>
+    </button>
+  </div>
+
+  <!-- Solution body (hidden) -->
+  <div class="sol-body" id="sol-${q.id}">
+    <div class="border-t px-4 sm:px-5 pt-4 pb-4" style="border-color:${col.border};background:rgba(255,255,255,0.5);">
+      <p class="text-xs font-mono font-bold mb-3 uppercase tracking-wider" style="color:${col.text};">Step-by-step Solution</p>
+      
+      ${q.steps.map((s,i)=>`
+      <div class="step mb-3" style="border-left-color:${col.border};">
+        <p class="text-xs font-mono font-semibold mb-1 uppercase tracking-wide" style="color:${col.text};">Step ${i+1}: ${s.h}</p>
+        <div class="text-sm font-body leading-relaxed whitespace-pre-line" style="color:#3a3530;">${s.v}</div>
+      </div>`).join('')}
+
+      <!-- Final answer -->
+      <div class="rounded-xl px-4 py-3 mt-3" style="background:rgba(255,255,255,0.85);border:1.5px solid ${col.border};">
+        <p class="text-xs font-mono font-bold uppercase tracking-wider mb-1" style="color:${col.text};">✓ Final Answer</p>
+        <p class="text-sm font-semibold font-body" style="color:#2d2a24;">${q.ans}</p>
+      </div>
+
+      <!-- Key insight -->
+      ${q.insight ? `
+      <div class="rounded-xl px-4 py-3 mt-2" style="background:rgba(255,255,255,0.6);border:1px dashed ${col.border};">
+        <p class="text-xs font-mono font-bold uppercase tracking-wider mb-1" style="color:${col.text};">💡 Key Insight</p>
+        <p class="text-xs font-body leading-relaxed" style="color:#57534e;">${q.insight}</p>
+      </div>` : ''}
+    </div>
+  </div>
+</div>`;
+  }).join('');
+}
+
+function toggleSol(id) {
+  const sol = document.getElementById('sol-'+id);
+  const btn = document.getElementById('btn-'+id);
+  const icon = document.getElementById('icon-'+id);
+  const btxt = document.getElementById('btxt-'+id);
+  const col = catColors[QS.find(q=>q.id===id).cat];
+  const isOpen = sol.classList.contains('open');
+  
+  if (!isOpen) {
+    sol.classList.add('open');
+    icon.textContent = '▼';
+    btxt.textContent = 'Hide Solution';
+    btn.style.background = col.bg;
+    if (!attempted.has(id)) { attempted.add(id); updateStats(); }
+  } else {
+    sol.classList.remove('open');
+    icon.textContent = '▶';
+    btxt.textContent = 'Show Detailed Solution';
+    btn.style.background = 'white';
+  }
+}
+
+function filter(cat, btn) {
+  currentFilter = cat;
+  document.querySelectorAll('.qtab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCards(cat);
+}
+
+function updateStats() {
+  const done = attempted.size;
+  const total = QS.length;
+  document.getElementById('stat-done').textContent = `${done} / ${total}`;
+  document.getElementById('prog').style.width = `${(done/total*100).toFixed(0)}%`;
+}
+
+// Init
+renderCards('all');
+</script>
+</body>
+</html>

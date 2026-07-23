@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title>Atlas study library</title>
+  <rect width="512" height="512" rx="112" fill="#2563eb"/>
+  <path d="M104 154c56-18 106-9 152 28v185c-46-37-96-46-152-28V154Zm304 0c-56-18-106-9-152 28v185c46-37 96-46 152-28V154Z" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="28"/>
+  <path d="M256 182v185" stroke="#fff" stroke-linecap="round" stroke-width="22"/>
+  <circle cx="367" cy="125" r="17" fill="#bfdbfe"/>
+  <path d="m367 82 9 25 25 9-25 9-9 25-9-25-25-9 25-9 9-25Z" fill="#fff"/>
+</svg>

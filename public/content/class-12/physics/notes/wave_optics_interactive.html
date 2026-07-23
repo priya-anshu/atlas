@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wave Optics — Class 12 Interactive Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  :root {
+    --bg: #f8f7f4;
+    --surface: #ffffff;
+    --surface2: #f0eff9;
+    --border: #e2e0f0;
+    --text: #1a1830;
+    --muted: #6b6880;
+    --accent: #4f46e5;
+    --accent2: #7c3aed;
+    --accent3: #0891b2;
+    --green: #059669;
+    --amber: #d97706;
+    --red: #dc2626;
+    --wave1: #4f46e5;
+    --wave2: #0891b2;
+    --shadow: 0 4px 24px rgba(79,70,229,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.7; }
+
+  /* Nav */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(248,247,244,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    display: flex; align-items: center; gap: 0; overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--accent); margin-right: 1.5rem; white-space: nowrap; padding: 1rem 0; }
+  .nav-link {
+    font-size: 0.78rem; font-weight: 500; color: var(--muted);
+    padding: 1rem 0.75rem; white-space: nowrap; cursor: pointer;
+    border-bottom: 2px solid transparent; transition: all .2s;
+    text-decoration: none;
+  }
+  .nav-link:hover, .nav-link.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* Layout */
+  main { max-width: 900px; margin: 0 auto; padding: 2rem 1.25rem 5rem; }
+  section { margin-bottom: 3.5rem; }
+
+  /* Section header */
+  .sec-label { font-size: 0.7rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin-bottom: .4rem; }
+  h2 { font-family: 'Playfair Display', serif; font-size: 1.9rem; color: var(--text); margin-bottom: .5rem; line-height: 1.2; }
+  h3 { font-size: 1.05rem; font-weight: 600; color: var(--text); margin: 1.4rem 0 .5rem; }
+  p { color: #3d3a55; margin-bottom: .75rem; }
+
+  /* Cards */
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 1.5rem;
+    box-shadow: var(--shadow); margin-bottom: 1.25rem;
+  }
+  .card-accent { border-left: 3px solid var(--accent); }
+  .card-green { border-left: 3px solid var(--green); background: #f0fdf4; }
+  .card-amber { border-left: 3px solid var(--amber); background: #fffbeb; }
+  .card-blue { border-left: 3px solid var(--accent3); background: #f0f9ff; }
+
+  /* Formula box */
+  .formula {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1rem 1.25rem;
+    margin: .75rem 0; text-align: center; font-size: 1.05rem;
+  }
+  .formula-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; margin: .75rem 0; }
+  @media(max-width:600px) { .formula-grid { grid-template-columns: 1fr; } }
+
+  /* Canvas containers */
+  .canvas-wrap {
+    background: #0f0e1a; border-radius: 14px; overflow: hidden;
+    position: relative; margin: 1rem 0;
+  }
+  canvas { display: block; width: 100%; }
+  .canvas-label {
+    position: absolute; top: .6rem; left: .9rem;
+    font-size: 0.7rem; font-weight: 600; letter-spacing: .08em;
+    text-transform: uppercase; color: rgba(255,255,255,0.45);
+  }
+  .canvas-legend {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    padding: .6rem .9rem; background: #1a1830;
+    font-size: .72rem; color: rgba(255,255,255,0.6);
+  }
+  .legend-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: .3rem; }
+
+  /* Controls */
+  .controls { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: .75rem; align-items: center; }
+  .ctrl-label { font-size: .75rem; font-weight: 500; color: var(--muted); }
+  input[type=range] {
+    accent-color: var(--accent); width: 120px; cursor: pointer;
+  }
+  .ctrl-val { font-size: .75rem; font-weight: 600; color: var(--accent); font-family: 'JetBrains Mono', monospace; min-width: 2.5rem; }
+  .btn {
+    padding: .35rem .85rem; border-radius: 6px; border: 1px solid var(--accent);
+    background: transparent; color: var(--accent); font-size: .78rem; font-weight: 500;
+    cursor: pointer; transition: all .15s;
+  }
+  .btn:hover { background: var(--accent); color: #fff; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent2); border-color: var(--accent2); }
+
+  /* Tabs */
+  .tabs { display: flex; gap: .4rem; margin-bottom: 1rem; flex-wrap: wrap; }
+  .tab {
+    padding: .4rem 1rem; border-radius: 6px; font-size: .8rem; font-weight: 500;
+    border: 1px solid var(--border); cursor: pointer; color: var(--muted);
+    background: var(--surface); transition: all .15s;
+  }
+  .tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* Key concept chips */
+  .chips { display: flex; flex-wrap: wrap; gap: .5rem; margin: .75rem 0; }
+  .chip {
+    background: var(--surface2); border: 1px solid var(--border);
+    padding: .25rem .75rem; border-radius: 20px; font-size: .78rem;
+    color: var(--accent); font-weight: 500;
+  }
+
+  /* Table */
+  table { width: 100%; border-collapse: collapse; font-size: .85rem; margin: .75rem 0; }
+  th { background: var(--surface2); font-weight: 600; color: var(--text); padding: .6rem .8rem; text-align: left; border-bottom: 2px solid var(--border); }
+  td { padding: .55rem .8rem; border-bottom: 1px solid var(--border); color: #3d3a55; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #faf9ff; }
+
+  /* Divider */
+  .divider { height: 1px; background: var(--border); margin: 2.5rem 0; }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #1a1830 0%, #2d2a5e 50%, #1e3a4a 100%);
+    border-radius: 18px; padding: 2.5rem 2rem; margin-bottom: 3rem;
+    position: relative; overflow: hidden;
+  }
+  .hero canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: .35; }
+  .hero-content { position: relative; z-index: 2; }
+  .hero-tag { font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #a5b4fc; margin-bottom: .5rem; }
+  .hero h1 { font-family: 'Playfair Display', serif; font-size: 2.4rem; color: #fff; line-height: 1.1; margin-bottom: .75rem; }
+  .hero p { color: #c7d2fe; font-size: .9rem; margin-bottom: 1.25rem; }
+  .hero-chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .hero-chip { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 20px; padding: .25rem .75rem; font-size: .75rem; color: #e0e7ff; }
+
+  .sub-list { list-style: none; padding: 0; }
+  .sub-list li { padding: .3rem 0 .3rem 1.2rem; position: relative; color: #3d3a55; }
+  .sub-list li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-size: .85rem; }
+
+  /* Intensity bar */
+  .intensity-bar { height: 8px; border-radius: 4px; background: linear-gradient(90deg, #1a1830, #4f46e5, #fff, #4f46e5, #1a1830); margin: .5rem 0; }
+
+  /* Scroll indicator */
+  .toc { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 2rem; }
+  .toc-title { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: .6rem; }
+  .toc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .3rem; }
+  @media(max-width:500px) { .toc-grid { grid-template-columns: 1fr; } }
+  .toc-item { font-size: .8rem; color: var(--accent); cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: .35rem; }
+  .toc-item:hover { text-decoration: underline; }
+  .toc-num { font-family: 'JetBrains Mono', monospace; font-size: .7rem; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<nav id="mainNav">
+  <span class="nav-logo">Wave Optics</span>
+  <a class="nav-link" href="#wavefront">Wavefront</a>
+  <a class="nav-link" href="#huygens">Huygens</a>
+  <a class="nav-link" href="#refraction">Refraction</a>
+  <a class="nav-link" href="#interference">Interference</a>
+  <a class="nav-link" href="#ydse">YDSE</a>
+  <a class="nav-link" href="#diffraction">Diffraction</a>
+  <a class="nav-link" href="#summary">Summary</a>
+</nav>
+
+<main>
+
+<!-- HERO -->
+<div class="hero">
+  <canvas id="heroCanvas" height="220"></canvas>
+  <div class="hero-content">
+    <div class="hero-tag">Class 12 Physics · Chapter 10</div>
+    <h1>Wave Optics</h1>
+    <p>Light as a wave — wavefronts, interference, diffraction, all animated in real-time.</p>
+    <div class="hero-chips">
+      <span class="hero-chip">Wavefronts</span>
+      <span class="hero-chip">Huygens' Principle</span>
+      <span class="hero-chip">YDSE</span>
+      <span class="hero-chip">Diffraction</span>
+      <span class="hero-chip">Coherence</span>
+    </div>
+  </div>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <div class="toc-title">Contents</div>
+  <div class="toc-grid">
+    <a class="toc-item" href="#wavefront"><span class="toc-num">10.1</span> Wavefront & Types</a>
+    <a class="toc-item" href="#huygens"><span class="toc-num">10.2</span> Huygens' Principle</a>
+    <a class="toc-item" href="#refraction"><span class="toc-num">10.3</span> Reflection & Refraction</a>
+    <a class="toc-item" href="#interference"><span class="toc-num">10.4</span> Interference of Light</a>
+    <a class="toc-item" href="#ydse"><span class="toc-num">10.5</span> Young's Double Slit</a>
+    <a class="toc-item" href="#diffraction"><span class="toc-num">10.6</span> Diffraction</a>
+    <a class="toc-item" href="#summary"><span class="toc-num">—</span> Key Formulae</a>
+  </div>
+</div>
+
+<!-- ======= 10.1 WAVEFRONT ======= -->
+<section id="wavefront">
+  <div class="sec-label">10.1</div>
+  <h2>Wavefront</h2>
+  <p>The <strong>wavefront</strong> is the locus of all particles of a medium which are vibrating in the same phase at any given instant. A line drawn perpendicular to a wavefront at any point gives the <strong>direction of propagation of light</strong> — this perpendicular is called a <strong>ray</strong>.</p>
+
+  <div class="tabs" id="wfTabs">
+    <div class="tab active" data-wf="spherical">Spherical</div>
+    <div class="tab" data-wf="cylindrical">Cylindrical</div>
+    <div class="tab" data-wf="plane">Plane</div>
+  </div>
+
+  <div class="canvas-wrap">
+    <span class="canvas-label" id="wfLabel">Spherical Wavefront — Point Source</span>
+    <canvas id="wfCanvas" height="260"></canvas>
+    <div class="canvas-legend">
+      <span><span class="legend-dot" style="background:#4f46e5"></span>Wavefront</span>
+      <span><span class="legend-dot" style="background:#f59e0b"></span>Rays (direction of propagation)</span>
+      <span><span class="legend-dot" style="background:#fff"></span>Source</span>
+    </div>
+  </div>
+
+  <div class="formula-grid">
+    <div class="card card-accent">
+      <div class="sec-label">Spherical</div>
+      <p>Point source S in 3D medium. Wavefronts are <strong>concentric spheres</strong>.</p>
+      <div class="formula">\(r = ct\)</div>
+      <p style="font-size:.8rem;color:var(--muted)">r = radius at time t, c = speed of light</p>
+    </div>
+    <div class="card card-blue">
+      <div class="sec-label">Plane</div>
+      <p>At <strong>very large distance</strong> from point source, wavefront ≈ plane.</p>
+      <div class="formula">\(\text{Curvature} \to 0 \text{ as } r \to \infty\)</div>
+    </div>
+  </div>
+
+  <div class="card card-amber">
+    <h3>⚡ Key Idea</h3>
+    <ul class="sub-list">
+      <li>All particles on a wavefront are in the <strong>same phase</strong></li>
+      <li>Rays are always <strong>perpendicular</strong> to wavefronts</li>
+      <li>Wavefront shape = shape of source's field of influence</li>
+      <li>In isotropic medium, rays are straight lines</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ======= 10.2 HUYGENS ======= -->
+<section id="huygens">
+  <div class="sec-label">10.2</div>
+  <h2>Huygens' Principle</h2>
+  <p>Proposed by <strong>Christian Huygens (1678)</strong>, this principle provides a geometric method to find the new position of a wavefront at a later instant.</p>
+
+  <div class="card card-accent">
+    <h3>The Two Postulates</h3>
+    <ul class="sub-list">
+      <li>Every point on a given wavefront acts as a <strong>fresh source</strong> of secondary wavelets that spread out with the speed of light in that medium</li>
+      <li>The new wavefront at a later time is the <strong>forward tangent envelope</strong> (common tangent surface) of all these secondary wavelets</li>
+    </ul>
+  </div>
+
+  <div class="controls">
+    <span class="ctrl-label">Speed</span>
+    <input type="range" id="huySpeed" min="0.3" max="2" step="0.1" value="0.8">
+    <span class="ctrl-val" id="huySpeedVal">0.8×</span>
+    <button class="btn btn-primary" id="huyReset">↺ Reset</button>
+  </div>
+
+  <div class="canvas-wrap">
+    <span class="canvas-label">Huygens' Construction — Secondary Wavelets</span>
+    <canvas id="huyCanvas" height="300"></canvas>
+    <div class="canvas-legend">
+      <span><span class="legend-dot" style="background:#4f46e5"></span>Primary wavefront</span>
+      <span><span class="legend-dot" style="background:#06b6d4"></span>Secondary wavelets</span>
+      <span><span class="legend-dot" style="background:#f59e0b"></span>New wavefront (envelope)</span>
+    </div>
+  </div>
+
+  <div class="card card-green">
+    <h3>Why backward wavelets don't matter</h3>
+    <p>Huygens acknowledged backward wavelets exist but gave no physical explanation for their absence. Later, <strong>Fresnel</strong> showed mathematically (using the obliquity factor) that the amplitude of secondary wavelets in the backward direction is <strong>zero</strong>, so backward wavefronts don't form.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ======= 10.3 REFRACTION / REFLECTION ======= -->
+<section id="refraction">
+  <div class="sec-label">10.3</div>
+  <h2>Reflection & Refraction using Huygens' Principle</h2>
+  <p>Huygens' principle can be used to prove the <strong>laws of reflection and refraction</strong> geometrically.</p>
+
+  <div class="tabs" id="rrTabs">
+    <div class="tab active" data-rr="reflection">Reflection</div>
+    <div class="tab" data-rr="refraction">Refraction (Snell's Law)</div>
+  </div>
+
+  <div class="canvas-wrap">
+    <span class="canvas-label" id="rrLabel">Reflection of a Plane Wave</span>
+    <canvas id="rrCanvas" height="300"></canvas>
+    <div class="canvas-legend">
+      <span><span class="legend-dot" style="background:#4f46e5"></span>Incident wavefront</span>
+      <span><span class="legend-dot" style="background:#f59e0b"></span>Reflected/Refracted wavefront</span>
+      <span><span class="legend-dot" style="background:#06b6d4"></span>Normal</span>
+    </div>
+  </div>
+
+  <div class="formula-grid">
+    <div class="card card-accent">
+      <div class="sec-label">Law of Reflection</div>
+      <div class="formula">\(\angle i = \angle r\)</div>
+      <p style="font-size:.82rem">Angle of incidence = Angle of reflection<br>Both rays and normal lie in the same plane</p>
+    </div>
+    <div class="card card-blue">
+      <div class="sec-label">Snell's Law (Refraction)</div>
+      <div class="formula">\(\dfrac{\sin i}{\sin r} = \dfrac{v_1}{v_2} = \dfrac{n_2}{n_1} = \mu\)</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Huygens' Proof of Snell's Law</h3>
+    <p>Consider a plane wavefront AB incident on a surface at angle <em>i</em>. While the wavelet from B travels distance <em>BC = v₁t</em> in medium 1, the wavelet from A travels distance <em>AE = v₂t</em> in medium 2.</p>
+    <div class="formula">\(\sin i = \frac{BC}{AC} = \frac{v_1 t}{AC}, \quad \sin r = \frac{AE}{AC} = \frac{v_2 t}{AC}\)</div>
+    <div class="formula">\(\therefore \frac{\sin i}{\sin r} = \frac{v_1}{v_2} = \text{const} = {}_1\mu_2\)</div>
+    <p>Since <strong>frequency does not change</strong> during refraction, but velocity changes:</p>
+    <div class="formula">\(\mu = \frac{c}{v}, \quad \lambda_{\text{medium}} = \frac{\lambda_0}{\mu}\)</div>
+  </div>
+
+  <div class="card card-amber">
+    <h3>Important Points on Refraction</h3>
+    <ul class="sub-list">
+      <li>Frequency does NOT change when light travels from one medium to another</li>
+      <li>Speed and wavelength both change</li>
+      <li>In denser medium (higher μ): speed ↓, wavelength ↓</li>
+      <li>Refractive index μ = c/v is always ≥ 1 (for real media)</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ======= 10.4 INTERFERENCE ======= -->
+<section id="interference">
+  <div class="sec-label">10.4</div>
+  <h2>Interference of Light</h2>
+  <p>When two light waves superimpose, the resultant intensity at any point depends on the phase difference between them. This redistribution of energy is called <strong>interference</strong>.</p>
+
+  <div class="card card-accent">
+    <h3>Principle of Superposition</h3>
+    <p>When two waves meet at a point, the resultant displacement = algebraic sum of individual displacements.</p>
+    <div class="formula">\(y = y_1 + y_2 = a_1\sin\omega t + a_2\sin(\omega t + \phi)\)</div>
+    <p>Resultant amplitude:</p>
+    <div class="formula">\(A = \sqrt{a_1^2 + a_2^2 + 2a_1 a_2 \cos\phi}\)</div>
+  </div>
+
+  <div class="controls">
+    <span class="ctrl-label">Phase Δ</span>
+    <input type="range" id="phaseSlider" min="0" max="6.28" step="0.05" value="0">
+    <span class="ctrl-val" id="phaseVal">0°</span>
+    <span class="ctrl-label" style="margin-left:.5rem">A₂/A₁</span>
+    <input type="range" id="ampSlider" min="0.1" max="2" step="0.05" value="1">
+    <span class="ctrl-val" id="ampVal">1.0</span>
+  </div>
+
+  <div class="canvas-wrap">
+    <span class="canvas-label">Superposition of Two Waves</span>
+    <canvas id="superCanvas" height="260"></canvas>
+    <div class="canvas-legend">
+      <span><span class="legend-dot" style="background:#4f46e5"></span>Wave 1</span>
+      <span><span class="legend-dot" style="background:#06b6d4"></span>Wave 2</span>
+      <span><span class="legend-dot" style="background:#f59e0b"></span>Resultant</span>
+    </div>
+  </div>
+
+  <div class="formula-grid">
+    <div class="card card-green">
+      <div class="sec-label">Constructive (Bright)</div>
+      <p>Phase difference = 2nπ (n = 0,1,2...)<br>Path difference = nλ</p>
+      <div class="formula">\(I_{\max} = (\sqrt{I_1}+\sqrt{I_2})^2\)</div>
+      <p style="font-size:.82rem">If I₁ = I₂ = I₀: <strong>I_max = 4I₀</strong></p>
+    </div>
+    <div class="card" style="border-left:3px solid var(--red); background:#fef2f2;">
+      <div class="sec-label">Destructive (Dark)</div>
+      <p>Phase difference = (2n−1)π<br>Path difference = (2n−1)λ/2</p>
+      <div class="formula">\(I_{\min} = (\sqrt{I_1}-\sqrt{I_2})^2\)</div>
+      <p style="font-size:.82rem">If I₁ = I₂: <strong>I_min = 0</strong></p>
+    </div>
+  </div>
+
+  <div class="card card-blue">
+    <h3>Resultant Intensity (General)</h3>
+    <div class="formula">\(I = I_1 + I_2 + 2\sqrt{I_1 I_2}\cos\phi\)</div>
+    <p>where φ is the phase difference between the two waves. The term \(2\sqrt{I_1 I_2}\cos\phi\) is the <strong>interference term</strong>.</p>
+    <div class="formula">\(I = 4I_0\cos^2\!\left(\frac{\phi}{2}\right)\quad\text{(when } I_1=I_2=I_0\text{)}\)</div>
+  </div>
+
+  <div class="card card-amber">
+    <h3>Conditions for Sustained Interference</h3>
+    <ul class="sub-list">
+      <li>The two sources must be <strong>coherent</strong> (constant phase difference)</li>
+      <li>Sources must be <strong>monochromatic</strong> (single wavelength)</li>
+      <li>Two sources must be very close; screen at large D</li>
+      <li>Amplitudes should be equal for best contrast (I_min → 0)</li>
+      <li>Sources must be narrow</li>
+    </ul>
+  </div>
+
+  <h3>Coherent vs Incoherent Sources</h3>
+  <table>
+    <tr><th>Coherent</th><th>Incoherent</th></tr>
+    <tr><td>Constant phase difference</td><td>Randomly changing phase difference</td></tr>
+    <tr><td>Stable interference pattern</td><td>No stable pattern</td></tr>
+    <tr><td>Produced from single source (laser/YDSE)</td><td>Two independent bulbs, lamps</td></tr>
+    <tr><td>I = I₁ + I₂ + 2√(I₁I₂)cosφ</td><td>I = I₁ + I₂ only</td></tr>
+  </table>
+</section>
+
+<div class="divider"></div>
+
+<!-- ======= 10.5 YDSE ======= -->
+<section id="ydse">
+  <div class="sec-label">10.5</div>
+  <h2>Young's Double Slit Experiment</h2>
+  <p>Performed by <strong>Thomas Young in 1802</strong>, YDSE was the first experimental demonstration of interference of light, proving its wave nature.</p>
+
+  <div class="card card-accent">
+    <h3>Setup</h3>
+    <p>Two fine slits S₁ and S₂ are separated by distance <strong>d</strong>, illuminated by monochromatic light of wavelength <strong>λ</strong>. A screen is placed at distance <strong>D</strong> from the slits (D >> d).</p>
+  </div>
+
+  <div class="controls">
+    <span class="ctrl-label">λ (nm)</span>
+    <input type="range" id="lambdaSlider" min="380" max="750" step="5" value="550">
+    <span class="ctrl-val" id="lambdaVal">550</span>
+    <span class="ctrl-label" style="margin-left:.5rem">d (mm)</span>
+    <input type="range" id="dSlider" min="0.5" max="3" step="0.1" value="1">
+    <span class="ctrl-val" id="dVal">1.0</span>
+    <span class="ctrl-label" style="margin-left:.5rem">D (m)</span>
+    <input type="range" id="DSlider" min="0.5" max="3" step="0.1" value="1">
+    <span class="ctrl-val" id="DVal">1.0</span>
+    <span class="ctrl-label" style="margin-left:.5rem">β (mm)</span>
+    <span class="ctrl-val" id="betaVal" style="color:var(--green)">—</span>
+  </div>
+
+  <div class="canvas-wrap">
+    <span class="canvas-label">YDSE — Live Interference Pattern</span>
+    <canvas id="ydseCanvas" height="340"></canvas>
+    <div class="canvas-legend">
+      <span><span class="legend-dot" style="background:#fff"></span>Bright fringe (constructive)</span>
+      <span><span class="legend-dot" style="background:#1a1830"></span>Dark fringe (destructive)</span>
+    </div>
+  </div>
+
+  <div class="formula-grid">
+    <div class="card card-blue">
+      <div class="sec-label">Path Difference</div>
+      <div class="formula">\(\Delta = \frac{yd}{D}\)</div>
+    </div>
+    <div class="card card-accent">
+      <div class="sec-label">Fringe Width</div>
+      <div class="formula">\(\beta = \frac{D\lambda}{d}\)</div>
+    </div>
+    <div class="card card-green">
+      <div class="sec-label">Bright Fringe Position</div>
+      <div class="formula">\(y_n = \frac{nD\lambda}{d},\quad n = 0,1,2,\ldots\)</div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--red); background:#fef2f2;">
+      <div class="sec-label">Dark Fringe Position</div>
+      <div class="formula">\(y_n = \frac{(2n-1)D\lambda}{2d},\quad n = 1,2,3,\ldots\)</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Effect of immersing in a liquid (refractive index μ)</h3>
+    <div class="formula">\(\beta' = \frac{\beta}{\mu} = \frac{D\lambda}{\mu d} = \frac{D\lambda_{\text{medium}}}{d}\)</div>
+    <p>Fringe width <strong>decreases</strong> by factor μ when apparatus is immersed in liquid.</p>
+  </div>
+
+  <div class="card card-amber">
+    <h3>Key Effects in YDSE</h3>
+    <ul class="sub-list">
+      <li><strong>β ∝ D</strong> — increase screen distance → wider fringes</li>
+      <li><strong>β ∝ λ</strong> — red light gives wider fringes than violet</li>
+      <li><strong>β ∝ 1/d</strong> — increase slit separation → narrower fringes</li>
+      <li>If one slit is closed → no interference, only single slit diffraction</li>
+      <li>If white light used → central fringe is white, coloured fringes on sides (violet closest, red farthest)</li>
+      <li>On shifting a slit source laterally → fringes shift in same direction</li>
+    </ul>
+  </div>
+
+  <h3>Maximum Number of Bright Fringes</h3>
+  <p>The maximum path difference is d (when screen distance D → ∞). So:</p>
+  <div class="formula">\(\Delta_{\max} = d \implies n_{\max} = \frac{d}{\lambda}\)</div>
+  <p>Total number of bright fringes observable = \(2n_{\max}+1\) (including central)</p>
+</section>
+
+<div class="divider"></div>
+
+<!-- ======= 10.6 DIFFRACTION ======= -->
+<section id="diffraction">
+  <div class="sec-label">10.6</div>
+  <h2>Diffraction of Light</h2>
+  <p><strong>Diffraction</strong> is the bending of light around the corners/edges of an obstacle or aperture. It is more pronounced when the obstacle size is <strong>comparable to the wavelength</strong> of light. (~10⁻⁷ m for visible light)</p>
+
+  <div class="controls">
+    <span class="ctrl-label">Slit width a (λ)</span>
+    <input type="range" id="slitSlider" min="2" max="20" step="0.5" value="5">
+    <span class="ctrl-val" id="slitVal">5λ</span>
+    <button class="btn btn-primary" id="diffReset" style="margin-left:.5rem">↺</button>
+  </div>
+
+  <div class="canvas-wrap">
+    <span class="canvas-label">Single Slit Diffraction Pattern</span>
+    <canvas id="diffCanvas" height="320"></canvas>
+    <div class="canvas-legend">
+      <span><span class="legend-dot" style="background:#4f46e5"></span>Intensity pattern</span>
+      <span><span class="legend-dot" style="background:#f59e0b"></span>Central maximum</span>
+      <span><span class="legend-dot" style="background:#374151"></span>Secondary minima</span>
+    </div>
+  </div>
+
+  <div class="formula-grid">
+    <div class="card" style="border-left:3px solid var(--red); background:#fef2f2;">
+      <div class="sec-label">Minima (Dark) Condition</div>
+      <div class="formula">\(a\sin\theta = n\lambda,\quad n = \pm 1, \pm 2, \ldots\)</div>
+      <p style="font-size:.82rem">a = slit width, θ = angle of diffraction</p>
+    </div>
+    <div class="card card-green">
+      <div class="sec-label">Secondary Maxima</div>
+      <div class="formula">\(a\sin\theta = (2n+1)\frac{\lambda}{2}\)</div>
+      <p style="font-size:.82rem">Intensity of nth secondary maximum ≈ I₀/(2n+1)²π²</p>
+    </div>
+  </div>
+
+  <div class="card card-accent">
+    <h3>Width of Central Maximum</h3>
+    <div class="formula">\(W = 2y_1 = \frac{2D\lambda}{a}\)</div>
+    <p>Angular width:</p>
+    <div class="formula">\(2\theta_0 = \frac{2\lambda}{a}\quad(\text{for small }\theta)\)</div>
+  </div>
+
+  <h3>Difference: Interference vs Diffraction</h3>
+  <table>
+    <tr><th>Feature</th><th>Interference</th><th>Diffraction</th></tr>
+    <tr><td>Origin</td><td>Two separate coherent sources</td><td>Secondary wavelets from same wavefront</td></tr>
+    <tr><td>Fringe width</td><td>All fringes equal width (β = Dλ/d)</td><td>Central fringe is twice as wide</td></tr>
+    <tr><td>Intensity</td><td>All bright fringes equal intensity</td><td>Decreases away from centre</td></tr>
+    <tr><td>Minima intensity</td><td>Perfectly zero (equal amplitudes)</td><td>Never perfectly zero (in general)</td></tr>
+  </table>
+
+  <div class="card card-amber">
+    <h3>Why is diffraction of light not noticed daily?</h3>
+    <p>Visible light wavelength ≈ 4×10⁻⁷ to 7×10⁻⁷ m. Everyday obstacles (doors, buildings) have dimensions ~1 m, which is 10⁶ times larger than λ. Diffraction is negligible in this case. It is seen only with very narrow slits (width ≈ λ).</p>
+  </div>
+
+  <div class="card card-blue">
+    <h3>Resolving Power (Rayleigh's Criterion)</h3>
+    <p>Two point sources are just resolved when the central maximum of one falls on the first minimum of the other.</p>
+    <div class="formula">\(\theta_{\min} = \frac{1.22\lambda}{D}\)</div>
+    <p>where D is the diameter of the lens/aperture. Smaller θ_min = better resolution.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ======= SUMMARY ======= -->
+<section id="summary">
+  <div class="sec-label">Quick Reference</div>
+  <h2>Key Formulae</h2>
+
+  <div class="card">
+    <h3>All Important Formulae at a Glance</h3>
+    <table>
+      <tr><th>Quantity</th><th>Formula</th><th>Condition</th></tr>
+      <tr><td>Refractive index</td><td>\(\mu = c/v\)</td><td>—</td></tr>
+      <tr><td>Snell's law</td><td>\(\mu_1\sin i = \mu_2\sin r\)</td><td>—</td></tr>
+      <tr><td>Wavelength in medium</td><td>\(\lambda_m = \lambda_0/\mu\)</td><td>—</td></tr>
+      <tr><td>Resultant intensity</td><td>\(I = I_1+I_2+2\sqrt{I_1I_2}\cos\phi\)</td><td>Coherent</td></tr>
+      <tr><td>Max intensity</td><td>\(I_{\max} = 4I_0\)</td><td>\(I_1=I_2=I_0\)</td></tr>
+      <tr><td>YDSE fringe width</td><td>\(\beta = D\lambda/d\)</td><td>D≫d</td></tr>
+      <tr><td>Bright fringe y</td><td>\(y_n = nD\lambda/d\)</td><td>n=0,1,2…</td></tr>
+      <tr><td>Dark fringe y</td><td>\(y_n = (2n-1)D\lambda/2d\)</td><td>n=1,2,3…</td></tr>
+      <tr><td>In liquid μ</td><td>\(\beta' = \beta/\mu\)</td><td>—</td></tr>
+      <tr><td>Diffraction minima</td><td>\(a\sin\theta = n\lambda\)</td><td>n=±1,±2…</td></tr>
+      <tr><td>Central max width</td><td>\(W = 2D\lambda/a\)</td><td>—</td></tr>
+      <tr><td>Rayleigh criterion</td><td>\(\theta_{\min}=1.22\lambda/D\)</td><td>—</td></tr>
+    </table>
+  </div>
+
+  <div class="card card-green">
+    <h3>✅ Blind-Spot Checklist</h3>
+    <ul class="sub-list">
+      <li>Frequency NEVER changes during refraction — only speed and λ change</li>
+      <li>I_max = 4I₀ only when I₁ = I₂; otherwise I_max = (√I₁ + √I₂)²</li>
+      <li>In YDSE, fringe width β is independent of fringe order (all equal)</li>
+      <li>Diffraction central max is TWICE as wide as side maxima</li>
+      <li>When slit width a → ∞, diffraction disappears (geometrical optics)</li>
+      <li>Interference conserves energy — just redistributes it</li>
+      <li>YDSE in liquid: β decreases (λ decreases by factor μ)</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+
+<script>
+// ============== HERO ANIMATION ==============
+(function(){
+  const c = document.getElementById('heroCanvas');
+  const ctx = c.getContext('2d');
+  function resize(){ c.width = c.parentElement.offsetWidth; }
+  resize(); window.addEventListener('resize', resize);
+  let t = 0;
+  function draw(){
+    c.width = c.parentElement.offsetWidth;
+    ctx.clearRect(0,0,c.width,c.height);
+    const cx = c.width/2, cy = c.height/2;
+    for(let r = 20; r < 400; r += 40){
+      const phase = (r - t*60) / 40;
+      const alpha = Math.max(0, 0.6 - r/350) * (0.5 + 0.5*Math.sin(phase*Math.PI));
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI*2);
+      ctx.strokeStyle = `rgba(99,102,241,${alpha})`;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+    // plane wave on right
+    for(let x = 0; x < c.width; x++){
+      const y = cy + 60*Math.sin((x/c.width)*4*Math.PI - t*4);
+      const alpha = 0.15 + 0.15*Math.sin((x/c.width)*4*Math.PI - t*4 + 1);
+      ctx.beginPath();
+      ctx.arc(x, y, 1, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(8,145,178,${alpha})`;
+      ctx.fill();
+    }
+    t += 0.008;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============== WAVEFRONT ANIMATION ==============
+(function(){
+  const canvas = document.getElementById('wfCanvas');
+  const ctx = canvas.getContext('2d');
+  let wfType = 'spherical', animId;
+  function resize(){ canvas.width = canvas.parentElement.offsetWidth; }
+  resize(); window.addEventListener('resize', resize);
+
+  let t = 0;
+  function drawSpherical(){
+    canvas.width = canvas.parentElement.offsetWidth;
+    const W = canvas.width, H = canvas.height;
+    ctx.fillStyle = '#0f0e1a'; ctx.fillRect(0,0,W,H);
+    const cx = W/2, cy = H/2;
+    // draw rays
+    ctx.strokeStyle = 'rgba(245,158,11,0.35)'; ctx.lineWidth = 1;
+    for(let a = 0; a < Math.PI*2; a += Math.PI/8){
+      ctx.beginPath(); ctx.moveTo(cx,cy);
+      ctx.lineTo(cx+Math.cos(a)*220, cy+Math.sin(a)*220);
+      ctx.stroke();
+    }
+    // wavefronts
+    const speeds = [40,40,40];
+    [0,1,2].forEach(i => {
+      const r = ((t*50 + i*70) % 220) + 10;
+      const alpha = Math.max(0, 1 - r/230);
+      ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+      ctx.strokeStyle = `rgba(79,70,229,${alpha})`; ctx.lineWidth = 2.5; ctx.stroke();
+    });
+    // source
+    ctx.beginPath(); ctx.arc(cx,cy,5,0,Math.PI*2);
+    ctx.fillStyle = '#fff'; ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.7)';
+    ctx.font = '11px Inter'; ctx.fillText('S',cx+8,cy+4);
+  }
+  function drawCylindrical(){
+    canvas.width = canvas.parentElement.offsetWidth;
+    const W = canvas.width, H = canvas.height;
+    ctx.fillStyle = '#0f0e1a'; ctx.fillRect(0,0,W,H);
+    const cx = W/2, cy = H/2;
+    // line source
+    ctx.beginPath(); ctx.moveTo(cx,10); ctx.lineTo(cx,H-10);
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    // semicircular wavefronts
+    [0,1,2].forEach(i => {
+      const r = ((t*50 + i*70) % (W/2-20)) + 15;
+      const alpha = Math.max(0, 1 - r/(W/2));
+      ctx.beginPath(); ctx.arc(cx,cy,r,-Math.PI/2,Math.PI/2);
+      ctx.strokeStyle = `rgba(79,70,229,${alpha})`; ctx.lineWidth = 2.5; ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx,cy,r,Math.PI/2,3*Math.PI/2);
+      ctx.strokeStyle = `rgba(79,70,229,${alpha})`; ctx.lineWidth = 2.5; ctx.stroke();
+    });
+    ctx.fillStyle='rgba(255,255,255,.6)';ctx.font='11px Inter';ctx.fillText('Line Source',cx+4,20);
+  }
+  function drawPlane(){
+    canvas.width = canvas.parentElement.offsetWidth;
+    const W = canvas.width, H = canvas.height;
+    ctx.fillStyle = '#0f0e1a'; ctx.fillRect(0,0,W,H);
+    const offset = (t*50) % 60;
+    for(let x = -offset; x < W; x += 60){
+      const alpha = 0.7;
+      ctx.beginPath(); ctx.moveTo(x,10); ctx.lineTo(x,H-10);
+      ctx.strokeStyle = `rgba(79,70,229,${alpha})`; ctx.lineWidth = 2; ctx.stroke();
+    }
+    // arrows
+    ctx.strokeStyle='rgba(245,158,11,0.6)'; ctx.lineWidth=1.5;
+    for(let y = 20; y < H; y+=40){
+      ctx.beginPath(); ctx.moveTo(20,y); ctx.lineTo(W-20,y);
+      ctx.stroke();
+      // arrowhead
+      ctx.beginPath(); ctx.moveTo(W-20,y); ctx.lineTo(W-28,y-5); ctx.lineTo(W-28,y+5); ctx.closePath();
+      ctx.fillStyle='rgba(245,158,11,0.6)'; ctx.fill();
+    }
+    ctx.fillStyle='rgba(255,255,255,.6)';ctx.font='11px Inter';ctx.fillText('Plane wavefronts (far from source)',10,H-8);
+  }
+
+  function loop(){
+    t += 0.016;
+    if(wfType==='spherical') drawSpherical();
+    else if(wfType==='cylindrical') drawCylindrical();
+    else drawPlane();
+    animId = requestAnimationFrame(loop);
+  }
+  loop();
+
+  document.querySelectorAll('#wfTabs .tab').forEach(tab => {
+    tab.addEventListener('click', function(){
+      document.querySelectorAll('#wfTabs .tab').forEach(t=>t.classList.remove('active'));
+      this.classList.add('active');
+      wfType = this.dataset.wf;
+      const labels = {spherical:'Spherical Wavefront — Point Source',cylindrical:'Cylindrical Wavefront — Line Source',plane:'Plane Wavefront — Source at Infinity'};
+      document.getElementById('wfLabel').textContent = labels[wfType];
+      t = 0;
+    });
+  });
+})();
+
+// ============== HUYGENS ==============
+(function(){
+  const canvas = document.getElementById('huyCanvas');
+  const ctx = canvas.getContext('2d');
+  let speed = 0.8, t = 0;
+  function resize(){ canvas.width = canvas.parentElement.offsetWidth; }
+  resize(); window.addEventListener('resize', resize);
+  const speedSlider = document.getElementById('huySpeed');
+  const speedVal = document.getElementById('huySpeedVal');
+  speedSlider.addEventListener('input', function(){ speed=parseFloat(this.value); speedVal.textContent=speed.toFixed(1)+'×'; });
+  document.getElementById('huyReset').addEventListener('click', ()=>{ t=0; });
+
+  const pts = [-100,-60,-20,20,60,100];
+  function draw(){
+    canvas.width = canvas.parentElement.offsetWidth;
+    const W = canvas.width, H = canvas.height;
+    ctx.fillStyle='#0f0e1a'; ctx.fillRect(0,0,W,H);
+    const originX = 80, cx = W/2, cy = H/2;
+    const maxR = Math.min(t*40*speed, W-originX-40);
+
+    // Primary wavefront (initial)
+    ctx.beginPath(); ctx.moveTo(originX, cy+pts[0]);
+    pts.forEach(p => { ctx.lineTo(originX, cy+p); });
+    ctx.strokeStyle='rgba(79,70,229,0.8)'; ctx.lineWidth=2.5; ctx.stroke();
+    ctx.fillStyle='rgba(79,70,229,.15)'; ctx.fillRect(originX-2, cy+pts[0], 4, pts[pts.length-1]-pts[0]);
+
+    // Secondary wavelets
+    pts.forEach(p => {
+      ctx.beginPath(); ctx.arc(originX, cy+p, maxR, -Math.PI/2.2, Math.PI/2.2);
+      ctx.strokeStyle='rgba(6,182,212,0.4)'; ctx.lineWidth=1.2; ctx.stroke();
+      // source point
+      ctx.beginPath(); ctx.arc(originX, cy+p, 3, 0, Math.PI*2);
+      ctx.fillStyle='rgba(6,182,212,0.9)'; ctx.fill();
+    });
+
+    // New wavefront (envelope tangent)
+    const nx = originX + maxR;
+    if(maxR > 5){
+      ctx.beginPath();
+      ctx.moveTo(nx, cy+pts[0]);
+      pts.forEach(p => ctx.lineTo(nx, cy+p));
+      ctx.strokeStyle='rgba(245,158,11,0.9)'; ctx.lineWidth=2.5; ctx.stroke();
+    }
+
+    // Labels
+    ctx.fillStyle='rgba(79,70,229,.9)'; ctx.font='11px Inter'; ctx.fillText('Primary wavefront', originX-70, cy-115);
+    if(maxR>30){ ctx.fillStyle='rgba(245,158,11,.9)'; ctx.fillText('New wavefront (envelope)', nx+5, cy-115); }
+    ctx.fillStyle='rgba(6,182,212,.8)'; ctx.fillText('Secondary wavelets', originX+20, cy+pts[pts.length-1]+20);
+
+    t += 0.04;
+    if(t > 4) t = 0;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============== REFLECTION / REFRACTION ==============
+(function(){
+  const canvas = document.getElementById('rrCanvas');
+  const ctx = canvas.getContext('2d');
+  let rrType = 'reflection', t = 0;
+  function resize(){ canvas.width = canvas.parentElement.offsetWidth; }
+  resize(); window.addEventListener('resize', resize);
+
+  document.querySelectorAll('#rrTabs .tab').forEach(tab => {
+    tab.addEventListener('click', function(){
+      document.querySelectorAll('#rrTabs .tab').forEach(t=>t.classList.remove('active'));
+      this.classList.add('active');
+      rrType = this.dataset.rr;
+      document.getElementById('rrLabel').textContent = rrType==='reflection'?'Reflection of a Plane Wave':'Refraction — Proof of Snell\'s Law';
+    });
+  });
+
+  function drawReflection(){
+    canvas.width = canvas.parentElement.offsetWidth;
+    const W=canvas.width,H=canvas.height;
+    ctx.fillStyle='#0f0e1a'; ctx.fillRect(0,0,W,H);
+    const surfY = H*0.55;
+    // surface
+    ctx.beginPath(); ctx.moveTo(0,surfY); ctx.lineTo(W,surfY);
+    ctx.strokeStyle='rgba(255,255,255,0.3)'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.05)'; ctx.fillRect(0,surfY,W,H-surfY);
+    ctx.fillStyle='rgba(255,255,255,.12)'; ctx.fillText('Medium (Mirror)', 10, surfY+16);
+
+    const angle = 35*Math.PI/180;
+    const cx = W/2;
+    // incident rays (animated)
+    for(let i=-2;i<=2;i++){
+      const x0 = cx + i*60, y0 = 20;
+      const len = (surfY-20);
+      const phase = (t*60 + i*30) % (len+40);
+      const x1 = x0 + len*Math.sin(angle);
+      const y1 = y0 + len;
+      ctx.beginPath();
+      ctx.moveTo(x0,y0); ctx.lineTo(x1,y1);
+      ctx.strokeStyle='rgba(79,70,229,0.5)'; ctx.lineWidth=1.5; ctx.stroke();
+      // moving dot
+      const frac = Math.min(1, phase/len);
+      const dx = x0 + frac*(x1-x0), dy = y0 + frac*(y1-y0);
+      ctx.beginPath(); ctx.arc(dx,dy,3,0,Math.PI*2);
+      ctx.fillStyle='rgba(79,70,229,0.9)'; ctx.fill();
+    }
+    // incident wavefront AB
+    const xA = cx-80, xB = cx+30;
+    const yA = surfY - (xB-xA)*Math.tan(Math.PI/2-angle);
+    ctx.beginPath(); ctx.moveTo(xA,yA); ctx.lineTo(xB,surfY);
+    ctx.strokeStyle='rgba(79,70,229,.9)'; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle='rgba(79,70,229,.8)'; ctx.font='12px Inter'; ctx.fillText('A (Incident WF)',xA-5,yA-6);
+    ctx.fillText('B',xB+4,surfY-4);
+
+    // normal
+    ctx.beginPath(); ctx.setLineDash([4,4]);
+    ctx.moveTo(xB,surfY-70); ctx.lineTo(xB,surfY+50);
+    ctx.strokeStyle='rgba(6,182,212,.6)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.setLineDash([]);
+
+    // reflected wavefront
+    const xC = xB+80, yC = surfY - (xC-xB)*Math.tan(Math.PI/2-angle);
+    ctx.beginPath(); ctx.moveTo(xB,surfY); ctx.lineTo(xC,yC);
+    ctx.strokeStyle='rgba(245,158,11,.9)'; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle='rgba(245,158,11,.8)'; ctx.fillText('Reflected WF',xC-10,yC-6);
+
+    // angle labels
+    ctx.fillStyle='rgba(255,255,255,.6)'; ctx.font='11px Inter';
+    ctx.fillText('∠i',xB-22,surfY-18);
+    ctx.fillText('∠r',xB+8,surfY-18);
+    ctx.fillText('∠i = ∠r  (Law of Reflection)',10,H-10);
+  }
+
+  function drawRefraction(){
+    canvas.width = canvas.parentElement.offsetWidth;
+    const W=canvas.width,H=canvas.height;
+    ctx.fillStyle='#0f0e1a'; ctx.fillRect(0,0,W,H);
+    const surfY = H/2;
+    // media
+    ctx.fillStyle='rgba(79,70,229,.06)'; ctx.fillRect(0,0,W,surfY);
+    ctx.fillStyle='rgba(8,145,178,.06)'; ctx.fillRect(0,surfY,W,H-surfY);
+    ctx.fillStyle='rgba(255,255,255,.35)'; ctx.font='11px Inter';
+    ctx.fillText('Medium 1 (n₁, v₁)',10,20);
+    ctx.fillText('Medium 2 (n₂ > n₁, v₂ < v₁)',10,surfY+16);
+    // boundary
+    ctx.beginPath(); ctx.moveTo(0,surfY); ctx.lineTo(W,surfY);
+    ctx.strokeStyle='rgba(255,255,255,0.2)'; ctx.lineWidth=1; ctx.stroke();
+
+    const i = 35*Math.PI/180, r = 22*Math.PI/180;
+    const cx = W/2;
+    // incident
+    ctx.beginPath(); ctx.moveTo(cx-100,20); ctx.lineTo(cx,surfY);
+    ctx.strokeStyle='rgba(79,70,229,.8)'; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle='rgba(79,70,229,.9)'; ctx.font='12px Inter'; ctx.fillText('Incident',cx-105,18);
+
+    // refracted
+    ctx.beginPath(); ctx.moveTo(cx,surfY); ctx.lineTo(cx+70,H-30);
+    ctx.strokeStyle='rgba(245,158,11,.8)'; ctx.lineWidth=2; ctx.stroke();
+    ctx.fillStyle='rgba(245,158,11,.8)'; ctx.fillText('Refracted',cx+72,surfY+20);
+
+    // normal
+    ctx.beginPath(); ctx.setLineDash([4,4]);
+    ctx.moveTo(cx,20); ctx.lineTo(cx,H-20);
+    ctx.strokeStyle='rgba(6,182,212,.5)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(6,182,212,.8)'; ctx.fillText('Normal',cx+4,H/4);
+
+    // arcs for angles
+    ctx.beginPath(); ctx.arc(cx,surfY,30,3*Math.PI/2-i,3*Math.PI/2); ctx.strokeStyle='rgba(255,255,255,.5)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx,surfY,30,Math.PI/2,Math.PI/2+r); ctx.stroke();
+
+    ctx.fillStyle='rgba(255,255,255,.7)'; ctx.font='11px Inter';
+    ctx.fillText('i',cx-16,surfY-20);
+    ctx.fillText('r',cx+8,surfY+24);
+
+    // formula
+    ctx.fillStyle='rgba(255,255,255,.5)'; ctx.font='12px Inter';
+    ctx.fillText('sin i / sin r = v₁/v₂ = n₂/n₁  (Snell\'s Law)',10,H-10);
+
+    // animated wave packet
+    const phase = (t*2) % (H-40) - 20;
+    const px = phase < surfY ? cx-100+phase*(100/(surfY-20)) : cx+(phase-surfY)*(70/(H-30-surfY));
+    const py = Math.min(phase, H-10);
+    ctx.beginPath(); ctx.arc(Math.min(px, W-10), Math.max(py, 10), 4,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,255,255,.8)'; ctx.fill();
+  }
+
+  function loop(){
+    t += 0.5;
+    if(rrType==='reflection') drawReflection(); else drawRefraction();
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+// ============== SUPERPOSITION ==============
+(function(){
+  const canvas = document.getElementById('superCanvas');
+  const ctx = canvas.getContext('2d');
+  let phase=0, amp2=1, t=0;
+  function resize(){ canvas.width = canvas.parentElement.offsetWidth; }
+  resize(); window.addEventListener('resize', resize);
+
+  const phaseSlider = document.getElementById('phaseSlider');
+  const phaseVal = document.getElementById('phaseVal');
+  const ampSlider = document.getElementById('ampSlider');
+  const ampVal = document.getElementById('ampVal');
+
+  phaseSlider.addEventListener('input', function(){
+    phase=parseFloat(this.value);
+    phaseVal.textContent=Math.round(phase*180/Math.PI)+'°';
+  });
+  ampSlider.addEventListener('input', function(){
+    amp2=parseFloat(this.value);
+    ampVal.textContent=amp2.toFixed(1);
+  });
+
+  function draw(){
+    canvas.width = canvas.parentElement.offsetWidth;
+    const W=canvas.width, H=canvas.height;
+    ctx.fillStyle='#0f0e1a'; ctx.fillRect(0,0,W,H);
+    const midY = H/2, amp = H/7;
+
+    // axes
+    ctx.beginPath(); ctx.moveTo(20,midY); ctx.lineTo(W-20,midY);
+    ctx.strokeStyle='rgba(255,255,255,.1)'; ctx.lineWidth=1; ctx.stroke();
+
+    function drawWave(color, phOff, amplitude, label, yOff){
+      ctx.beginPath();
+      for(let x=20;x<W-20;x++){
+        const val = amplitude*Math.sin(2*Math.PI*(x-20)/(W-40)*3 - t + phOff);
+        if(x===20) ctx.moveTo(x, midY+yOff+val*amp);
+        else ctx.lineTo(x, midY+yOff+val*amp);
+      }
+      ctx.strokeStyle=color; ctx.lineWidth=2; ctx.stroke();
+      ctx.fillStyle=color; ctx.font='11px Inter'; ctx.fillText(label, 22, midY+yOff-amp-6);
+    }
+
+    const r_amp = Math.sqrt(1 + amp2*amp2 + 2*amp2*Math.cos(phase));
+    drawWave('rgba(99,102,241,.7)', 0, 1, 'y₁ (Wave 1)', -amp*1.8);
+    drawWave('rgba(6,182,212,.7)', phase, amp2, `y₂ (Wave 2, φ=${Math.round(phase*180/Math.PI)}°)`, 0);
+    drawWave('rgba(245,158,11,.95)', 0, 0, '', 0); // resultant
+
+    // resultant properly
+    ctx.beginPath();
+    for(let x=20;x<W-20;x++){
+      const v1 = Math.sin(2*Math.PI*(x-20)/(W-40)*3 - t);
+      const v2 = amp2*Math.sin(2*Math.PI*(x-20)/(W-40)*3 - t + phase);
+      const val = v1+v2;
+      if(x===20) ctx.moveTo(x, midY+amp*1.8+val*amp*0.6);
+      else ctx.lineTo(x, midY+amp*1.8+val*amp*0.6);
+    }
+    ctx.strokeStyle='rgba(245,158,11,.95)'; ctx.lineWidth=2.5; ctx.stroke();
+    ctx.fillStyle='rgba(245,158,11,.9)'; ctx.fillText(`Resultant (A=${r_amp.toFixed(2)})`, 22, midY+amp*1.8-amp*0.7-4);
+
+    t += 0.04;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ============== YDSE ==============
+(function(){
+  const canvas = document.getElementById('ydseCanvas');
+  const ctx = canvas.getContext('2d');
+  function resize(){ canvas.width = canvas.parentElement.offsetWidth; }
+  resize(); window.addEventListener('resize', resize);
+
+  const lambdaSlider=document.getElementById('lambdaSlider');
+  const dSlider=document.getElementById('dSlider');
+  const DSlider=document.getElementById('DSlider');
+  const lambdaVal=document.getElementById('lambdaVal');
+  const dVal=document.getElementById('dVal');
+  const DVal=document.getElementById('DVal');
+  const betaVal=document.getElementById('betaVal');
+
+  function wavelengthToRGB(wl){
+    let r,g,b;
+    if(wl>=380&&wl<440){r=(440-wl)/60;g=0;b=1;}
+    else if(wl<490){r=0;g=(wl-440)/50;b=1;}
+    else if(wl<510){r=0;g=1;b=(510-wl)/20;}
+    else if(wl<580){r=(wl-510)/70;g=1;b=0;}
+    else if(wl<645){r=1;g=(645-wl)/65;b=0;}
+    else{r=1;g=0;b=0;}
+    return [Math.round(r*255),Math.round(g*255),Math.round(b*255)];
+  }
+
+  function draw(){
+    canvas.width = canvas.parentElement.offsetWidth;
+    const W=canvas.width, H=canvas.height;
+    const lam = parseFloat(lambdaSlider.value)*1e-9;
+    const d = parseFloat(dSlider.value)*1e-3;
+    const D = parseFloat(DSlider.value);
+    const beta = D*lam/d*1000; // mm
+    betaVal.textContent = beta.toFixed(2)+' mm';
+    const rgb = wavelengthToRGB(parseFloat(lambdaSlider.value));
+
+    ctx.fillStyle='#0f0e1a'; ctx.fillRect(0,0,W,H);
+
+    // Layout: slit section left, screen right
+    const slitX = W*0.3;
+    const screenX = W*0.9;
+    const midY = H/2;
+
+    // Source
+    ctx.beginPath(); ctx.arc(20, midY, 8, 0, Math.PI*2);
+    ctx.fillStyle='rgba(255,255,255,.9)'; ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.6)'; ctx.font='10px Inter'; ctx.fillText('S',14,midY+18);
+
+    // Slit barrier
+    ctx.fillStyle='rgba(255,255,255,.15)';
+    ctx.fillRect(slitX-3, 10, 6, midY-30);
+    ctx.fillRect(slitX-3, midY+30, 6, H-midY-40);
+    ctx.fillStyle='rgba(255,255,255,.5)'; ctx.fillText('S₁',slitX+6,midY-35);
+    ctx.fillText('S₂',slitX+6,midY+44);
+    ctx.fillText('←d→',slitX-22,midY+2);
+
+    // Lines from source to slits
+    ctx.beginPath(); ctx.moveTo(28,midY); ctx.lineTo(slitX-3,midY-25);
+    ctx.strokeStyle='rgba(255,255,255,.15)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(28,midY); ctx.lineTo(slitX-3,midY+25);
+    ctx.stroke();
+
+    // Interference pattern on screen
+    const screenH = H-30;
+    for(let y=0; y<screenH; y++){
+      const yPos = y - screenH/2;
+      const delta = d * yPos / D * 1e-2; // rough scale
+      const phi = 2*Math.PI*delta/lam;
+      const I = Math.cos(phi/2)**2;
+      const alpha = I*I;
+      ctx.beginPath();
+      ctx.rect(screenX, y+15, 18, 1);
+      ctx.fillStyle=`rgba(${rgb[0]},${rgb[1]},${rgb[2]},${alpha.toFixed(3)})`;
+      ctx.fill();
+    }
+
+    // Screen line
+    ctx.beginPath(); ctx.moveTo(screenX,15); ctx.lineTo(screenX,H-15);
+    ctx.strokeStyle='rgba(255,255,255,.3)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.5)'; ctx.fillText('Screen',screenX-10,H-5);
+
+    // Rays from slits to screen
+    [[slitX, midY-25],[slitX, midY+25]].forEach(([sx,sy])=>{
+      for(let n=-2;n<=2;n++){
+        const ty = midY + n*(beta/1000)*D*200;
+        ctx.beginPath(); ctx.moveTo(sx,sy); ctx.lineTo(screenX,Math.max(15,Math.min(H-15,ty)));
+        ctx.strokeStyle=`rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.08)`;
+        ctx.lineWidth=1; ctx.stroke();
+      }
+    });
+
+    // Fringe width indicator
+    const fringePixels = Math.min(50, beta * 10);
+    ctx.beginPath();
+    ctx.moveTo(screenX+22, midY-fringePixels/2); ctx.lineTo(screenX+22, midY+fringePixels/2);
+    ctx.strokeStyle='rgba(255,255,255,.5)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.6)'; ctx.font='10px Inter'; ctx.fillText('β',screenX+24,midY+3);
+
+    // D label
+    ctx.beginPath(); ctx.moveTo(slitX,H-8); ctx.lineTo(screenX,H-8);
+    ctx.strokeStyle='rgba(255,255,255,.3)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.5)'; ctx.fillText('D',W/2,H-4);
+  }
+
+  [lambdaSlider,dSlider,DSlider].forEach(s=>{
+    s.addEventListener('input',()=>{
+      lambdaVal.textContent=lambdaSlider.value;
+      dVal.textContent=parseFloat(dSlider.value).toFixed(1);
+      DVal.textContent=parseFloat(DSlider.value).toFixed(1);
+      draw();
+    });
+  });
+  draw();
+})();
+
+// ============== DIFFRACTION ==============
+(function(){
+  const canvas = document.getElementById('diffCanvas');
+  const ctx = canvas.getContext('2d');
+  function resize(){ canvas.width = canvas.parentElement.offsetWidth; }
+  resize(); window.addEventListener('resize', resize);
+  const slitSlider = document.getElementById('slitSlider');
+  const slitVal = document.getElementById('slitVal');
+  let t=0;
+
+  document.getElementById('diffReset').addEventListener('click',()=>t=0);
+  slitSlider.addEventListener('input',()=>{
+    slitVal.textContent=parseFloat(slitSlider.value).toFixed(1)+'λ';
+    drawDiff();
+  });
+
+  function drawDiff(){
+    canvas.width = canvas.parentElement.offsetWidth;
+    const W=canvas.width, H=canvas.height;
+    ctx.fillStyle='#0f0e1a'; ctx.fillRect(0,0,W,H);
+    const a = parseFloat(slitSlider.value);
+    const midY = H/2;
+    const screenX = W*0.75;
+    const slitX = W*0.15;
+
+    // Slit
+    ctx.fillStyle='rgba(255,255,255,.2)';
+    ctx.fillRect(slitX-3,10,6,midY-a*5);
+    ctx.fillRect(slitX-3,midY+a*5,6,H-midY-a*5-10);
+    ctx.fillStyle='rgba(6,182,212,.8)';
+    ctx.fillRect(slitX-3, midY-a*5, 6, a*10);
+    ctx.fillStyle='rgba(255,255,255,.6)'; ctx.font='10px Inter';
+    ctx.fillText(`a = ${a.toFixed(1)}λ`, slitX+7, midY);
+
+    // Diffracted waves fan
+    const numRays = 15;
+    for(let i=0;i<numRays;i++){
+      const angle = (i/(numRays-1)-0.5)*Math.PI*0.8;
+      const sinTh = Math.sin(angle);
+      const beta_val = Math.PI*a*sinTh;
+      const intensity = beta_val===0 ? 1 : Math.pow(Math.sin(beta_val)/beta_val, 2);
+      ctx.beginPath();
+      ctx.moveTo(slitX, midY);
+      ctx.lineTo(screenX, midY + Math.tan(angle)*(screenX-slitX));
+      ctx.strokeStyle=`rgba(79,70,229,${(intensity*0.35).toFixed(3)})`;
+      ctx.lineWidth=1; ctx.stroke();
+    }
+
+    // Intensity pattern on screen
+    const scH = H-20;
+    for(let y=0; y<scH; y++){
+      const yPos = (y-scH/2)/(scH/2);
+      const theta = Math.atan(yPos * 1.5);
+      const sinTh = Math.sin(theta);
+      const bv = Math.PI*a*sinTh;
+      const I = bv===0 ? 1 : Math.pow(Math.sin(bv)/bv, 2);
+      const alpha = I*I;
+      ctx.fillStyle=`rgba(79,70,229,${(alpha*0.9).toFixed(3)})`;
+      ctx.fillRect(screenX, y+10, 22, 1);
+      // white highlight for bright
+      if(I>0.9){ ctx.fillStyle=`rgba(255,255,255,${(I*0.5).toFixed(3)})`; ctx.fillRect(screenX,y+10,22,1); }
+    }
+
+    // Central max indicator
+    ctx.fillStyle='rgba(245,158,11,.7)'; ctx.font='9px Inter';
+    ctx.fillText('Central Max', screenX+25, midY+3);
+    // First minima
+    const firstMinY = (scH/2)*Math.sin(Math.asin(1/a));
+    if(!isNaN(firstMinY) && firstMinY < scH/2-5){
+      ctx.fillStyle='rgba(100,100,100,.6)'; ctx.font='9px Inter';
+      ctx.fillText('1st min', screenX+25, midY-firstMinY+5);
+      ctx.fillText('1st min', screenX+25, midY+firstMinY+5);
+    }
+
+    // Label
+    ctx.beginPath(); ctx.moveTo(slitX,H-8); ctx.lineTo(screenX,H-8);
+    ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.lineWidth=1; ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,.4)'; ctx.fillText('D',W*0.45,H-4);
+    ctx.fillText('sin θ = nλ/a (minima)', 10, 20);
+  }
+
+  drawDiff();
+  slitSlider.addEventListener('input', drawDiff);
+})();
+
+// Nav highlight
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+window.addEventListener('scroll', ()=>{
+  let current='';
+  sections.forEach(s=>{ if(window.scrollY >= s.offsetTop-120) current=s.id; });
+  navLinks.forEach(l=>{ l.classList.toggle('active', l.getAttribute('href')==='#'+current); });
+});
+
+// KaTeX render
+document.addEventListener('DOMContentLoaded',()=>{
+  renderMathInElement(document.body,{delimiters:[{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});
+});
+renderMathInElement(document.body,{delimiters:[{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});
+</script>
+</body>
+</html>

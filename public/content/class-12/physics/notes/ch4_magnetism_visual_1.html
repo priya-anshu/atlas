@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 4 — Moving Charges & Magnetism</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide-react@0.378.0/dist/umd/lucide-react.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/framer-motion@11/dist/framer-motion.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          amber: { 50:'#fdf6ed', 100:'#faeeda', 200:'#f5d9a8', 400:'#e8a030', 600:'#c47f17', 800:'#7a4e0a', 900:'#412402' },
+          rust:  { 50:'#fdf1ec', 100:'#fce0d2', 200:'#f8b89a', 400:'#e06030', 600:'#b84c1a', 800:'#7a2e0d' },
+          warm:  { 50:'#fdf9f4', 100:'#f9f0e4', 200:'#f0dfc5', 300:'#e0c99a', 400:'#c9a96b', 700:'#7a5c2e', 900:'#2e1f0e' }
+        },
+        fontFamily: {
+          display: ['Crimson Pro', 'Georgia', 'serif'],
+          body: ['Outfit', 'sans-serif'],
+          mono: ['JetBrains Mono', 'monospace'],
+        }
+      }
+    }
+  }
+</script>
+<style>
+  * { box-sizing: border-box; }
+  body { background: #fdf6ed; font-family: 'Outfit', sans-serif; min-height: 100vh; }
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: #faeeda; }
+  ::-webkit-scrollbar-thumb { background: #c47f17; border-radius: 10px; }
+
+  @keyframes spin-slow { to { transform: rotate(360deg); } }
+  @keyframes pulse-ring { 0%,100%{transform:scale(1);opacity:.6} 50%{transform:scale(1.12);opacity:1} }
+  @keyframes field-flow { to { stroke-dashoffset: -40; } }
+  @keyframes float-up { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+  @keyframes glow-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(196,127,23,0)} 50%{box-shadow:0 0 20px 4px rgba(196,127,23,0.3)} }
+
+  .spin-slow { animation: spin-slow 8s linear infinite; }
+  .pulse-ring { animation: pulse-ring 2s ease-in-out infinite; }
+  .float { animation: float-up 3s ease-in-out infinite; }
+  .glow { animation: glow-pulse 2.5s ease-in-out infinite; }
+
+  .field-line { stroke-dasharray: 8 4; animation: field-flow 1.5s linear infinite; }
+  .field-line-rev { stroke-dasharray: 8 4; animation: field-flow 1.5s linear infinite reverse; }
+  .field-line-slow { stroke-dasharray: 8 4; animation: field-flow 2.5s linear infinite; }
+
+  .tab-active { background: linear-gradient(135deg, #c47f17, #e8a030); color: white; box-shadow: 0 4px 15px rgba(196,127,23,0.4); }
+  .formula-card { background: linear-gradient(135deg, #fdf6ed, #faeeda); border: 1px solid #e8d5b5; }
+  .glass { background: rgba(253,246,237,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(232,160,48,0.2); }
+
+  input[type=range] { -webkit-appearance: none; appearance: none; height: 4px; border-radius: 2px; background: #e8d5b5; outline: none; }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #c47f17; cursor: pointer; box-shadow: 0 2px 6px rgba(196,127,23,0.4); }
+  input[type=range]::-webkit-slider-thumb:hover { background: #e8a030; transform: scale(1.1); }
+
+  .dot-in::before { content: '⊙'; font-size: 18px; color: #b84c1a; }
+  .dot-out::before { content: '⊗'; font-size: 18px; color: #185fa5; }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+const { motion, AnimatePresence } = FramerMotion;
+const { Zap, Magnet, Circle, ArrowRight, Activity, RotateCcw, Waves, GitBranch, ChevronRight } = lucide;
+
+const TABS = [
+  { id:'bs',    label:'Biot–Savart',        icon: Activity },
+  { id:'perm',  label:'ε₀ & μ₀',            icon: Waves },
+  { id:'wire',  label:'Wire Field',          icon: Zap },
+  { id:'max',   label:'Corkscrew & RHR',     icon: RotateCcw },
+  { id:'loop',  label:'Circular Loop',       icon: Circle },
+];
+
+/* ─── Shared slider component ─── */
+function Slider({ label, min, max, step=1, value, onChange, unit='', color='amber' }) {
+  return (
+    <div className="flex items-center gap-3 mb-3">
+      <span className="text-warm-700 font-body text-xs w-24 shrink-0">{label}</span>
+      <input type="range" min={min} max={max} step={step} value={value}
+        onChange={e => onChange(+e.target.value)} className="flex-1" />
+      <span className="font-mono text-xs font-medium text-amber-800 w-16 text-right">
+        {value}{unit}
+      </span>
+    </div>
+  );
+}
+
+/* ─── Formula box ─── */
+function FormulaBox({ children, title }) {
+  return (
+    <motion.div initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} transition={{delay:0.2}}
+      className="formula-card rounded-xl p-4 mt-4 border-l-4 border-amber-600">
+      {title && <div className="font-body text-xs font-medium text-amber-800 uppercase tracking-widest mb-2">{title}</div>}
+      <div className="font-mono text-sm text-warm-900 leading-loose">{children}</div>
+    </motion.div>
+  );
+}
+
+/* ─── Info card ─── */
+function InfoCard({ title, value, icon: Icon }) {
+  return (
+    <motion.div whileHover={{y:-3,boxShadow:'0 8px 20px rgba(196,127,23,0.15)'}}
+      className="bg-white/60 border border-amber-200 rounded-xl p-4 cursor-default">
+      {Icon && <Icon size={18} className="text-amber-600 mb-2" />}
+      <div className="font-body font-medium text-warm-900 text-sm mb-1">{title}</div>
+      <div className="font-mono text-xs text-warm-700 leading-relaxed">{value}</div>
+    </motion.div>
+  );
+}
+
+/* ═══════════════════════════════════════
+   PANEL 1: Biot–Savart Law
+═══════════════════════════════════════ */
+function BiotSavartPanel() {
+  const [I, setI] = useState(5);
+  const [dl, setDl] = useState(3);
+  const [r, setR] = useState(5);
+  const [theta, setTheta] = useState(90);
+  const canvasRef = useRef(null);
+
+  const mu0 = 4 * Math.PI * 1e-7;
+  const dB = (mu0 / (4 * Math.PI)) * (I * dl * 1e-3 * Math.sin(theta * Math.PI / 180)) / ((r * r) * 1e-4);
+  const dBpT = (dB * 1e12).toFixed(3);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    const cx = W / 2, cy = H / 2 + 10;
+
+    // Background grid
+    ctx.strokeStyle = 'rgba(196,127,23,0.06)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < W; x += 30) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y < H; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+    const th = theta * Math.PI / 180;
+    const px = cx + r * 16 * Math.cos(-th + Math.PI / 2);
+    const py = cy + r * 16 * Math.sin(-th + Math.PI / 2);
+
+    // r vector dashed
+    ctx.strokeStyle = '#9c7a50'; ctx.lineWidth = 1.5; ctx.setLineDash([5, 3]);
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
+    ctx.setLineDash([]);
+    // arrowhead
+    const dx = px - cx, dy = py - cy, len = Math.sqrt(dx*dx+dy*dy);
+    const nx = dx/len, ny = dy/len;
+    ctx.strokeStyle = '#9c7a50'; ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(px - nx*10 + ny*5, py - ny*10 - nx*5);
+    ctx.lineTo(px, py);
+    ctx.lineTo(px - nx*10 - ny*5, py - ny*10 + nx*5);
+    ctx.stroke();
+
+    // theta arc
+    ctx.strokeStyle = '#1d9e75'; ctx.lineWidth = 1.5;
+    const arcStart = -Math.PI/2, arcEnd = arcStart + (Math.PI - th);
+    ctx.beginPath(); ctx.arc(cx, cy, 36, arcStart, arcStart + (Math.PI/2 - th + Math.PI/2), th > Math.PI/2); ctx.stroke();
+    ctx.fillStyle = '#1d9e75'; ctx.font = '11px JetBrains Mono'; ctx.textAlign = 'left';
+    ctx.fillText(`θ=${theta}°`, cx + 10, cy - 30);
+
+    // Current element (wire)
+    const grad = ctx.createLinearGradient(cx, cy - 55, cx, cy + 55);
+    grad.addColorStop(0, '#e8a030'); grad.addColorStop(1, '#c47f17');
+    ctx.strokeStyle = grad; ctx.lineWidth = 5; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(cx, cy + 50); ctx.lineTo(cx, cy - 50); ctx.stroke();
+
+    // Current direction arrow
+    ctx.strokeStyle = '#e8a030'; ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(cx - 7, cy - 30); ctx.lineTo(cx, cy - 48); ctx.lineTo(cx + 7, cy - 30);
+    ctx.stroke();
+
+    // dl label box
+    ctx.fillStyle = 'rgba(196,127,23,0.15)';
+    ctx.beginPath(); ctx.roundRect(cx-6, cy-18, 12, 36, 3); ctx.fill();
+    ctx.strokeStyle = '#c47f17'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.roundRect(cx-6, cy-18, 12, 36, 3); ctx.stroke();
+
+    // Point P
+    ctx.fillStyle = '#b84c1a';
+    ctx.beginPath(); ctx.arc(px, py, 6, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#7a2e0d'; ctx.font = 'bold 13px Outfit'; ctx.textAlign = 'left';
+    ctx.fillText('P', px + 10, py + 5);
+
+    // dB symbol (out of page)
+    ctx.strokeStyle = '#b84c1a'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(px, py - 55, 16, 0, Math.PI*2); ctx.stroke();
+    ctx.fillStyle = '#b84c1a';
+    ctx.beginPath(); ctx.arc(px, py - 55, 5, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#b84c1a'; ctx.font = '11px JetBrains Mono'; ctx.textAlign = 'center';
+    ctx.fillText('dB ⊙', px, py - 55 + 30);
+
+    // Wire dot
+    ctx.fillStyle = '#c47f17';
+    ctx.beginPath(); ctx.arc(cx, cy, 7, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.font = '10px sans-serif';
+    ctx.fillText('I', cx, cy + 4);
+
+    // r label
+    ctx.fillStyle = '#9c7a50'; ctx.font = '12px JetBrains Mono'; ctx.textAlign = 'center';
+    ctx.fillText(`r = ${r} cm`, (cx + px)/2 + 12, (cy + py)/2 - 10);
+
+    // I label
+    ctx.fillStyle = '#c47f17'; ctx.font = '500 13px Outfit'; ctx.textAlign = 'right';
+    ctx.fillText(`I = ${I} A ↑`, cx - 12, cy - 55);
+
+  }, [I, dl, r, theta]);
+
+  return (
+    <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{duration:0.4}}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <div className="bg-white/50 rounded-2xl p-4 border border-amber-200 mb-4">
+            <Slider label="Current I" min={1} max={20} value={I} onChange={setI} unit=" A" />
+            <Slider label="Element dl" min={1} max={10} value={dl} onChange={setDl} unit=" mm" />
+            <Slider label="Distance r" min={2} max={15} value={r} onChange={setR} unit=" cm" />
+            <Slider label="Angle θ" min={10} max={170} value={theta} onChange={setTheta} unit="°" />
+          </div>
+
+          <motion.div animate={{scale:[1,1.02,1]}} transition={{duration:2,repeat:Infinity}}
+            className="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-400 rounded-2xl p-4 text-center glow">
+            <div className="font-body text-xs text-amber-700 uppercase tracking-widest mb-1">Computed dB</div>
+            <div className="font-display text-3xl font-semibold text-amber-800">{dBpT}</div>
+            <div className="font-mono text-xs text-amber-600 mt-1">picotesla (pT)</div>
+          </motion.div>
+
+          <FormulaBox title="Biot–Savart Law">
+            <span className="text-amber-700">dB</span> = (μ₀/4π) · <span className="text-rust-600">I·dl·sinθ</span> / r²{'\n'}
+            μ₀ = 4π×10⁻⁷ T·m/A{'\n'}
+            Direction: <span className="text-amber-700">dl × r̂</span> (right-hand rule)
+          </FormulaBox>
+        </div>
+
+        <div className="flex flex-col">
+          <div className="font-body text-xs text-warm-700 uppercase tracking-widest mb-2 text-center">Interactive Diagram</div>
+          <canvas ref={canvasRef} width={340} height={300}
+            className="rounded-2xl border border-amber-200 w-full"
+            style={{background:'linear-gradient(135deg,#fdf6ed,#faeeda)'}} />
+          <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+            {[
+              {label:'dB ∝ I', desc:'More current → stronger field'},
+              {label:'dB ∝ dl', desc:'Longer element → more field'},
+              {label:'dB ∝ 1/r²', desc:'Field falls with distance²'},
+            ].map((item, i) => (
+              <motion.div key={i} whileHover={{y:-2}}
+                className="bg-white/60 border border-amber-200 rounded-xl p-2">
+                <div className="font-mono text-xs font-medium text-amber-800">{item.label}</div>
+                <div className="font-body text-xs text-warm-700 mt-1">{item.desc}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ═══════════════════════════════════════
+   PANEL 2: ε₀ & μ₀
+═══════════════════════════════════════ */
+function PermPanel() {
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTick(t => t + 1), 40);
+    return () => clearInterval(id);
+  }, []);
+
+  const t = tick * 0.04;
+  const W = 600, H = 200;
+  const nPts = 150;
+
+  const ePath = Array.from({length: nPts}, (_, i) => {
+    const x = (i / nPts) * (W - 40) + 20;
+    const y = H/2 - 60 * Math.sin(2*Math.PI*i/nPts*3 - t);
+    return `${i===0?'M':'L'}${x},${y}`;
+  }).join(' ');
+
+  const bPath = Array.from({length: nPts}, (_, i) => {
+    const x = (i / nPts) * (W - 40) + 20;
+    const y = H/2 - 45 * Math.cos(2*Math.PI*i/nPts*3 - t);
+    return `${i===0?'M':'L'}${x},${y}`;
+  }).join(' ');
+
+  return (
+    <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{duration:0.4}}>
+      <div className="mb-6">
+        <div className="font-body text-xs text-warm-700 uppercase tracking-widest mb-3 text-center">Electromagnetic Wave — E & B fields oscillate perpendicular</div>
+        <div className="bg-gradient-to-br from-amber-50 to-white border border-amber-200 rounded-2xl p-4 overflow-hidden">
+          <svg width="100%" viewBox={`0 0 ${W} ${H}`} className="overflow-visible">
+            <defs>
+              <marker id="arrowE" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M2 1L8 5L2 9" fill="none" stroke="#c47f17" strokeWidth="1.5" strokeLinecap="round"/>
+              </marker>
+              <marker id="arrowB" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                <path d="M2 1L8 5L2 9" fill="none" stroke="#185fa5" strokeWidth="1.5" strokeLinecap="round"/>
+              </marker>
+            </defs>
+            {/* Grid */}
+            {Array.from({length:6}, (_,i) => (
+              <line key={i} x1={20 + i*(W-40)/5} y1={20} x2={20 + i*(W-40)/5} y2={H-20}
+                stroke="rgba(196,127,23,0.08)" strokeWidth="1"/>
+            ))}
+            <line x1={20} y1={H/2} x2={W-20} y2={H/2} stroke="rgba(196,127,23,0.15)" strokeWidth="1" strokeDasharray="4 4"/>
+            {/* E-field wave */}
+            <path d={ePath} fill="none" stroke="#c47f17" strokeWidth="2.5" strokeLinecap="round"/>
+            {/* B-field wave */}
+            <path d={bPath} fill="none" stroke="#185fa5" strokeWidth="2" strokeLinecap="round" opacity="0.8"/>
+            {/* Direction arrow */}
+            <line x1={W-80} y1={H/2} x2={W-20} y2={H/2} stroke="#2e1f0e" strokeWidth="1.5"
+              markerEnd="url(#arrowE)" opacity="0.4"/>
+            <text x={W-52} y={H/2-8} fontSize="10" fill="#2e1f0e" opacity="0.5" textAnchor="middle">c →</text>
+            {/* Labels */}
+            <text x={22} y={22} fontSize="12" fill="#c47f17" fontWeight="500">E (electric, governed by ε₀)</text>
+            <text x={22} y={H-8} fontSize="12" fill="#185fa5" fontWeight="500">B (magnetic, governed by μ₀)</text>
+          </svg>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        {[
+          { icon: Zap, title: 'ε₀ — Electric permittivity', val: '8.854×10⁻¹² C²/N·m²\nResists electric field formation in vacuum.\nUsed in Coulomb\'s law: F = q²/(4πε₀r²)' },
+          { icon: Magnet, title: 'μ₀ — Magnetic permeability', val: '4π×10⁻⁷ T·m/A\nEase of magnetic field formation in vacuum.\nUsed in Biot–Savart: dB ∝ μ₀/4π' },
+          { icon: Waves, title: 'Speed of light', val: 'c = 1/√(ε₀μ₀) = 3×10⁸ m/s\nMaxwell\'s greatest unification:\nElectricity + Magnetism → Light' },
+          { icon: Activity, title: 'Coulomb constant', val: 'k = 1/(4πε₀) = 9×10⁹ N·m²/C²\nThe "strength" of electrostatic force.\nAppears in F = kq₁q₂/r²' },
+        ].map((item, i) => (
+          <InfoCard key={i} {...item} />
+        ))}
+      </div>
+
+      <FormulaBox title="Key relation">
+        c = 1/√(ε₀μ₀) &nbsp; ← &nbsp; <span className="text-amber-700">Maxwell's electromagnetic wave equation</span>{'\n'}
+        ε₀ = 1/(μ₀c²) &nbsp; ↔ &nbsp; μ₀ = 1/(ε₀c²) &nbsp; (dual roles)
+      </FormulaBox>
+    </motion.div>
+  );
+}
+
+/* ═══════════════════════════════════════
+   PANEL 3: Wire Magnetic Field
+═══════════════════════════════════════ */
+function WirePanel() {
+  const [I, setI] = useState(10);
+  const [animTick, setAnimTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setAnimTick(t => t + 1), 50);
+    return () => clearInterval(id);
+  }, []);
+
+  const mu0 = 4 * Math.PI * 1e-7;
+  const radii = [35, 65, 100, 140, 185, 230];
+  const cx = 200, cy = 200;
+  const offset = (animTick * 2) % 40;
+
+  return (
+    <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{duration:0.4}}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <div className="bg-white/50 rounded-2xl p-4 border border-amber-200 mb-4">
+            <Slider label="Current I" min={1} max={40} value={I} onChange={setI} unit=" A" />
+          </div>
+
+          <div className="space-y-2 mb-4">
+            {radii.slice(0,4).map((r, i) => {
+              const B = mu0 * I / (2 * Math.PI * (r / 200));
+              const BuT = (B * 1e6).toFixed(2);
+              return (
+                <motion.div key={i} initial={{x:-20,opacity:0}} animate={{x:0,opacity:1}} transition={{delay:i*0.05}}
+                  className="flex items-center gap-3 bg-white/60 border border-amber-200 rounded-xl px-3 py-2">
+                  <div className="w-3 h-3 rounded-full" style={{background:`rgba(184,76,26,${1-i*0.18})`}} />
+                  <div className="font-mono text-xs text-warm-700 flex-1">r = {(r/20).toFixed(1)} cm</div>
+                  <div className="font-mono text-xs font-medium text-amber-800">B = {BuT} μT</div>
+                  <div className="w-16 h-1.5 rounded-full bg-amber-100 overflow-hidden">
+                    <div className="h-full bg-amber-500 rounded-full" style={{width:`${Math.max(5,(1-i*0.2)*100)}%`}} />
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          <FormulaBox title="Ampere's Law result">
+            <span className="text-amber-700">B = μ₀I / 2πr</span>{'\n'}
+            B ∝ I &nbsp;|&nbsp; B ∝ 1/r{'\n'}
+            Field forms concentric circles{'\n'}
+            Direction: right-hand thumb rule
+          </FormulaBox>
+        </div>
+
+        <div>
+          <div className="font-body text-xs text-warm-700 uppercase tracking-widest mb-2 text-center">Live field visualization</div>
+          <div className="bg-gradient-to-br from-amber-50 to-white border border-amber-200 rounded-2xl overflow-hidden">
+            <svg width="100%" viewBox="0 0 400 400">
+              {/* Animated concentric rings */}
+              {radii.map((r, i) => {
+                const alpha = Math.max(0.15, 0.9 - i * 0.14);
+                const strokeW = Math.max(0.8, 2.2 - i * 0.27);
+                const B = mu0 * I / (2 * Math.PI * (r / 200));
+                const speed = 1 + i * 0.3;
+                const dashOffset = -(animTick * 1.5 / speed) % 40;
+                return (
+                  <g key={i}>
+                    <circle cx={cx} cy={cy} r={r}
+                      fill="none"
+                      stroke={`rgba(184,76,26,${alpha})`}
+                      strokeWidth={strokeW}
+                      strokeDasharray="6 4"
+                      strokeDashoffset={dashOffset}
+                    />
+                    {/* Direction arrow at top of each circle */}
+                    <g transform={`translate(${cx},${cy - r})`}>
+                      <line x1="-6" y1="0" x2="6" y2="0" stroke={`rgba(184,76,26,${alpha})`} strokeWidth={strokeW} markerEnd="url(#aW)"/>
+                    </g>
+                  </g>
+                );
+              })}
+
+              <defs>
+                <marker id="aW" viewBox="0 0 10 6" refX="10" refY="3" markerWidth="5" markerHeight="5" orient="auto">
+                  <path d="M0 0L10 3L0 6" fill="rgba(184,76,26,0.7)"/>
+                </marker>
+              </defs>
+
+              {/* Wire cross section */}
+              <circle cx={cx} cy={cy} r={18} fill="#c47f17" opacity="0.9"/>
+              <circle cx={cx} cy={cy} r={14} fill="#e8a030"/>
+              <text x={cx} y={cy+1} fontSize="13" fill="white" textAnchor="middle" dominantBaseline="middle" fontWeight="500">•</text>
+
+              {/* I label */}
+              <text x={cx} y={cy-26} fontSize="12" fill="#c47f17" textAnchor="middle" fontWeight="500">I = {I}A ↑</text>
+
+              {/* r arrow */}
+              <line x1={cx} y1={cy} x2={cx+65} y2={cy} stroke="#1d9e75" strokeWidth="1.5" strokeDasharray="4 2"/>
+              <text x={cx+32} y={cy-6} fontSize="11" fill="#1d9e75" textAnchor="middle">r</text>
+
+              {/* Corner formula */}
+              <text x={10} y={390} fontSize="11" fill="#9c7a50" fontFamily="JetBrains Mono">B = μ₀I / 2πr</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ═══════════════════════════════════════
+   PANEL 4: Maxwell Corkscrew + RHR
+═══════════════════════════════════════ */
+function MaxwellPanel() {
+  const [showB, setShowB] = useState(true);
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTick(t => t + 1), 50);
+    return () => clearInterval(id);
+  }, []);
+
+  // Helix path for corkscrew
+  const helixPts = [];
+  for (let i = 0; i <= 360 * 3; i += 6) {
+    const rad = i * Math.PI / 180;
+    const y = 30 + i * 0.23;
+    const x = 200 + 36 * Math.sin(rad);
+    helixPts.push(`${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${y.toFixed(1)}`);
+  }
+
+  // Animated ring for RHR
+  const ringOffset = -(tick * 2) % 40;
+
+  return (
+    <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{duration:0.4}}>
+      <div className="flex gap-3 mb-6 justify-center flex-wrap">
+        <button onClick={() => setShowB(true)}
+          className={`font-body text-sm px-5 py-2 rounded-full border transition-all ${showB ? 'bg-amber-600 text-white border-amber-600 shadow-lg' : 'border-amber-300 text-amber-700 hover:bg-amber-50'}`}>
+          Right-hand thumb rule
+        </button>
+        <button onClick={() => setShowB(false)}
+          className={`font-body text-sm px-5 py-2 rounded-full border transition-all ${!showB ? 'bg-rust-600 text-white border-rust-600 shadow-lg' : 'border-rust-300 text-rust-700 hover:bg-rust-50'}`}>
+          Maxwell's corkscrew
+        </button>
+      </div>
+
+      <AnimatePresence mode="wait">
+        {showB ? (
+          <motion.div key="rhr" initial={{opacity:0,x:-20}} animate={{opacity:1,x:0}} exit={{opacity:0,x:20}}
+            className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex flex-col items-center">
+              <div className="bg-gradient-to-br from-amber-50 to-white border border-amber-200 rounded-2xl overflow-hidden">
+                <svg width="100%" viewBox="0 0 340 360">
+                  {/* Vertical wire */}
+                  <defs>
+                    <linearGradient id="wg" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor="#c47f17"/>
+                      <stop offset="100%" stopColor="#e8a030"/>
+                    </linearGradient>
+                  </defs>
+                  <rect x={164} y={20} width={12} height={320} rx={6} fill="url(#wg)" opacity="0.9"/>
+
+                  {/* Current arrow */}
+                  <path d="M170 50L170 25M163 42L170 25L177 42" fill="none" stroke="#e8a030" strokeWidth="2.5" strokeLinecap="round"/>
+                  <text x={185} y={35} fontSize="12" fill="#c47f17" fontWeight="500">I ↑</text>
+
+                  {/* Animated concentric rings at different y positions */}
+                  {[80, 140, 200, 260].map((y, i) => (
+                    <g key={i}>
+                      <ellipse cx={170} cy={y} rx={50+i*10} ry={14+i*3}
+                        fill="none" stroke={`rgba(184,76,26,${0.8-i*0.15})`}
+                        strokeWidth={2-i*0.3}
+                        strokeDasharray="6 3"
+                        strokeDashoffset={ringOffset}/>
+                      {/* Arrow at right of ellipse */}
+                      <polygon
+                        points={`${170+50+i*10-2},${y} ${170+50+i*10+6},${y-4} ${170+50+i*10+6},${y+4}`}
+                        fill={`rgba(184,76,26,${0.8-i*0.15})`}/>
+                    </g>
+                  ))}
+
+                  {/* Thumb representation */}
+                  <path d="M120 190 C108 175 106 155 115 142 C124 129 138 133 140 148 C140 162 136 178 138 190"
+                    fill="none" stroke="#2e1f0e" strokeWidth="3" strokeLinecap="round" opacity="0.7"/>
+
+                  {/* B label */}
+                  <text x={235} y={145} fontSize="12" fill="#b84c1a" fontWeight="500">B</text>
+                  <path d="M228 140L225 145L228 150" fill="none" stroke="#b84c1a" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+              </div>
+            </div>
+
+            <div className="flex flex-col justify-center">
+              <div className="space-y-4">
+                {[
+                  { step: '1', text: 'Point right thumb in the direction of current (I ↑)', color: 'amber' },
+                  { step: '2', text: 'Curl your four fingers around the wire', color: 'rust' },
+                  { step: '3', text: 'The curled fingers show the direction of circular magnetic field lines (B)', color: 'amber' },
+                ].map((item, i) => (
+                  <motion.div key={i} initial={{x:20,opacity:0}} animate={{x:0,opacity:1}} transition={{delay:i*0.15}}
+                    className="flex gap-4 items-start">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-mono font-medium text-sm shrink-0
+                      ${item.color === 'amber' ? 'bg-amber-100 text-amber-800' : 'bg-rust-100 text-rust-800'}`}>
+                      {item.step}
+                    </div>
+                    <div className="font-body text-sm text-warm-900 leading-relaxed pt-1">{item.text}</div>
+                  </motion.div>
+                ))}
+              </div>
+
+              <FormulaBox title="Right-hand thumb rule">
+                Thumb → I (current direction){'\n'}
+                Fingers curl → B (field direction){'\n'}
+                <span className="text-amber-700">Field encircles the wire in closed loops</span>
+              </FormulaBox>
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div key="cork" initial={{opacity:0,x:20}} animate={{opacity:1,x:0}} exit={{opacity:0,x:-20}}
+            className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex flex-col items-center">
+              <div className="bg-gradient-to-br from-amber-50 to-white border border-amber-200 rounded-2xl overflow-hidden">
+                <svg width="100%" viewBox="0 0 340 360">
+                  {/* Screw shaft */}
+                  <line x1={170} y1={20} x2={170} y2={340} stroke="#9c7a50" strokeWidth={3} opacity="0.4"/>
+
+                  {/* Helix = corkscrew thread */}
+                  <path d={helixPts.join('')} fill="none" stroke="#c47f17" strokeWidth={2.5}
+                    strokeLinecap="round" opacity="0.85"/>
+
+                  {/* Advance direction arrow */}
+                  <defs>
+                    <marker id="advArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                      <path d="M2 1L8 5L2 9" fill="none" stroke="#b84c1a" strokeWidth="1.5" strokeLinecap="round"/>
+                    </marker>
+                  </defs>
+                  <line x1={170} y1={330} x2={170} y2={280} stroke="#b84c1a" strokeWidth={2}
+                    markerEnd="url(#advArr)" strokeDasharray="5 3"/>
+
+                  {/* Rotation arc + arrow at top */}
+                  <path d="M140 65 A30 15 0 0 1 200 65" fill="none" stroke="#1d9e75" strokeWidth={2}
+                    strokeDasharray="5 3"/>
+                  <polygon points="200,65 208,59 206,68" fill="#1d9e75"/>
+
+                  {/* Labels */}
+                  <text x={200} y={60} fontSize="11" fill="#1d9e75">rotate</text>
+                  <text x={182} y={310} fontSize="11" fill="#b84c1a">advance</text>
+                  <text x={182} y={325} fontSize="11" fill="#b84c1a">= B dir.</text>
+
+                  {/* Current direction indicator */}
+                  <rect x={150} y={20} width={40} height={22} rx={6} fill="#c47f17" opacity="0.15"/>
+                  <text x={170} y={35} fontSize="12" fill="#c47f17" textAnchor="middle" fontWeight="500">I →</text>
+                </svg>
+              </div>
+            </div>
+
+            <div className="flex flex-col justify-center">
+              <div className="space-y-4">
+                {[
+                  { step: '1', text: 'Hold a right-handed screw (ordinary screw)', color: 'amber' },
+                  { step: '2', text: 'Rotate the screw in the direction of current flow', color: 'rust' },
+                  { step: '3', text: 'The direction in which the screw advances gives the direction of magnetic field B', color: 'amber' },
+                ].map((item, i) => (
+                  <motion.div key={i} initial={{x:20,opacity:0}} animate={{x:0,opacity:1}} transition={{delay:i*0.15}}
+                    className="flex gap-4 items-start">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center font-mono font-medium text-sm shrink-0
+                      ${item.color === 'amber' ? 'bg-amber-100 text-amber-800' : 'bg-rust-100 text-rust-800'}`}>
+                      {item.step}
+                    </div>
+                    <div className="font-body text-sm text-warm-900 leading-relaxed pt-1">{item.text}</div>
+                  </motion.div>
+                ))}
+              </div>
+
+              <FormulaBox title="Maxwell's corkscrew rule">
+                Screw rotates in direction of I{'\n'}
+                Screw advances in direction of B{'\n'}
+                <span className="text-amber-700">Equivalent to the right-hand thumb rule</span>
+              </FormulaBox>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
+/* ═══════════════════════════════════════
+   PANEL 5: Circular Loop Axis
+═══════════════════════════════════════ */
+function LoopPanel() {
+  const [I, setI] = useState(5);
+  const [R, setR] = useState(5);
+  const [showGraph, setShowGraph] = useState(true);
+
+  const mu0 = 4 * Math.PI * 1e-7;
+  const Rm = R / 100;
+  const B0 = (mu0 * I) / (2 * Rm);
+
+  const W = 600, H = 90;
+  const nPts = 200;
+  const graphPts = Array.from({length: nPts}, (_, i) => {
+    const xNorm = (i / nPts) * 2 - 1;
+    const xM = xNorm * Rm * 5;
+    const B = mu0 * I * Rm * Rm / (2 * Math.pow(Rm * Rm + xM * xM, 1.5));
+    const xPx = 20 + i * (W - 40) / nPts;
+    const yPx = H - 10 - (B / B0) * (H - 20);
+    return `${i === 0 ? 'M' : 'L'}${xPx.toFixed(1)},${yPx.toFixed(1)}`;
+  }).join(' ');
+
+  const arrowData = Array.from({length: 13}, (_, i) => {
+    const xNorm = (i / 12) * 2 - 1;
+    const xM = xNorm * Rm * 5;
+    const B = mu0 * I * Rm * Rm / (2 * Math.pow(Rm * Rm + xM * xM, 1.5));
+    const Bscaled = B / B0;
+    const xPx = 20 + (i / 12) * (W - 40);
+    return { xPx, Bscaled };
+  });
+
+  return (
+    <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{duration:0.4}}>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <div className="bg-white/50 rounded-2xl p-4 border border-amber-200 mb-4">
+            <Slider label="Current I" min={1} max={20} value={I} onChange={setI} unit=" A" />
+            <Slider label="Radius R" min={2} max={12} value={R} onChange={setR} unit=" cm" />
+          </div>
+
+          {/* Key values */}
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            {[
+              { label: 'B at centre', val: `${(B0*1e6).toFixed(2)} μT`, note:'x = 0' },
+              { label: 'B at x = R', val: `${(mu0*I*Rm*Rm/(2*Math.pow(2,1.5)*Rm*Rm*Rm)*1e6).toFixed(3)} μT`, note:'falls to 35.4%' },
+            ].map((item, i) => (
+              <motion.div key={i} whileHover={{scale:1.02}}
+                className="bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-300 rounded-xl p-3 text-center">
+                <div className="font-body text-xs text-amber-700 mb-1">{item.label}</div>
+                <div className="font-mono text-sm font-medium text-amber-900">{item.val}</div>
+                <div className="font-body text-xs text-amber-600 mt-1">{item.note}</div>
+              </motion.div>
+            ))}
+          </div>
+
+          <FormulaBox title="On-axis field">
+            <span className="text-amber-700">B = μ₀IR² / 2(R²+x²)^(3/2)</span>{'\n'}
+            At centre x=0: <span className="text-amber-700">B₀ = μ₀I/2R</span>{'\n'}
+            At x≫R: B ≈ μ₀IR²/2x³ (magnetic dipole){'\n'}
+            Maximum field always at x = 0
+          </FormulaBox>
+        </div>
+
+        <div>
+          {/* Loop diagram */}
+          <div className="bg-gradient-to-br from-amber-50 to-white border border-amber-200 rounded-2xl mb-4 overflow-hidden">
+            <svg width="100%" viewBox="0 0 340 260">
+              <defs>
+                <marker id="bArr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                  <path d="M2 1L8 5L2 9" fill="none" stroke="#b84c1a" strokeWidth="1.5" strokeLinecap="round"/>
+                </marker>
+              </defs>
+
+              {/* Axis dashed line */}
+              <line x1={20} y1={130} x2={320} y2={130} stroke="rgba(156,122,80,0.3)" strokeWidth={1} strokeDasharray="6 4"/>
+              <text x={310} y={125} fontSize="10" fill="#9c7a50">x-axis</text>
+
+              {/* Circular loop (perspective ellipse) */}
+              {(() => {
+                const loopR = R * 5 + 30;
+                const lx = 170, ly = 130;
+                return (
+                  <g>
+                    <ellipse cx={lx} cy={ly} rx={loopR*0.28} ry={loopR}
+                      fill="none" stroke="#c47f17" strokeWidth={3} opacity="0.9"/>
+                    {/* Current arrow */}
+                    <text x={lx+loopR*0.28+8} y={ly+loopR*0.3} fontSize="12" fill="#c47f17" fontWeight="500">I ↻</text>
+                    {/* R indicator */}
+                    <line x1={lx} y1={ly} x2={lx} y2={ly-loopR} stroke="#1d9e75" strokeWidth={1.5} strokeDasharray="4 2"/>
+                    <text x={lx+6} y={ly-loopR/2} fontSize="11" fill="#1d9e75">R</text>
+
+                    {/* B arrows along axis */}
+                    {[-90,-60,-30,0,30,60,90].map((xOff, i) => {
+                      const xM = xOff / 1000;
+                      const B = mu0 * I * Rm * Rm / (2 * Math.pow(Rm * Rm + xM * xM, 1.5));
+                      const Bs = B / B0;
+                      const arrowLen = Math.max(8, Bs * 42);
+                      return (
+                        <g key={i}>
+                          <line
+                            x1={lx + xOff - arrowLen/2} y1={ly}
+                            x2={lx + xOff + arrowLen/2} y2={ly}
+                            stroke="#b84c1a" strokeWidth={Math.max(0.8, Bs*2)}
+                            markerEnd="url(#bArr)" opacity={0.5 + Bs*0.5}/>
+                        </g>
+                      );
+                    })}
+                  </g>
+                );
+              })()}
+            </svg>
+          </div>
+
+          {/* B vs x graph */}
+          <div className="bg-gradient-to-br from-amber-50 to-white border border-amber-200 rounded-2xl overflow-hidden">
+            <div className="font-body text-xs text-warm-700 uppercase tracking-widest text-center pt-2 pb-1">B along axis</div>
+            <svg width="100%" viewBox={`0 0 ${W} ${H+20}`}>
+              {/* Axes */}
+              <line x1={20} y1={H} x2={W-20} y2={H} stroke="rgba(156,122,80,0.3)" strokeWidth={1}/>
+              <line x1={W/2} y1={5} x2={W/2} y2={H} stroke="rgba(156,122,80,0.2)" strokeWidth={1} strokeDasharray="4 3"/>
+              {/* Curve */}
+              <path d={graphPts} fill="none" stroke="#b84c1a" strokeWidth={2.5} strokeLinecap="round"/>
+              {/* Peak dot */}
+              <circle cx={W/2} cy={10} r={4} fill="#b84c1a"/>
+              <text x={W/2+6} y={14} fontSize="10" fill="#b84c1a" fontFamily="JetBrains Mono">B₀</text>
+              <text x={W/2} y={H+16} fontSize="10" fill="#9c7a50" textAnchor="middle" fontFamily="JetBrains Mono">x=0 (centre)</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ═══════════════════════════════════════
+   ROOT APP
+═══════════════════════════════════════ */
+function App() {
+  const [activeTab, setActiveTab] = useState('bs');
+
+  const panels = {
+    bs:    <BiotSavartPanel />,
+    perm:  <PermPanel />,
+    wire:  <WirePanel />,
+    max:   <MaxwellPanel />,
+    loop:  <LoopPanel />,
+  };
+
+  return (
+    <div className="min-h-screen" style={{background:'linear-gradient(135deg,#fdf6ed 0%,#faeeda 50%,#f5d9a8 100%)'}}>
+      {/* Header */}
+      <motion.header initial={{y:-30,opacity:0}} animate={{y:0,opacity:1}} transition={{duration:0.6,ease:'easeOut'}}
+        className="text-center pt-10 pb-6 px-4">
+        <div className="inline-flex items-center gap-2 bg-amber-100/80 border border-amber-300 rounded-full px-4 py-1.5 mb-4">
+          <Zap size={13} className="text-amber-600" />
+          <span className="font-body text-xs font-medium text-amber-700 uppercase tracking-widest">Physics · Class 12 · Chapter 4</span>
+        </div>
+        <h1 className="font-display text-5xl font-light text-warm-900 leading-tight mb-2">
+          Moving Charges &<br/>
+          <span className="text-amber-700 italic">Magnetism</span>
+        </h1>
+        <p className="font-body text-sm text-warm-700 max-w-md mx-auto">
+          Interactive visualizations — Biot–Savart, ε₀ & μ₀, Corkscrew Rule, Right-Hand Rule, Circular Loop
+        </p>
+      </motion.header>
+
+      {/* Main card */}
+      <div className="max-w-4xl mx-auto px-4 pb-12">
+        <motion.div initial={{y:20,opacity:0}} animate={{y:0,opacity:1}} transition={{duration:0.5,delay:0.2}}
+          className="bg-white/70 rounded-3xl border border-amber-200 overflow-hidden"
+          style={{backdropFilter:'blur(16px)',boxShadow:'0 8px 40px rgba(196,127,23,0.12)'}}>
+
+          {/* Tab nav */}
+          <div className="border-b border-amber-200 bg-amber-50/50 p-3">
+            <div className="flex gap-2 flex-wrap">
+              {TABS.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
+                return (
+                  <motion.button key={tab.id}
+                    whileHover={{scale:1.03}} whileTap={{scale:0.97}}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center gap-2 font-body text-sm px-4 py-2 rounded-xl transition-all duration-200 ${
+                      isActive
+                        ? 'tab-active'
+                        : 'text-warm-700 hover:bg-amber-100 border border-transparent hover:border-amber-300'
+                    }`}>
+                    <Icon size={15} />
+                    {tab.label}
+                  </motion.button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Panel content */}
+          <div className="p-6">
+            <AnimatePresence mode="wait">
+              <motion.div key={activeTab}
+                initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-10}}
+                transition={{duration:0.3}}>
+                {panels[activeTab]}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </motion.div>
+
+        {/* Footer */}
+        <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{delay:0.8}}
+          className="text-center mt-6 font-body text-xs text-warm-700">
+          Chapter 4 · Moving Charges and Magnetism · CBSE & ISC · Class 12 Physics
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>

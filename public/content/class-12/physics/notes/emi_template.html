@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Electromagnetic Induction — Class 12 Physics</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700&display=swap');
+:root{
+  --bg:#F0F4F8;--surface:#FFFFFF;--surface2:#F8FAFC;--border:#E2E8F0;
+  --text:#0F172A;--text2:#475569;--accent:#1B3A5C;
+  --teal:#0D9488;--blue:#2563EB;--green:#16A34A;--red:#DC2626;
+  --amber:#D97706;--purple:#7C3AED;--orange:#EA580C;--r:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:15px;}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,#0F172A 0%,#1B3A5C 40%,#1E3A5F 70%,#312E81 100%);
+  color:white;padding:64px 20px 52px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 30% 60%,rgba(124,58,237,.25) 0%,transparent 55%),
+             radial-gradient(ellipse at 80% 20%,rgba(234,88,12,.2) 0%,transparent 50%);
+  pointer-events:none;}
+.eyebrow{font-size:10.5px;letter-spacing:3px;text-transform:uppercase;color:#A5B4FC;font-weight:700;margin-bottom:11px;position:relative;z-index:1;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(26px,5.5vw,50px);font-weight:700;
+  line-height:1.15;margin-bottom:14px;position:relative;z-index:1;}
+.hero h1 em{color:#FDBA74;font-style:normal;}
+.hero-sub{color:#CBD5E1;font-size:14.5px;max-width:560px;margin:0 auto 28px;position:relative;z-index:1;}
+.pills{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;position:relative;z-index:1;}
+.pill{border-radius:50px;padding:5px 14px;font-size:11px;font-weight:600;border:1px solid;}
+.p-o{background:rgba(234,88,12,.15);border-color:#FDBA74;color:#FDBA74;}
+.p-p{background:rgba(124,58,237,.15);border-color:#C4B5FD;color:#C4B5FD;}
+.p-b{background:rgba(37,99,235,.15);border-color:#93C5FD;color:#93C5FD;}
+.p-g{background:rgba(16,163,74,.15);border-color:#6EE7B7;color:#6EE7B7;}
+
+/* ── NAV ── */
+.nav-float{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 20px;overflow-x:auto;scrollbar-width:none;}
+.nav-float::-webkit-scrollbar{display:none;}
+.nav-inner{display:flex;max-width:1000px;margin:0 auto;white-space:nowrap;}
+.nb{padding:13px 14px;font-size:11px;font-weight:700;color:var(--text2);background:none;
+  border:none;border-bottom:2.5px solid transparent;cursor:pointer;transition:all .18s;text-transform:uppercase;letter-spacing:.3px;}
+.nb:hover{color:var(--orange);}
+.nb.active{color:var(--orange);border-bottom-color:var(--orange);}
+
+main{max-width:1000px;margin:0 auto;padding:0 20px 80px;}
+section{margin-top:52px;scroll-margin-top:58px;}
+.sec-eye{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--orange);margin-bottom:6px;}
+h2{font-family:'Playfair Display',serif;font-size:clamp(20px,3.5vw,28px);font-weight:700;
+  color:var(--accent);margin-bottom:13px;line-height:1.22;}
+h3{font-size:15px;font-weight:700;color:var(--accent);margin:20px 0 8px;}
+p{color:var(--text2);margin-bottom:10px;}
+strong{color:var(--accent);}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:22px 26px;margin-bottom:15px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+
+/* ── FORMULA BOXES ── */
+.fbox{border-radius:11px;padding:17px 21px;margin:15px 0;font-family:'JetBrains Mono',monospace;
+  background:linear-gradient(135deg,#FFF7ED,#FFEDD5);border:1.5px solid #FCD34D;border-left:4px solid var(--amber);}
+.fbox.teal{background:linear-gradient(135deg,#F0FDFA,#CCFBF1);border-color:#5EEAD4;border-left-color:var(--teal);}
+.fbox.blue{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-color:#BFDBFE;border-left-color:var(--blue);}
+.fbox.red{background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border-color:#FCA5A5;border-left-color:var(--red);}
+.fbox.purple{background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border-color:#DDD6FE;border-left-color:var(--purple);}
+.fbox.green{background:linear-gradient(135deg,#F0FDF4,#DCFCE7);border-color:#86EFAC;border-left-color:var(--green);}
+.f-label{font-family:'Inter',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.8px;
+  text-transform:uppercase;color:var(--amber);margin-bottom:8px;}
+.fbox.teal .f-label{color:var(--teal);}
+.fbox.blue .f-label{color:var(--blue);}
+.fbox.red .f-label{color:var(--red);}
+.fbox.purple .f-label{color:var(--purple);}
+.fbox.green .f-label{color:var(--green);}
+.f-main{font-size:20px;font-weight:600;color:var(--accent);text-align:center;padding:9px 0;}
+.f-note{font-family:'Inter',sans-serif;font-size:12px;color:var(--text2);margin-top:8px;line-height:1.65;font-style:italic;}
+
+/* ── DERIVATION STEPS ── */
+.dstep{display:flex;gap:17px;padding:16px 0;border-bottom:1px dashed var(--border);align-items:flex-start;}
+.dstep:last-child{border-bottom:none;}
+.snum{width:34px;height:34px;border-radius:50%;background:var(--orange);color:white;
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;margin-top:2px;}
+.sbody{flex:1;}
+.sbody strong{color:var(--accent);display:block;margin-bottom:5px;font-size:14px;}
+
+/* ── VIZ WRAP ── */
+.viz-wrap{background:#07090F;border-radius:var(--r);overflow:hidden;
+  border:1px solid #1E293B;box-shadow:0 8px 36px rgba(0,0,0,.22);margin:22px 0;}
+.viz-hdr{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06);}
+.viz-title{color:#E2E8F0;font-size:11.5px;font-weight:700;letter-spacing:.3px;}
+.legend{display:flex;gap:11px;align-items:center;flex-wrap:wrap;}
+.leg{display:flex;align-items:center;gap:5px;font-size:10px;color:#94A3B8;}
+.leg-dot{width:8px;height:8px;border-radius:50%;}
+.viz-ctrl{padding:12px 16px;background:rgba(255,255,255,.02);
+  border-top:1px solid rgba(255,255,255,.05);display:flex;flex-wrap:wrap;gap:13px;align-items:center;}
+.cg{display:flex;flex-direction:column;gap:3px;min-width:110px;}
+.cl{font-size:10px;color:#64748B;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.cv{font-size:11px;color:#FDBA74;font-family:'JetBrains Mono',monospace;}
+input[type=range]{width:100%;accent-color:#EA580C;cursor:pointer;}
+.btn{padding:7px 15px;border:none;border-radius:7px;font-size:11.5px;font-weight:700;cursor:pointer;transition:background .18s;}
+.btn-o{background:var(--orange);color:white;} .btn-o:hover{background:#C2410C;}
+.btn-p{background:#D97706;color:white;} .btn-p:hover{background:#B45309;}
+.btn-t{background:var(--teal);color:white;} .btn-t:hover{background:#0F766E;}
+select.dark-sel{background:#1E293B;color:#E2E8F0;border:1px solid #334155;
+  padding:5px 8px;border-radius:6px;font-size:12px;cursor:pointer;}
+
+.info-panel{flex:1;min-width:160px;background:rgba(234,88,12,.1);border:1px solid rgba(234,88,12,.3);
+  border-radius:8px;padding:8px 12px;color:#FDBA74;font-size:11px;line-height:1.6;}
+
+/* ── CONDITION CARDS ── */
+.cond-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:16px 0;}
+.cond-card{border-radius:13px;padding:18px;border:1.5px solid;}
+.cc-flux{background:linear-gradient(135deg,#FFF7ED,#FFEDD5);border-color:#FCD34D;}
+.cc-lenz{background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border-color:#FCA5A5;}
+.cc-mot{background:linear-gradient(135deg,#F0FDFA,#CCFBF1);border-color:#5EEAD4;}
+.cc-self{background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border-color:#DDD6FE;}
+.cc-icon{font-size:26px;margin-bottom:8px;}
+.cc-title{font-weight:700;font-size:14px;color:var(--accent);margin-bottom:5px;}
+.cc-desc{font-size:12px;color:var(--text2);line-height:1.6;}
+
+/* ── ACCORDION ── */
+.acc{border:1px solid var(--border);border-radius:11px;overflow:hidden;margin:12px 0;}
+.acc-h{padding:14px 18px;background:var(--surface);cursor:pointer;display:flex;
+  justify-content:space-between;align-items:center;font-weight:700;font-size:13.5px;
+  color:var(--accent);transition:background .18s;user-select:none;}
+.acc-h:hover{background:#F1F5F9;}
+.acc-b{display:none;padding:15px 18px;background:var(--surface2);border-top:1px solid var(--border);
+  color:var(--text2);font-size:13px;line-height:1.72;}
+.acc-b.open{display:block;}
+.arr{transition:transform .2s;color:var(--orange);}
+.acc-h.open .arr{transform:rotate(180deg);}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;font-size:13px;margin:13px 0;}
+th{background:var(--accent);color:white;padding:10px 13px;text-align:left;font-size:12px;font-weight:700;}
+td{padding:10px 13px;border-bottom:1px solid var(--border);color:var(--text2);}
+tr:nth-child(even) td{background:#F8FAFC;}
+tr:last-child td{border-bottom:none;}
+code{font-family:'JetBrains Mono',monospace;background:#FFF7ED;color:#C2410C;padding:1px 5px;border-radius:4px;font-size:12px;}
+
+.hibox{background:linear-gradient(135deg,#FFF7ED,#FFEDD5);border:1.5px solid #FCD34D;
+  border-left:4px solid var(--amber);border-radius:11px;padding:13px 17px;margin:13px 0;font-size:13px;color:#92400E;}
+.hibox strong{color:#78350F;}
+.hibox.lenz{background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border-color:#FCA5A5;border-left-color:var(--red);color:#7F1D1D;}
+.hibox.lenz strong{color:#991B1B;}
+.badge{display:inline-block;padding:2px 9px;border-radius:50px;font-size:11px;font-weight:700;}
+.b-o{background:#FEF3C7;color:#92400E;} .b-r{background:#FEE2E2;color:#B91C1C;}
+.b-t{background:#CCFBF1;color:#0F766E;} .b-p{background:#EDE9FE;color:#6D28D9;}
+
+.vstrip{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0;}
+.vi{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);
+  border-radius:9px;padding:9px 13px;flex:1;min-width:130px;}
+.vi-dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.vi-lbl{font-size:12px;font-weight:600;color:var(--text);}
+.vi-sub{font-size:11px;color:var(--text2);}
+
+/* ── FLUX METER BAR ── */
+.flux-meter{margin:14px 0;}
+.flux-bar-wrap{background:#E2E8F0;border-radius:8px;height:20px;overflow:hidden;position:relative;}
+.flux-bar{height:100%;border-radius:8px;transition:width .3s,background .3s;}
+.flux-label{font-size:11px;color:var(--text2);margin-top:5px;font-family:'JetBrains Mono',monospace;}
+
+@media(max-width:600px){.dstep{flex-direction:column;}.legend{display:none;}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<div class="hero">
+  <div class="eyebrow">Class 12 Physics · Chapter 6</div>
+  <h1><em>Electromagnetic</em><br>Induction</h1>
+  <p class="hero-sub">Faraday's Laws · Lenz's Law · Motional EMF · Self & Mutual Induction · Energy in Inductor — all with live 3D Three.js simulations. Zero CDN. Fully offline.</p>
+  <div class="pills">
+    <span class="pill p-o">⚡ e = −dΦ/dt</span>
+    <span class="pill p-p">🔄 Lenz's Law</span>
+    <span class="pill p-b">📐 e = Blv</span>
+    <span class="pill p-g">🌀 U = ½LI²</span>
+  </div>
+</div>
+
+<!-- ═══════════════════ NAV ═══════════════════ -->
+<nav class="nav-float">
+  <div class="nav-inner">
+    <button class="nb active" onclick="nav('s1',this)">Flux</button>
+    <button class="nb" onclick="nav('s2',this)">Faraday's Laws</button>
+    <button class="nb" onclick="nav('s3',this)">Lenz's Law</button>
+    <button class="nb" onclick="nav('s4',this)">Motional EMF</button>
+    <button class="nb" onclick="nav('s5',this)">Methods of EMF</button>
+    <button class="nb" onclick="nav('s6',this)">Self-Induction</button>
+    <button class="nb" onclick="nav('s7',this)">Mutual Induction</button>
+    <button class="nb" onclick="nav('s8',this)">Energy in Inductor</button>
+    <button class="nb" onclick="nav('s9',this)">Simulator</button>
+    <button class="nb" onclick="nav('s10',this)">Summary</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ═══ S1: MAGNETIC FLUX ═══ -->
+<section id="s1">
+  <div class="sec-eye">Foundation</div>
+  <h2>Magnetic Flux (Φ)</h2>
+  <div class="card">
+    <p>Magnetic flux is the <strong>total number of magnetic field lines passing through a surface</strong> normally. Think of it as how much of the magnetic field is "captured" by the loop.</p>
+    <div class="vstrip">
+      <div class="vi"><div class="vi-dot" style="background:#A78BFA;color:white">B</div>
+        <div><div class="vi-lbl">Magnetic Field</div><div class="vi-sub">Uniform field (Tesla)</div></div></div>
+      <div class="vi"><div class="vi-dot" style="background:#5EEAD4;color:#0F172A">A</div>
+        <div><div class="vi-lbl">Area of loop</div><div class="vi-sub">m² · normal vector â</div></div></div>
+      <div class="vi"><div class="vi-dot" style="background:#FDBA74;color:#0F172A">θ</div>
+        <div><div class="vi-lbl">Angle B to normal</div><div class="vi-sub">0° = max, 90° = zero</div></div></div>
+    </div>
+    <div class="fbox">
+      <div class="f-label">Magnetic Flux Formula</div>
+      <div class="f-main">Φ = B · A = BA cosθ</div>
+      <div class="f-note">θ = angle between B and area normal â. Unit: Weber (Wb). 1 Wb = 1 T·m².<br>
+      Case I: θ=90° → Φ=0 (B parallel to surface, no lines cross through it)<br>
+      Case II: θ=0° → Φ=BA (maximum — B perpendicular to surface)</div>
+    </div>
+    <div class="hibox"><strong>Key insight:</strong> It's not the field strength alone that matters — it's how much field passes THROUGH the loop area. Rotating the loop changes flux even if B doesn't change!</div>
+  </div>
+
+  <!-- 3D FLUX VISUALIZER -->
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">🔷 3D Magnetic Flux Visualizer — Rotate loop to see flux change</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#A78BFA"></div>B field</div>
+        <div class="leg"><div class="leg-dot" style="background:#5EEAD4"></div>Loop area</div>
+        <div class="leg"><div class="leg-dot" style="background:#FDBA74"></div>Normal â</div>
+        <div class="leg"><div class="leg-dot" style="background:#F87171"></div>Flux lines through loop</div>
+      </div>
+    </div>
+    <div id="fluxContainer" style="height:400px;width:100%;"></div>
+    <div class="viz-ctrl">
+      <div class="cg">
+        <div class="cl">Angle θ (B to normal)</div>
+        <input type="range" id="fluxTheta" min="0" max="90" value="0" oninput="updateFlux()">
+        <div class="cv" id="fluxThetaVal">θ = 0°</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Field Strength B (T)</div>
+        <input type="range" id="fluxB" min="0.2" max="3" step="0.1" value="1.5" oninput="updateFlux()">
+        <div class="cv" id="fluxBVal">B = 1.5 T</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Area A (m²)</div>
+        <input type="range" id="fluxA" min="0.2" max="2" step="0.1" value="1" oninput="updateFlux()">
+        <div class="cv" id="fluxAVal">A = 1.0 m²</div>
+      </div>
+      <div class="cg" style="min-width:200px;">
+        <div class="cl">Φ = BA cosθ</div>
+        <div class="flux-meter">
+          <div class="flux-bar-wrap"><div class="flux-bar" id="fluxBar" style="width:100%;background:#FDBA74"></div></div>
+          <div class="flux-label" id="fluxValue">Φ = 1.50 Wb</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S2: FARADAY'S LAWS ═══ -->
+<section id="s2">
+  <div class="sec-eye">Core Principle</div>
+  <h2>Faraday's Laws of Electromagnetic Induction</h2>
+  <div class="card">
+    <div class="cond-grid">
+      <div class="cond-card cc-flux">
+        <div class="cc-icon">1️⃣</div>
+        <div class="cc-title">Faraday's First Law</div>
+        <div class="cc-desc">Whenever the amount of magnetic flux linked with a circuit <strong>changes</strong>, an EMF and current is induced. It lasts as long as the change continues.</div>
+      </div>
+      <div class="cond-card cc-mot">
+        <div class="cc-icon">2️⃣</div>
+        <div class="cc-title">Faraday's Second Law</div>
+        <div class="cc-desc">The magnitude of induced EMF equals the <strong>rate of change of magnetic flux</strong> linked with the circuit.</div>
+      </div>
+    </div>
+
+    <div class="fbox">
+      <div class="f-label">Faraday's Second Law — Induced EMF</div>
+      <div class="f-main">e = − dΦ_B / dt</div>
+      <div class="f-note">Negative sign = Lenz's law (EMF opposes change). For N turns: e = −N dΦ_B/dt</div>
+    </div>
+    <div class="fbox teal">
+      <div class="f-label">For N-turn coil</div>
+      <div class="f-main">e = −N · dΦ_B/dt</div>
+      <div class="f-note">More turns → more EMF. Each turn adds its contribution. This is why transformers have many turns.</div>
+    </div>
+
+    <h3>Induced Current and Charge</h3>
+    <div class="fbox blue">
+      <div class="f-label">Induced Current (closed circuit)</div>
+      <div class="f-main">I = e/R = −(N/R) · dΦ_B/dt</div>
+    </div>
+    <div class="fbox purple">
+      <div class="f-label">Charge that flows (independent of time!)</div>
+      <div class="f-main">q = N·ΔΦ/R</div>
+      <div class="f-note">Note: q depends only on ΔΦ (change in flux), NOT on how fast the change happens. This is used to measure flux experimentally!</div>
+    </div>
+  </div>
+
+  <!-- FARADAY ANIMATION -->
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">⚡ Faraday's Law — Magnet moving into coil → flux changes → EMF induced</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#F87171"></div>N-pole</div>
+        <div class="leg"><div class="leg-dot" style="background:#5EEAD4"></div>Coil</div>
+        <div class="leg"><div class="leg-dot" style="background:#FDBA74"></div>Induced EMF</div>
+        <div class="leg"><div class="leg-dot" style="background:#A78BFA"></div>Field lines</div>
+      </div>
+    </div>
+    <div id="faradayContainer" style="height:420px;width:100%;"></div>
+    <div class="viz-ctrl">
+      <div class="cg">
+        <div class="cl">Magnet Position</div>
+        <input type="range" id="magnetPos" min="-6" max="1" step="0.05" value="-5" oninput="updateFaraday()">
+        <div class="cv" id="magnetPosVal">Far away</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Speed</div>
+        <input type="range" id="faradaySpeed" min="0.5" max="5" step="0.5" value="2">
+        <div class="cv">Animation speed</div>
+      </div>
+      <div class="cg" style="justify-content:flex-end">
+        <button class="btn btn-o" id="faradayBtn" onclick="toggleFaraday()">▶ Auto-move</button>
+        <button class="btn btn-t" style="margin-top:4px" onclick="resetFaraday()">↺ Reset</button>
+      </div>
+      <div id="faradayInfo" class="info-panel">Move magnet toward coil to see flux increase and EMF induced</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S3: LENZ'S LAW ═══ -->
+<section id="s3">
+  <div class="sec-eye">Direction of Induced Current</div>
+  <h2>Lenz's Law — The Opposition Principle</h2>
+  <div class="card">
+    <div class="hibox lenz">
+      <strong>Lenz's Law:</strong> The induced EMF is always in such a direction that it tends to produce a current which <strong>opposes the change in magnetic flux</strong> that produced it.
+    </div>
+    <div class="dstep">
+      <div class="snum">1</div>
+      <div class="sbody">
+        <strong>N-pole approaches coil → flux increases → induced current opposes</strong>
+        <p>The front face of the coil becomes N-pole (repels the approaching magnet). Current flows anticlockwise when viewed from the magnet side.</p>
+      </div>
+    </div>
+    <div class="dstep">
+      <div class="snum">2</div>
+      <div class="sbody">
+        <strong>N-pole moves away → flux decreases → induced current supports</strong>
+        <p>The front face becomes S-pole (attracts the receding magnet). Current reverses to clockwise.</p>
+      </div>
+    </div>
+    <div class="dstep">
+      <div class="snum">3</div>
+      <div class="sbody">
+        <strong>Why does Lenz's law obey conservation of energy?</strong>
+        <p>You must do mechanical work to move the magnet against the opposing force. This work converts to electrical energy (induced current). If Lenz's law were reversed, we'd get energy for free — impossible!</p>
+      </div>
+    </div>
+    <div class="fbox red">
+      <div class="f-label">Fleming's Right Hand Rule — Direction of induced current</div>
+      <div class="f-main">Thumb → Motion · Forefinger → B · Middle → I</div>
+      <div class="f-note">Stretch thumb, forefinger, middle finger mutually perpendicular. Thumb = direction of conductor motion, Forefinger = B field direction (N→S), Middle finger = direction of induced current.</div>
+    </div>
+  </div>
+
+  <!-- LENZ'S LAW 3D INTERACTIVE -->
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">🔴 Lenz's Law — Live 3D: Induced pole always OPPOSES magnet motion</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#F87171"></div>N-pole (red)</div>
+        <div class="leg"><div class="leg-dot" style="background:#60A5FA"></div>S-pole (blue)</div>
+        <div class="leg"><div class="leg-dot" style="background:#4ADE80"></div>Induced current</div>
+      </div>
+    </div>
+    <div id="lenzContainer" style="height:420px;width:100%;"></div>
+    <div class="viz-ctrl">
+      <div class="cg">
+        <div class="cl">Scenario</div>
+        <select id="lenzCase" class="dark-sel" onchange="updateLenz()">
+          <option value="approach-N">N-pole approaching →</option>
+          <option value="recede-N">N-pole receding ←</option>
+          <option value="approach-S">S-pole approaching →</option>
+          <option value="recede-S">S-pole receding ←</option>
+        </select>
+      </div>
+      <div class="cg" style="justify-content:flex-end;">
+        <button class="btn btn-o" id="lenzAnimBtn" onclick="toggleLenzAnim()">▶ Animate</button>
+      </div>
+      <div id="lenzInfo" class="info-panel">Flux increasing → induced pole = N (repels) → current anticlockwise</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S4: MOTIONAL EMF ═══ -->
+<section id="s4">
+  <div class="sec-eye">EMF by Motion</div>
+  <h2>Motional Electromotive Force (e = Blv)</h2>
+  <div class="card">
+    <p>When a conductor of length l moves with velocity v perpendicular to a magnetic field B, the free electrons in the conductor experience a magnetic force and move — creating an EMF.</p>
+    <div class="dstep">
+      <div class="snum">1</div>
+      <div class="sbody">
+        <strong>Conductor PQ moves rightward with velocity v in field B (into page)</strong>
+        <p>Consider loop PQRS. As PQ moves right by distance dy in time dt, the area swept = l·dy.</p>
+      </div>
+    </div>
+    <div class="dstep">
+      <div class="snum">2</div>
+      <div class="sbody">
+        <strong>Change in flux = B × change in area</strong>
+        <div class="fbox" style="margin:8px 0">
+          <div class="f-label">Flux change rate</div>
+          <div class="f-main">dΦ/dt = B · l · (dy/dt) = Blv</div>
+        </div>
+      </div>
+    </div>
+    <div class="dstep">
+      <div class="snum">3</div>
+      <div class="sbody">
+        <strong>By Faraday's law → Motional EMF</strong>
+        <div class="fbox green" style="margin:8px 0">
+          <div class="f-label">Motional EMF — Master Formula</div>
+          <div class="f-main">e = Blv</div>
+          <div class="f-note">B = field strength (T) · l = length of conductor (m) · v = velocity (m/s)<br>Valid when B, l, v are mutually perpendicular (all 90° to each other)</div>
+        </div>
+        <div class="hibox" style="margin:8px 0;"><strong>Direction:</strong> Use Fleming's Right Hand Rule. For B into page (⊗) and v rightward → current flows from Q to P (upward in wire).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOTIONAL EMF 3D -->
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">📐 Motional EMF — 3D: Conductor sweeping through B field</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#A78BFA"></div>B into page ⊗</div>
+        <div class="leg"><div class="leg-dot" style="background:#4ADE80"></div>Moving conductor PQ</div>
+        <div class="leg"><div class="leg-dot" style="background:#FDBA74"></div>Area swept (ΔΦ)</div>
+        <div class="leg"><div class="leg-dot" style="background:#F87171"></div>Induced current</div>
+      </div>
+    </div>
+    <div id="motionalContainer" style="height:400px;width:100%;"></div>
+    <div class="viz-ctrl">
+      <div class="cg">
+        <div class="cl">Velocity v (m/s)</div>
+        <input type="range" id="motV" min="1" max="20" value="8" oninput="calcMotional()">
+        <div class="cv" id="motVVal">v = 8 m/s</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Length l (m)</div>
+        <input type="range" id="motL" min="0.1" max="2" step="0.1" value="0.5" oninput="calcMotional()">
+        <div class="cv" id="motLVal">l = 0.5 m</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Field B (T)</div>
+        <input type="range" id="motB" min="0.1" max="3" step="0.1" value="1" oninput="calcMotional()">
+        <div class="cv" id="motBVal">B = 1.0 T</div>
+      </div>
+      <div class="cg" style="justify-content:flex-end">
+        <button class="btn btn-o" id="motBtn" onclick="toggleMot()">▶ Start</button>
+        <button class="btn btn-t" style="margin-top:4px" onclick="resetMot()">↺ Reset</button>
+      </div>
+      <div id="motInfo" class="info-panel">e = Blv = <strong id="motEMF">4.00 V</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S5: METHODS OF EMF ═══ -->
+<section id="s5">
+  <div class="sec-eye">Three Ways to Induce EMF</div>
+  <h2>Methods of Producing Induced EMF</h2>
+  <div class="card">
+    <p>Since Φ = BA cosθ, there are exactly <strong>three ways</strong> to change flux and produce EMF:</p>
+    <div class="cond-grid">
+      <div class="cond-card cc-flux">
+        <div class="cc-icon">🧲</div>
+        <div class="cc-title">Method 1: Change B</div>
+        <div class="cc-desc">Change magnitude of field B while loop stays still. Used in: transformers, induction heaters.</div>
+      </div>
+      <div class="cond-card cc-mot">
+        <div class="cc-icon">📏</div>
+        <div class="cc-title">Method 2: Change A</div>
+        <div class="cc-desc">Change the area of loop inside the field. Moving a conductor in field changes effective area. Used in: generators, rail-gun EMF.</div>
+      </div>
+      <div class="cond-card cc-lenz">
+        <div class="cc-icon">🔄</div>
+        <div class="cc-title">Method 3: Change θ</div>
+        <div class="cc-desc">Rotate the coil in a uniform field — angle θ between B and normal changes. Used in: AC generators, alternators.</div>
+      </div>
+    </div>
+
+    <h3>AC Generator — Rotating Coil (Method 3)</h3>
+    <div class="fbox">
+      <div class="f-label">EMF from rotating coil in uniform B</div>
+      <div class="f-main">e = NBAω sinωt = e₀ sinωt</div>
+      <div class="f-note">e₀ = NBAω = peak EMF · ω = angular velocity (rad/s) · N = turns · A = area · B = field<br>Induced current: I = I₀ sinωt where I₀ = e₀/R (peak current)</div>
+    </div>
+
+    <div class="hibox"><strong>Why sinωt?</strong> When coil plane is parallel to B (θ=90° between normal and B), the flux change rate is maximum → peak EMF. When coil is perpendicular to B (normal ∥ B), flux is maximum but rate of change = 0 → zero EMF. These are 90° apart — hence sinusoidal output!</div>
+  </div>
+
+  <!-- AC GENERATOR 3D -->
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">🔌 AC Generator — 3D Rotating Coil with Live EMF Output</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#A78BFA"></div>B field</div>
+        <div class="leg"><div class="leg-dot" style="background:#5EEAD4"></div>Rotating coil</div>
+        <div class="leg"><div class="leg-dot" style="background:#FDBA74"></div>EMF = e₀ sinωt</div>
+      </div>
+    </div>
+    <div id="generatorContainer" style="height:420px;width:100%;"></div>
+    <div class="viz-ctrl">
+      <div class="cg">
+        <div class="cl">Angular speed ω</div>
+        <input type="range" id="genOmega" min="0.5" max="5" step="0.5" value="2" oninput="updateGen()">
+        <div class="cv" id="genOmegaVal">ω = 2 rad/s</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Turns N</div>
+        <input type="range" id="genN" min="1" max="100" step="5" value="50" oninput="updateGen()">
+        <div class="cv" id="genNVal">N = 50</div>
+      </div>
+      <div class="cg" style="justify-content:flex-end">
+        <button class="btn btn-o" id="genBtn" onclick="toggleGen()">⏸ Pause</button>
+      </div>
+      <div id="genInfo" class="info-panel">
+        Peak EMF e₀ = NBAω &nbsp;|&nbsp; Current = <strong id="genEMF">e₀ sinωt</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S6: SELF-INDUCTION ═══ -->
+<section id="s6">
+  <div class="sec-eye">Self Induction</div>
+  <h2>Self-Inductance — The Inertia of Electricity</h2>
+  <div class="card">
+    <p>Self-inductance is the property of a coil by which it <strong>opposes any change in current</strong> flowing through it by inducing a back EMF. It is electricity's version of inertia.</p>
+    <div class="dstep">
+      <div class="snum">1</div>
+      <div class="sbody">
+        <strong>Flux ∝ Current</strong>
+        <p>For N turns, NΦ_B ∝ I → NΦ_B = LI where L = self-inductance coefficient.</p>
+        <div class="fbox purple" style="margin:8px 0">
+          <div class="f-label">Definition of Self-Inductance</div>
+          <div class="f-main">L = NΦ_B / I</div>
+          <div class="f-note">L is numerically equal to flux linkage per unit current. Unit: Henry (H). 1H = 1 Vs/A = 1 Wb/A</div>
+        </div>
+      </div>
+    </div>
+    <div class="dstep">
+      <div class="snum">2</div>
+      <div class="sbody">
+        <strong>Back EMF (opposing change in current)</strong>
+        <div class="fbox red" style="margin:8px 0">
+          <div class="f-label">Self-induced back EMF</div>
+          <div class="f-main">e = −L · dI/dt</div>
+          <div class="f-note">Negative sign = always opposes change. When current increases, e opposes increase. When current decreases, e tries to maintain it. This is why inductors resist sudden changes.</div>
+        </div>
+      </div>
+    </div>
+    <div class="dstep">
+      <div class="snum">3</div>
+      <div class="sbody">
+        <strong>Self-Inductance of a Long Solenoid</strong>
+        <div class="fbox" style="margin:8px 0">
+          <div class="f-label">Solenoid self-inductance</div>
+          <div class="f-main">L = μ₀N²A/l &nbsp;or&nbsp; L = μ₀μᵣN²A/l (with core)</div>
+          <div class="f-note">N = total turns · A = cross-section area · l = length · μᵣ = relative permeability of core<br>Iron core (μᵣ ≈ 1000) increases L by 1000×!</div>
+        </div>
+      </div>
+    </div>
+    <div class="hibox"><strong>Definition of 1 Henry:</strong> A coil has self-inductance of 1 henry when a current changing at rate of 1 A/s induces an EMF of 1 volt in it. (If dI/dt = 1, then L = e numerically)</div>
+  </div>
+
+  <!-- SELF INDUCTANCE 3D -->
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">🌀 Self-Inductance Solenoid — 3D with back-EMF visualization</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#5EEAD4"></div>Solenoid coil</div>
+        <div class="leg"><div class="leg-dot" style="background:#A78BFA"></div>Magnetic field inside</div>
+        <div class="leg"><div class="leg-dot" style="background:#F87171"></div>Back EMF direction</div>
+      </div>
+    </div>
+    <div id="selfContainer" style="height:380px;width:100%;"></div>
+    <div class="viz-ctrl">
+      <div class="cg">
+        <div class="cl">Turns N</div>
+        <input type="range" id="selfN" min="100" max="1000" step="50" value="500" oninput="calcSelf()">
+        <div class="cv" id="selfNVal">N = 500</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Length l (cm)</div>
+        <input type="range" id="selfL" min="10" max="100" step="5" value="40" oninput="calcSelf()">
+        <div class="cv" id="selfLVal">l = 40 cm</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Area A (cm²)</div>
+        <input type="range" id="selfA" min="1" max="50" step="1" value="20" oninput="calcSelf()">
+        <div class="cv" id="selfAVal">A = 20 cm²</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Core μᵣ</div>
+        <select id="selfMu" class="dark-sel" onchange="calcSelf()">
+          <option value="1">Air core (μᵣ=1)</option>
+          <option value="100">Soft iron (μᵣ=100)</option>
+          <option value="1000">Iron core (μᵣ=1000)</option>
+        </select>
+      </div>
+      <div id="selfResult" class="info-panel">L = 4.02 × 10⁻³ H</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Mutual Inductance — Two Coupled Coils</h3>
+    <div class="fbox blue">
+      <div class="f-label">Mutual Inductance M</div>
+      <div class="f-main">M = μ₀N₁N₂A / l</div>
+      <div class="f-note">EMF in secondary: e₂ = −M · dI₁/dt<br>M = mutual inductance (H). Depends on geometry and closeness of coils. Basis of transformers!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S7: MUTUAL INDUCTION ═══ -->
+<section id="s7">
+  <div class="sec-eye">Coupled Coils</div>
+  <h2>Mutual Induction — Transformer Principle</h2>
+  <div class="card">
+    <p>When current in one coil (primary) changes, it induces EMF in a nearby coil (secondary). This is mutual induction — the basis of every transformer.</p>
+    <div class="fbox">
+      <div class="f-label">EMF induced in secondary by primary</div>
+      <div class="f-main">e₂ = −M · dI₁/dt</div>
+      <div class="f-note">M = mutual inductance · dI₁/dt = rate of change of primary current<br>Larger M → more coupling → more EMF transferred</div>
+    </div>
+    <h3>Relation M² = L₁L₂ (ideal coupling)</h3>
+    <div class="fbox teal">
+      <div class="f-label">Coupling coefficient k</div>
+      <div class="f-main">M = k√(L₁L₂) &nbsp;where 0 ≤ k ≤ 1</div>
+      <div class="f-note">k=1 = perfect coupling (all flux links both coils, like iron core transformer). k≈0 = loose coupling (air-core, coils far apart).</div>
+    </div>
+  </div>
+
+  <!-- MUTUAL INDUCTION 3D -->
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">🔗 Mutual Induction — 3D: AC in primary induces EMF in secondary</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#FDBA74"></div>Primary coil</div>
+        <div class="leg"><div class="leg-dot" style="background:#5EEAD4"></div>Secondary coil</div>
+        <div class="leg"><div class="leg-dot" style="background:#A78BFA"></div>Shared flux</div>
+      </div>
+    </div>
+    <div id="mutualContainer" style="height:400px;width:100%;"></div>
+    <div class="viz-ctrl">
+      <div class="cg">
+        <div class="cl">Primary current freq</div>
+        <input type="range" id="mutFreq" min="0.5" max="5" step="0.5" value="1.5" oninput="updateMutual()">
+        <div class="cv" id="mutFreqVal">f = 1.5 Hz</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Coupling k</div>
+        <input type="range" id="mutK" min="0.1" max="1" step="0.1" value="0.8" oninput="updateMutual()">
+        <div class="cv" id="mutKVal">k = 0.8</div>
+      </div>
+      <div class="cg" style="justify-content:flex-end">
+        <button class="btn btn-o" id="mutBtn" onclick="toggleMutual()">⏸ Pause</button>
+      </div>
+      <div id="mutInfo" class="info-panel">e₂ = −M·dI₁/dt = coupled output</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S8: ENERGY IN INDUCTOR ═══ -->
+<section id="s8">
+  <div class="sec-eye">Energy Storage</div>
+  <h2>Energy Stored in an Inductor</h2>
+  <div class="card">
+    <p>An inductor stores energy in its <strong>magnetic field</strong>, just as a capacitor stores energy in its electric field. This energy comes from the work done to establish the current against back-EMF.</p>
+    <div class="dstep">
+      <div class="snum">1</div>
+      <div class="sbody">
+        <strong>Work done to move charge dq against back-EMF e</strong>
+        <p>dW = −e·dq = L(dI/dt)·dq = L·I·dI &nbsp;[since dq = I·dt]</p>
+      </div>
+    </div>
+    <div class="dstep">
+      <div class="snum">2</div>
+      <div class="sbody">
+        <strong>Total work to build current from 0 to I</strong>
+        <div class="fbox" style="margin:8px 0">
+          <div class="f-label">Energy stored in inductor</div>
+          <div class="f-main">W = U = ½LI²</div>
+          <div class="f-note">This is stored as magnetic field energy inside the inductor. Analogous to U = ½CV² for capacitor.</div>
+        </div>
+      </div>
+    </div>
+    <div class="dstep">
+      <div class="snum">3</div>
+      <div class="sbody">
+        <strong>Energy density (energy per unit volume)</strong>
+        <div class="fbox purple" style="margin:8px 0">
+          <div class="f-label">Magnetic energy density</div>
+          <div class="f-main">u = U/V = B²/(2μ₀)</div>
+          <div class="f-note">This is the energy stored per unit volume of the magnetic field. Compare with electric energy density: u_E = ε₀E²/2</div>
+        </div>
+      </div>
+    </div>
+    <h3>Physical Meaning: 1 Henry</h3>
+    <div class="hibox"><strong>When I = 1A and L = 1H:</strong> U = ½ × 1 × 1² = 0.5 J. So 1 henry inductor carrying 1 ampere stores 0.5 joules. This is why large inductors in power systems carry enormous energy that must be handled carefully when switching off.</div>
+    <table>
+      <tr><th>Quantity</th><th>Capacitor (Electric)</th><th>Inductor (Magnetic)</th></tr>
+      <tr><td>Energy stored</td><td><code>U = ½CV²</code></td><td><code>U = ½LI²</code></td></tr>
+      <tr><td>Energy density</td><td><code>u = ε₀E²/2</code></td><td><code>u = B²/2μ₀</code></td></tr>
+      <tr><td>Stores energy in</td><td>Electric field</td><td>Magnetic field</td></tr>
+      <tr><td>Opposes change in</td><td>Voltage (V)</td><td>Current (I)</td></tr>
+    </table>
+  </div>
+
+  <!-- ENERGY VISUALIZER -->
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">⚡ Inductor Energy Visualizer — U = ½LI² with field strength</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#A78BFA"></div>B field inside</div>
+        <div class="leg"><div class="leg-dot" style="background:#FDBA74"></div>Energy stored</div>
+        <div class="leg"><div class="leg-dot" style="background:#5EEAD4"></div>Solenoid</div>
+      </div>
+    </div>
+    <div id="energyContainer" style="height:380px;width:100%;"></div>
+    <div class="viz-ctrl">
+      <div class="cg">
+        <div class="cl">Current I (A)</div>
+        <input type="range" id="enI" min="0" max="5" step="0.1" value="2" oninput="calcEnergy()">
+        <div class="cv" id="enIVal">I = 2.0 A</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Inductance L (mH)</div>
+        <input type="range" id="enL" min="1" max="1000" step="10" value="100" oninput="calcEnergy()">
+        <div class="cv" id="enLVal">L = 100 mH</div>
+      </div>
+      <div id="enResult" class="info-panel" style="min-width:220px">U = ½LI² = <strong id="enValue">0.200 J</strong></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S9: MASTER SIMULATOR ═══ -->
+<section id="s9">
+  <div class="sec-eye">Interactive Lab</div>
+  <h2>Complete EMI Simulator</h2>
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">🎮 Full EMI Simulator — Choose scenario, adjust all parameters</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#FDBA74"></div>Induced EMF</div>
+        <div class="leg"><div class="leg-dot" style="background:#4ADE80"></div>Induced current</div>
+        <div class="leg"><div class="leg-dot" style="background:#A78BFA"></div>Flux Φ</div>
+      </div>
+    </div>
+    <div id="simContainer" style="height:440px;width:100%;"></div>
+    <div class="viz-ctrl">
+      <div class="cg">
+        <div class="cl">Scenario</div>
+        <select id="simMode" class="dark-sel" onchange="updateSimMode()">
+          <option value="faraday">Faraday — Magnet & Coil</option>
+          <option value="motional">Motional EMF — Moving Rod</option>
+          <option value="generator">AC Generator</option>
+          <option value="inductor">Self-Induction — Switching</option>
+        </select>
+      </div>
+      <div class="cg">
+        <div class="cl">N (turns)</div>
+        <input type="range" id="simN" min="1" max="200" value="50" oninput="calcSimAll()">
+        <div class="cv" id="simNv">N = 50</div>
+      </div>
+      <div class="cg">
+        <div class="cl">B (Tesla)</div>
+        <input type="range" id="simB" min="0.1" max="3" step="0.1" value="1" oninput="calcSimAll()">
+        <div class="cv" id="simBv">B = 1.0 T</div>
+      </div>
+      <div class="cg">
+        <div class="cl">R (Ω)</div>
+        <input type="range" id="simR" min="1" max="100" value="10" oninput="calcSimAll()">
+        <div class="cv" id="simRv">R = 10 Ω</div>
+      </div>
+    </div>
+    <div id="simResults" style="background:#07090F;padding:14px 18px;border-top:1px solid #1E293B;"></div>
+  </div>
+</section>
+
+<!-- ═══ S10: SUMMARY ═══ -->
+<section id="s10">
+  <div class="sec-eye">Quick Revision</div>
+  <h2>Complete Summary — All Formulas</h2>
+  <div class="card">
+    <table>
+      <tr><th>Concept</th><th>Formula</th><th>Key Point</th></tr>
+      <tr><td>Magnetic flux</td><td><code>Φ = BA cosθ</code></td><td>θ between B and normal â</td></tr>
+      <tr><td>Faraday's law</td><td><code>e = −dΦ/dt</code></td><td>−ve sign = Lenz's law</td></tr>
+      <tr><td>N-turn coil</td><td><code>e = −N·dΦ/dt</code></td><td>Each turn adds EMF</td></tr>
+      <tr><td>Induced current</td><td><code>I = e/R</code></td><td>Needs closed circuit</td></tr>
+      <tr><td>Charge flowed</td><td><code>q = NΔΦ/R</code></td><td>Independent of time!</td></tr>
+      <tr><td>Motional EMF</td><td><code>e = Blv</code></td><td>B, l, v mutually ⊥</td></tr>
+      <tr><td>AC generator</td><td><code>e = NBAω sinωt</code></td><td>Peak = NBAω</td></tr>
+      <tr><td>Self-inductance</td><td><code>L = NΦ/I</code></td><td>Unit: Henry (H)</td></tr>
+      <tr><td>Back EMF</td><td><code>e = −L·dI/dt</code></td><td>Opposes current change</td></tr>
+      <tr><td>Solenoid L</td><td><code>L = μ₀N²A/l</code></td><td>μᵣ × for iron core</td></tr>
+      <tr><td>Mutual inductance</td><td><code>e₂ = −M·dI₁/dt</code></td><td>Transformer principle</td></tr>
+      <tr><td>Energy in inductor</td><td><code>U = ½LI²</code></td><td>Stored in B field</td></tr>
+      <tr><td>Magnetic energy density</td><td><code>u = B²/2μ₀</code></td><td>Per unit volume</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h3>⚠️ Common Exam Mistakes</h3>
+    <div class="acc">
+      <div class="acc-h" onclick="acc(this)">Mistake 1: Ignoring the negative sign in e = −dΦ/dt <span class="arr">▼</span></div>
+      <div class="acc-b">The negative sign is Lenz's law mathematically encoded. It tells you the induced EMF OPPOSES the change. In numerical problems, we use magnitude |e| = dΦ/dt. But for direction questions, the negative sign tells you to use Lenz's law to find current direction.</div>
+    </div>
+    <div class="acc">
+      <div class="acc-h" onclick="acc(this)">Mistake 2: θ in Φ = BA cosθ is measured from wrong reference <span class="arr">▼</span></div>
+      <div class="acc-b">θ is the angle between B and the <strong>area normal (â)</strong> — NOT between B and the loop surface. When B is perpendicular to loop surface (parallel to normal), θ=0°, cosθ=1, Φ=max. When B is parallel to loop surface (perpendicular to normal), θ=90°, cosθ=0, Φ=0.</div>
+    </div>
+    <div class="acc">
+      <div class="acc-h" onclick="acc(this)">Mistake 3: Confusing L = NΦ/I with e = −L·dI/dt <span class="arr">▼</span></div>
+      <div class="acc-b">L = NΦ/I defines what L IS (ratio of flux linkage to current). The back EMF formula e = −L·dI/dt tells you what L DOES (produces back EMF when current changes). Both are needed — don't mix them up. L doesn't change with I (for linear inductors).</div>
+    </div>
+    <div class="acc">
+      <div class="acc-h" onclick="acc(this)">Mistake 4: Charge q = NΔΦ/R is time-independent — students think it depends on how fast <span class="arr">▼</span></div>
+      <div class="acc-b">q = ∫I dt = ∫(e/R)dt = (1/R)∫e dt = (N/R)∫dΦ = NΔΦ/R. The integral of dΦ/dt over time is just ΔΦ — time cancels out! So the same amount of charge flows whether you move the magnet fast or slow, as long as the total flux change ΔΦ is the same.</div>
+    </div>
+    <div class="acc">
+      <div class="acc-h" onclick="acc(this)">Mistake 5: Motional EMF needs all three (B, l, v) to be perpendicular to each other <span class="arr">▼</span></div>
+      <div class="acc-b">e = Blv only when B ⊥ l ⊥ v (all mutually perpendicular). If B is at angle to v, use e = Blv sinθ where θ is angle between B and v. If conductor makes angle with perpendicular, use the component of l perpendicular to v. Always check geometry first!</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div style="background:var(--accent);color:white;text-align:center;padding:26px 20px;font-size:12px;opacity:.9">
+  <strong>Electromagnetic Induction</strong> · Class 12 Physics · Chapter 6<br>
+  <span style="opacity:.6">Quantum Tuitions / Priyanshu Informatics · Dehradun · All Three.js inlined — zero CDN</span>
+</div>
+
+<script>
+'use strict';
+// ═══════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════
+function nav(id, btn) {
+  document.getElementById(id).scrollIntoView({behavior:'smooth'});
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function acc(h){h.classList.toggle('open');h.nextElementSibling.classList.toggle('open');}
+
+function makeRenderer(container, h, alpha) {
+  const W=container.clientWidth;
+  const r=new THREE.WebGLRenderer({antialias:true,alpha:!!alpha});
+  r.setSize(W,h); r.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  r.setClearColor(0x07090F,1); container.appendChild(r.domElement); return r;
+}
+function makeCam(W,H,pos){
+  const c=new THREE.PerspectiveCamera(45,W/H,0.1,200);
+  c.position.set(...pos); c.lookAt(0,0,0); return c;
+}
+function lights(sc){
+  sc.add(new THREE.AmbientLight(0xffffff,0.55));
+  const d=new THREE.DirectionalLight(0xffffff,0.8); d.position.set(5,8,5); sc.add(d);
+  const d2=new THREE.DirectionalLight(0x4488ff,0.25); d2.position.set(-5,-4,-4); sc.add(d2);
+}
+function addOrbit(renderer,camera,target){
+  target=target||new THREE.Vector3(0,0,0);
+  let drag=false,lx=0,ly=0;
+  const sp=new THREE.Spherical().setFromVector3(camera.position.clone().sub(target));
+  const el=renderer.domElement;
+  el.addEventListener('mousedown',e=>{drag=true;lx=e.clientX;ly=e.clientY;});
+  window.addEventListener('mouseup',()=>drag=false);
+  el.addEventListener('mousemove',e=>{
+    if(!drag)return;
+    sp.theta-=(e.clientX-lx)*.008; sp.phi=Math.max(.15,Math.min(Math.PI-.15,sp.phi-(e.clientY-ly)*.008));
+    lx=e.clientX;ly=e.clientY;
+    camera.position.setFromSpherical(sp).add(target); camera.lookAt(target);
+  });
+  el.addEventListener('wheel',e=>{e.preventDefault();sp.radius=Math.max(3,Math.min(30,sp.radius*(1+e.deltaY*.001)));camera.position.setFromSpherical(sp).add(target);camera.lookAt(target);},{passive:false});
+  return sp;
+}
+function mkBox(w,h,d,col,met,rou){return new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color:col,metalness:met||.3,roughness:rou||.6}));}
+function mkCyl(rt,rb,h,seg,col,met,rou){return new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg||16),new THREE.MeshStandardMaterial({color:col,metalness:met||.4,roughness:rou||.5}));}
+function mkTorus(r,tube,col,seg){return new THREE.Mesh(new THREE.TorusGeometry(r,tube,12,seg||48),new THREE.MeshStandardMaterial({color:col,metalness:.5,roughness:.4}));}
+function mkSphere(r,col,met){return new THREE.Mesh(new THREE.SphereGeometry(r,16,16),new THREE.MeshStandardMaterial({color:col,metalness:met||.4,roughness:.5}));}
+function mkLabel(text,x,y,z,col,sc,scene){
+  const cv=document.createElement('canvas'); cv.width=256;cv.height=64;
+  const ctx=cv.getContext('2d'); ctx.fillStyle=col||'#fff';
+  ctx.font=`bold ${sc||20}px Inter,sans-serif`; ctx.fillText(text,6,42);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),transparent:true,depthTest:false}));
+  sp.scale.set(3,.75,1); sp.position.set(x,y,z); scene.add(sp); return sp;
+}
+function mkArrow3D(scene,from,to,col,r){
+  r=r||.04; const dir=new THREE.Vector3().subVectors(to,from); const len=dir.length(); if(len<.01)return;
+  const ax=new THREE.Vector3(0,1,0); const nm=dir.clone().normalize();
+  const shaft=mkCyl(r,r,len*.8,8,col,.2,.5); shaft.position.copy(from.clone().lerp(to,.4));
+  shaft.quaternion.setFromUnitVectors(ax,nm); scene.add(shaft);
+  const head=mkCyl(0,r*3,len*.22,8,col,.2,.5); head.position.copy(to.clone().sub(nm.clone().multiplyScalar(len*.1)));
+  head.quaternion.setFromUnitVectors(ax,nm); scene.add(head);
+}
+function mkFieldDot(scene,x,y,z,intoPage){ // ⊗ or ⊙
+  const mat=new THREE.MeshStandardMaterial({color:0xA78BFA,metalness:.3,roughness:.6});
+  const outer=new THREE.Mesh(new THREE.TorusGeometry(.12,.015,8,24),mat);
+  outer.position.set(x,y,z); scene.add(outer);
+  if(intoPage){
+    const cross1=mkBox(.18,.015,.015,0xA78BFA); cross1.position.set(x,y,z); cross1.rotation.z=Math.PI/4; scene.add(cross1);
+    const cross2=mkBox(.18,.015,.015,0xA78BFA); cross2.position.set(x,y,z); cross2.rotation.z=-Math.PI/4; scene.add(cross2);
+  } else {
+    const dot=mkSphere(.04,0xA78BFA,.3); dot.position.set(x,y,z); scene.add(dot);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// SCENE 1: FLUX VISUALIZER
+// ═══════════════════════════════════════════════
+let fluxScene,fluxCam,fluxRen,fluxLoopGroup,fluxNormalArrow,fluxFieldLines=[];
+(function(){
+  const cont=document.getElementById('fluxContainer');
+  const H=400; fluxRen=makeRenderer(cont,H);
+  fluxScene=new THREE.Scene(); lights(fluxScene);
+  fluxCam=makeCam(cont.clientWidth,H,[0,5,10]); addOrbit(fluxRen,fluxCam);
+
+  // Loop (will rotate with theta)
+  fluxLoopGroup=new THREE.Group();
+  const loopMat=new THREE.MeshStandardMaterial({color:0x5EEAD4,metalness:.6,roughness:.3,side:THREE.DoubleSide});
+  // Frame 4 sides
+  [[-1.5,0,0,.1,3,0.1],[1.5,0,0,.1,3,.1],[0,1.5,0,3,.1,.1],[0,-1.5,0,3,.1,.1]].forEach(([x,y,z,w,h,d])=>{
+    const b=mkBox(w,h,d,0x5EEAD4,.6,.3); b.position.set(x,y,z); fluxLoopGroup.add(b);
+  });
+  // Surface
+  const surf=new THREE.Mesh(new THREE.PlaneGeometry(3,3),new THREE.MeshStandardMaterial({color:0x5EEAD4,opacity:.12,transparent:true,side:THREE.DoubleSide}));
+  fluxLoopGroup.add(surf);
+  fluxScene.add(fluxLoopGroup);
+
+  // Normal arrow (area vector â)
+  fluxNormalArrow={from:new THREE.Vector3(0,0,0),to:new THREE.Vector3(0,0,2.5)};
+
+  // B field lines (along x-axis) - arrows
+  for(let y=-2;y<=2;y+=0.8){
+    mkArrow3D(fluxScene,new THREE.Vector3(-5,y,0),new THREE.Vector3(5,y,0),0xA78BFA,.04);
+  }
+  mkLabel('B →',4.2,0,.5,'#A78BFA',16,fluxScene);
+
+  function loop(){requestAnimationFrame(loop);fluxRen.render(fluxScene,fluxCam);}
+  loop();
+  updateFlux();
+})();
+
+function updateFlux(){
+  const theta=parseFloat(document.getElementById('fluxTheta').value);
+  const B=parseFloat(document.getElementById('fluxB').value);
+  const A=parseFloat(document.getElementById('fluxA').value);
+  document.getElementById('fluxThetaVal').textContent=`θ = ${theta}°`;
+  document.getElementById('fluxBVal').textContent=`B = ${B.toFixed(1)} T`;
+  document.getElementById('fluxAVal').textContent=`A = ${A.toFixed(1)} m²`;
+  const rad=theta*Math.PI/180;
+  if(fluxLoopGroup) fluxLoopGroup.rotation.y=rad;
+  const phi=B*A*Math.cos(rad);
+  const pct=Math.max(0,phi/(B*A))*100;
+  const bar=document.getElementById('fluxBar');
+  bar.style.width=pct+'%';
+  bar.style.background=pct>60?'#FDBA74':pct>30?'#F59E0B':'#DC2626';
+  document.getElementById('fluxValue').textContent=`Φ = ${phi.toFixed(3)} Wb`;
+}
+
+// ═══════════════════════════════════════════════
+// SCENE 2: FARADAY — MAGNET + COIL
+// ═══════════════════════════════════════════════
+let farScene,farCam,farRen,farMagnet,farCoil,farAuto=false,farDir=1,farPos=-5,farRaf;
+(function(){
+  const cont=document.getElementById('faradayContainer');
+  const H=420; farRen=makeRenderer(cont,H);
+  farScene=new THREE.Scene(); lights(farScene);
+  farCam=makeCam(cont.clientWidth,H,[0,5,12]); addOrbit(farRen,farCam);
+
+  // Coil (fixed at origin)
+  farCoil=new THREE.Group();
+  for(let i=0;i<8;i++){
+    const ring=mkTorus(1.4,.08,0x5EEAD4,48);
+    ring.position.set(i*.12-0.42,0,0); ring.rotation.y=Math.PI/2;
+    farCoil.add(ring);
+  }
+  // Coil frame cylinder
+  const frame=mkCyl(.06,.06,1,8,0x1E3A5F,.8,.3); frame.rotation.z=Math.PI/2; farCoil.add(frame);
+  farScene.add(farCoil);
+
+  // Galvanometer box
+  const galvo=mkBox(1,.5,.4,0x1E293B,.3,.8); galvo.position.set(0,-2,0); farScene.add(galvo);
+  mkLabel('G',0,-2.8,.3,'#94A3B8',16,farScene);
+  // Wire connections
+  const wL=mkBox(.05,.05,2,0xFCD34D); wL.position.set(-1.5,-1.25,0); wL.rotation.z=Math.PI/4*.8; farScene.add(wL);
+  const wR=mkBox(.05,.05,2,0xFCD34D); wR.position.set(1.5,-1.25,0); wR.rotation.z=-Math.PI/4*.8; farScene.add(wR);
+
+  // Bar magnet (moves)
+  farMagnet=new THREE.Group();
+  const nP=mkBox(.7,1.5,.7,0xEF4444,.7,.3); nP.position.set(0,.75,0); farMagnet.add(nP);
+  const sP=mkBox(.7,1.5,.7,0x3B82F6,.7,.3); sP.position.set(0,-.75,0); farMagnet.add(sP);
+  // yoke
+  const yoke=mkBox(.6,.1,.6,0x475569,.8,.3); yoke.position.set(0,0,0); farMagnet.add(yoke);
+  farMagnet.rotation.z=Math.PI/2; // make horizontal
+  farMagnet.position.set(-5,0,0);
+  farScene.add(farMagnet);
+  mkLabel('N',-4.8,1.2,.5,'#F87171',18,farScene);
+  mkLabel('S',-4.8,-1.2,.5,'#60A5FA',18,farScene);
+
+  // Field lines emanating from N pole (dashes)
+  for(let a=0;a<Math.PI*2;a+=Math.PI/4){
+    const pts=[new THREE.Vector3(0,Math.cos(a)*.8,Math.sin(a)*.8),new THREE.Vector3(2.5,Math.cos(a)*1.6,Math.sin(a)*1.6)];
+    const geo=new THREE.BufferGeometry().setFromPoints(pts);
+    const line=new THREE.Line(geo,new THREE.LineBasicMaterial({color:0xA78BFA,opacity:.4,transparent:true}));
+    line.name='fieldline';
+    farMagnet.add(line);
+  }
+
+  // Labels
+  mkLabel('Coil',0,2.5,.5,'#5EEAD4',16,farScene);
+
+  addOrbit(farRen,farCam);
+  function loop(){
+    requestAnimationFrame(loop);
+    if(farAuto){
+      const speed=parseFloat(document.getElementById('faradaySpeed').value)||2;
+      farPos+=farDir*speed*0.02;
+      if(farPos>0.8){farDir=-1;}
+      if(farPos<-5){farDir=1;}
+      farMagnet.position.x=farPos;
+      document.getElementById('magnetPos').value=farPos;
+      updateFaradayDisplay(farPos);
+    }
+    farRen.render(farScene,farCam);
+  }
+  loop();
+})();
+
+function updateFaraday(){
+  farPos=parseFloat(document.getElementById('magnetPos').value);
+  farMagnet.position.x=farPos;
+  updateFaradayDisplay(farPos);
+}
+function updateFaradayDisplay(pos){
+  const dist=Math.abs(pos);
+  const flux=(6-dist)*0.5;
+  const emf=pos<-4?'Near zero':pos<-2?'Low EMF':pos<0?'HIGH EMF!':'Maximum!';
+  document.getElementById('magnetPosVal').textContent=pos>-1?'Inside coil!':pos>-3?'Approaching':'Far away';
+  document.getElementById('faradayInfo').innerHTML=
+    `Magnet pos: ${pos.toFixed(1)} m &nbsp;|&nbsp; Approx Φ ≈ ${Math.max(0,flux).toFixed(2)} Wb &nbsp;|&nbsp; <strong>EMF: ${emf}</strong>`;
+}
+function toggleFaraday(){
+  farAuto=!farAuto;
+  const btn=document.getElementById('faradayBtn');
+  btn.textContent=farAuto?'⏸ Pause':'▶ Auto-move';
+  btn.className=farAuto?'btn btn-p':'btn btn-o';
+}
+function resetFaraday(){farAuto=false;document.getElementById('faradayBtn').textContent='▶ Auto-move';document.getElementById('faradayBtn').className='btn btn-o';farPos=-5;document.getElementById('magnetPos').value=-5;farMagnet.position.x=-5;updateFaradayDisplay(-5);}
+
+// ═══════════════════════════════════════════════
+// SCENE 3: LENZ'S LAW
+// ═══════════════════════════════════════════════
+let lenzScene,lenzCam,lenzRen,lenzMag,lenzCoil,lenzCurrent,lenzAnimating=false,lenzT=0;
+(function(){
+  const cont=document.getElementById('lenzContainer');
+  const H=420; lenzRen=makeRenderer(cont,H);
+  lenzScene=new THREE.Scene(); lights(lenzScene);
+  lenzCam=makeCam(cont.clientWidth,H,[0,6,13]); addOrbit(lenzRen,lenzCam);
+
+  // Coil
+  lenzCoil=new THREE.Group();
+  for(let i=0;i<10;i++){
+    const r=mkTorus(1.5,.07,0x5EEAD4,48);
+    r.position.set(0,0,i*.1-.45); lenzCoil.add(r);
+  }
+  lenzScene.add(lenzCoil);
+
+  // Induced pole indicators (N and S faces of coil)
+  // Left face N indicator
+  const nFace=new THREE.Mesh(new THREE.TorusGeometry(1.5,.08,8,32),new THREE.MeshStandardMaterial({color:0xEF4444,opacity:.6,transparent:true}));
+  nFace.position.set(0,0,-.5); nFace.name='nFace'; lenzScene.add(nFace);
+  const sFace=new THREE.Mesh(new THREE.TorusGeometry(1.5,.08,8,32),new THREE.MeshStandardMaterial({color:0x3B82F6,opacity:.6,transparent:true}));
+  sFace.position.set(0,0,.55); sFace.name='sFace'; lenzScene.add(sFace);
+
+  // Magnet
+  lenzMag=new THREE.Group();
+  const nPole=mkBox(.8,1.8,.8,0xEF4444,.7,.3); nPole.position.set(0,.9,0); lenzMag.add(nPole);
+  const sPole=mkBox(.8,1.8,.8,0x3B82F6,.7,.3); sPole.position.set(0,-.9,0); lenzMag.add(sPole);
+  lenzMag.rotation.x=Math.PI/2; lenzMag.position.set(0,0,-4);
+  lenzScene.add(lenzMag);
+  mkLabel('N (magnet)',0,1.6,-4.2,'#F87171',14,lenzScene);
+
+  // Current ring (animated)
+  lenzCurrent=new THREE.Mesh(new THREE.TorusGeometry(1.5,.06,8,64),new THREE.MeshStandardMaterial({color:0x4ADE80,metalness:.6}));
+  lenzCurrent.position.set(0,0,0); lenzScene.add(lenzCurrent);
+
+  // Force arrow
+  mkLabel('Force opposes →',0,3,0,'#FDBA74',14,lenzScene);
+
+  addOrbit(lenzRen,lenzCam);
+  function loop(){
+    requestAnimationFrame(loop);
+    if(lenzAnimating){
+      lenzT+=0.02;
+      const z=-4+2.5*(Math.sin(lenzT)+1)/2;
+      lenzMag.position.z=z;
+    }
+    lenzCurrent.rotation.z+=0.03;
+    lenzRen.render(lenzScene,lenzCam);
+  }
+  loop();
+  updateLenz();
+})();
+
+function updateLenz(){
+  const sc=document.getElementById('lenzCase').value;
+  const info={
+    'approach-N':'N-pole approaching → Flux ↑ → Induced pole = N (repels) → current anticlockwise → opposes approach',
+    'recede-N':'N-pole receding ← → Flux ↓ → Induced pole = S (attracts) → current clockwise → opposes recession',
+    'approach-S':'S-pole approaching → Flux ↑ (opposite dir) → Induced pole = S (repels) → current reverses',
+    'recede-S':'S-pole receding ← → Flux ↓ → Induced pole = N (attracts) → current reverses'
+  };
+  document.getElementById('lenzInfo').textContent=info[sc];
+  // Change magnet color
+  if(lenzMag){
+    lenzMag.children[0].material.color.set(sc.includes('N')?0xEF4444:0x3B82F6);
+    lenzMag.children[1].material.color.set(sc.includes('N')?0x3B82F6:0xEF4444);
+  }
+}
+function toggleLenzAnim(){
+  lenzAnimating=!lenzAnimating;
+  const btn=document.getElementById('lenzAnimBtn');
+  btn.textContent=lenzAnimating?'⏸ Pause':'▶ Animate';
+  btn.className=lenzAnimating?'btn btn-p':'btn btn-o';
+}
+
+// ═══════════════════════════════════════════════
+// SCENE 4: MOTIONAL EMF
+// ═══════════════════════════════════════════════
+let motScene,motCam,motRen,motRod,motSwept,motRunning=false,motX=-3,motRaf2;
+(function(){
+  const cont=document.getElementById('motionalContainer');
+  const H=400; motRen=makeRenderer(cont,H);
+  motScene=new THREE.Scene(); lights(motScene);
+  motCam=makeCam(cont.clientWidth,H,[0,6,12]); addOrbit(motRen,motCam);
+
+  // Field dots (B into page) - grid on XY plane
+  for(let x=-4;x<=4;x+=1.2){
+    for(let y=-2;y<=2;y+=1.2){
+      mkFieldDot(motScene,x,y,0,true);
+    }
+  }
+  mkLabel('B ⊗ (into page)',0,3,.3,'#A78BFA',14,motScene);
+
+  // Fixed rails (horizontal)
+  const railMat=new THREE.MeshStandardMaterial({color:0x94A3B8,metalness:.8,roughness:.2});
+  const railT=new THREE.Mesh(new THREE.BoxGeometry(10,.08,.08),railMat); railT.position.set(0,1.8,0); motScene.add(railT);
+  const railB=new THREE.Mesh(new THREE.BoxGeometry(10,.08,.08),railMat); railB.position.set(0,-1.8,0); motScene.add(railB);
+  mkLabel('P',-4.8,1.8,.2,'#FDBA74',16,motScene);
+  mkLabel('Q',-4.8,-1.8,.2,'#FDBA74',16,motScene);
+  mkLabel('S', 4.8,1.8,.2,'#FDBA74',16,motScene);
+  mkLabel('R', 4.8,-1.8,.2,'#FDBA74',16,motScene);
+
+  // Resistor on right end
+  const res=mkBox(.5,.8,.3,0xFCD34D,.3,.7); res.position.set(4.5,0,0); motScene.add(res);
+
+  // Moving rod (PQ slider)
+  motRod=mkCyl(.07,.07,3.6,8,0x4ADE80,.6,.3);
+  motRod.rotation.z=Math.PI/2; motRod.position.set(-3,0,0); motScene.add(motRod);
+
+  // Current direction arrow on rod
+  const curArr=mkCyl(.04,.04,.8,6,0xF87171,.2,.5); curArr.position.set(-3,.5,.2); motScene.add(curArr);
+
+  // Swept area (grows dynamically)
+  motSwept=mkBox(.01,3.6,.01,0xFDBA74,.1,.9);
+  motSwept.material.opacity=0.15; motSwept.material.transparent=true;
+  motScene.add(motSwept);
+
+  // Velocity arrow
+  mkArrow3D(motScene,new THREE.Vector3(-3,0,.5),new THREE.Vector3(-1.5,0,.5),0x4ADE80,.08);
+  mkLabel('v →',-1.2,.4,.8,'#4ADE80',16,motScene);
+
+  addOrbit(motRen,motCam);
+  function loop(){
+    requestAnimationFrame(loop);
+    if(motRunning){
+      const v=parseFloat(document.getElementById('motV').value)||8;
+      motX+=v*0.008;
+      if(motX>4){motX=-3;}
+      motRod.position.x=motX;
+      // Update swept area
+      const w=Math.max(0.01,motX-(-3));
+      motSwept.geometry.dispose();
+      motSwept.geometry=new THREE.BoxGeometry(w,3.6,.01);
+      motSwept.position.x=-3+w/2;
+    }
+    motRen.render(motScene,motCam);
+  }
+  loop();
+  calcMotional();
+})();
+
+function calcMotional(){
+  const v=parseFloat(document.getElementById('motV').value);
+  const l=parseFloat(document.getElementById('motL').value);
+  const B=parseFloat(document.getElementById('motB').value);
+  document.getElementById('motVVal').textContent=`v = ${v} m/s`;
+  document.getElementById('motLVal').textContent=`l = ${l.toFixed(1)} m`;
+  document.getElementById('motBVal').textContent=`B = ${B.toFixed(1)} T`;
+  document.getElementById('motEMF').textContent=`${(B*l*v).toFixed(2)} V`;
+  document.getElementById('motInfo').innerHTML=`e = Blv = ${B.toFixed(1)} × ${l.toFixed(1)} × ${v} = <strong id="motEMF">${(B*l*v).toFixed(2)} V</strong>`;
+}
+function toggleMot(){motRunning=!motRunning;const b=document.getElementById('motBtn');b.textContent=motRunning?'⏸ Pause':'▶ Start';b.className=motRunning?'btn btn-p':'btn btn-o';}
+function resetMot(){motRunning=false;motX=-3;document.getElementById('motBtn').textContent='▶ Start';document.getElementById('motBtn').className='btn btn-o';}
+
+// ═══════════════════════════════════════════════
+// SCENE 5: AC GENERATOR
+// ═══════════════════════════════════════════════
+let genScene,genCam,genRen,genCoilGroup,genRunning=true,genT=0;
+const genCanvas2d=document.createElement('canvas');
+(function(){
+  const cont=document.getElementById('generatorContainer');
+  const H=420; genRen=makeRenderer(cont,H);
+  genScene=new THREE.Scene(); lights(genScene);
+  genCam=makeCam(cont.clientWidth,H,[0,5,12]); addOrbit(genRen,genCam);
+
+  // Magnets (fixed)
+  const nMag=mkBox(1,5,.9,0xEF4444,.7,.3); nMag.position.set(-3,0,0); genScene.add(nMag);
+  const sMag=mkBox(1,5,.9,0x3B82F6,.7,.3); sMag.position.set(3,0,0); genScene.add(sMag);
+  mkLabel('N',-3.7,2.8,.5,'#F87171',18,genScene);
+  mkLabel('S', 3.1,2.8,.5,'#60A5FA',18,genScene);
+  // B field arrows
+  for(let y=-1.5;y<=1.5;y+=.75){
+    mkArrow3D(genScene,new THREE.Vector3(-2.3,y,0),new THREE.Vector3(2.3,y,0),0xA78BFA,.04);
+  }
+
+  // Rotating coil
+  genCoilGroup=new THREE.Group();
+  // Coil rectangle 4 sides
+  const cMat=new THREE.MeshStandardMaterial({color:0x5EEAD4,metalness:.6,roughness:.3});
+  [[-1,0,0,.1,3.5,.1],[1,0,0,.1,3.5,.1],[0,1.75,0,2.1,.1,.1],[0,-1.75,0,2.1,.1,.1]].forEach(([x,y,z,w,h,d])=>{
+    const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),cMat); b.position.set(x,y,z); genCoilGroup.add(b);
+  });
+  // Surface
+  genCoilGroup.add(new THREE.Mesh(new THREE.PlaneGeometry(2,3.5),new THREE.MeshStandardMaterial({color:0x5EEAD4,opacity:.1,transparent:true,side:THREE.DoubleSide})));
+  genScene.add(genCoilGroup);
+
+  // Slip rings (simplified as tori)
+  [-.5,.5].forEach(z=>{
+    const sr=mkTorus(.15,.03,0xFCD34D,32); sr.position.set(0,-2.2,z); sr.rotation.x=Math.PI/2; genScene.add(sr);
+  });
+  mkLabel('Slip rings',0,-3,.5,'#FCD34D',14,genScene);
+
+  // Axis
+  const axle=mkCyl(.04,.04,3.5,6,0x94A3B8,.8,.2); axle.rotation.x=Math.PI/2; genScene.add(axle);
+
+  // Oscilloscope mini canvas
+  genCanvas2d.width=180; genCanvas2d.height=70;
+  const osc=new THREE.CanvasTexture(genCanvas2d);
+  const oscMesh=new THREE.Mesh(new THREE.PlaneGeometry(3.5,1.4),new THREE.MeshBasicMaterial({map:osc,transparent:true}));
+  oscMesh.position.set(-4.5,3.5,0); genScene.add(oscMesh);
+  oscMesh.userData.tex=osc;
+
+  addOrbit(genRen,genCam);
+  const emfTrail=[];
+  function loop(){
+    requestAnimationFrame(loop);
+    if(genRunning){
+      const omega=parseFloat(document.getElementById('genOmega').value)||2;
+      genT+=omega*.015;
+      genCoilGroup.rotation.y=genT;
+      // Oscilloscope update
+      const ctx2=genCanvas2d.getContext('2d');
+      ctx2.fillStyle='#07090F'; ctx2.fillRect(0,0,180,70);
+      emfTrail.push(Math.sin(genT));
+      if(emfTrail.length>160)emfTrail.shift();
+      ctx2.beginPath();
+      for(let i=0;i<emfTrail.length;i++){
+        const px=i+10,py=35-emfTrail[i]*28;
+        i===0?ctx2.moveTo(px,py):ctx2.lineTo(px,py);
+      }
+      ctx2.strokeStyle='#FDBA74'; ctx2.lineWidth=1.8; ctx2.stroke();
+      ctx2.fillStyle='#64748B'; ctx2.font='9px monospace'; ctx2.fillText('e = e₀sinωt',6,10);
+      osc.needsUpdate=true;
+      const emfNow=(Math.sin(genT)*100).toFixed(1);
+      document.getElementById('genEMF').textContent=`e = ${emfNow}% of e₀`;
+    }
+    genRen.render(genScene,genCam);
+  }
+  loop();
+})();
+function updateGen(){
+  document.getElementById('genOmegaVal').textContent=`ω = ${document.getElementById('genOmega').value} rad/s`;
+  document.getElementById('genNVal').textContent=`N = ${document.getElementById('genN').value}`;
+}
+function toggleGen(){genRunning=!genRunning;const b=document.getElementById('genBtn');b.textContent=genRunning?'⏸ Pause':'▶ Resume';b.className=genRunning?'btn btn-p':'btn btn-o';}
+
+// ═══════════════════════════════════════════════
+// SCENE 6: SELF-INDUCTANCE SOLENOID
+// ═══════════════════════════════════════════════
+let selfScene,selfCam,selfRen;
+(function(){
+  const cont=document.getElementById('selfContainer');
+  const H=380; selfRen=makeRenderer(cont,H);
+  selfScene=new THREE.Scene(); lights(selfScene);
+  selfCam=makeCam(cont.clientWidth,H,[0,4,11]); addOrbit(selfRen,selfCam);
+
+  // Solenoid (many rings)
+  const nRings=30;
+  for(let i=0;i<nRings;i++){
+    const x=i/nRings*6-3;
+    const r=mkTorus(.8,.06,0x5EEAD4,48); r.position.set(x,0,0); r.rotation.y=Math.PI/2; selfScene.add(r);
+  }
+  // End caps
+  const capMat=new THREE.MeshStandardMaterial({color:0x1E3A5F,.3:.3,roughness:.7});
+  [-3,3].forEach(x=>{const cap=mkCyl(.8,.8,.08,32,0x1E3A5F,.3,.7);cap.rotation.z=Math.PI/2;cap.position.set(x,0,0);selfScene.add(cap);});
+
+  // B field arrows inside
+  for(let x=-2.5;x<=2.5;x+=1){
+    mkArrow3D(selfScene,new THREE.Vector3(x-.4,0,0),new THREE.Vector3(x+.4,0,0),0xA78BFA,.04);
+  }
+  mkLabel('B →',2.8,.4,.3,'#A78BFA',16,selfScene);
+
+  // Current in/out labels
+  mkLabel('I →',-4.2,.3,.3,'#4ADE80',16,selfScene);
+  // Back EMF label
+  mkLabel('e_back = −L·dI/dt',.5,1.6,.3,'#F87171',14,selfScene);
+  const backArr=mkCyl(.04,.04,1.2,6,0xF87171,.2,.5); backArr.rotation.z=Math.PI/2; backArr.position.set(-2.5,1.2,.2); selfScene.add(backArr);
+
+  addOrbit(selfRen,selfCam);
+  function loop(){requestAnimationFrame(loop);selfRen.render(selfScene,selfCam);}
+  loop();
+  calcSelf();
+})();
+
+function calcSelf(){
+  const N=parseFloat(document.getElementById('selfN').value);
+  const l=parseFloat(document.getElementById('selfL').value)/100;
+  const A=parseFloat(document.getElementById('selfA').value)*1e-4;
+  const mu=parseFloat(document.getElementById('selfMu').value);
+  document.getElementById('selfNVal').textContent=`N = ${N}`;
+  document.getElementById('selfLVal').textContent=`l = ${Math.round(l*100)} cm`;
+  document.getElementById('selfAVal').textContent=`A = ${Math.round(A*1e4)} cm²`;
+  const L=4*Math.PI*1e-7*mu*N*N*A/l;
+  const unit=L>=1?`${L.toFixed(3)} H`:L>=1e-3?`${(L*1e3).toFixed(2)} mH`:`${(L*1e6).toFixed(1)} μH`;
+  document.getElementById('selfResult').innerHTML=`<strong>L = μ₀μᵣN²A/l = ${unit}</strong> (μᵣ = ${mu}× boost)`;
+}
+
+// ═══════════════════════════════════════════════
+// SCENE 7: MUTUAL INDUCTION
+// ═══════════════════════════════════════════════
+let mutScene,mutCam,mutRen,mutRunning=true,mutT=0;
+(function(){
+  const cont=document.getElementById('mutualContainer');
+  const H=400; mutRen=makeRenderer(cont,H);
+  mutScene=new THREE.Scene(); lights(mutScene);
+  mutCam=makeCam(cont.clientWidth,H,[0,5,13]); addOrbit(mutRen,mutCam);
+
+  // Primary coil (left)
+  const pMat=new THREE.MeshStandardMaterial({color:0xFDBA74,metalness:.6,roughness:.3});
+  for(let i=0;i<12;i++){
+    const r=new THREE.Mesh(new THREE.TorusGeometry(1.1,.06,12,48),pMat);
+    r.position.set(-3+i*.12-.6,0,0); r.rotation.y=Math.PI/2; mutScene.add(r);
+  }
+  mkLabel('Primary (L₁)',-3,1.8,.5,'#FDBA74',16,mutScene);
+  mkLabel('I₁(t) →',-3.8,.3,.5,'#FDBA74',14,mutScene);
+
+  // Iron core
+  const core=mkCyl(.5,.5,5,32,0x6D28D9,.5,.4); core.rotation.z=Math.PI/2; mutScene.add(core);
+
+  // Secondary coil (right)
+  const sMat=new THREE.MeshStandardMaterial({color:0x5EEAD4,metalness:.6,roughness:.3});
+  for(let i=0;i<12;i++){
+    const r=new THREE.Mesh(new THREE.TorusGeometry(1.2,.07,12,48),sMat);
+    r.position.set(1.2+i*.16-.6,0,0); r.rotation.y=Math.PI/2; mutScene.add(r);
+  }
+  mkLabel('Secondary (L₂)',2.5,1.8,.5,'#5EEAD4',16,mutScene);
+  mkLabel('e₂ = −M·dI₁/dt',2.5,.3,.5,'#5EEAD4',14,mutScene);
+
+  // Shared flux arrows
+  for(let x=-1.5;x<=1.5;x+=.8){
+    mkArrow3D(mutScene,new THREE.Vector3(x-.3,0,0),new THREE.Vector3(x+.3,0,0),0xA78BFA,.04);
+  }
+  mkLabel('Shared Φ',0,-1.5,.5,'#A78BFA',14,mutScene);
+
+  // Galvanometer for secondary
+  const galvo=mkBox(1,.5,.4,0x1E293B,.3,.8); galvo.position.set(2.5,-2.5,0); mutScene.add(galvo);
+  mkLabel('G (output)',2.5,-3.2,.4,'#94A3B8',14,mutScene);
+
+  addOrbit(mutRen,mutCam);
+  function loop(){
+    requestAnimationFrame(loop);
+    if(mutRunning){
+      const freq=parseFloat(document.getElementById('mutFreq').value)||1.5;
+      const k=parseFloat(document.getElementById('mutK').value)||.8;
+      mutT+=freq*.015;
+      // Pulse the shared flux color
+      const pulse=Math.abs(Math.sin(mutT));
+      const col=new THREE.Color(0xA78BFA).lerp(new THREE.Color(0x1E293B),1-pulse*k);
+    }
+    mutRen.render(mutScene,mutCam);
+  }
+  loop();
+})();
+function updateMutual(){
+  document.getElementById('mutFreqVal').textContent=`f = ${document.getElementById('mutFreq').value} Hz`;
+  document.getElementById('mutKVal').textContent=`k = ${document.getElementById('mutK').value}`;
+}
+function toggleMutual(){mutRunning=!mutRunning;const b=document.getElementById('mutBtn');b.textContent=mutRunning?'⏸ Pause':'▶ Resume';b.className=mutRunning?'btn btn-p':'btn btn-o';}
+
+// ═══════════════════════════════════════════════
+// SCENE 8: ENERGY IN INDUCTOR
+// ═══════════════════════════════════════════════
+let enScene,enCam,enRen,enFieldMeshes=[],enT=0;
+(function(){
+  const cont=document.getElementById('energyContainer');
+  const H=380; enRen=makeRenderer(cont,H);
+  enScene=new THREE.Scene(); lights(enScene);
+  enCam=makeCam(cont.clientWidth,H,[0,4,11]); addOrbit(enRen,enCam);
+
+  // Solenoid
+  for(let i=0;i<20;i++){
+    const x=i/19*5-2.5;
+    const r=mkTorus(.9,.065,0x5EEAD4,48); r.position.set(x,0,0); r.rotation.y=Math.PI/2; enScene.add(r);
+  }
+
+  // Energy glow field inside solenoid
+  for(let i=0;i<8;i++){
+    const fm=mkCyl(.85,.85,.01,32,0xA78BFA,.1,.9);
+    fm.material.opacity=0.2; fm.material.transparent=true;
+    fm.rotation.z=Math.PI/2; fm.position.set(i*.6-2.1,0,0);
+    enScene.add(fm); enFieldMeshes.push(fm);
+  }
+  mkLabel('Stored energy U = ½LI²',.5,2,.3,'#FDBA74',14,enScene);
+  mkLabel('B field inside',0,-1.5,.5,'#A78BFA',14,enScene);
+
+  addOrbit(enRen,enCam);
+  function loop(){
+    requestAnimationFrame(loop);
+    enT+=.02;
+    const pulse=.15+.08*Math.sin(enT);
+    enFieldMeshes.forEach((m,i)=>{m.material.opacity=pulse+i*.01;});
+    enRen.render(enScene,enCam);
+  }
+  loop();
+  calcEnergy();
+})();
+
+function calcEnergy(){
+  const I=parseFloat(document.getElementById('enI').value);
+  const L=parseFloat(document.getElementById('enL').value)/1000;
+  document.getElementById('enIVal').textContent=`I = ${I.toFixed(1)} A`;
+  document.getElementById('enLVal').textContent=`L = ${Math.round(L*1000)} mH`;
+  const U=.5*L*I*I;
+  document.getElementById('enValue').textContent=`${U.toFixed(4)} J`;
+  // Scale field glow with energy
+  enFieldMeshes.forEach(m=>m.material.opacity=0.05+U*.5);
+}
+
+// ═══════════════════════════════════════════════
+// SCENE 9: FULL SIMULATOR
+// ═══════════════════════════════════════════════
+let simScene,simCam,simRen,simMode='faraday',simT=0,simMag,simCoilGrp;
+(function(){
+  const cont=document.getElementById('simContainer');
+  const H=440; simRen=makeRenderer(cont,H);
+  simScene=new THREE.Scene(); lights(simScene);
+  simCam=makeCam(cont.clientWidth,H,[0,5,12]); addOrbit(simRen,simCam);
+  buildSimScene('faraday');
+  function loop(){
+    requestAnimationFrame(loop);
+    simT+=0.02;
+    animateSim();
+    simRen.render(simScene,simCam);
+    calcSimAll();
+  }
+  loop();
+})();
+
+function buildSimScene(mode){
+  // Clear scene (keep lights)
+  while(simScene.children.length>2)simScene.remove(simScene.children[2]);
+  simMag=null; simCoilGrp=null;
+  if(mode==='faraday'||mode==='inductor'){
+    // Coil
+    simCoilGrp=new THREE.Group();
+    for(let i=0;i<10;i++){const r=mkTorus(1.5,.07,0x5EEAD4,48);r.position.set(i*.12-.54,0,0);r.rotation.y=Math.PI/2;simCoilGrp.add(r);}
+    simScene.add(simCoilGrp);
+    if(mode==='faraday'){
+      simMag=new THREE.Group();
+      const n=mkBox(.7,1.8,.7,0xEF4444,.7,.3); n.position.set(0,.9,0); simMag.add(n);
+      const s=mkBox(.7,1.8,.7,0x3B82F6,.7,.3); s.position.set(0,-.9,0); simMag.add(s);
+      simMag.rotation.x=Math.PI/2; simMag.position.set(0,0,-4);
+      simScene.add(simMag);
+    }
+  } else if(mode==='motional'){
+    for(let x=-4;x<=4;x+=1.2)for(let y=-2;y<=2;y+=1.2)mkFieldDot(simScene,x,y,0,true);
+    const r=mkCyl(.08,.08,3.6,8,0x4ADE80,.6,.3); r.rotation.z=Math.PI/2; r.position.set(-3,0,0);
+    simScene.add(r);
+    const rT=mkBox(.08,.08,8,.94A3B8); rT.position.set(0,1.8,0); simScene.add(rT);
+    const rB=mkBox(.08,.08,8,.94A3B8); rB.position.set(0,-1.8,0); simScene.add(rB);
+  } else if(mode==='generator'){
+    const nM=mkBox(1,5,.9,0xEF4444,.7,.3); nM.position.set(-3,0,0); simScene.add(nM);
+    const sM=mkBox(1,5,.9,0x3B82F6,.7,.3); sM.position.set(3,0,0); simScene.add(sM);
+    simCoilGrp=new THREE.Group();
+    [[-1,0,0,.1,3.5,.1],[1,0,0,.1,3.5,.1],[0,1.75,0,2.1,.1,.1],[0,-1.75,0,2.1,.1,.1]].forEach(([x,y,z,w,h,d])=>{
+      const b=mkBox(w,h,d,0x5EEAD4,.6,.3); b.position.set(x,y,z); simCoilGrp.add(b);
+    });
+    simScene.add(simCoilGrp);
+  }
+}
+
+function animateSim(){
+  if(simMode==='faraday'&&simMag){simMag.position.z=Math.sin(simT)*3-1;}
+  else if(simMode==='generator'&&simCoilGrp){simCoilGrp.rotation.y=simT;}
+  else if(simMode==='inductor'&&simCoilGrp){simCoilGrp.scale.set(1,.98+.02*Math.sin(simT*3),1);}
+}
+
+function updateSimMode(){
+  simMode=document.getElementById('simMode').value;
+  buildSimScene(simMode);
+  calcSimAll();
+}
+
+let simLast=0;
+function calcSimAll(){
+  const now=Date.now(); if(now-simLast<100)return; simLast=now;
+  const N=parseFloat(document.getElementById('simN').value);
+  const B=parseFloat(document.getElementById('simB').value);
+  const R=parseFloat(document.getElementById('simR').value);
+  document.getElementById('simNv').textContent=`N = ${N}`;
+  document.getElementById('simBv').textContent=`B = ${B} T`;
+  document.getElementById('simRv').textContent=`R = ${R} Ω`;
+  const A=0.01, omega=2, v=5, l=0.5, L=1e-3, I_self=2;
+  let rows='';
+  if(simMode==='faraday'){
+    const phi=N*B*A; const e=N*B*A*omega; const curr=e/R; const q=N*B*A/R;
+    rows=`${sr('NΦ_B (flux linkage)',phi.toExponential(3)+' Wb','#FDBA74')}${sr('e = N·dΦ/dt',e.toFixed(4)+' V','#F87171')}${sr('I = e/R',(curr).toFixed(5)+' A','#4ADE80')}${sr('q = NΔΦ/R',q.toFixed(5)+' C','#A78BFA')}`;
+  } else if(simMode==='motional'){
+    const e=B*l*v; const curr=e/R;
+    rows=`${sr('e = Blv',e.toFixed(3)+' V','#FDBA74')}${sr('I = e/R',curr.toFixed(4)+' A','#4ADE80')}${sr('Power = eI',(e*curr).toFixed(4)+' W','#F87171')}${sr('F on rod = BIl',(B*curr*l).toFixed(4)+' N','#A78BFA')}`;
+  } else if(simMode==='generator'){
+    const e0=N*B*A*omega; const rms=e0/Math.sqrt(2);
+    rows=`${sr('e₀ = NBAω',e0.toFixed(4)+' V','#FDBA74')}${sr('e_rms = e₀/√2',rms.toFixed(4)+' V','#F87171')}${sr('I_rms = e_rms/R',(rms/R).toFixed(5)+' A','#4ADE80')}${sr('f = ω/2π',(omega/(2*Math.PI)).toFixed(3)+' Hz','#A78BFA')}`;
+  } else {
+    const U=.5*L*I_self*I_self; const u=B*B/(2*4*Math.PI*1e-7);
+    rows=`${sr('L = μ₀N²A/l',(4*Math.PI*1e-7*N*N*A/.1).toExponential(3)+' H','#A78BFA')}${sr('U = ½LI²',U.toFixed(5)+' J','#FDBA74')}${sr('e_back = −L·dI/dt','−L×(dI/dt)','#F87171')}${sr('u = B²/2μ₀',u.toFixed(1)+' J/m³','#4ADE80')}`;
+  }
+  document.getElementById('simResults').innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:11px;">${rows}</div>`;
+}
+function sr(l,v,c){return `<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:10px 13px"><div style="font-size:10px;color:#64748B;font-weight:700;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px">${l}</div><div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:${c};font-weight:600">${v}</div></div>`;}
+
+// ═══════════════════════════════════════════════
+// RESIZE
+// ═══════════════════════════════════════════════
+const allScenes=[
+  {r:()=>fluxRen,c:()=>fluxCam,id:'fluxContainer',h:400},
+  {r:()=>farRen,c:()=>farCam,id:'faradayContainer',h:420},
+  {r:()=>lenzRen,c:()=>lenzCam,id:'lenzContainer',h:420},
+  {r:()=>motRen,c:()=>motCam,id:'motionalContainer',h:400},
+  {r:()=>genRen,c:()=>genCam,id:'generatorContainer',h:420},
+  {r:()=>selfRen,c:()=>selfCam,id:'selfContainer',h:380},
+  {r:()=>mutRen,c:()=>mutCam,id:'mutualContainer',h:400},
+  {r:()=>enRen,c:()=>enCam,id:'energyContainer',h:380},
+  {r:()=>simRen,c:()=>simCam,id:'simContainer',h:440},
+];
+window.addEventListener('resize',()=>{
+  allScenes.forEach(({r,c,id,h})=>{
+    try{const W=document.getElementById(id).clientWidth;r().setSize(W,h);c().aspect=W/h;c().updateProjectionMatrix();}catch(e){}
+  });
+  updateFlux();
+});
+
+// Initial calc
+calcMotional();
+updateGen();
+updateMutual();
+calcSimAll();
+</script>
+</body>
+</html>

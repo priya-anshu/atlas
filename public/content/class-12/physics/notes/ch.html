@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 4 — Moving Charges & Magnetism</title>
+
+<!-- React must load first -->
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Framer Motion v10 UMD — exposes window.Motion reliably -->
+<script src="https://cdn.jsdelivr.net/npm/framer-motion@10.18.0/dist/framer-motion.js"></script>
+
+<!-- Lucide (plain JS icons, no React dependency issues) -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+<!-- Babel for JSX -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        display: ['Crimson Pro','Georgia','serif'],
+        body:    ['Outfit','sans-serif'],
+        mono:    ['JetBrains Mono','monospace'],
+      }
+    }
+  }
+}
+</script>
+
+<style>
+*{box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;background:#fdf6ed;min-height:100vh}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:#faeeda}
+::-webkit-scrollbar-thumb{background:#c47f17;border-radius:10px}
+
+@keyframes spin-slow{to{transform:rotate(360deg)}}
+@keyframes float-up{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes glow-pulse{0%,100%{box-shadow:0 0 0 0 rgba(196,127,23,0)}50%{box-shadow:0 0 20px 6px rgba(196,127,23,0.25)}}
+@keyframes dash-flow{to{stroke-dashoffset:-40}}
+@keyframes dash-flow-rev{to{stroke-dashoffset:40}}
+
+.float{animation:float-up 3s ease-in-out infinite}
+.glow{animation:glow-pulse 2.5s ease-in-out infinite}
+.flow{animation:dash-flow 1.4s linear infinite}
+.flow-rev{animation:dash-flow-rev 1.4s linear infinite}
+.flow-slow{animation:dash-flow 2.2s linear infinite}
+
+input[type=range]{-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:#e8d5b5;outline:none;width:100%}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#c47f17;cursor:pointer;box-shadow:0 2px 6px rgba(196,127,23,0.4);transition:background .15s}
+input[type=range]::-webkit-slider-thumb:hover{background:#e8a030}
+
+.tab-active{background:linear-gradient(135deg,#c47f17,#e8a030);color:white;box-shadow:0 4px 14px rgba(196,127,23,0.4)}
+.formula-card{background:linear-gradient(135deg,#fdf6ed,#faeeda);border:1px solid #e8d5b5;border-left:4px solid #c47f17}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel" data-presets="react">
+const { useState, useEffect, useRef } = React;
+
+// ── grab motion from the correct global ──
+const { motion, AnimatePresence } = window.Motion || window.FramerMotion || {};
+
+// ── Lucide icons rendered as inline SVG via the lucide UMD ──
+function Icon({ name, size=16, color='currentColor', strokeWidth=2 }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!ref.current || !window.lucide) return;
+    const iconData = window.lucide[name];
+    if (!iconData) return;
+    const [tag, attrs, children=[]] = iconData;
+    ref.current.setAttribute('width', size);
+    ref.current.setAttribute('height', size);
+    ref.current.setAttribute('viewBox', '0 0 24 24');
+    ref.current.setAttribute('fill', 'none');
+    ref.current.setAttribute('stroke', color);
+    ref.current.setAttribute('stroke-width', strokeWidth);
+    ref.current.setAttribute('stroke-linecap', 'round');
+    ref.current.setAttribute('stroke-linejoin', 'round');
+    ref.current.innerHTML = children.map(([t,a]) =>
+      `<${t} ${Object.entries(a).map(([k,v])=>`${k}="${v}"`).join(' ')}/>`
+    ).join('');
+  }, [name, size, color]);
+  return <svg ref={ref} />;
+}
+
+// ── Wrapper components for motion with fallback ──
+const MDiv = motion ? motion.div : ({children, className, style, onClick}) =>
+  <div className={className} style={style} onClick={onClick}>{children}</div>;
+
+const MButton = motion ? motion.button : ({children, className, onClick}) =>
+  <button className={className} onClick={onClick}>{children}</button>;
+
+// ── Shared slider ──
+function Slider({ label, min, max, step=1, value, onChange, unit='' }) {
+  return (
+    <div className="flex items-center gap-3 mb-3">
+      <span style={{fontFamily:"'Outfit',sans-serif",fontSize:12,color:'#7a4e0a',minWidth:88,flexShrink:0}}>{label}</span>
+      <input type="range" min={min} max={max} step={step} value={value}
+        onChange={e => onChange(+e.target.value)} />
+      <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:12,color:'#c47f17',minWidth:52,textAlign:'right',fontWeight:500}}>
+        {value}{unit}
+      </span>
+    </div>
+  );
+}
+
+// ── Formula box ──
+function FormulaBox({ children, title }) {
+  return (
+    <div className="formula-card rounded-xl p-4 mt-4">
+      {title && <div style={{fontFamily:"'Outfit',sans-serif",fontSize:11,fontWeight:500,color:'#7a4e0a',textTransform:'uppercase',letterSpacing:'1.5px',marginBottom:8}}>{title}</div>}
+      <pre style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,color:'#2e1f0e',lineHeight:1.9,whiteSpace:'pre-wrap',margin:0}}>{children}</pre>
+    </div>
+  );
+}
+
+// ── Info card ──
+function InfoCard({ title, value, iconName }) {
+  const Wrap = motion ? motion.div : 'div';
+  const props = motion ? {whileHover:{y:-3,boxShadow:'0 8px 20px rgba(196,127,23,0.15)'}} : {};
+  return (
+    <Wrap {...props} style={{background:'rgba(255,255,255,0.65)',border:'1px solid #f0dfc5',borderRadius:12,padding:'14px 16px',cursor:'default'}}>
+      {iconName && <Icon name={iconName} size={18} color="#c47f17" />}
+      <div style={{fontFamily:"'Outfit',sans-serif",fontWeight:500,color:'#2e1f0e',fontSize:13,marginBottom:4,marginTop:6}}>{title}</div>
+      <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,color:'#7a4e0a',lineHeight:1.6,whiteSpace:'pre-wrap'}}>{value}</div>
+    </Wrap>
+  );
+}
+
+/* ═══════════════════════════
+   PANEL 1 — Biot–Savart
+═══════════════════════════ */
+function BiotSavartPanel() {
+  const [I,  setI]     = useState(5);
+  const [dl, setDl]    = useState(3);
+  const [r,  setR]     = useState(5);
+  const [theta,setTh]  = useState(90);
+  const cvs = useRef(null);
+
+  const mu0 = 4*Math.PI*1e-7;
+  const dB  = (mu0/(4*Math.PI)) * (I * dl*1e-3 * Math.sin(theta*Math.PI/180)) / (r*r*1e-4);
+  const dBpT = (dB*1e12).toFixed(3);
+
+  useEffect(() => {
+    const c = cvs.current; if(!c) return;
+    const ctx = c.getContext('2d');
+    const W=c.width, H=c.height, cx=W/2, cy=H/2+10;
+    ctx.clearRect(0,0,W,H);
+    ctx.fillStyle='#fdf6ed'; ctx.fillRect(0,0,W,H);
+
+    // grid
+    ctx.strokeStyle='rgba(196,127,23,0.07)'; ctx.lineWidth=1;
+    for(let x=0;x<W;x+=30){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=30){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+    const th = theta*Math.PI/180;
+    const px = cx + r*16*Math.cos(-th+Math.PI/2);
+    const py = cy + r*16*Math.sin(-th+Math.PI/2);
+
+    // r dashed vector
+    ctx.save(); ctx.strokeStyle='#9c7a50'; ctx.lineWidth=1.5; ctx.setLineDash([5,3]);
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(px,py); ctx.stroke();
+    ctx.restore();
+
+    // arrowhead on r
+    const dx2=px-cx,dy2=py-cy,len2=Math.sqrt(dx2*dx2+dy2*dy2);
+    const nx2=dx2/len2, ny2=dy2/len2;
+    ctx.save(); ctx.strokeStyle='#9c7a50'; ctx.lineWidth=1.5; ctx.lineCap='round';
+    ctx.beginPath();
+    ctx.moveTo(px-nx2*10+ny2*5,py-ny2*10-nx2*5);
+    ctx.lineTo(px,py);
+    ctx.lineTo(px-nx2*10-ny2*5,py-ny2*10+nx2*5);
+    ctx.stroke(); ctx.restore();
+
+    // theta arc
+    ctx.save(); ctx.strokeStyle='#1d9e75'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(cx,cy,36,Math.PI*1.5,Math.PI*1.5-(Math.PI/2-th+Math.PI/2),false); ctx.stroke();
+    ctx.fillStyle='#1d9e75'; ctx.font='11px JetBrains Mono';
+    ctx.fillText(`θ=${theta}°`,cx+10,cy-28); ctx.restore();
+
+    // wire gradient
+    const g = ctx.createLinearGradient(cx-6,0,cx+6,0);
+    g.addColorStop(0,'#c47f17'); g.addColorStop(1,'#e8a030');
+    ctx.save(); ctx.strokeStyle=g; ctx.lineWidth=6; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(cx,cy+55); ctx.lineTo(cx,cy-55); ctx.stroke(); ctx.restore();
+
+    // current arrow
+    ctx.save(); ctx.strokeStyle='#e8a030'; ctx.lineWidth=2.5; ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(cx-8,cy-30); ctx.lineTo(cx,cy-50); ctx.lineTo(cx+8,cy-30); ctx.stroke(); ctx.restore();
+
+    // dl highlight box
+    ctx.save(); ctx.fillStyle='rgba(196,127,23,0.12)';
+    ctx.beginPath(); ctx.roundRect(cx-7,cy-16,14,32,3); ctx.fill();
+    ctx.strokeStyle='rgba(196,127,23,0.5)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.roundRect(cx-7,cy-16,14,32,3); ctx.stroke(); ctx.restore();
+    ctx.fillStyle='#9c7a50'; ctx.font='11px JetBrains Mono'; ctx.textAlign='center';
+    ctx.fillText('dl',cx+18,cy+5);
+
+    // point P
+    ctx.save(); ctx.fillStyle='#b84c1a';
+    ctx.beginPath(); ctx.arc(px,py,7,0,Math.PI*2); ctx.fill(); ctx.restore();
+    ctx.fillStyle='#7a2e0d'; ctx.font='bold 13px Outfit'; ctx.textAlign='left';
+    ctx.fillText('P',px+12,py+5);
+
+    // dB symbol (out of page ⊙)
+    const dbx=px, dby=py-60;
+    ctx.save(); ctx.strokeStyle='#b84c1a'; ctx.lineWidth=2;
+    ctx.beginPath(); ctx.arc(dbx,dby,16,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle='#b84c1a'; ctx.beginPath(); ctx.arc(dbx,dby,5,0,Math.PI*2); ctx.fill(); ctx.restore();
+    ctx.fillStyle='#b84c1a'; ctx.font='11px JetBrains Mono'; ctx.textAlign='center';
+    ctx.fillText('dB ⊙',dbx,dby+32);
+
+    // r label
+    ctx.fillStyle='#9c7a50'; ctx.font='12px JetBrains Mono'; ctx.textAlign='center';
+    ctx.fillText(`r=${r}cm`,(cx+px)/2+8,(cy+py)/2-10);
+
+    // wire label
+    ctx.fillStyle='#c47f17'; ctx.font='500 12px Outfit'; ctx.textAlign='right';
+    ctx.fillText(`I=${I}A ↑`,cx-14,cy-58);
+
+    // wire center dot
+    ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(cx,cy,5,0,Math.PI*2); ctx.fill();
+
+  }, [I,dl,r,theta]);
+
+  return (
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24}}>
+      <div>
+        <div style={{background:'rgba(255,255,255,0.55)',borderRadius:16,padding:16,border:'1px solid #f0dfc5',marginBottom:16}}>
+          <Slider label="Current I" min={1} max={20} value={I} onChange={setI} unit=" A"/>
+          <Slider label="Element dl" min={1} max={10} value={dl} onChange={setDl} unit=" mm"/>
+          <Slider label="Distance r" min={2} max={15} value={r} onChange={setR} unit=" cm"/>
+          <Slider label="Angle θ" min={10} max={170} value={theta} onChange={setTh} unit="°"/>
+        </div>
+
+        <div className="glow" style={{background:'linear-gradient(135deg,#faeeda,#fdf6ed)',border:'2px solid #e8a030',borderRadius:16,padding:16,textAlign:'center'}}>
+          <div style={{fontFamily:"'Outfit',sans-serif",fontSize:11,color:'#c47f17',letterSpacing:'1.5px',textTransform:'uppercase',marginBottom:4}}>Computed dB</div>
+          <div style={{fontFamily:"'Crimson Pro',serif",fontSize:36,fontWeight:600,color:'#7a4e0a'}}>{dBpT}</div>
+          <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,color:'#9c7a50'}}>picotesla (pT)</div>
+        </div>
+
+        <FormulaBox title="Biot–Savart Law">
+{`dB = (μ₀/4π) · I·dl·sinθ / r²
+μ₀ = 4π×10⁻⁷ T·m/A
+Direction: dl × r̂  (right-hand rule)`}
+        </FormulaBox>
+      </div>
+
+      <div>
+        <div style={{fontFamily:"'Outfit',sans-serif",fontSize:11,color:'#9c7a50',textTransform:'uppercase',letterSpacing:'1.5px',textAlign:'center',marginBottom:8}}>Interactive Diagram</div>
+        <canvas ref={cvs} width={320} height={290}
+          style={{borderRadius:16,border:'1px solid #f0dfc5',width:'100%'}}/>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8,marginTop:12}}>
+          {[
+            {k:'dB ∝ I',    v:'More current → stronger field'},
+            {k:'dB ∝ dl',   v:'Longer element → more field'},
+            {k:'dB ∝ 1/r²', v:'Field falls with distance²'},
+          ].map((item,i)=>(
+            <div key={i} style={{background:'rgba(255,255,255,0.6)',border:'1px solid #f0dfc5',borderRadius:12,padding:'10px 8px',textAlign:'center'}}>
+              <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,fontWeight:500,color:'#c47f17'}}>{item.k}</div>
+              <div style={{fontFamily:"'Outfit',sans-serif",fontSize:11,color:'#7a4e0a',marginTop:4,lineHeight:1.4}}>{item.v}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════
+   PANEL 2 — ε₀ & μ₀
+═══════════════════════════ */
+function PermPanel() {
+  const [tick,setTick] = useState(0);
+  useEffect(()=>{ const id=setInterval(()=>setTick(t=>t+1),40); return()=>clearInterval(id); },[]);
+  const t = tick*0.04;
+  const W=580, H=180;
+  const pts = n => Array.from({length:n},(_, i)=>i);
+
+  const ePath = pts(150).map(i=>{
+    const x=20+i*(W-40)/149;
+    const y=H/2 - 62*Math.sin(2*Math.PI*i/149*3 - t);
+    return `${i===0?'M':'L'}${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+
+  const bPath = pts(150).map(i=>{
+    const x=20+i*(W-40)/149;
+    const y=H/2 - 46*Math.cos(2*Math.PI*i/149*3 - t);
+    return `${i===0?'M':'L'}${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+
+  return (
+    <div>
+      <div style={{fontFamily:"'Outfit',sans-serif",fontSize:11,color:'#9c7a50',textTransform:'uppercase',letterSpacing:'1.5px',textAlign:'center',marginBottom:12}}>
+        Electromagnetic Wave — E &amp; B fields oscillate perpendicular, propagating at c
+      </div>
+      <div style={{background:'linear-gradient(135deg,#fdf9f4,#fff)',border:'1px solid #f0dfc5',borderRadius:16,padding:8,marginBottom:20}}>
+        <svg width="100%" viewBox={`0 0 ${W} ${H}`}>
+          {pts(6).map(i=>(
+            <line key={i} x1={20+i*(W-40)/5} y1={15} x2={20+i*(W-40)/5} y2={H-15}
+              stroke="rgba(196,127,23,0.07)" strokeWidth="1"/>
+          ))}
+          <line x1={20} y1={H/2} x2={W-20} y2={H/2} stroke="rgba(196,127,23,0.15)" strokeWidth="1" strokeDasharray="5 4"/>
+          <path d={ePath} fill="none" stroke="#c47f17" strokeWidth="2.5" strokeLinecap="round"/>
+          <path d={bPath} fill="none" stroke="#185fa5" strokeWidth="2" strokeLinecap="round" opacity="0.85"/>
+          <text x={22} y={22} fontSize="12" fill="#c47f17" fontWeight="500" fontFamily="Outfit">E — electric field (governed by ε₀)</text>
+          <text x={22} y={H-8} fontSize="12" fill="#185fa5" fontWeight="500" fontFamily="Outfit">B — magnetic field (governed by μ₀)</text>
+          <text x={W/2} y={H/2+18} fontSize="11" fill="#9c7a50" textAnchor="middle" fontFamily="JetBrains Mono">→ c = 1/√(ε₀μ₀) = 3×10⁸ m/s →</text>
+        </svg>
+      </div>
+
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:16}}>
+        {[
+          {iconName:'zap',       title:'ε₀ — Electric permittivity of free space', value:'8.854×10⁻¹² C²/N·m²\nResists electric field formation.\nCoulomb: F = q²/(4πε₀r²)'},
+          {iconName:'magnet',    title:'μ₀ — Magnetic permeability of free space', value:'4π×10⁻⁷ T·m/A\nEase of magnetic field formation.\nBiot–Savart: dB ∝ μ₀I dl/r²'},
+          {iconName:'radio',     title:'Speed of light — Maxwell\'s unification',    value:'c = 1/√(ε₀μ₀) = 3×10⁸ m/s\nElectricity + Magnetism = Light\nMaxwell\'s greatest prediction'},
+          {iconName:'activity',  title:'Coulomb constant k',                         value:'k = 1/(4πε₀) = 9×10⁹ N·m²/C²\nStrength of electrostatic force.\nF = kq₁q₂/r²'},
+        ].map((item,i) => <InfoCard key={i} {...item}/>)}
+      </div>
+
+      <FormulaBox title="Key unifying relation">
+{`c = 1/√(ε₀μ₀)   ← Maxwell\'s electromagnetic wave equation
+ε₀ = 1/(μ₀c²)   ↔   μ₀ = 1/(ε₀c²)   (dual roles in EM theory)`}
+      </FormulaBox>
+    </div>
+  );
+}
+
+/* ═══════════════════════════
+   PANEL 3 — Wire Field
+═══════════════════════════ */
+function WirePanel() {
+  const [I,setI]       = useState(10);
+  const [tick,setTick] = useState(0);
+  useEffect(()=>{ const id=setInterval(()=>setTick(t=>t+1),50); return()=>clearInterval(id); },[]);
+
+  const mu0 = 4*Math.PI*1e-7;
+  const radii = [35,65,100,140,185,230];
+  const cx=200, cy=200;
+  const offset = -(tick*1.8)%40;
+
+  return (
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24}}>
+      <div>
+        <div style={{background:'rgba(255,255,255,0.55)',borderRadius:16,padding:16,border:'1px solid #f0dfc5',marginBottom:16}}>
+          <Slider label="Current I" min={1} max={40} value={I} onChange={setI} unit=" A"/>
+        </div>
+
+        <div style={{display:'flex',flexDirection:'column',gap:8,marginBottom:16}}>
+          {radii.slice(0,5).map((r,i)=>{
+            const B = mu0*I/(2*Math.PI*(r/200));
+            const BuT = (B*1e6).toFixed(2);
+            const pct = Math.max(8,(1-i*0.18)*100);
+            return (
+              <div key={i} style={{display:'flex',alignItems:'center',gap:10,background:'rgba(255,255,255,0.6)',border:'1px solid #f0dfc5',borderRadius:12,padding:'8px 12px'}}>
+                <div style={{width:12,height:12,borderRadius:'50%',background:`rgba(184,76,26,${1-i*0.18})`,flexShrink:0}}/>
+                <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,color:'#7a4e0a',flex:1}}>r = {(r/20).toFixed(1)} cm</div>
+                <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,fontWeight:500,color:'#c47f17',minWidth:80}}>{BuT} μT</div>
+                <div style={{width:60,height:5,borderRadius:3,background:'#faeeda',overflow:'hidden'}}>
+                  <div style={{height:'100%',background:'#c47f17',borderRadius:3,width:`${pct}%`,transition:'width .3s'}}/>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <FormulaBox title="Ampere\'s Law (infinite wire)">
+{`B = μ₀I / 2πr
+B ∝ I   |   B ∝ 1/r
+Field forms concentric circles.
+Direction: right-hand thumb rule`}
+        </FormulaBox>
+      </div>
+
+      <div>
+        <div style={{fontFamily:"'Outfit',sans-serif",fontSize:11,color:'#9c7a50',textTransform:'uppercase',letterSpacing:'1.5px',textAlign:'center',marginBottom:8}}>Live field visualization</div>
+        <div style={{background:'linear-gradient(135deg,#fdf9f4,#fff)',border:'1px solid #f0dfc5',borderRadius:16,overflow:'hidden'}}>
+          <svg width="100%" viewBox="0 0 400 400">
+            {radii.map((r,i)=>{
+              const alpha = Math.max(0.15,0.9-i*0.14);
+              const sw    = Math.max(0.8,2.2-i*0.27);
+              return (
+                <g key={i}>
+                  <circle cx={cx} cy={cy} r={r} fill="none"
+                    stroke={`rgba(184,76,26,${alpha})`}
+                    strokeWidth={sw}
+                    strokeDasharray="6 4"
+                    strokeDashoffset={offset}/>
+                  {/* direction arrow at top */}
+                  <polygon
+                    points={`${cx-6},${cy-r} ${cx+6},${cy-r} ${cx},${cy-r-7}`}
+                    fill={`rgba(184,76,26,${alpha})`}/>
+                </g>
+              );
+            })}
+
+            {/* Wire */}
+            <circle cx={cx} cy={cy} r={18} fill="#c47f17" opacity="0.9"/>
+            <circle cx={cx} cy={cy} r={13} fill="#e8a030"/>
+            <text x={cx} y={cy+5} fontSize="13" fill="white" textAnchor="middle" fontWeight="600">•</text>
+            <text x={cx} y={cy-25} fontSize="12" fill="#c47f17" textAnchor="middle" fontWeight="500">I={I}A ↑</text>
+
+            {/* r arrow */}
+            <line x1={cx} y1={cy} x2={cx+65} y2={cy} stroke="#1d9e75" strokeWidth="1.5" strokeDasharray="4 2"/>
+            <text x={cx+32} y={cy-6} fontSize="11" fill="#1d9e75" textAnchor="middle">r</text>
+
+            <text x={12} y={392} fontSize="11" fill="#9c7a50" fontFamily="JetBrains Mono">B = μ₀I / 2πr</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════
+   PANEL 4 — Maxwell & RHR
+═══════════════════════════ */
+function MaxwellPanel() {
+  const [view,setView]  = useState('rhr');
+  const [tick,setTick]  = useState(0);
+  useEffect(()=>{ const id=setInterval(()=>setTick(t=>t+1),50); return()=>clearInterval(id); },[]);
+
+  const ringOff = -(tick*1.8)%40;
+
+  // helix path
+  const helix = Array.from({length:360*3+1},(_,i)=>{
+    const rad=i*Math.PI/180;
+    const y=28+i*0.225;
+    const x=170+34*Math.sin(rad);
+    return `${i===0?'M':'L'}${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+
+  return (
+    <div>
+      <div style={{display:'flex',gap:10,marginBottom:24,justifyContent:'center',flexWrap:'wrap'}}>
+        {[
+          {id:'rhr',  label:'Right-Hand Thumb Rule'},
+          {id:'cork', label:"Maxwell\'s Corkscrew"},
+        ].map(btn=>(
+          <button key={btn.id} onClick={()=>setView(btn.id)}
+            className={view===btn.id?'tab-active':''}
+            style={{
+              fontFamily:"'Outfit',sans-serif",fontSize:13,padding:'8px 22px',borderRadius:24,
+              border:'1px solid #e8d5b5',cursor:'pointer',transition:'all .2s',
+              background:view===btn.id?undefined:'rgba(255,255,255,0.6)',
+              color:view===btn.id?undefined:'#7a4e0a',
+            }}>
+            {btn.label}
+          </button>
+        ))}
+      </div>
+
+      {view==='rhr' ? (
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24}}>
+          <div style={{background:'linear-gradient(135deg,#fdf9f4,#fff)',border:'1px solid #f0dfc5',borderRadius:16,overflow:'hidden'}}>
+            <svg width="100%" viewBox="0 0 300 360">
+              <rect x={144} y={20} width={12} height={320} rx={6} fill="#c47f17" opacity="0.9"/>
+              {/* current arrow */}
+              <path d="M150 50L150 24M143 44L150 24L157 44" fill="none" stroke="#e8a030" strokeWidth="2.5" strokeLinecap="round"/>
+              <text x={165} y={36} fontSize="12" fill="#c47f17" fontWeight="500" fontFamily="Outfit">I ↑</text>
+
+              {/* animated rings */}
+              {[75,130,190,248].map((y,i)=>(
+                <g key={i}>
+                  <ellipse cx={150} cy={y} rx={48+i*10} ry={13+i*3}
+                    fill="none"
+                    stroke={`rgba(184,76,26,${0.85-i*0.15})`}
+                    strokeWidth={2-i*0.3}
+                    strokeDasharray="6 3"
+                    strokeDashoffset={ringOff}/>
+                  <polygon
+                    points={`${150+48+i*10-2},${y} ${150+48+i*10+5},${y-3} ${150+48+i*10+5},${y+3}`}
+                    fill={`rgba(184,76,26,${0.85-i*0.15})`}/>
+                </g>
+              ))}
+
+              {/* thumb sketch */}
+              <path d="M100 180 C90 165 88 145 97 133 C106 120 120 124 122 139 C122 154 118 170 120 182"
+                fill="none" stroke="#2e1f0e" strokeWidth="3" strokeLinecap="round" opacity="0.6"/>
+
+              <text x={230} y={130} fontSize="12" fill="#b84c1a" fontWeight="500" fontFamily="Outfit">B →</text>
+            </svg>
+          </div>
+
+          <div style={{display:'flex',flexDirection:'column',justifyContent:'center',gap:16}}>
+            {[
+              {n:'1', t:'Point right thumb in direction of current (I ↑)', c:'#c47f17'},
+              {n:'2', t:'Curl your four fingers around the wire',          c:'#b84c1a'},
+              {n:'3', t:'Curled fingers show direction of circular B field lines', c:'#c47f17'},
+            ].map((s,i)=>(
+              <div key={i} style={{display:'flex',gap:14,alignItems:'flex-start'}}>
+                <div style={{width:30,height:30,borderRadius:'50%',background:s.c==='#c47f17'?'#faeeda':'#fce0d2',
+                  color:s.c,fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:500,
+                  display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                  {s.n}
+                </div>
+                <div style={{fontFamily:"'Outfit',sans-serif",fontSize:13,color:'#2e1f0e',lineHeight:1.6,paddingTop:4}}>{s.t}</div>
+              </div>
+            ))}
+            <FormulaBox title="Right-hand thumb rule">
+{`Thumb  → direction of I
+Fingers curl → direction of B
+B encircles the wire in closed loops`}
+            </FormulaBox>
+          </div>
+        </div>
+      ) : (
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24}}>
+          <div style={{background:'linear-gradient(135deg,#fdf9f4,#fff)',border:'1px solid #f0dfc5',borderRadius:16,overflow:'hidden'}}>
+            <svg width="100%" viewBox="0 0 340 365">
+              {/* shaft */}
+              <line x1={170} y1={18} x2={170} y2={345} stroke="#9c7a50" strokeWidth={3} opacity="0.35"/>
+              {/* helix */}
+              <path d={helix} fill="none" stroke="#c47f17" strokeWidth="2.5" strokeLinecap="round" opacity="0.85"/>
+
+              {/* advance arrow */}
+              <line x1={170} y1={340} x2={170} y2={290} stroke="#b84c1a" strokeWidth="2" strokeDasharray="5 3"/>
+              <polygon points="163,294 170,278 177,294" fill="#b84c1a"/>
+
+              {/* rotation arc */}
+              <path d="M138 68 A34 16 0 0 1 202 68" fill="none" stroke="#1d9e75" strokeWidth="2" strokeDasharray="5 3"/>
+              <polygon points="202,68 211,62 209,72" fill="#1d9e75"/>
+
+              <text x={210} y={65} fontSize="11" fill="#1d9e75" fontFamily="Outfit">rotate (I dir.)</text>
+              <text x={182} y={316} fontSize="11" fill="#b84c1a" fontFamily="Outfit">advance</text>
+              <text x={182} y={330} fontSize="11" fill="#b84c1a" fontFamily="Outfit">= B direction</text>
+
+              <rect x={146} y={18} width={48} height={22} rx={6} fill="rgba(196,127,23,0.15)"/>
+              <text x={170} y={33} fontSize="12" fill="#c47f17" textAnchor="middle" fontWeight="500" fontFamily="Outfit">I →</text>
+            </svg>
+          </div>
+
+          <div style={{display:'flex',flexDirection:'column',justifyContent:'center',gap:16}}>
+            {[
+              {n:'1', t:'Hold a right-handed (ordinary) screw',                   c:'#c47f17'},
+              {n:'2', t:'Rotate the screw in the direction of current flow',       c:'#b84c1a'},
+              {n:'3', t:'Direction the screw advances = direction of B field',     c:'#c47f17'},
+            ].map((s,i)=>(
+              <div key={i} style={{display:'flex',gap:14,alignItems:'flex-start'}}>
+                <div style={{width:30,height:30,borderRadius:'50%',background:s.c==='#c47f17'?'#faeeda':'#fce0d2',
+                  color:s.c,fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:500,
+                  display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                  {s.n}
+                </div>
+                <div style={{fontFamily:"'Outfit',sans-serif",fontSize:13,color:'#2e1f0e',lineHeight:1.6,paddingTop:4}}>{s.t}</div>
+              </div>
+            ))}
+            <FormulaBox title="Maxwell\'s corkscrew rule">
+{`Screw rotates in direction of I
+Screw advances in direction of B
+Equivalent to right-hand thumb rule`}
+            </FormulaBox>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════════════════
+   PANEL 5 — Circular Loop Axis
+═══════════════════════════ */
+function LoopPanel() {
+  const [I,setI] = useState(5);
+  const [R,setR] = useState(5);
+
+  const mu0 = 4*Math.PI*1e-7;
+  const Rm   = R/100;
+  const B0   = (mu0*I)/(2*Rm);
+
+  const GW=580, GH=80, nPts=200;
+  const graphPts = Array.from({length:nPts},(_,i)=>{
+    const xN = i/nPts*2-1;
+    const xM = xN*Rm*5;
+    const B  = mu0*I*Rm*Rm / (2*Math.pow(Rm*Rm+xM*xM,1.5));
+    const xP = 20+i*(GW-40)/nPts;
+    const yP = GH-8 - (B/B0)*(GH-18);
+    return `${i===0?'M':'L'}${xP.toFixed(1)},${yP.toFixed(1)}`;
+  }).join(' ');
+
+  const loopR = R*5+28;
+
+  return (
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24}}>
+      <div>
+        <div style={{background:'rgba(255,255,255,0.55)',borderRadius:16,padding:16,border:'1px solid #f0dfc5',marginBottom:16}}>
+          <Slider label="Current I" min={1} max={20} value={I} onChange={setI} unit=" A"/>
+          <Slider label="Radius R" min={2} max={12} value={R} onChange={setR} unit=" cm"/>
+        </div>
+
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:16}}>
+          {[
+            {label:'B at centre (x=0)', val:`${(B0*1e6).toFixed(2)} μT`, note:'maximum field'},
+            {label:'B at x = R',         val:`${(mu0*I*Rm*Rm/(2*Math.pow(2,1.5)*Rm*Rm*Rm)*1e6).toFixed(3)} μT`, note:'35.4% of B₀'},
+          ].map((item,i)=>(
+            <div key={i} style={{background:'linear-gradient(135deg,#faeeda,#fdf6ed)',border:'1px solid #e8d5b5',borderRadius:12,padding:'12px',textAlign:'center'}}>
+              <div style={{fontFamily:"'Outfit',sans-serif",fontSize:11,color:'#c47f17',marginBottom:4}}>{item.label}</div>
+              <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:500,color:'#7a4e0a'}}>{item.val}</div>
+              <div style={{fontFamily:"'Outfit',sans-serif",fontSize:11,color:'#9c7a50',marginTop:4}}>{item.note}</div>
+            </div>
+          ))}
+        </div>
+
+        <FormulaBox title="On-axis magnetic field">
+{`B = μ₀IR² / 2(R²+x²)^(3/2)
+
+At centre x=0:  B₀ = μ₀I / 2R
+At x >> R:      B ≈ μ₀IR²/2x³
+                (magnetic dipole field)`}
+        </FormulaBox>
+      </div>
+
+      <div>
+        {/* Loop diagram */}
+        <div style={{background:'linear-gradient(135deg,#fdf9f4,#fff)',border:'1px solid #f0dfc5',borderRadius:16,overflow:'hidden',marginBottom:12}}>
+          <svg width="100%" viewBox="0 0 340 260">
+            <defs>
+              <marker id="bA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                <path d="M2 2L8 5L2 8" fill="none" stroke="#b84c1a" strokeWidth="1.5" strokeLinecap="round"/>
+              </marker>
+            </defs>
+
+            {/* axis */}
+            <line x1={20} y1={130} x2={320} y2={130} stroke="rgba(156,122,80,0.25)" strokeWidth="1" strokeDasharray="6 4"/>
+            <text x={305} y={124} fontSize="10" fill="#9c7a50" fontFamily="JetBrains Mono">x</text>
+
+            {/* Loop ellipse */}
+            <ellipse cx={170} cy={130} rx={loopR*0.27} ry={loopR}
+              fill="none" stroke="#c47f17" strokeWidth="3" opacity="0.9"/>
+            <text x={170+loopR*0.27+8} y={145} fontSize="12" fill="#c47f17" fontWeight="500" fontFamily="Outfit">I ↻</text>
+
+            {/* R indicator */}
+            <line x1={170} y1={130} x2={170} y2={130-loopR} stroke="#1d9e75" strokeWidth="1.5" strokeDasharray="4 2"/>
+            <text x={180} y={130-loopR/2} fontSize="11" fill="#1d9e75" fontFamily="JetBrains Mono">R={R}cm</text>
+
+            {/* B arrows along axis */}
+            {[-90,-60,-30,0,30,60,90].map((xOff,i)=>{
+              const xM=xOff/1000, Bv=mu0*I*Rm*Rm/(2*Math.pow(Rm*Rm+xM*xM,1.5));
+              const Bs=Bv/B0, aLen=Math.max(8,Bs*44);
+              return (
+                <line key={i}
+                  x1={170+xOff-aLen/2} y1={130}
+                  x2={170+xOff+aLen/2} y2={130}
+                  stroke="#b84c1a"
+                  strokeWidth={Math.max(1,Bs*2.5)}
+                  markerEnd="url(#bA)"
+                  opacity={0.45+Bs*0.55}/>
+              );
+            })}
+          </svg>
+        </div>
+
+        {/* B vs x graph */}
+        <div style={{background:'linear-gradient(135deg,#fdf9f4,#fff)',border:'1px solid #f0dfc5',borderRadius:16,overflow:'hidden',padding:'8px 0 0'}}>
+          <div style={{fontFamily:"'Outfit',sans-serif",fontSize:11,color:'#9c7a50',textTransform:'uppercase',letterSpacing:'1.5px',textAlign:'center',marginBottom:4}}>B along axis (x)</div>
+          <svg width="100%" viewBox={`0 0 ${GW} ${GH+20}`}>
+            <line x1={20} y1={GH} x2={GW-20} y2={GH} stroke="rgba(156,122,80,0.25)" strokeWidth="1"/>
+            <line x1={GW/2} y1={4} x2={GW/2} y2={GH} stroke="rgba(156,122,80,0.18)" strokeWidth="1" strokeDasharray="4 3"/>
+            <path d={graphPts} fill="none" stroke="#b84c1a" strokeWidth="2.5" strokeLinecap="round"/>
+            <circle cx={GW/2} cy={8} r={4} fill="#b84c1a"/>
+            <text x={GW/2+8} y={14} fontSize="10" fill="#b84c1a" fontFamily="JetBrains Mono">B₀</text>
+            <text x={GW/2} y={GH+16} fontSize="10" fill="#9c7a50" textAnchor="middle" fontFamily="JetBrains Mono">x = 0 (centre)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════
+   ROOT APP
+═══════════════════════════ */
+const TABS = [
+  {id:'bs',   label:'Biot–Savart'},
+  {id:'perm', label:'ε₀ & μ₀'},
+  {id:'wire', label:'Wire Field'},
+  {id:'max',  label:'Corkscrew & RHR'},
+  {id:'loop', label:'Circular Loop'},
+];
+
+const PANELS = {
+  bs:   <BiotSavartPanel/>,
+  perm: <PermPanel/>,
+  wire: <WirePanel/>,
+  max:  <MaxwellPanel/>,
+  loop: <LoopPanel/>,
+};
+
+function App() {
+  const [tab,setTab] = useState('bs');
+
+  return (
+    <div style={{minHeight:'100vh',background:'linear-gradient(135deg,#fdf6ed 0%,#faeeda 50%,#f5e0b0 100%)'}}>
+      {/* Header */}
+      <div style={{textAlign:'center',paddingTop:40,paddingBottom:24,paddingLeft:16,paddingRight:16}}>
+        <div style={{display:'inline-flex',alignItems:'center',gap:8,background:'rgba(250,238,218,0.85)',
+          border:'1px solid #e8d5b5',borderRadius:24,padding:'6px 18px',marginBottom:16}}>
+          <Icon name="zap" size={13} color="#c47f17"/>
+          <span style={{fontFamily:"'Outfit',sans-serif",fontSize:11,alignItems:'left',fontWeight:500,color:'#c47f17',textTransform:'uppercase',letterSpacing:'2px'}}>
+            Physics · Class 12 · Chapter 4 Magnatism
+          </span>
+        </div>
+        <div style={{fontFamily:"'Crimson Pro',serif",fontSize:42,fontWeight:300,color:'#2e1f0e',lineHeight:1.25,marginBottom:8}}>
+          Moving Charges &amp;<br/>
+          <span style={{color:'#c47f17',fontStyle:'italic'}}>Magnetism</span>
+        </div>
+        <div style={{fontFamily:"'Outfit',sans-serif",fontSize:13,color:'#7a4e0a',maxWidth:500,margin:'0 auto'}}>
+          Interactive visualizations — Biot–Savart · ε₀ &amp; μ₀ · Ampere\'s Law · Corkscrew Rule · Circular Loop
+        </div>
+      </div>
+
+      {/* Main card */}
+      <div style={{maxWidth:920,margin:'0 auto',paddingLeft:16,paddingRight:16,paddingBottom:48}}>
+        <div style={{background:'rgba(255,255,255,0.72)',borderRadius:24,border:'1px solid #e8d5b5',
+          overflow:'hidden',backdropFilter:'blur(16px)',boxShadow:'0 8px 40px rgba(196,127,23,0.12)'}}>
+
+          {/* Tabs */}
+          <div style={{borderBottom:'1px solid #f0dfc5',background:'rgba(253,246,237,0.6)',padding:12}}>
+            <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+              {TABS.map(t=>(
+                <button key={t.id} onClick={()=>setTab(t.id)}
+                  className={tab===t.id?'tab-active':''}
+                  style={{
+                    fontFamily:"'Outfit',sans-serif",fontSize:13,padding:'7px 18px',borderRadius:14,
+                    border:'1px solid transparent',cursor:'pointer',transition:'all .18s',
+                    background:tab===t.id?undefined:'rgba(255,255,255,0.6)',
+                    color:tab===t.id?undefined:'#7a4e0a',
+                    borderColor:tab===t.id?undefined:'#e8d5b5',
+                  }}>
+                  {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Panel */}
+          <div style={{padding:24}}>
+            {PANELS[tab]}
+          </div>
+        </div>
+
+        <div style={{textAlign:'center',marginTop:20,fontFamily:"'Outfit',sans-serif",fontSize:11,color:'#9c7a50'}}>
+          Chapter 4 · Moving Charges and Magnetism · CBSE &amp; ISC · Class 12 Physics
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

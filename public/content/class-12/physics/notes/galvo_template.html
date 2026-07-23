@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moving Coil Galvanometer — Class 12 Physics</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700&display=swap');
+:root{
+  --bg:#F0F4F8;--surface:#FFFFFF;--surface2:#F8FAFC;--border:#E2E8F0;
+  --text:#0F172A;--text2:#475569;--accent:#1B3A5C;
+  --teal:#0D9488;--blue:#2563EB;--green:#16A34A;--red:#DC2626;
+  --amber:#D97706;--purple:#7C3AED;--r:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;font-size:15px;}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#0F172A 0%,#1B3A5C 50%,#065F46 100%);
+  color:white;padding:62px 20px 50px;text-align:center;position:relative;overflow:hidden;}
+.hero::after{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 60% 30%,rgba(13,148,136,.28) 0%,transparent 55%);pointer-events:none;}
+.eyebrow{font-size:10.5px;letter-spacing:3px;text-transform:uppercase;color:#5EEAD4;font-weight:700;margin-bottom:11px;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(24px,5vw,44px);font-weight:700;
+  line-height:1.18;margin-bottom:13px;position:relative;z-index:1;}
+.hero h1 em{color:#5EEAD4;font-style:normal;}
+.hero-sub{color:#CBD5E1;font-size:14px;max-width:550px;margin:0 auto 26px;position:relative;z-index:1;}
+.pills{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;position:relative;z-index:1;}
+.pill{border-radius:50px;padding:5px 14px;font-size:11px;font-weight:600;border:1px solid;}
+.p-t{background:rgba(13,148,136,.15);border-color:#5EEAD4;color:#5EEAD4;}
+.p-a{background:rgba(217,119,6,.15);border-color:#FCD34D;color:#FCD34D;}
+.p-r{background:rgba(220,38,38,.15);border-color:#FCA5A5;color:#FCA5A5;}
+.p-b{background:rgba(37,99,235,.15);border-color:#93C5FD;color:#93C5FD;}
+
+/* NAV */
+.nav-float{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.94);
+  backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 20px;
+  overflow-x:auto;scrollbar-width:none;}
+.nav-float::-webkit-scrollbar{display:none;}
+.nav-inner{display:flex;max-width:980px;margin:0 auto;white-space:nowrap;}
+.nb{padding:13px 15px;font-size:11.5px;font-weight:700;color:var(--text2);background:none;
+  border:none;border-bottom:2.5px solid transparent;cursor:pointer;transition:all .18s;text-transform:uppercase;letter-spacing:.3px;}
+.nb:hover{color:var(--teal);}
+.nb.active{color:var(--teal);border-bottom-color:var(--teal);}
+
+main{max-width:980px;margin:0 auto;padding:0 20px 80px;}
+section{margin-top:52px;scroll-margin-top:58px;}
+.sec-eye{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);margin-bottom:6px;}
+h2{font-family:'Playfair Display',serif;font-size:clamp(19px,3vw,26px);font-weight:700;
+  color:var(--accent);margin-bottom:13px;line-height:1.22;}
+h3{font-size:15px;font-weight:700;color:var(--accent);margin:20px 0 8px;}
+p{color:var(--text2);margin-bottom:10px;}
+strong{color:var(--accent);}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:22px 26px;margin-bottom:15px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+
+/* FORMULA BOXES */
+.fbox{border-radius:11px;padding:17px 21px;margin:16px 0;font-family:'JetBrains Mono',monospace;
+  background:linear-gradient(135deg,#F0FDFA,#ECFDF5);border:1.5px solid #99F6E4;border-left:4px solid var(--teal);}
+.fbox.blue{background:linear-gradient(135deg,#EFF6FF,#F0F9FF);border-color:#BFDBFE;border-left-color:var(--blue);}
+.fbox.amber{background:linear-gradient(135deg,#FFFBEB,#FFF7ED);border-color:#FCD34D;border-left-color:var(--amber);}
+.fbox.red{background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border-color:#FCA5A5;border-left-color:var(--red);}
+.fbox.purple{background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border-color:#DDD6FE;border-left-color:var(--purple);}
+.f-label{font-family:'Inter',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.8px;
+  text-transform:uppercase;color:var(--teal);margin-bottom:8px;}
+.fbox.blue .f-label{color:var(--blue);}
+.fbox.amber .f-label{color:var(--amber);}
+.fbox.red .f-label{color:var(--red);}
+.fbox.purple .f-label{color:var(--purple);}
+.f-main{font-size:20px;font-weight:600;color:var(--accent);text-align:center;padding:9px 0;}
+.f-note{font-family:'Inter',sans-serif;font-size:12px;color:var(--text2);margin-top:8px;line-height:1.65;font-style:italic;}
+
+/* STEPS */
+.dstep{display:flex;gap:17px;padding:17px 0;border-bottom:1px dashed var(--border);align-items:flex-start;}
+.dstep:last-child{border-bottom:none;}
+.snum{width:35px;height:35px;border-radius:50%;background:var(--teal);color:white;
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;margin-top:2px;}
+.sbody{flex:1;}
+.sbody strong{color:var(--accent);display:block;margin-bottom:5px;font-size:14px;}
+
+/* VIZ */
+.viz-wrap{background:#07090F;border-radius:var(--r);overflow:hidden;
+  border:1px solid #1E293B;box-shadow:0 8px 36px rgba(0,0,0,.25);margin:22px 0;}
+.viz-hdr{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06);}
+.viz-title{color:#E2E8F0;font-size:11.5px;font-weight:700;letter-spacing:.3px;}
+.legend{display:flex;gap:11px;align-items:center;}
+.leg{display:flex;align-items:center;gap:5px;font-size:10px;color:#94A3B8;}
+.leg-dot{width:8px;height:8px;border-radius:50%;}
+.viz-canvas-wrap{width:100%;position:relative;}
+.viz-ctrl{padding:12px 16px;background:rgba(255,255,255,.02);
+  border-top:1px solid rgba(255,255,255,.05);display:flex;flex-wrap:wrap;gap:13px;align-items:center;}
+.cg{display:flex;flex-direction:column;gap:3px;min-width:110px;}
+.cl{font-size:10px;color:#64748B;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.cv{font-size:11px;color:#5EEAD4;font-family:'JetBrains Mono',monospace;}
+input[type=range]{width:100%;accent-color:#0D9488;cursor:pointer;}
+.btn{padding:7px 15px;border:none;border-radius:7px;font-size:11.5px;font-weight:700;cursor:pointer;transition:background .18s;}
+.btn-t{background:#0D9488;color:white;} .btn-t:hover{background:#0F766E;}
+.btn-p{background:#D97706;color:white;} .btn-p:hover{background:#B45309;}
+
+/* PART CARDS */
+.part-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:16px 0;}
+.part-card{border-radius:12px;padding:18px;border:1.5px solid;transition:transform .18s;}
+.part-card:hover{transform:translateY(-2px);}
+.pc-icon{font-size:24px;margin-bottom:8px;}
+.pc-title{font-weight:700;font-size:13.5px;color:var(--accent);margin-bottom:4px;}
+.pc-desc{font-size:12px;color:var(--text2);}
+.pc-coil{background:linear-gradient(135deg,#F0FDFA,#CCFBF1);border-color:#5EEAD4;}
+.pc-magnet{background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border-color:#FCA5A5;}
+.pc-core{background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border-color:#DDD6FE;}
+.pc-spring{background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border-color:#FCD34D;}
+.pc-pointer{background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border-color:#93C5FD;}
+
+/* ACCORDION */
+.acc{border:1px solid var(--border);border-radius:11px;overflow:hidden;margin:12px 0;}
+.acc-h{padding:14px 18px;background:var(--surface);cursor:pointer;display:flex;
+  justify-content:space-between;align-items:center;font-weight:700;font-size:13.5px;
+  color:var(--accent);transition:background .18s;user-select:none;}
+.acc-h:hover{background:#F1F5F9;}
+.acc-b{display:none;padding:15px 18px;background:var(--surface2);border-top:1px solid var(--border);
+  color:var(--text2);font-size:13px;line-height:1.72;}
+.acc-b.open{display:block;}
+.arr{transition:transform .2s;color:var(--teal);}
+.acc-h.open .arr{transform:rotate(180deg);}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:13px;margin:13px 0;}
+th{background:var(--accent);color:white;padding:10px 13px;text-align:left;font-size:12px;font-weight:700;}
+td{padding:10px 13px;border-bottom:1px solid var(--border);color:var(--text2);}
+tr:nth-child(even) td{background:#F8FAFC;}
+tr:last-child td{border-bottom:none;}
+code{font-family:'JetBrains Mono',monospace;background:#F0FDF4;color:#0F766E;padding:1px 5px;border-radius:4px;font-size:12px;}
+
+.hibox{background:linear-gradient(135deg,#FFFBEB,#FFF7ED);border:1.5px solid #FCD34D;
+  border-left:4px solid var(--amber);border-radius:11px;padding:13px 17px;margin:13px 0;font-size:13px;color:#92400E;}
+.hibox strong{color:#78350F;}
+.badge{display:inline-block;padding:2px 9px;border-radius:50px;font-size:11px;font-weight:700;}
+.b-t{background:#CCFBF1;color:#0F766E;} .b-r{background:#FEE2E2;color:#B91C1C;}
+.b-a{background:#FEF3C7;color:#92400E;} .b-p{background:#EDE9FE;color:#6D28D9;}
+
+.vstrip{display:flex;flex-wrap:wrap;gap:9px;margin:14px 0;}
+.vi{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);
+  border-radius:9px;padding:9px 13px;flex:1;min-width:130px;}
+.vi-dot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.vi-lbl{font-size:12px;font-weight:600;color:var(--text);}
+.vi-sub{font-size:11px;color:var(--text2);}
+
+.info-panel{flex:1;background:rgba(13,148,136,.12);border:1px solid #5EEAD4;border-radius:8px;
+  padding:8px 12px;color:#5EEAD4;font-size:11px;line-height:1.5;}
+
+@media(max-width:600px){.dstep{flex-direction:column;}.legend{display:none;}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="eyebrow">Class 12 Physics · Moving Charges & Magnetism · Section 4.4</div>
+  <h1>Moving Coil <em>Galvanometer</em></h1>
+  <p class="hero-sub">Construction, working principle, sensitivity, and conversion — with fully offline 3D Three.js models using real meshes.</p>
+  <div class="pills">
+    <span class="pill p-t">🟢 Torque τ = NIAB</span>
+    <span class="pill p-a">🔄 Radial B field (sinθ=1)</span>
+    <span class="pill p-r">📐 θ = (NBA/K)·I</span>
+    <span class="pill p-b">🔌 Ammeter & Voltmeter</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav-float">
+  <div class="nav-inner">
+    <button class="nb active" onclick="nav('s1',this)">Overview</button>
+    <button class="nb" onclick="nav('s2',this)">Construction</button>
+    <button class="nb" onclick="nav('s3',this)">Principle</button>
+    <button class="nb" onclick="nav('s4',this)">Working</button>
+    <button class="nb" onclick="nav('s5',this)">Sensitivity</button>
+    <button class="nb" onclick="nav('s6',this)">→ Ammeter</button>
+    <button class="nb" onclick="nav('s7',this)">→ Voltmeter</button>
+    <button class="nb" onclick="nav('s8',this)">Simulator</button>
+    <button class="nb" onclick="nav('s9',this)">Summary</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ══ S1: OVERVIEW ══ -->
+<section id="s1">
+  <div class="sec-eye">Introduction</div>
+  <h2>What is a Moving Coil Galvanometer?</h2>
+  <div class="card">
+    <p>A <strong>Moving Coil Galvanometer (MCG)</strong> is a sensitive electromagnetic instrument used for <strong>detecting and measuring small electric currents</strong>. It works on the principle that a current-carrying coil placed in a magnetic field experiences a torque.</p>
+    <div class="vstrip">
+      <div class="vi"><div class="vi-dot" style="background:#5EEAD4;color:#0F172A">τ</div>
+        <div><div class="vi-lbl">Deflecting Torque</div><div class="vi-sub">τ = NIAB (radial field)</div></div></div>
+      <div class="vi"><div class="vi-dot" style="background:#FCD34D;color:#0F172A">K</div>
+        <div><div class="vi-lbl">Restoring Torque</div><div class="vi-sub">Kθ from phosphor bronze spring</div></div></div>
+      <div class="vi"><div class="vi-dot" style="background:#F87171;color:white">θ</div>
+        <div><div class="vi-lbl">Deflection</div><div class="vi-sub">θ = (NBA/K)·I ∝ I</div></div></div>
+      <div class="vi"><div class="vi-dot" style="background:#A78BFA;color:white">B</div>
+        <div><div class="vi-lbl">Radial B field</div><div class="vi-sub">sinθ always = 1</div></div></div>
+    </div>
+    <div class="hibox"><strong>Key insight:</strong> The cylindrical soft iron core makes the field radial — so sinθ = 1 always. This means deflection θ is linearly proportional to current I. Without radial field, sinθ would change with angle making the scale non-linear!</div>
+  </div>
+</section>
+
+<!-- ══ S2: CONSTRUCTION ══ -->
+<section id="s2">
+  <div class="sec-eye">Physical Structure</div>
+  <h2>Construction — Parts of a Galvanometer</h2>
+
+  <div class="part-grid">
+    <div class="part-card pc-coil">
+      <div class="pc-icon">🔵</div>
+      <div class="pc-title">Rectangular Coil</div>
+      <div class="pc-desc">N turns of insulated copper wire wound on a non-metallic frame. Suspended between magnet poles.</div>
+    </div>
+    <div class="part-card pc-magnet">
+      <div class="pc-icon">🔴</div>
+      <div class="pc-title">Permanent Horseshoe Magnet</div>
+      <div class="pc-desc">Provides strong, uniform magnetic field. Concave pole pieces create a <strong>radial field</strong>.</div>
+    </div>
+    <div class="part-card pc-core">
+      <div class="pc-icon">🟣</div>
+      <div class="pc-title">Cylindrical Soft Iron Core</div>
+      <div class="pc-desc">Placed inside the coil. Makes field radial and uniform. Greatly increases field strength.</div>
+    </div>
+    <div class="part-card pc-spring">
+      <div class="pc-icon">🟡</div>
+      <div class="pc-title">Phosphor Bronze Springs (T₁, T₂)</div>
+      <div class="pc-desc">Upper and lower hair springs. Provide restoring torque Kθ. Also serve as current leads.</div>
+    </div>
+    <div class="part-card pc-pointer">
+      <div class="pc-icon">🔷</div>
+      <div class="pc-title">Pointer & Scale</div>
+      <div class="pc-desc">Lightweight pointer attached to coil indicates deflection θ on a calibrated scale.</div>
+    </div>
+  </div>
+
+  <!-- MAIN 3D GALVANOMETER MODEL -->
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">🔬 3D Galvanometer — Full Construction (drag to orbit)</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#5EEAD4"></div>Coil</div>
+        <div class="leg"><div class="leg-dot" style="background:#F87171"></div>Magnet</div>
+        <div class="leg"><div class="leg-dot" style="background:#A78BFA"></div>Iron Core</div>
+        <div class="leg"><div class="leg-dot" style="background:#FCD34D"></div>Springs</div>
+      </div>
+    </div>
+    <div id="galvoContainer" style="height:480px;width:100%;"></div>
+    <div class="viz-ctrl">
+      <div class="cg">
+        <div class="cl">View Preset</div>
+        <select id="galvoView" onchange="setGalvoView()" style="background:#1E293B;color:#E2E8F0;border:1px solid #334155;padding:4px 8px;border-radius:6px;font-size:12px;">
+          <option value="iso">Isometric</option>
+          <option value="top">Top view</option>
+          <option value="front">Front view</option>
+          <option value="side">Side view</option>
+        </select>
+      </div>
+      <div class="cg">
+        <div class="cl">Auto-rotate</div>
+        <button class="btn btn-t" id="galvoRotBtn" onclick="toggleGalvoRot()">▶ Start</button>
+      </div>
+      <div class="info-panel">🖱️ Drag to orbit · Scroll to zoom · Use presets to inspect parts</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S3: PRINCIPLE ══ -->
+<section id="s3">
+  <div class="sec-eye">Physics Behind It</div>
+  <h2>Working Principle</h2>
+  <div class="card">
+    <div class="dstep">
+      <div class="snum">1</div>
+      <div class="sbody">
+        <strong>Current enters the coil</strong>
+        <p>When current I flows through the N-turn coil of area A, each turn experiences a magnetic force from the field B.</p>
+      </div>
+    </div>
+    <div class="dstep">
+      <div class="snum">2</div>
+      <div class="sbody">
+        <strong>Deflecting torque is created</strong>
+        <p>The magnetic torque on the coil is τ = NIAB sinθ. But since the field is <strong>radial by design</strong>, the plane of the coil is always parallel to B, so sinθ = 1 always.</p>
+        <div class="fbox" style="margin:8px 0">
+          <div class="f-label">Deflecting Torque (radial field)</div>
+          <div class="f-main">τ_def = NIAB</div>
+          <div class="f-note">This is always maximum because sinθ = 1 due to radial field. No angle dependence!</div>
+        </div>
+      </div>
+    </div>
+    <div class="dstep">
+      <div class="snum">3</div>
+      <div class="sbody">
+        <strong>Restoring torque from spring</strong>
+        <p>The phosphor bronze spring resists the rotation. As the coil deflects by angle θ, the spring provides restoring torque:</p>
+        <div class="fbox amber" style="margin:8px 0">
+          <div class="f-label">Restoring Torque (from spring)</div>
+          <div class="f-main">τ_rest = Kθ</div>
+          <div class="f-note">K = torsional constant of the spring (restoring torque per unit twist)</div>
+        </div>
+      </div>
+    </div>
+    <div class="dstep">
+      <div class="snum">4</div>
+      <div class="sbody">
+        <strong>Equilibrium → deflection proportional to current</strong>
+        <p>At steady state: deflecting torque = restoring torque</p>
+        <div class="fbox purple" style="margin:8px 0">
+          <div class="f-label">At equilibrium: NIAB = Kθ</div>
+          <div class="f-main">θ = (NBA/K) · I</div>
+          <div class="f-note">θ ∝ I → deflection is directly proportional to current → <strong>linear scale</strong>! This is the key result.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RADIAL FIELD EXPLANATION -->
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">🧲 Why Radial Field? — Cross-section view (3D)</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#A78BFA"></div>Iron core</div>
+        <div class="leg"><div class="leg-dot" style="background:#F87171"></div>N pole</div>
+        <div class="leg"><div class="leg-dot" style="background:#4ADE80"></div>S pole</div>
+        <div class="leg"><div class="leg-dot" style="background:#FCD34D"></div>Field lines</div>
+      </div>
+    </div>
+    <div id="radialContainer" style="height:380px;width:100%;"></div>
+    <div class="viz-ctrl">
+      <div class="cg">
+        <div class="cl">Coil angle</div>
+        <input type="range" id="radialAngle" min="-80" max="80" value="0" oninput="updateRadial()">
+        <div class="cv" id="radialAngleVal">θ = 0°</div>
+      </div>
+      <div class="info-panel">At ANY coil angle, the coil face remains parallel to B → <strong>sinθ = 1 always</strong> → maximum torque always</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S4: WORKING ANIMATION ══ -->
+<section id="s4">
+  <div class="sec-eye">Live Animation</div>
+  <h2>Working — Current In → Coil Deflects → Pointer Reads</h2>
+
+  <div class="card">
+    <p>Watch the complete sequence: current enters → magnetic torque rotates coil → spring resists → equilibrium reached → pointer shows reading.</p>
+    <div class="hibox"><strong>Remember:</strong> The coil doesn't spin freely — it deflects to an angle θ and stops there when restoring torque = deflecting torque. The pointer attached to the coil indicates this angle θ on the scale.</div>
+  </div>
+
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">⚡ Live Working Animation — 3D Galvanometer</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#5EEAD4"></div>Coil</div>
+        <div class="leg"><div class="leg-dot" style="background:#F87171"></div>Forces on coil arms</div>
+        <div class="leg"><div class="leg-dot" style="background:#FCD34D"></div>Pointer</div>
+      </div>
+    </div>
+    <div id="workingContainer" style="height:440px;width:100%;"></div>
+    <div class="viz-ctrl">
+      <div class="cg">
+        <div class="cl">Current I (μA)</div>
+        <input type="range" id="workI" min="0" max="100" value="50" oninput="updateWorking()">
+        <div class="cv" id="workIVal">I = 50 μA</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Turns N</div>
+        <input type="range" id="workN" min="10" max="200" step="10" value="100" oninput="updateWorking()">
+        <div class="cv" id="workNVal">N = 100</div>
+      </div>
+      <div class="cg" style="justify-content:flex-end;">
+        <button class="btn btn-t" id="workAnimBtn" onclick="toggleWorkAnim()">▶ Animate</button>
+        <button class="btn btn-t" style="margin-top:4px" onclick="resetWorking()">↺ Reset</button>
+      </div>
+      <div id="workInfo" class="info-panel">
+        Deflecting torque τ = NIAB &nbsp;|&nbsp; Restoring = Kθ &nbsp;|&nbsp; <strong id="workTheta">θ = 45°</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S5: SENSITIVITY ══ -->
+<section id="s5">
+  <div class="sec-eye">Sensitivity Analysis</div>
+  <h2>Current Sensitivity & Voltage Sensitivity</h2>
+
+  <div class="card">
+    <h3>Current Sensitivity (Iₛ)</h3>
+    <p>Current sensitivity = deflection produced per unit current flowing through it.</p>
+    <div class="fbox">
+      <div class="f-label">Current Sensitivity</div>
+      <div class="f-main">Iₛ = θ/I = NBA/K</div>
+      <div class="f-note">Unit: rad/A or div/A. To increase Iₛ: increase N, B, A or decrease K (softer spring).</div>
+    </div>
+
+    <h3>Voltage Sensitivity (Vₛ)</h3>
+    <p>Voltage sensitivity = deflection per unit voltage across it.</p>
+    <div class="fbox blue">
+      <div class="f-label">Voltage Sensitivity</div>
+      <div class="f-main">Vₛ = θ/V = NBA/KR = Iₛ/R</div>
+      <div class="f-note">Unit: rad/V or div/V. Vₛ = Iₛ/R. Note: increasing N doubles Iₛ but also doubles R → Vₛ unchanged!</div>
+    </div>
+
+    <div class="hibox"><strong>Important exam trap:</strong> Increasing current sensitivity does NOT always increase voltage sensitivity. Doubling N → doubles Iₛ, but R also doubles → Vₛ = Iₛ/R stays same. To increase Vₛ: increase B or A, or decrease K without changing R.</div>
+
+    <div class="acc">
+      <div class="acc-h" onclick="acc(this)">Example 19: Increase current sensitivity by 50%, resistance doubled — find voltage sensitivity change <span class="arr">▼</span></div>
+      <div class="acc-b">
+        Given: New I'ₛ = Iₛ + 50/100 × Iₛ = 1.5 Iₛ = 3Iₛ/2 &nbsp;|&nbsp; New R' = 2R<br><br>
+        Initial Vₛ = Iₛ/R<br>
+        New V'ₛ = I'ₛ/R' = (3Iₛ/2)/(2R) = 3Iₛ/4R = (3/4)(Iₛ/R) = <strong>(3/4)Vₛ</strong><br><br>
+        ∴ Voltage sensitivity decreases to 75% of original — it DECREASES by 25%!
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ S6: AMMETER ══ -->
+<section id="s6">
+  <div class="sec-eye">Conversion</div>
+  <h2>Converting Galvanometer to Ammeter</h2>
+
+  <div class="card">
+    <p>A galvanometer has high resistance and can only handle small current. To measure large current, connect a <strong>low resistance shunt S in parallel</strong>.</p>
+
+    <div class="dstep">
+      <div class="snum">1</div>
+      <div class="sbody">
+        <strong>Why parallel? Why low resistance?</strong>
+        <p>Most of the large current I bypasses through shunt S. Only a small safe current Ig passes through the galvanometer. S must be very small so it doesn't affect the circuit.</p>
+      </div>
+    </div>
+    <div class="dstep">
+      <div class="snum">2</div>
+      <div class="sbody">
+        <strong>Voltage across both is equal (parallel connection)</strong>
+        <p>Ig × G = (I − Ig) × S</p>
+        <div class="fbox" style="margin:8px 0">
+          <div class="f-label">Shunt Resistance Formula</div>
+          <div class="f-main">S = (Ig × G) / (I − Ig)</div>
+          <div class="f-note">Or equivalently: S = [Ig/(I−Ig)] × G</div>
+        </div>
+      </div>
+    </div>
+    <div class="dstep">
+      <div class="snum">3</div>
+      <div class="sbody">
+        <strong>Effective resistance of the ammeter</strong>
+        <div class="fbox amber" style="margin:8px 0">
+          <div class="f-label">Parallel combination (Ammeter resistance)</div>
+          <div class="f-main">Rₚ = GS/(G+S)</div>
+          <div class="f-note">Since S &lt;&lt; G, Rₚ ≈ S which is very small. Ideal ammeter resistance = 0.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3D AMMETER CIRCUIT -->
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">🔌 3D Ammeter Circuit — Current splitting at shunt</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#F87171"></div>Galvanometer (G)</div>
+        <div class="leg"><div class="leg-dot" style="background:#4ADE80"></div>Shunt (S)</div>
+        <div class="leg"><div class="leg-dot" style="background:#FCD34D"></div>Current paths</div>
+      </div>
+    </div>
+    <div id="ammeterContainer" style="height:360px;width:100%;"></div>
+    <div class="viz-ctrl">
+      <div class="cg">
+        <div class="cl">Total current I (mA)</div>
+        <input type="range" id="ammI" min="1" max="20" value="5" oninput="calcAmmeter()">
+        <div class="cv" id="ammIVal">I = 5 mA</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Galvanometer G (Ω)</div>
+        <input type="range" id="ammG" min="5" max="50" value="15" oninput="calcAmmeter()">
+        <div class="cv" id="ammGVal">G = 15 Ω</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Full scale Ig (mA)</div>
+        <input type="range" id="ammIg" min="0.5" max="3" step="0.5" value="2" oninput="calcAmmeter()">
+        <div class="cv" id="ammIgVal">Ig = 2 mA</div>
+      </div>
+      <div id="ammResult" class="info-panel" style="min-width:200px;">S = 0.006 Ω | Rₚ = 0.006 Ω</div>
+    </div>
+  </div>
+
+  <div class="acc">
+    <div class="acc-h" onclick="acc(this)">Example 20: G=15Ω, Ig=2mA, I=5A → find shunt S <span class="arr">▼</span></div>
+    <div class="acc-b">
+      G = 15Ω, Ig = 2×10⁻³ A, I = 5 A<br><br>
+      S = IgG/(I−Ig) = (2×10⁻³ × 15)/(5 − 2×10⁻³)<br>
+      = 0.03/(4.998) ≈ <strong>0.006 Ω</strong><br><br>
+      This tiny 0.006Ω resistor connected in parallel diverts almost all 5A current, letting only 2mA through the galvanometer.
+    </div>
+  </div>
+</section>
+
+<!-- ══ S7: VOLTMETER ══ -->
+<section id="s7">
+  <div class="sec-eye">Conversion</div>
+  <h2>Converting Galvanometer to Voltmeter</h2>
+
+  <div class="card">
+    <p>A voltmeter must have <strong>very high resistance</strong> so it draws negligible current and doesn't disturb the circuit. Connect a <strong>high resistance Rₛ in series</strong> with the galvanometer.</p>
+
+    <div class="dstep">
+      <div class="snum">1</div>
+      <div class="sbody">
+        <strong>Why series? Why high resistance?</strong>
+        <p>The series resistance limits current to full-scale deflection current Ig when maximum voltage V is applied. High resistance ensures the voltmeter draws negligible current.</p>
+      </div>
+    </div>
+    <div class="dstep">
+      <div class="snum">2</div>
+      <div class="sbody">
+        <strong>Full-scale deflection condition</strong>
+        <p>At max voltage V: V = Ig(G + Rₛ)</p>
+        <div class="fbox red" style="margin:8px 0">
+          <div class="f-label">Series Resistance Formula</div>
+          <div class="f-main">Rₛ = V/Ig − G</div>
+          <div class="f-note">Rₛ is very large (>> G). Ideal voltmeter resistance = ∞</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3D VOLTMETER -->
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">🔋 3D Voltmeter Circuit — High resistance in series</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#F87171"></div>Galvanometer</div>
+        <div class="leg"><div class="leg-dot" style="background:#93C5FD"></div>Series R</div>
+        <div class="leg"><div class="leg-dot" style="background:#FCD34D"></div>Current path</div>
+      </div>
+    </div>
+    <div id="voltmeterContainer" style="height:320px;width:100%;"></div>
+    <div class="viz-ctrl">
+      <div class="cg">
+        <div class="cl">Voltage V (V)</div>
+        <input type="range" id="voltV" min="1" max="50" value="10" oninput="calcVoltmeter()">
+        <div class="cv" id="voltVVal">V = 10 V</div>
+      </div>
+      <div class="cg">
+        <div class="cl">G (Ω)</div>
+        <input type="range" id="voltG" min="5" max="50" value="15" oninput="calcVoltmeter()">
+        <div class="cv" id="voltGVal">G = 15 Ω</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Ig (mA)</div>
+        <input type="range" id="voltIg" min="0.5" max="5" step="0.5" value="2" oninput="calcVoltmeter()">
+        <div class="cv" id="voltIgVal">Ig = 2 mA</div>
+      </div>
+      <div id="voltResult" class="info-panel">Rₛ = 4985 Ω | Total R = 5000 Ω</div>
+    </div>
+  </div>
+
+  <!-- COMPARISON TABLE -->
+  <div class="card">
+    <h3>Ammeter vs Voltmeter Comparison</h3>
+    <table>
+      <tr><th>Property</th><th>Ammeter</th><th>Voltmeter</th></tr>
+      <tr><td>Connection</td><td>Parallel with shunt S</td><td>Series with resistance Rₛ</td></tr>
+      <tr><td>Shunt/Rₛ</td><td><code>S = IgG/(I−Ig)</code> (tiny)</td><td><code>Rₛ = V/Ig − G</code> (large)</td></tr>
+      <tr><td>Own resistance</td><td>Very low (≈ S &lt;&lt; G)</td><td>Very high (≈ Rₛ >> G)</td></tr>
+      <tr><td>Ideal resistance</td><td><span class="badge b-t">0 Ω</span></td><td><span class="badge b-r">∞ Ω</span></td></tr>
+      <tr><td>Current through G</td><td>Ig (small fraction)</td><td>Ig (same, full current)</td></tr>
+      <tr><td>Purpose</td><td>Measures current I</td><td>Measures voltage V</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ══ S8: FULL SIMULATOR ══ -->
+<section id="s8">
+  <div class="sec-eye">Interactive Lab</div>
+  <h2>Full Galvanometer Simulator</h2>
+
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">🎮 Interactive MCG Simulator — All parameters live</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#5EEAD4"></div>Coil deflection</div>
+        <div class="leg"><div class="leg-dot" style="background:#FCD34D"></div>Pointer</div>
+        <div class="leg"><div class="leg-dot" style="background:#F87171"></div>Forces</div>
+      </div>
+    </div>
+    <div id="simContainer" style="height:460px;width:100%;"></div>
+    <div class="viz-ctrl">
+      <div class="cg">
+        <div class="cl">Current I (μA)</div>
+        <input type="range" id="simI" min="0" max="200" value="80" oninput="calcSimAll()">
+        <div class="cv" id="simIv">I = 80 μA</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Turns N</div>
+        <input type="range" id="simN" min="10" max="500" step="10" value="100" oninput="calcSimAll()">
+        <div class="cv" id="simNv">N = 100</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Area A (cm²)</div>
+        <input type="range" id="simA" min="1" max="20" value="5" oninput="calcSimAll()">
+        <div class="cv" id="simAv">A = 5 cm²</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Field B (T)</div>
+        <input type="range" id="simB" min="0.1" max="1" step="0.05" value="0.3" oninput="calcSimAll()">
+        <div class="cv" id="simBv">B = 0.3 T</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Spring K (×10⁻⁶)</div>
+        <input type="range" id="simK" min="1" max="20" value="5" oninput="calcSimAll()">
+        <div class="cv" id="simKv">K = 5×10⁻⁶</div>
+      </div>
+    </div>
+    <div id="simResults" style="background:#07090F;padding:14px 18px;border-top:1px solid #1E293B;"></div>
+  </div>
+</section>
+
+<!-- ══ S9: SUMMARY ══ -->
+<section id="s9">
+  <div class="sec-eye">Quick Revision</div>
+  <h2>Complete Summary</h2>
+  <div class="card">
+    <table>
+      <tr><th>Quantity</th><th>Formula</th><th>Note</th></tr>
+      <tr><td>Deflecting torque</td><td><code>τ = NIAB</code></td><td>sinθ=1 due to radial field</td></tr>
+      <tr><td>Restoring torque</td><td><code>τ = Kθ</code></td><td>K = spring constant</td></tr>
+      <tr><td>Deflection angle</td><td><code>θ = (NBA/K)·I</code></td><td>θ ∝ I → linear scale ⭐</td></tr>
+      <tr><td>Current sensitivity</td><td><code>Iₛ = NBA/K</code></td><td>Unit: div/A</td></tr>
+      <tr><td>Voltage sensitivity</td><td><code>Vₛ = NBA/KR</code></td><td>Unit: div/V</td></tr>
+      <tr><td>Shunt (ammeter)</td><td><code>S = IgG/(I−Ig)</code></td><td>Parallel, small</td></tr>
+      <tr><td>Ammeter resistance</td><td><code>Rₚ = GS/(G+S)</code></td><td>≈ S (very small)</td></tr>
+      <tr><td>Series R (voltmeter)</td><td><code>Rₛ = V/Ig − G</code></td><td>Series, very large</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>⚠️ Exam Mistakes</h3>
+    <div class="acc">
+      <div class="acc-h" onclick="acc(this)">Mistake 1: Ignoring radial field significance <span class="arr">▼</span></div>
+      <div class="acc-b">Without radial field, the torque would be NIAB sinα where α changes as coil rotates. Scale would be non-linear (compressed near ends). Radial field ensures sinα=1 always → uniform, linear scale. The cylindrical iron core is what creates radial field.</div>
+    </div>
+    <div class="acc">
+      <div class="acc-h" onclick="acc(this)">Mistake 2: Thinking more N always increases voltage sensitivity <span class="arr">▼</span></div>
+      <div class="acc-b">Doubling N doubles Iₛ = NBA/K. BUT it also doubles resistance R (more wire). Vₛ = Iₛ/R = NBA/KR. If both N and R double, Vₛ stays same. To genuinely increase Vₛ: increase B or A, or decrease K independently of wire length.</div>
+    </div>
+    <div class="acc">
+      <div class="acc-h" onclick="acc(this)">Mistake 3: Shunt in series / Series R in parallel <span class="arr">▼</span></div>
+      <div class="acc-b">Ammeter: shunt (small S) in <strong>PARALLEL</strong> — diverts excess current. Voltmeter: high resistance Rₛ in <strong>SERIES</strong> — limits current to safe Ig. Getting this backwards is the most common mistake. Remember: A-mmeter (parallel), V-oltmeter (series).</div>
+    </div>
+    <div class="acc">
+      <div class="acc-h" onclick="acc(this)">Mistake 4: Ideal ammeter and voltmeter resistance <span class="arr">▼</span></div>
+      <div class="acc-b">Ideal ammeter resistance = <strong>0 Ω</strong> (so no voltage drop, doesn't affect circuit). Ideal voltmeter resistance = <strong>∞ Ω</strong> (draws zero current, doesn't affect circuit). In reality: ammeter has tiny S ≈ Rₚ, voltmeter has huge Rₛ+G.</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div style="background:var(--accent);color:white;text-align:center;padding:26px 20px;font-size:12px;opacity:.9">
+  <strong>Moving Coil Galvanometer</strong> · Class 12 Physics · Moving Charges & Magnetism<br>
+  <span style="opacity:.6">Quantum Tuitions / Priyanshu Informatics · Dehradun</span>
+</div>
+
+<script>
+'use strict';
+// ═══════════════════════════════════════════════════════════
+// UTILITY FUNCTIONS
+// ═══════════════════════════════════════════════════════════
+function nav(id, btn) {
+  document.getElementById(id).scrollIntoView({behavior:'smooth'});
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function acc(h) { h.classList.toggle('open'); h.nextElementSibling.classList.toggle('open'); }
+
+// Orbit control (manual, no CDN needed)
+function addOrbitControl(renderer, camera, target) {
+  target = target || new THREE.Vector3(0,0,0);
+  let isDrag=false, lastX=0, lastY=0;
+  const el = renderer.domElement;
+  const spherical = new THREE.Spherical().setFromVector3(
+    camera.position.clone().sub(target));
+
+  el.addEventListener('mousedown', e=>{isDrag=true;lastX=e.clientX;lastY=e.clientY;});
+  el.addEventListener('mouseup', ()=>isDrag=false);
+  el.addEventListener('mouseleave', ()=>isDrag=false);
+  el.addEventListener('mousemove', e=>{
+    if(!isDrag) return;
+    spherical.theta -= (e.clientX-lastX)*0.008;
+    spherical.phi = Math.max(0.15,Math.min(Math.PI-0.15,spherical.phi-(e.clientY-lastY)*0.008));
+    lastX=e.clientX; lastY=e.clientY;
+    camera.position.setFromSpherical(spherical).add(target);
+    camera.lookAt(target);
+  });
+  el.addEventListener('wheel', e=>{
+    e.preventDefault();
+    spherical.radius = Math.max(3, Math.min(25, spherical.radius*(1+e.deltaY*0.001)));
+    camera.position.setFromSpherical(spherical).add(target);
+    camera.lookAt(target);
+  },{passive:false});
+
+  // Touch support
+  let lastTouchDist=0;
+  el.addEventListener('touchstart', e=>{
+    if(e.touches.length===1){isDrag=true;lastX=e.touches[0].clientX;lastY=e.touches[0].clientY;}
+    else if(e.touches.length===2){
+      lastTouchDist=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+    }
+    e.preventDefault();
+  },{passive:false});
+  el.addEventListener('touchmove', e=>{
+    if(e.touches.length===1 && isDrag){
+      spherical.theta-=(e.touches[0].clientX-lastX)*0.01;
+      spherical.phi=Math.max(0.15,Math.min(Math.PI-0.15,spherical.phi-(e.touches[0].clientY-lastY)*0.01));
+      lastX=e.touches[0].clientX;lastY=e.touches[0].clientY;
+      camera.position.setFromSpherical(spherical).add(target);
+      camera.lookAt(target);
+    } else if(e.touches.length===2){
+      const d=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+      spherical.radius=Math.max(3,Math.min(25,spherical.radius*(lastTouchDist/d)));
+      lastTouchDist=d;
+      camera.position.setFromSpherical(spherical).add(target);
+      camera.lookAt(target);
+    }
+    e.preventDefault();
+  },{passive:false});
+  el.addEventListener('touchend',()=>isDrag=false);
+  return {spherical, target};
+}
+
+function makeRenderer(container, h) {
+  const W=container.clientWidth;
+  const renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer.setSize(W,h);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setClearColor(0x07090F,1);
+  container.appendChild(renderer.domElement);
+  return renderer;
+}
+
+function makeCam(W,H,pos,look) {
+  const cam=new THREE.PerspectiveCamera(45,W/H,0.1,200);
+  cam.position.set(...pos);
+  cam.lookAt(new THREE.Vector3(...(look||[0,0,0])));
+  return cam;
+}
+
+function addLights(scene) {
+  scene.add(new THREE.AmbientLight(0xffffff,0.6));
+  const d1=new THREE.DirectionalLight(0xffffff,0.8); d1.position.set(5,8,5); scene.add(d1);
+  const d2=new THREE.DirectionalLight(0x4488ff,0.3); d2.position.set(-5,-3,-5); scene.add(d2);
+}
+
+function makeCylinder(rTop,rBot,h,segs,color,metalness,roughness) {
+  const g=new THREE.CylinderGeometry(rTop,rBot,h,segs||16);
+  const m=new THREE.MeshStandardMaterial({color,metalness:metalness||0.4,roughness:roughness||0.5});
+  return new THREE.Mesh(g,m);
+}
+function makeBox(w,h,d,color,metalness,roughness) {
+  const g=new THREE.BoxGeometry(w,h,d);
+  const m=new THREE.MeshStandardMaterial({color,metalness:metalness||0.3,roughness:roughness||0.6});
+  return new THREE.Mesh(g,m);
+}
+function makeSphere(r,color,metalness) {
+  const g=new THREE.SphereGeometry(r,16,16);
+  const m=new THREE.MeshStandardMaterial({color,metalness:metalness||0.5,roughness:0.4});
+  return new THREE.Mesh(g,m);
+}
+function makeTorus(r,tube,color) {
+  const g=new THREE.TorusGeometry(r,tube,12,48);
+  const m=new THREE.MeshStandardMaterial({color,metalness:0.6,roughness:0.3});
+  return new THREE.Mesh(g,m);
+}
+
+function makeArrow3D(scene, from, to, color, radius) {
+  radius = radius||0.04;
+  const dir=new THREE.Vector3().subVectors(to,from);
+  const len=dir.length();
+  if(len<0.01) return;
+  const mid=new THREE.Vector3().addVectors(from,to).multiplyScalar(0.5);
+  const shaftLen=len*0.8;
+  const shaft=makeCylinder(radius,radius,shaftLen,8,color,0.2,0.5);
+  shaft.position.copy(from.clone().lerp(to,0.4));
+  shaft.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.clone().normalize());
+  scene.add(shaft);
+  const head=makeCylinder(0,radius*3,len*0.2,8,color,0.2,0.5);
+  head.position.copy(to.clone().sub(dir.clone().normalize().multiplyScalar(len*0.1)));
+  head.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir.clone().normalize());
+  scene.add(head);
+}
+
+function makeLabel3D(text,x,y,z,color,scene,scale) {
+  const cv=document.createElement('canvas');
+  cv.width=256;cv.height=64;
+  const ctx=cv.getContext('2d');
+  ctx.fillStyle=color||'#ffffff';
+  ctx.font=`bold ${scale||22}px Inter,sans-serif`;
+  ctx.textBaseline='middle';
+  ctx.fillText(text,8,32);
+  const tex=new THREE.CanvasTexture(cv);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:false}));
+  sp.scale.set(3,0.75,1);
+  sp.position.set(x,y,z);
+  scene.add(sp);
+  return sp;
+}
+
+// ═══════════════════════════════════════════════════════════
+// SCENE 1: MAIN GALVANOMETER 3D MODEL
+// ═══════════════════════════════════════════════════════════
+let galvoScene,galvoCamera,galvoRenderer,galvoOrbit,galvoRotating=false,galvoAngle=0;
+(function initGalvo(){
+  const container=document.getElementById('galvoContainer');
+  const H=480;
+  galvoRenderer=makeRenderer(container,H);
+  galvoScene=new THREE.Scene();
+  galvoScene.background=new THREE.Color(0x07090F);
+  galvoCamera=makeCam(container.clientWidth,H,[0,6,12],[0,0,0]);
+  addLights(galvoScene);
+
+  // --- Horseshoe magnet (two poles: N=red, S=blue) ---
+  const poleH=4, poleW=1.2, poleD=1.2;
+  const nPole=makeBox(poleW,poleH,poleD,0xEF4444,0.7,0.3);
+  nPole.position.set(-2.2,0,0);
+  galvoScene.add(nPole);
+  const sPole=makeBox(poleW,poleH,poleD,0x3B82F6,0.7,0.3);
+  sPole.position.set(2.2,0,0);
+  galvoScene.add(sPole);
+  // Yoke connecting poles
+  const yoke=makeBox(4.4+poleW,0.8,poleD,0x475569,0.8,0.3);
+  yoke.position.set(0,-poleH/2-0.4,0);
+  galvoScene.add(yoke);
+  // Concave pole faces (arced using torus segments)
+  [-2.2,2.2].forEach((x,i)=>{
+    const face=new THREE.CylinderGeometry(1.8,1.8,poleD,32,1,false,-Math.PI*0.4,Math.PI*0.8);
+    const faceMesh=new THREE.Mesh(face,new THREE.MeshStandardMaterial({
+      color:i===0?0xB91C1C:0x1D4ED8,metalness:0.8,roughness:0.2,side:THREE.DoubleSide}));
+    faceMesh.rotation.x=Math.PI/2;
+    faceMesh.position.set(x>0?-0.3:0.3,0,0);
+    galvoScene.add(faceMesh);
+  });
+  makeLabel3D('N', -2.5, 2.8, 0.8, '#F87171', galvoScene);
+  makeLabel3D('S',  2.1, 2.8, 0.8, '#60A5FA', galvoScene);
+
+  // --- Cylindrical soft iron core ---
+  const core=makeCylinder(0.7,0.7,3.6,32,0x6D28D9,0.5,0.4);
+  core.rotation.z=Math.PI/2;
+  core.position.set(0,0,0);
+  galvoScene.add(core);
+  makeLabel3D('Iron core',1.2,-1,0.5,'#A78BFA',galvoScene,18);
+
+  // --- Coil (flat rectangular wound wire) ---
+  const coilGroup=new THREE.Group();
+  for(let i=0;i<5;i++){
+    const offset=i*0.07-0.14;
+    const w=1.1,h=2.0;
+    // coil wires: 4 sides as thin boxes
+    const mCoil=new THREE.MeshStandardMaterial({color:0x5EEAD4,metalness:0.6,roughness:0.3});
+    [[0,h/2+offset,0,w,0.06,0.06],[0,-h/2+offset,0,w,0.06,0.06],
+     [-w/2,offset,0,0.06,h,0.06],[w/2,offset,0,0.06,h,0.06]].forEach(([x,y,z,bw,bh,bd])=>{
+      const b=new THREE.Mesh(new THREE.BoxGeometry(bw,bh,bd),mCoil);
+      b.position.set(x,y,z+offset*0.1);
+      coilGroup.add(b);
+    });
+  }
+  galvoScene.add(coilGroup);
+  makeLabel3D('Coil (N turns)',0,1.5,1.2,'#5EEAD4',galvoScene,18);
+
+  // --- Springs (upper and lower) as helical torus approximation ---
+  function makeSpring(yPos) {
+    const sg=new THREE.Group();
+    for(let i=0;i<6;i++){
+      const ring=makeTorus(0.22,0.025,0xFCD34D);
+      ring.position.set(0,yPos+i*0.08-0.2,0);
+      ring.rotation.x=Math.PI/2;
+      sg.add(ring);
+    }
+    return sg;
+  }
+  galvoScene.add(makeSpring(1.1));
+  galvoScene.add(makeSpring(-1.5));
+  makeLabel3D('Spring T₁',0.6,1.8,0.3,'#FCD34D',galvoScene,16);
+  makeLabel3D('Spring T₂',0.6,-1.8,0.3,'#FCD34D',galvoScene,16);
+
+  // --- Pointer (thin long needle) ---
+  const pointer=makeBox(0.04,2.5,0.03,0xF8FAFC,0.1,0.9);
+  pointer.position.set(0,1.25+1.2,0.2);
+  galvoScene.add(pointer);
+  const pTip=makeSphere(0.07,0xF8FAFC,0.1);
+  pTip.position.set(0,2.7,0.2);
+  galvoScene.add(pTip);
+  makeLabel3D('Pointer',0.3,3.0,0.4,'#E2E8F0',galvoScene,16);
+
+  // --- Scale (arc) ---
+  const scaleArc=new THREE.TorusGeometry(1.8,0.04,8,32,Math.PI*0.8);
+  const scaleMesh=new THREE.Mesh(scaleArc,new THREE.MeshStandardMaterial({color:0xE2E8F0,metalness:0.1}));
+  scaleMesh.position.set(0,1.2,0.25);
+  scaleMesh.rotation.z=Math.PI*0.6;
+  galvoScene.add(scaleMesh);
+  makeLabel3D('Scale',0,3.4,0.4,'#94A3B8',galvoScene,16);
+
+  // --- Frame / case ---
+  const frame=makeBox(6,5.5,1.8,0x1E293B,0.3,0.8);
+  const hole=new THREE.Mesh(new THREE.BoxGeometry(4.2,4.2,2),
+    new THREE.MeshStandardMaterial({color:0x07090F}));
+  hole.position.set(0,0.3,0);
+  // Simple frame outline as wireframe
+  const frameWire=new THREE.BoxHelper(frame,0x334155);
+  frame.position.set(0,0,0);
+  galvoScene.add(frameWire);
+
+  // Field arrows between poles
+  for(let y=-1;y<=1;y+=0.5){
+    makeArrow3D(galvoScene,
+      new THREE.Vector3(-1.3,y,0),
+      new THREE.Vector3(1.3,y,0),
+      0xA78BFA,0.03);
+  }
+
+  galvoOrbit=addOrbitControl(galvoRenderer,galvoCamera,new THREE.Vector3(0,0,0));
+
+  function loop(){
+    requestAnimationFrame(loop);
+    if(galvoRotating){
+      galvoAngle+=0.008;
+      galvoCamera.position.x=Math.sin(galvoAngle)*13;
+      galvoCamera.position.z=Math.cos(galvoAngle)*13;
+      galvoCamera.position.y=5;
+      galvoCamera.lookAt(0,0,0);
+    }
+    galvoRenderer.render(galvoScene,galvoCamera);
+  }
+  loop();
+})();
+
+function toggleGalvoRot(){
+  galvoRotating=!galvoRotating;
+  const btn=document.getElementById('galvoRotBtn');
+  btn.textContent=galvoRotating?'⏸ Stop':'▶ Start';
+  btn.className=galvoRotating?'btn btn-p':'btn btn-t';
+}
+function setGalvoView(){
+  const v=document.getElementById('galvoView').value;
+  const r=13;
+  const positions={iso:[6,5,11],top:[0,15,1],front:[0,0,15],side:[15,0,0]};
+  const [x,y,z]=positions[v];
+  galvoCamera.position.set(x,y,z);
+  galvoCamera.lookAt(0,0,0);
+  if(galvoOrbit) galvoOrbit.spherical.setFromVector3(galvoCamera.position);
+}
+
+// ═══════════════════════════════════════════════════════════
+// SCENE 2: RADIAL FIELD CROSS-SECTION
+// ═══════════════════════════════════════════════════════════
+let radialScene,radialCamera,radialRenderer,radialCoil;
+(function initRadial(){
+  const container=document.getElementById('radialContainer');
+  const H=380;
+  radialRenderer=makeRenderer(container,H);
+  radialScene=new THREE.Scene();
+  radialScene.background=new THREE.Color(0x07090F);
+  radialCamera=makeCam(container.clientWidth,H,[0,0,12],[0,0,0]);
+  addLights(radialScene);
+
+  // Iron core (circle)
+  const core=makeCylinder(1.5,1.5,1.0,48,0x7C3AED,0.5,0.3);
+  core.rotation.x=Math.PI/2;
+  radialScene.add(core);
+  makeLabel3D('Iron core',0,-2.2,0,'#A78BFA',radialScene,16);
+
+  // N and S poles as arcs
+  const nGeo=new THREE.TorusGeometry(3,0.6,8,32,Math.PI*0.7);
+  const nMesh=new THREE.Mesh(nGeo,new THREE.MeshStandardMaterial({color:0xEF4444,metalness:0.7}));
+  nMesh.rotation.z=Math.PI*0.15;
+  nMesh.rotation.x=Math.PI/2;
+  radialScene.add(nMesh);
+  const sGeo=new THREE.TorusGeometry(3,0.6,8,32,Math.PI*0.7);
+  const sMesh=new THREE.Mesh(sGeo,new THREE.MeshStandardMaterial({color:0x3B82F6,metalness:0.7}));
+  sMesh.rotation.z=-Math.PI*1.15;
+  sMesh.rotation.x=Math.PI/2;
+  radialScene.add(sMesh);
+  makeLabel3D('N',-3.5,0.5,0,'#F87171',radialScene,20);
+  makeLabel3D('S', 3.0,0.5,0,'#60A5FA',radialScene,20);
+
+  // Radial field lines
+  for(let a=0;a<Math.PI*2;a+=Math.PI/6){
+    const x1=1.6*Math.cos(a), y1=1.6*Math.sin(a);
+    const x2=2.5*Math.cos(a), y2=2.5*Math.sin(a);
+    makeArrow3D(radialScene,
+      new THREE.Vector3(x1,y1,0),
+      new THREE.Vector3(x2,y2,0),
+      0xFCD34D,0.03);
+  }
+  makeLabel3D('Radial field lines',0,3.5,0,'#FCD34D',radialScene,16);
+
+  // Coil (rotatable rectangle)
+  radialCoil=new THREE.Group();
+  const coilMat=new THREE.MeshStandardMaterial({color:0x5EEAD4,metalness:0.6,roughness:0.3});
+  // Make coil as 4 boxes
+  [[-0.7,0,0,0.06,3.5,0.1],[0.7,0,0,0.06,3.5,0.1],
+   [0,1.75,0,1.46,0.1,0.1],[0,-1.75,0,1.46,0.1,0.1]].forEach(([x,y,z,bw,bh,bd])=>{
+    const b=new THREE.Mesh(new THREE.BoxGeometry(bw,bh,bd),coilMat);
+    b.position.set(x,y,z);
+    radialCoil.add(b);
+  });
+  radialScene.add(radialCoil);
+
+  // Force arrows on coil (always tangential due to radial field)
+  const fUp=makeArrow3D.bind(null,radialScene);
+
+  function loop(){
+    requestAnimationFrame(loop);
+    radialRenderer.render(radialScene,radialCamera);
+  }
+  loop();
+  updateRadial();
+})();
+
+function updateRadial(){
+  const angle=parseFloat(document.getElementById('radialAngle').value);
+  document.getElementById('radialAngleVal').textContent=`θ = ${angle}°`;
+  if(radialCoil) radialCoil.rotation.z=angle*Math.PI/180;
+}
+
+// ═══════════════════════════════════════════════════════════
+// SCENE 3: WORKING ANIMATION
+// ═══════════════════════════════════════════════════════════
+let workScene,workCamera,workRenderer,workCoilGroup,workPointer,
+    workAnimating=false,workTargetAngle=0,workCurrentAngle=0;
+
+(function initWorking(){
+  const container=document.getElementById('workingContainer');
+  const H=440;
+  workRenderer=makeRenderer(container,H);
+  workScene=new THREE.Scene();
+  workScene.background=new THREE.Color(0x07090F);
+  workCamera=makeCam(container.clientWidth,H,[0,5,11],[0,0,0]);
+  addLights(workScene);
+
+  // Magnet poles
+  const pGeo=new THREE.BoxGeometry(1,4,1);
+  const nM=new THREE.Mesh(pGeo,new THREE.MeshStandardMaterial({color:0xEF4444,metalness:0.6}));
+  nM.position.set(-2.5,0,0); workScene.add(nM);
+  const sM=new THREE.Mesh(pGeo,new THREE.MeshStandardMaterial({color:0x3B82F6,metalness:0.6}));
+  sM.position.set(2.5,0,0); workScene.add(sM);
+  makeLabel3D('N',-3,2.5,0,'#F87171',workScene);
+  makeLabel3D('S', 2.7,2.5,0,'#60A5FA',workScene);
+
+  // Field lines
+  for(let y=-1.5;y<=1.5;y+=0.75){
+    makeArrow3D(workScene,new THREE.Vector3(-2,y,0),new THREE.Vector3(2,y,0),0xA78BFA,0.03);
+  }
+  makeLabel3D('B →',0,2.5,0,'#A78BFA',workScene);
+
+  // Iron core
+  const ic=makeCylinder(0.6,0.6,2,32,0x6D28D9,0.5,0.4);
+  ic.rotation.z=Math.PI/2; workScene.add(ic);
+
+  // Rotating coil group
+  workCoilGroup=new THREE.Group();
+  const cMat=new THREE.MeshStandardMaterial({color:0x5EEAD4,metalness:0.6,roughness:0.3,side:THREE.DoubleSide});
+  // Coil frame: 4 sides
+  [[-0.8,0,0,0.1,3.2,0.08],[0.8,0,0,0.1,3.2,0.08],
+   [0,1.6,0,1.62,0.1,0.08],[0,-1.6,0,1.62,0.1,0.08]].forEach(([x,y,z,bw,bh,bd])=>{
+    workCoilGroup.add(new THREE.Mesh(new THREE.BoxGeometry(bw,bh,bd),cMat));
+    workCoilGroup.children[workCoilGroup.children.length-1].position.set(x,y,z);
+  });
+  // Coil surface (semi-transparent)
+  const surfM=new THREE.MeshStandardMaterial({color:0x5EEAD4,opacity:0.15,transparent:true,side:THREE.DoubleSide});
+  const surf=new THREE.Mesh(new THREE.PlaneGeometry(1.6,3.2),surfM);
+  workCoilGroup.add(surf);
+  workScene.add(workCoilGroup);
+
+  // Force arrows on AB and CD (always tangential in radial field)
+  const fArrTop=new THREE.Group();
+  const fArrBot=new THREE.Group();
+  // Top force (upward = out of page) shown as colored cylinder
+  const fMat1=new THREE.MeshStandardMaterial({color:0xF87171,metalness:0.2});
+  const fMat2=new THREE.MeshStandardMaterial({color:0x4ADE80,metalness:0.2});
+  const fTop=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.08,0.8,8),fMat1);
+  fTop.position.set(-0.8,0,0.7);
+  const fTopHead=new THREE.Mesh(new THREE.ConeGeometry(0.15,0.3,8),fMat1);
+  fTopHead.position.set(-0.8,0,1.1);
+  fTopHead.rotation.x=Math.PI/2;
+  const fBot=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.08,0.8,8),fMat2);
+  fBot.position.set(0.8,0,-0.7);
+  const fBotHead=new THREE.Mesh(new THREE.ConeGeometry(0.15,0.3,8),fMat2);
+  fBotHead.position.set(0.8,0,-1.1);
+  fBotHead.rotation.x=-Math.PI/2;
+  workCoilGroup.add(fTop,fTopHead,fBot,fBotHead);
+  makeLabel3D('F₁',-1.3,0,1.3,'#F87171',workScene);
+  makeLabel3D('F₂', 1.3,0,-1.3,'#4ADE80',workScene);
+
+  // Pointer (attached to coil)
+  workPointer=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.01,3.5,6),
+    new THREE.MeshStandardMaterial({color:0xFDE047,metalness:0.3}));
+  workPointer.position.set(0,1.75,0.15);
+  workCoilGroup.add(workPointer);
+  makeLabel3D('Pointer',0.3,3.2,0.5,'#FCD34D',workScene);
+
+  // Springs (top/bottom)
+  [-1.7,1.7].forEach(y=>{
+    for(let i=0;i<4;i++){
+      const ring=makeTorus(0.18,0.022,0xFCD34D);
+      ring.position.set(0,y+i*0.07-0.1,0);
+      ring.rotation.x=Math.PI/2;
+      workScene.add(ring);
+    }
+  });
+
+  // Scale arc
+  const scaleG=new THREE.TorusGeometry(2.5,0.04,8,48,Math.PI*0.9);
+  const scaleM=new THREE.Mesh(scaleG,new THREE.MeshStandardMaterial({color:0x94A3B8,metalness:0.1}));
+  scaleM.position.set(0,0,0.4);
+  scaleM.rotation.x=Math.PI/2;
+  scaleM.rotation.z=-Math.PI*0.45;
+  workScene.add(scaleM);
+
+  addOrbitControl(workRenderer,workCamera);
+  updateWorking();
+
+  function loop(){
+    requestAnimationFrame(loop);
+    if(Math.abs(workCurrentAngle-workTargetAngle)>0.005){
+      workCurrentAngle+=(workTargetAngle-workCurrentAngle)*0.04;
+      workCoilGroup.rotation.y=workCurrentAngle;
+    }
+    workRenderer.render(workScene,workCamera);
+  }
+  loop();
+})();
+
+function updateWorking(){
+  const I=parseFloat(document.getElementById('workI').value);
+  const N=parseFloat(document.getElementById('workN').value);
+  document.getElementById('workIVal').textContent=`I = ${I} μA`;
+  document.getElementById('workNVal').textContent=`N = ${N}`;
+  // θ ∝ I*N (simplified)
+  workTargetAngle=(I/100)*(Math.PI/2)*0.85;
+  const tDeg=Math.round(workTargetAngle*180/Math.PI);
+  document.getElementById('workTheta').textContent=`θ = ${tDeg}°`;
+  document.getElementById('workInfo').innerHTML=
+    `Deflecting τ = NIAB &nbsp;|&nbsp; Restoring = Kθ &nbsp;|&nbsp; At equilibrium: <strong>θ = ${tDeg}°</strong> ∝ I`;
+}
+let workAnimRAF=null;
+function toggleWorkAnim(){
+  workAnimating=!workAnimating;
+  const btn=document.getElementById('workAnimBtn');
+  btn.textContent=workAnimating?'⏸ Pause':'▶ Animate';
+  btn.className=workAnimating?'btn btn-p':'btn btn-t';
+  if(workAnimating){
+    let t=0;
+    function sweep(){
+      if(!workAnimating) return;
+      t+=0.015;
+      const I=50+45*Math.sin(t);
+      document.getElementById('workI').value=I;
+      updateWorking();
+      workAnimRAF=requestAnimationFrame(sweep);
+    }
+    sweep();
+  } else {
+    if(workAnimRAF) cancelAnimationFrame(workAnimRAF);
+  }
+}
+function resetWorking(){
+  workAnimating=false;
+  if(workAnimRAF) cancelAnimationFrame(workAnimRAF);
+  document.getElementById('workAnimBtn').textContent='▶ Animate';
+  document.getElementById('workAnimBtn').className='btn btn-t';
+  document.getElementById('workI').value=0;
+  updateWorking();
+}
+
+// ═══════════════════════════════════════════════════════════
+// SCENE 4: AMMETER CIRCUIT
+// ═══════════════════════════════════════════════════════════
+let ammScene,ammCamera,ammRenderer,ammShuntMesh;
+(function initAmmeter(){
+  const container=document.getElementById('ammeterContainer');
+  const H=360;
+  ammRenderer=makeRenderer(container,H);
+  ammScene=new THREE.Scene();
+  ammScene.background=new THREE.Color(0x07090F);
+  ammCamera=makeCam(container.clientWidth,H,[0,3,12],[0,0,0]);
+  addLights(ammScene);
+
+  // Main current wire
+  const wireMat=new THREE.MeshStandardMaterial({color:0xFCD34D,metalness:0.7,roughness:0.3});
+  // Horizontal wires
+  [[-5,0,0,4,0.1,0.1],[-1,0,0,2,0.1,0.1],[1,0,0,2,0.1,0.1],[3,0,0,4,0.1,0.1]].forEach(([x,y,z,w,h,d])=>{
+    const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),wireMat);
+    m.position.set(x,y,z); ammScene.add(m);
+  });
+
+  // Split node left and right
+  [-1,1].forEach(x=>{
+    const node=makeSphere(0.15,0xFCD34D,0.7);
+    node.position.set(x,0,0);
+    ammScene.add(node);
+    // Vertical branches
+    const branch=new THREE.Mesh(new THREE.BoxGeometry(0.08,1.8,0.08),wireMat);
+    branch.position.set(x,x>0?-0.9:0.9,0);
+    ammScene.add(branch);
+  });
+
+  // Galvanometer box (upper path)
+  const galvoBox=makeBox(1.8,0.9,0.6,0xEF4444,0.4,0.5);
+  galvoBox.position.set(0,1.7,0);
+  ammScene.add(galvoBox);
+  makeLabel3D('G (Galvanometer)',0,2.4,0,'#F87171',ammScene,16);
+  makeLabel3D('R = G Ω',0,1.7,0.5,'#FCA5A5',ammScene,14);
+
+  // Horizontal bridge wires to galvanometer
+  [-0.9,0.9].forEach(x=>{
+    const bw=new THREE.Mesh(new THREE.BoxGeometry(0.08,0.08,0.8),wireMat);
+    bw.position.set(x>0?0.9:-0.9,1.7,0);
+    // Connect vertical to galvo
+    const vert2=new THREE.Mesh(new THREE.BoxGeometry(0.08,0.8,0.08),wireMat);
+    vert2.position.set(x,x>0?1.3:1.3,0);
+    ammScene.add(vert2);
+  });
+
+  // Shunt resistor (lower path) - this will be updated
+  ammShuntMesh=makeBox(1.8,0.7,0.5,0x4ADE80,0.3,0.6);
+  ammShuntMesh.position.set(0,-1.7,0);
+  ammScene.add(ammShuntMesh);
+  makeLabel3D('S (Shunt)',0,-2.3,0,'#4ADE80',ammScene,16);
+
+  // Horizontal bridge to shunt
+  [-1,1].forEach(x=>{
+    const vert3=new THREE.Mesh(new THREE.BoxGeometry(0.08,0.7,0.08),wireMat);
+    vert3.position.set(x,-1.3,0);
+    ammScene.add(vert3);
+  });
+
+  // Current arrows on main wire
+  makeArrow3D(ammScene,new THREE.Vector3(-4.5,0,0),new THREE.Vector3(-1.5,0,0),0xFCD34D,0.06);
+  makeArrow3D(ammScene,new THREE.Vector3(1.5,0,0),new THREE.Vector3(4.5,0,0),0xFCD34D,0.06);
+  makeLabel3D('I →',-3.5,0.4,0,'#FCD34D',ammScene);
+
+  // Small Ig arrow through G
+  makeArrow3D(ammScene,new THREE.Vector3(-0.6,1.7,0),new THREE.Vector3(0.6,1.7,0),0xF87171,0.04);
+  makeLabel3D('Ig',0,2.0,0,'#F87171',ammScene,16);
+
+  // Large I-Ig arrow through S
+  makeArrow3D(ammScene,new THREE.Vector3(-0.6,-1.7,0),new THREE.Vector3(0.6,-1.7,0),0x4ADE80,0.05);
+  makeLabel3D('I−Ig',0,-2.0,0,'#4ADE80',ammScene,16);
+
+  addOrbitControl(ammRenderer,ammCamera);
+  function loop(){ requestAnimationFrame(loop); ammRenderer.render(ammScene,ammCamera); }
+  loop();
+  calcAmmeter();
+})();
+
+function calcAmmeter(){
+  const I=parseFloat(document.getElementById('ammI').value);
+  const G=parseFloat(document.getElementById('ammG').value);
+  const Ig=parseFloat(document.getElementById('ammIg').value);
+  document.getElementById('ammIVal').textContent=`I = ${I} mA`;
+  document.getElementById('ammGVal').textContent=`G = ${G} Ω`;
+  document.getElementById('ammIgVal').textContent=`Ig = ${Ig} mA`;
+  if(Ig>=I){document.getElementById('ammResult').textContent='⚠ Ig must be < I';return;}
+  const S=(Ig*G)/(I-Ig);
+  const Rp=(G*S)/(G+S);
+  document.getElementById('ammResult').innerHTML=
+    `<strong>S = ${S.toFixed(4)} Ω</strong> (shunt) &nbsp;|&nbsp; Rₚ = ${Rp.toFixed(4)} Ω (ammeter R)`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// SCENE 5: VOLTMETER CIRCUIT
+// ═══════════════════════════════════════════════════════════
+let voltScene,voltCamera,voltRenderer;
+(function initVoltmeter(){
+  const container=document.getElementById('voltmeterContainer');
+  const H=320;
+  voltRenderer=makeRenderer(container,H);
+  voltScene=new THREE.Scene();
+  voltScene.background=new THREE.Color(0x07090F);
+  voltCamera=makeCam(container.clientWidth,H,[0,2,11],[0,0,0]);
+  addLights(voltScene);
+
+  const wireMat=new THREE.MeshStandardMaterial({color:0xFCD34D,metalness:0.7,roughness:0.3});
+
+  // Single series path: wire - Rs - Galvo - wire
+  // Horizontal wire left
+  const wL=new THREE.Mesh(new THREE.BoxGeometry(2.5,0.08,0.08),wireMat);
+  wL.position.set(-3,0,0); voltScene.add(wL);
+  // Series R box
+  const Rs=makeBox(2,0.7,0.5,0x3B82F6,0.4,0.5);
+  Rs.position.set(-1.0,0,0); voltScene.add(Rs);
+  makeLabel3D('Rₛ (High R)',-1,0.7,0,'#93C5FD',voltScene,16);
+  // Middle wire
+  const wM=new THREE.Mesh(new THREE.BoxGeometry(0.4,0.08,0.08),wireMat);
+  wM.position.set(0.2,0,0); voltScene.add(wM);
+  // Galvo box
+  const gBox=makeBox(1.8,0.7,0.5,0xEF4444,0.4,0.5);
+  gBox.position.set(1.4,0,0); voltScene.add(gBox);
+  makeLabel3D('G',1.4,0.7,0,'#F87171',voltScene,16);
+  // Wire right
+  const wR=new THREE.Mesh(new THREE.BoxGeometry(2,0.08,0.08),wireMat);
+  wR.position.set(3.4,0,0); voltScene.add(wR);
+
+  // Current arrow
+  makeArrow3D(voltScene,new THREE.Vector3(-4.2,0,0),new THREE.Vector3(-2.3,0,0),0xFCD34D,0.06);
+  makeLabel3D('Ig →',-3.5,0.4,0,'#FCD34D',voltScene,16);
+
+  // Voltage labels
+  makeLabel3D('V (full scale)',-0.5,-1.2,0,'#E2E8F0',voltScene,16);
+  makeLabel3D('+', -4.5, 0, 0, '#F87171', voltScene, 20);
+  makeLabel3D('−', 4.6, 0, 0, '#60A5FA', voltScene, 20);
+
+  // Terminal dots
+  const tMat=new THREE.MeshStandardMaterial({color:0xFCD34D,metalness:0.8});
+  [-4.3,4.3].forEach(x=>{
+    const t=new THREE.Mesh(new THREE.SphereGeometry(0.18,12,12),tMat);
+    t.position.set(x,0,0); voltScene.add(t);
+  });
+
+  addOrbitControl(voltRenderer,voltCamera);
+  function loop(){ requestAnimationFrame(loop); voltRenderer.render(voltScene,voltCamera); }
+  loop();
+  calcVoltmeter();
+})();
+
+function calcVoltmeter(){
+  const V=parseFloat(document.getElementById('voltV').value);
+  const G=parseFloat(document.getElementById('voltG').value);
+  const Ig=parseFloat(document.getElementById('voltIg').value)/1000;
+  document.getElementById('voltVVal').textContent=`V = ${V} V`;
+  document.getElementById('voltGVal').textContent=`G = ${G} Ω`;
+  document.getElementById('voltIgVal').textContent=`Ig = ${Ig*1000} mA`;
+  const Rs=V/Ig-G;
+  document.getElementById('voltResult').innerHTML=
+    `<strong>Rₛ = ${Rs.toFixed(1)} Ω</strong> &nbsp;|&nbsp; Total R = ${(Rs+G).toFixed(1)} Ω`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// SCENE 6: FULL SIMULATOR
+// ═══════════════════════════════════════════════════════════
+let simScene,simCamera,simRenderer,simCoil,simPointerMesh,simScalePointer;
+(function initSim(){
+  const container=document.getElementById('simContainer');
+  const H=460;
+  simRenderer=makeRenderer(container,H);
+  simScene=new THREE.Scene();
+  simScene.background=new THREE.Color(0x07090F);
+  simCamera=makeCam(container.clientWidth,H,[0,4,12],[0,0,0]);
+  addLights(simScene);
+
+  // Full galvanometer scene
+  // Magnets
+  [[-2.8,0xEF4444],[2.8,0x3B82F6]].forEach(([x,c])=>{
+    const p=makeBox(0.9,4.5,0.9,c,0.7,0.3);
+    p.position.set(x,0,0); simScene.add(p);
+    // Concave face
+    const arc=new THREE.CylinderGeometry(1.9,1.9,0.9,32,1,false,-Math.PI*0.35,Math.PI*0.7);
+    const arcM=new THREE.Mesh(arc,new THREE.MeshStandardMaterial({color:c,metalness:0.8,roughness:0.2,side:THREE.DoubleSide}));
+    arcM.rotation.x=Math.PI/2;
+    arcM.position.set(x<0?0.4:-0.4,0,0);
+    simScene.add(arcM);
+  });
+  makeLabel3D('N',-3.2,2.7,0.5,'#F87171',simScene);
+  makeLabel3D('S', 2.9,2.7,0.5,'#60A5FA',simScene);
+
+  // Core
+  const core=makeCylinder(0.75,0.75,2,48,0x6D28D9,0.5,0.3);
+  core.rotation.z=Math.PI/2; simScene.add(core);
+
+  // Field lines
+  for(let y=-1.5;y<=1.5;y+=0.6){
+    makeArrow3D(simScene,new THREE.Vector3(-2,y,0),new THREE.Vector3(2,y,0),0xA78BFA,0.025);
+  }
+
+  // Rotating coil
+  simCoil=new THREE.Group();
+  const cMat2=new THREE.MeshStandardMaterial({color:0x5EEAD4,metalness:0.6,roughness:0.3});
+  [[-0.9,0,0,0.1,3.4,0.1],[0.9,0,0,0.1,3.4,0.1],
+   [0,1.7,0,1.82,0.1,0.1],[0,-1.7,0,1.82,0.1,0.1]].forEach(([x,y,z,bw,bh,bd])=>{
+    const b=new THREE.Mesh(new THREE.BoxGeometry(bw,bh,bd),cMat2);
+    b.position.set(x,y,z); simCoil.add(b);
+  });
+  // coil surface
+  simCoil.add(new THREE.Mesh(new THREE.PlaneGeometry(1.8,3.4),
+    new THREE.MeshStandardMaterial({color:0x5EEAD4,opacity:0.12,transparent:true,side:THREE.DoubleSide})));
+
+  // Pointer
+  simPointerMesh=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.01,3.8,6),
+    new THREE.MeshStandardMaterial({color:0xFDE047,metalness:0.4}));
+  simPointerMesh.position.set(0,1.9,0.18);
+  simCoil.add(simPointerMesh);
+
+  simScene.add(simCoil);
+
+  // Springs
+  [-2,2].forEach(y=>{
+    for(let i=0;i<5;i++){
+      const ring=makeTorus(0.2,0.024,0xFCD34D);
+      ring.position.set(0,y+i*0.07-0.14,0);
+      ring.rotation.x=Math.PI/2;
+      simScene.add(ring);
+    }
+  });
+
+  // Scale arc
+  const scG=new THREE.TorusGeometry(2.8,0.05,8,64,Math.PI);
+  const scM=new THREE.Mesh(scG,new THREE.MeshStandardMaterial({color:0xE2E8F0,metalness:0.1}));
+  scM.position.set(0,0,0.5); scM.rotation.x=Math.PI/2; scM.rotation.z=Math.PI/2;
+  simScene.add(scM);
+
+  addOrbitControl(simRenderer,simCamera);
+
+  let currentAngle=0,targetAngle=0;
+  function loop(){
+    requestAnimationFrame(loop);
+    const N=parseFloat(document.getElementById('simN').value)||100;
+    const I=parseFloat(document.getElementById('simI').value)||0;
+    const A=parseFloat(document.getElementById('simA').value)||5;
+    const B=parseFloat(document.getElementById('simB').value)||0.3;
+    const K=parseFloat(document.getElementById('simK').value)||5;
+    const Knew=K*1e-6;
+    const tau=N*(I*1e-6)*(A*1e-4)*B;
+    // θ = tau/K but normalize for display
+    targetAngle=Math.min(Math.PI*0.45, tau/Knew * 0.0001);
+    currentAngle+=(targetAngle-currentAngle)*0.05;
+    if(simCoil) simCoil.rotation.y=currentAngle;
+    simRenderer.render(simScene,simCamera);
+  }
+  loop();
+})();
+
+let simLastUpdate=0;
+function calcSimAll(){
+  const N=parseFloat(document.getElementById('simN').value);
+  const I=parseFloat(document.getElementById('simI').value);
+  const A=parseFloat(document.getElementById('simA').value);
+  const B=parseFloat(document.getElementById('simB').value);
+  const K=parseFloat(document.getElementById('simK').value);
+  document.getElementById('simNv').textContent=`N = ${N}`;
+  document.getElementById('simIv').textContent=`I = ${I} μA`;
+  document.getElementById('simAv').textContent=`A = ${A} cm²`;
+  document.getElementById('simBv').textContent=`B = ${B} T`;
+  document.getElementById('simKv').textContent=`K = ${K}×10⁻⁶`;
+
+  const Ival=I*1e-6, Aval=A*1e-4, Kval=K*1e-6;
+  const tau=(N*Ival*Aval*B).toExponential(3);
+  const Is=(N*Aval*B/Kval).toFixed(2);
+  const R=N*50*1e-3; // approx resistance
+  const Vs=(parseFloat(Is)/R).toFixed(4);
+  const theta=((N*Aval*B/Kval)*Ival*180/Math.PI).toFixed(1);
+
+  document.getElementById('simResults').innerHTML=`
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:11px;">
+    ${sr2('τ_deflect = NIAB',tau+' N·m','#5EEAD4')}
+    ${sr2('Deflection θ',theta+'°','#F87171')}
+    ${sr2('Current sensitivity',Is+' div/A','#FCD34D')}
+    ${sr2('Voltage sensitivity',Vs+' div/V','#93C5FD')}
+    ${sr2('m = NIA',(N*Ival*Aval).toExponential(3)+' A·m²','#A78BFA')}
+    ${sr2('θ/I = NBA/K',Is,'#4ADE80')}
+  </div>`;
+}
+function sr2(lbl,val,color){
+  return `<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:10px 13px">
+    <div style="font-size:10px;color:#64748B;font-weight:700;text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px">${lbl}</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:${color};font-weight:600">${val}</div>
+  </div>`;
+}
+calcSimAll();
+
+// ═══════════════════════════════════════════════════════════
+// RESIZE HANDLER
+// ═══════════════════════════════════════════════════════════
+window.addEventListener('resize',()=>{
+  const scenes=[
+    {r:galvoRenderer,c:galvoCamera,container:'galvoContainer',h:480},
+    {r:radialRenderer,c:radialCamera,container:'radialContainer',h:380},
+    {r:workRenderer,c:workCamera,container:'workingContainer',h:440},
+    {r:ammRenderer,c:ammCamera,container:'ammeterContainer',h:360},
+    {r:voltRenderer,c:voltCamera,container:'voltmeterContainer',h:320},
+    {r:simRenderer,c:simCamera,container:'simContainer',h:460},
+  ];
+  scenes.forEach(({r,c,container,h})=>{
+    if(!r) return;
+    const W=document.getElementById(container).clientWidth;
+    r.setSize(W,h);
+    c.aspect=W/h;
+    c.updateProjectionMatrix();
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AC Circuits: Phasors & Pure Components</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .math {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: 600;
+            color: #1e40af;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased leading-relaxed">
+
+    <div class="max-w-4xl mx-auto py-12 px-6">
+        
+        <header class="mb-12 border-b-4 border-blue-600 pb-6">
+            <h1 class="text-4xl font-bold text-slate-900 mb-3">AC Circuits: Phasors & Pure Components</h1>
+            <p class="text-lg text-slate-600">CBSE Class 12 Physics Reference — Foundation for LCR Circuits</p>
+        </header>
+
+        <section class="mb-12 bg-white p-8 rounded-xl shadow-sm border border-slate-100">
+            <h2 class="text-2xl font-bold text-blue-800 mb-4 flex items-center">
+                <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm">1</span>
+                Phasor Diagrams — The Core Idea
+            </h2>
+            <p class="mb-4 text-slate-700">A <strong>phasor</strong> is a rotating vector that represents a sinusoidally varying quantity (current or EMF). Here's the exact mechanism:</p>
+            <ul class="list-disc pl-6 mb-6 text-slate-700 space-y-2">
+                <li>The phasor's <strong>length</strong> = peak value (<span class="math">I₀</span> or <span class="math">E₀</span>)</li>
+                <li>The phasor <strong>rotates anticlockwise</strong> with angular velocity <span class="math">ω</span> (always anticlockwise — this is a fixed convention, never clockwise)</li>
+                <li>The <strong>projection of the phasor on the Y-axis at any instant</strong> gives you the instantaneous value</li>
+            </ul>
+            
+            <p class="mb-6 text-slate-700"><strong>Why projection on Y-axis specifically?</strong> Because our equations are written in <strong>sine form</strong>: <span class="math">I = I₀sin(ωt)</span>, <span class="math">E = E₀sin(ωt)</span>. If the phasor makes angle <span class="math">ωt</span> with the X-axis (horizontal reference), then Y-projection = (length) × <span class="math">sin(ωt)</span> = <span class="math">I₀sin(ωt)</span>, which matches the equation.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
+                    <h3 class="font-bold text-amber-900 mb-1">Blind spot #1</h3>
+                    <p class="text-amber-800 text-sm">If a problem gives you a <em>cosine</em> form like <span class="math">I = I₀cos(ωt)</span>, your phasor diagram starts not from the X-axis, but rotated 90° ahead of it (i.e., starting at the Y-axis itself). Always convert: <span class="math">cos(ωt) = sin(ωt + π/2)</span>. A cosine phasor is just a sine phasor sitting 90° ahead.</p>
+                </div>
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
+                    <h3 class="font-bold text-amber-900 mb-1">Blind spot #2</h3>
+                    <p class="text-amber-800 text-sm">Time <span class="math">t = 0</span> is when you "freeze" the phasor diagram and draw it as a snapshot. The diagram is NOT static physics — it's a snapshot of two rotating arrows at one instant, maintaining a fixed angle between them forever.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12 bg-white p-8 rounded-xl shadow-sm border border-slate-100">
+            <h2 class="text-2xl font-bold text-blue-800 mb-4 flex items-center">
+                <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm">2</span>
+                AC Through a Pure Resistor
+            </h2>
+            <p class="mb-4"><strong>Setup:</strong> <span class="math">E = E₀sin(ωt)</span> applied across resistance <span class="math">R</span> only.</p>
+            
+            <div class="bg-slate-50 p-4 rounded-lg mb-6 text-sm font-mono text-slate-700 border border-slate-200">
+                <p>By Ohm's law instantaneously: IR = E</p>
+                <p>→ I = E/R = (E₀/R) sin(ωt)</p>
+                <p>→ I = I₀sin(ωt), where <strong>I₀ = E₀/R</strong></p>
+            </div>
+
+            <p class="mb-4 text-slate-700"><strong>Result:</strong> Comparing <span class="math">I = I₀sin(ωt)</span> and <span class="math">E = E₀sin(ωt)</span> — both have the <strong>same phase</strong> (no phase angle, no lag, no lead). Current and voltage rise and fall together, hit zero together, peak together.</p>
+            <p class="mb-6 text-slate-700"><strong>Phasor diagram:</strong> Both <span class="math">I₀</span> and <span class="math">E₀</span> phasors point in the exact same direction, overlapping.</p>
+
+            <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
+                <h3 class="font-bold text-amber-900 mb-1">Special / Extreme Cases</h3>
+                <ul class="list-disc pl-5 text-amber-800 text-sm space-y-1">
+                    <li>This is the ONLY component where R works identically for AC and DC.</li>
+                    <li><strong>Blind spot:</strong> Students sometimes think "in phase" means <span class="math">I₀ = E₀</span> numerically. Wrong — it only means the <em>phase angle</em> is zero. Magnitudes are related by R, they are NOT equal unless <span class="math">R = 1Ω</span>.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="mb-12 bg-white p-8 rounded-xl shadow-sm border border-slate-100">
+            <h2 class="text-2xl font-bold text-blue-800 mb-4 flex items-center">
+                <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm">3</span>
+                AC Through a Pure Inductor
+            </h2>
+            <p class="mb-4"><strong>Setup:</strong> <span class="math">E = E₀sin(ωt)</span> applied to a pure inductance <span class="math">L</span> (zero resistance).</p>
+            
+            <div class="bg-slate-50 p-4 rounded-lg mb-6 text-sm font-mono text-slate-700 border border-slate-200">
+                <p>E − L(dI/dt) = 0</p>
+                <p>→ dI/dt = (E₀/L) sin(ωt)</p>
+                <p>Integrating: I = −(E₀/ωL)cos(ωt)</p>
+                <p>Since −cos(ωt) = sin(ωt − π/2):</p>
+                <p class="font-bold text-blue-800 mt-2">I = I₀ sin(ωt − π/2)  [where I₀ = E₀/ωL]</p>
+            </div>
+
+            <p class="mb-4 text-slate-700"><strong>Result:</strong> Current <strong>lags</strong> the EMF by phase angle <span class="math">π/2</span> (90°). Equivalently, voltage <strong>leads</strong> current by 90°.</p>
+            <p class="mb-6 text-slate-700"><strong>Inductive Reactance:</strong> <span class="math">X<sub>L</sub> = ωL = 2πνL</span>. It is directly proportional to frequency (<span class="math">X<sub>L</sub> ∝ ν</span>).</p>
+
+            <table class="w-full text-left border-collapse mb-6">
+                <thead>
+                    <tr class="bg-slate-100 text-slate-700 border-b-2 border-slate-300">
+                        <th class="p-3 text-sm font-bold">Case</th>
+                        <th class="p-3 text-sm font-bold">What happens</th>
+                        <th class="p-3 text-sm font-bold">Why</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm">
+                    <tr class="border-b border-slate-200">
+                        <td class="p-3 font-semibold">DC source (ν = 0)</td>
+                        <td class="p-3"><span class="math">X<sub>L</sub> = 0</span></td>
+                        <td class="p-3">Inductor offers ZERO opposition to steady DC (acts like a wire)</td>
+                    </tr>
+                    <tr class="border-b border-slate-200 bg-slate-50">
+                        <td class="p-3 font-semibold">Very high freq. AC</td>
+                        <td class="p-3"><span class="math">X<sub>L</sub> → ∞</span></td>
+                        <td class="p-3">Inductor almost completely blocks current</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold text-blue-700">Conclusion (Memorize)</td>
+                        <td colspan="2" class="p-3 font-bold text-blue-700">"Inductor passes DC and blocks AC of very high frequency"</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
+                <h3 class="font-bold text-amber-900 mb-1">Blind spot #3</h3>
+                <p class="text-amber-800 text-sm">Don't confuse "passes DC" with "DC has no effect." At <span class="math">ν=0</span>, <span class="math">X<sub>L</sub>=0</span> doesn't mean the inductor disappears — it just means it offers no <em>additional</em> opposition once steady current is established. (It still opposes the initial build-up).</p>
+            </div>
+        </section>
+
+        <section class="mb-12 bg-white p-8 rounded-xl shadow-sm border border-slate-100">
+            <h2 class="text-2xl font-bold text-blue-800 mb-4 flex items-center">
+                <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm">4</span>
+                AC Through a Pure Capacitor
+            </h2>
+            <p class="mb-4"><strong>Setup:</strong> <span class="math">E = E₀sin(ωt)</span> applied to a capacitor <span class="math">C</span> only.</p>
+            
+            <div class="bg-slate-50 p-4 rounded-lg mb-6 text-sm font-mono text-slate-700 border border-slate-200">
+                <p>Charge q = CE₀sin(ωt)</p>
+                <p>I = dq/dt = CE₀ω cos(ωt) = (E₀/(1/ωC)) cos(ωt)</p>
+                <p>Since cos(ωt) = sin(ωt + π/2):</p>
+                <p class="font-bold text-blue-800 mt-2">I = I₀ sin(ωt + π/2)  [where I₀ = E₀/(1/ωC)]</p>
+            </div>
+
+            <p class="mb-4 text-slate-700"><strong>Result:</strong> Current <strong>leads</strong> the EMF by phase angle <span class="math">π/2</span> (90°). Equivalently, voltage <strong>lags</strong> current by 90°. (Exact opposite of the inductor).</p>
+            <p class="mb-6 text-slate-700"><strong>Capacitive Reactance:</strong> <span class="math">X<sub>C</sub> = 1/ωC = 1/(2πνC)</span>. It is inversely proportional to frequency (<span class="math">X<sub>C</sub> ∝ 1/ν</span>).</p>
+
+            <table class="w-full text-left border-collapse mb-6">
+                <thead>
+                    <tr class="bg-slate-100 text-slate-700 border-b-2 border-slate-300">
+                        <th class="p-3 text-sm font-bold">Case</th>
+                        <th class="p-3 text-sm font-bold">What happens</th>
+                        <th class="p-3 text-sm font-bold">Why</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm">
+                    <tr class="border-b border-slate-200">
+                        <td class="p-3 font-semibold">DC source (ν = 0)</td>
+                        <td class="p-3"><span class="math">X<sub>C</sub> = ∞</span></td>
+                        <td class="p-3">Capacitor offers infinite opposition to DC (open circuit)</td>
+                    </tr>
+                    <tr class="border-b border-slate-200 bg-slate-50">
+                        <td class="p-3 font-semibold">Very high freq. AC</td>
+                        <td class="p-3"><span class="math">X<sub>C</sub> → 0</span></td>
+                        <td class="p-3">Capacitor offers almost no opposition, current flows freely</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold text-blue-700">Conclusion (Memorize)</td>
+                        <td colspan="2" class="p-3 font-bold text-blue-700">"Capacitor blocks DC and passes AC of high frequency"</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg">
+                    <h3 class="font-bold text-amber-900 mb-1">Blind spot #4</h3>
+                    <p class="text-amber-800 text-sm mb-2"><strong>L passes DC, blocks high-freq AC.</strong><br><strong>C blocks DC, passes high-freq AC.</strong></p>
+                    <p class="text-amber-800 text-xs">Think of an inductor as "lazy to change" (passes steady DC easily) and a capacitor as "needs to keep charging/discharging" (DC can't cycle it, AC can).</p>
+                </div>
+                <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-lg">
+                    <h3 class="font-bold text-emerald-900 mb-1">CIVIL Mnemonic (Blind spot #5)</h3>
+                    <ul class="text-emerald-800 text-sm list-none space-y-1">
+                        <li><strong>C I V</strong> : In a Capacitor, Current (I) leads Voltage (V).</li>
+                        <li><strong>V I L</strong> : Voltage (V) leads Current (I) in an Inductor (L).</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12 bg-white p-8 rounded-xl shadow-sm border border-slate-100">
+            <h2 class="text-2xl font-bold text-blue-800 mb-6 flex items-center">
+                <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center mr-3 text-sm">5</span>
+                Comparing All Three — Side by Side
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse whitespace-nowrap">
+                    <thead>
+                        <tr class="bg-slate-800 text-white">
+                            <th class="p-4 font-semibold text-sm rounded-tl-lg">Quantity</th>
+                            <th class="p-4 font-semibold text-sm border-l border-slate-600">Resistor (R)</th>
+                            <th class="p-4 font-semibold text-sm border-l border-slate-600">Inductor (L)</th>
+                            <th class="p-4 font-semibold text-sm border-l border-slate-600 rounded-tr-lg">Capacitor (C)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <td class="p-3 font-semibold text-slate-700">Current eq.</td>
+                            <td class="p-3 border-l border-slate-200"><span class="math">I₀sin(ωt)</span></td>
+                            <td class="p-3 border-l border-slate-200"><span class="math">I₀sin(ωt − π/2)</span></td>
+                            <td class="p-3 border-l border-slate-200"><span class="math">I₀sin(ωt + π/2)</span></td>
+                        </tr>
+                        <tr class="border-b border-slate-200">
+                            <td class="p-3 font-semibold text-slate-700">Phase relation</td>
+                            <td class="p-3 border-l border-slate-200">In phase (φ=0)</td>
+                            <td class="p-3 border-l border-slate-200">I lags E by 90°</td>
+                            <td class="p-3 border-l border-slate-200">I leads E by 90°</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <td class="p-3 font-semibold text-slate-700">Opposition</td>
+                            <td class="p-3 border-l border-slate-200">R</td>
+                            <td class="p-3 border-l border-slate-200"><span class="math">X<sub>L</sub> = ωL</span></td>
+                            <td class="p-3 border-l border-slate-200"><span class="math">X<sub>C</sub> = 1/ωC</span></td>
+                        </tr>
+                        <tr class="border-b border-slate-200">
+                            <td class="p-3 font-semibold text-slate-700">Peak current</td>
+                            <td class="p-3 border-l border-slate-200"><span class="math">I₀ = E₀/R</span></td>
+                            <td class="p-3 border-l border-slate-200"><span class="math">I₀ = E₀/X<sub>L</sub></span></td>
+                            <td class="p-3 border-l border-slate-200"><span class="math">I₀ = E₀/X<sub>C</sub></span></td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <td class="p-3 font-semibold text-slate-700">Freq. depend?</td>
+                            <td class="p-3 border-l border-slate-200">No (constant)</td>
+                            <td class="p-3 border-l border-slate-200">Yes, <span class="math">∝ ν</span></td>
+                            <td class="p-3 border-l border-slate-200">Yes, <span class="math">∝ 1/ν</span></td>
+                        </tr>
+                        <tr class="border-b border-slate-200">
+                            <td class="p-3 font-semibold text-slate-700">At ν = 0 (DC)</td>
+                            <td class="p-3 border-l border-slate-200 text-green-700">Normal</td>
+                            <td class="p-3 border-l border-slate-200 text-green-700">Passes DC</td>
+                            <td class="p-3 border-l border-slate-200 text-red-600">Blocks DC</td>
+                        </tr>
+                        <tr class="border-b border-slate-200 bg-slate-50">
+                            <td class="p-3 font-semibold text-slate-700">At ν → ∞</td>
+                            <td class="p-3 border-l border-slate-200 text-green-700">Normal</td>
+                            <td class="p-3 border-l border-slate-200 text-red-600">Blocks AC</td>
+                            <td class="p-3 border-l border-slate-200 text-green-700">Passes AC</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold text-slate-900 mb-6">6. Worked Examples</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
+                    <h3 class="text-lg font-bold text-slate-800 mb-3 border-b pb-2">Ex 4: Resistor</h3>
+                    <p class="text-sm text-slate-600 mb-2">R = 20Ω, E_rms = 110V, ν = 50Hz</p>
+                    <ul class="text-sm space-y-1 text-slate-700 font-mono">
+                        <li>I_rms = 110/20 = 5.5 A</li>
+                        <li>I₀ = √2 × 5.5 = 7.78 A</li>
+                        <li class="mt-2 text-xs text-slate-500">At t=0.1s: I = I₀sin(π/4)...</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
+                    <h3 class="text-lg font-bold text-slate-800 mb-3 border-b pb-2">Ex 5: Inductor</h3>
+                    <p class="text-sm text-slate-600 mb-2">E = 220sin(100πt), L = 1/π H</p>
+                    <ul class="text-sm space-y-1 text-slate-700 font-mono">
+                        <li>X_L = 100π × (1/π) = 100Ω</li>
+                        <li>I₀ = 220/100 = 2.2 A</li>
+                        <li>I = 2.2 sin(100πt − π/2)</li>
+                        <li>I_rms = 2.2/1.414 = 1.55 A</li>
+                    </ul>
+                </div>
+
+                <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
+                    <h3 class="text-lg font-bold text-slate-800 mb-3 border-b pb-2">Ex 6: Capacitor</h3>
+                    <p class="text-sm text-slate-600 mb-2">C = 10μF, E = 220sin(100πt)</p>
+                    <ul class="text-sm space-y-1 text-slate-700 font-mono">
+                        <li>X_C = 1/(100π×10μF) = 318.5Ω</li>
+                        <li>I₀ = 220/318.5 = 0.691 A</li>
+                        <li>I = 0.691 sin(100πt + π/2)</li>
+                        <li>I_rms = 0.691/1.414 = 0.489 A</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-indigo-900 text-white p-8 rounded-xl shadow-md">
+            <h2 class="text-2xl font-bold text-indigo-100 mb-3">Why This Matters for LCR (Preview)</h2>
+            <p class="text-indigo-50 leading-relaxed text-sm md:text-base">
+                When R, L, C combine in one circuit, you <strong>cannot simply add</strong> the phase-shifted voltages arithmetically (V_R + V_L + V_C ≠ total V algebraically) because they're not in phase with each other. 
+                V_R is in phase with I, V_L leads I by 90°, and V_C lags I by 90°. You must add them as <strong>vectors (phasors)</strong> using the Pythagorean-style combination, which is exactly why we built the phasor foundation first. The next step is vector addition step by step!
+            </p>
+        </section>
+
+    </div>
+
+</body>
+</html>

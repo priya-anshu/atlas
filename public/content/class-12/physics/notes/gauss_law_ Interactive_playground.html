@@ -1,0 +1,1639 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gauss's Law — Interactive Playground</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        cream: '#fdf6ec',
+        paper: '#fff9f0',
+        ink:   '#1a1a2e',
+        soft:  '#f0e6d3',
+        muted: '#8b7355',
+      },
+      fontFamily: {
+        fun:  ['Nunito', 'sans-serif'],
+        mono: ['Space Mono', 'monospace'],
+      }
+    }
+  }
+}
+</script>
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #fdf6ec;
+    font-family: 'Nunito', sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* Notebook paper lines background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      transparent, transparent 31px,
+      rgba(180,160,120,0.15) 31px, rgba(180,160,120,0.15) 32px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Red margin line */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; bottom: 0;
+    left: 72px;
+    width: 1px;
+    background: rgba(220,80,80,0.25);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .z1 { position: relative; z-index: 1; }
+
+  /* TAB STYLES */
+  .tab-pill {
+    padding: 10px 22px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+    white-space: nowrap;
+    user-select: none;
+  }
+  .tab-pill:hover { transform: translateY(-2px) scale(1.04); }
+
+  .tab-0 { background:#fff0d4; color:#b45309; border-color:#fcd34d; }
+  .tab-1 { background:#e0f2fe; color:#0369a1; border-color:#7dd3fc; }
+  .tab-2 { background:#fce7f3; color:#be185d; border-color:#f9a8d4; }
+  .tab-3 { background:#dcfce7; color:#15803d; border-color:#86efac; }
+  .tab-4 { background:#ede9fe; color:#7c3aed; border-color:#c4b5fd; }
+
+  .tab-pill.active { transform: translateY(-3px) scale(1.08); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+  .tab-0.active { background:#fbbf24; box-shadow: 0 8px 20px rgba(251,191,36,0.4); }
+  .tab-1.active { background:#38bdf8; box-shadow: 0 8px 20px rgba(56,189,248,0.4); color:#fff; }
+  .tab-2.active { background:#f472b6; box-shadow: 0 8px 20px rgba(244,114,182,0.4); color:#fff; }
+  .tab-3.active { background:#4ade80; box-shadow: 0 8px 20px rgba(74,222,128,0.4); color:#166534; }
+  .tab-4.active { background:#a78bfa; box-shadow: 0 8px 20px rgba(167,139,250,0.4); color:#fff; }
+
+  /* CARD */
+  .card {
+    background: #fff9f2;
+    border: 2px solid #e8d5b0;
+    border-radius: 20px;
+    box-shadow: 4px 4px 0 #e8d5b0;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .card:hover { box-shadow: 6px 6px 0 #d4b896; transform: translate(-1px,-1px); }
+
+  /* FORMULA CHIPS */
+  .chip {
+    display: inline-block;
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .chip-gold { background:#fef3c7; color:#92400e; border: 2px solid #fcd34d; }
+  .chip-blue { background:#dbeafe; color:#1e40af; border: 2px solid #93c5fd; }
+  .chip-pink { background:#fce7f3; color:#9d174d; border: 2px solid #f9a8d4; }
+  .chip-green { background:#d1fae5; color:#064e3b; border: 2px solid #6ee7b7; }
+  .chip-purple { background:#ede9fe; color:#4c1d95; border: 2px solid #c4b5fd; }
+
+  /* SLIDERS */
+  .fun-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 8px;
+    border-radius: 50px;
+    outline: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .fun-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    border: 3px solid white;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    transition: transform 0.15s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .fun-slider::-webkit-slider-thumb:hover { transform: scale(1.3); }
+  .fun-slider:active::-webkit-slider-thumb { transform: scale(1.15); }
+
+  .sl-gold { background: linear-gradient(90deg,#fde68a,#f59e0b); }
+  .sl-gold::-webkit-slider-thumb { background:#f59e0b; }
+  .sl-blue { background: linear-gradient(90deg,#bae6fd,#0ea5e9); }
+  .sl-blue::-webkit-slider-thumb { background:#0ea5e9; }
+  .sl-pink { background: linear-gradient(90deg,#fbcfe8,#ec4899); }
+  .sl-pink::-webkit-slider-thumb { background:#ec4899; }
+  .sl-green { background: linear-gradient(90deg,#bbf7d0,#22c55e); }
+  .sl-green::-webkit-slider-thumb { background:#22c55e; }
+  .sl-purple { background: linear-gradient(90deg,#ddd6fe,#8b5cf6); }
+  .sl-purple::-webkit-slider-thumb { background:#8b5cf6; }
+
+  /* FACT BOXES */
+  .fact {
+    border-left: 4px solid;
+    border-radius: 0 12px 12px 0;
+    padding: 10px 14px;
+    font-size: 13px;
+    line-height: 1.6;
+    font-weight: 600;
+    margin-bottom: 10px;
+    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .fact.highlight { transform: scale(1.03) translateX(4px); }
+  .fact-gold { border-color:#f59e0b; background:#fffbeb; color:#78350f; }
+  .fact-blue  { border-color:#0ea5e9; background:#f0f9ff; color:#0c4a6e; }
+  .fact-pink  { border-color:#ec4899; background:#fdf2f8; color:#831843; }
+  .fact-green { border-color:#22c55e; background:#f0fdf4; color:#14532d; }
+  .fact-purple{ border-color:#8b5cf6; background:#f5f3ff; color:#4c1d95; }
+
+  /* BOUNCE ANIMATION */
+  @keyframes bounceIn {
+    0%   { transform: scale(0.3); opacity:0; }
+    50%  { transform: scale(1.1); }
+    70%  { transform: scale(0.95); }
+    100% { transform: scale(1); opacity:1; }
+  }
+  .bounce-in { animation: bounceIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+
+  /* PANEL SWITCH */
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeSlide 0.35s ease forwards; }
+  @keyframes fadeSlide {
+    from { opacity:0; transform: translateY(10px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  /* CANVAS */
+  canvas { border-radius: 16px; display: block; cursor: crosshair; }
+
+  /* EMOJI BADGE */
+  .emoji-badge {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+    border: 2px solid;
+  }
+
+  /* SCORE POP */
+  .score-pop {
+    position: fixed;
+    pointer-events: none;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 22px;
+    z-index: 999;
+    animation: scorePop 1.2s ease forwards;
+  }
+  @keyframes scorePop {
+    0%   { opacity:1; transform: translateY(0) scale(1); }
+    100% { opacity:0; transform: translateY(-60px) scale(1.4); }
+  }
+
+  /* QUIZ */
+  .quiz-opt {
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: 2px solid #e8d5b0;
+    background: white;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 13px;
+    transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+    text-align: left;
+  }
+  .quiz-opt:hover { transform: translateX(6px); border-color:#fbbf24; background:#fffbeb; }
+  .quiz-opt.correct { background:#d1fae5; border-color:#22c55e; color:#14532d; transform: scale(1.03); }
+  .quiz-opt.wrong   { background:#fee2e2; border-color:#ef4444; color:#7f1d1d; }
+
+  /* Sticker */
+  .sticker {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 3px 10px;
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* Tooltip */
+  .tooltip-wrap { position: relative; display: inline-block; }
+  .tooltip-wrap .tooltip-text {
+    visibility: hidden; opacity: 0;
+    background: #1a1a2e; color: white;
+    font-size: 12px; font-weight: 600;
+    padding: 6px 12px; border-radius: 8px;
+    position: absolute; bottom: 130%; left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    transition: opacity 0.2s;
+    z-index: 100;
+    pointer-events: none;
+  }
+  .tooltip-wrap:hover .tooltip-text { visibility: visible; opacity: 1; }
+
+  /* Progress bar */
+  .progress-bar { height: 10px; border-radius: 50px; background:#e8d5b0; overflow:hidden; }
+  .progress-fill { height: 100%; border-radius: 50px; transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+
+  /* Confetti burst point (hidden) */
+  #confetti-canvas { position:fixed; top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:998; }
+
+  /* Draggable probe */
+  .probe-cursor { cursor: grab; }
+  .probe-cursor:active { cursor: grabbing; }
+</style>
+</head>
+<body>
+<canvas id="confetti-canvas"></canvas>
+
+<div class="z1 max-w-5xl mx-auto px-4 py-8">
+
+  <!-- HEADER -->
+  <div class="text-center mb-8">
+    <div class="inline-flex items-center gap-2 bg-white border-2 border-yellow-300 rounded-full px-5 py-2 mb-4 shadow-sm">
+      <span class="text-lg">⚡</span>
+      <span class="font-mono text-xs font-bold text-yellow-700 tracking-widest uppercase">Class 12 · Chapter 1 · Gauss's Law</span>
+      <span class="text-lg">⚡</span>
+    </div>
+
+    <h1 class="font-fun font-black text-5xl text-ink mb-2" style="letter-spacing:-1px;">
+      Gauss's Law
+      <span class="text-yellow-500">Playground</span> 🎮
+    </h1>
+    <p class="text-muted font-semibold text-base">Drag sliders · Click on charges · Earn points · Learn physics!</p>
+
+    <!-- Score -->
+    <div class="inline-flex items-center gap-3 mt-4 bg-white border-2 border-orange-200 rounded-2xl px-6 py-3 shadow">
+      <span class="text-2xl">🏆</span>
+      <div class="text-left">
+        <div class="text-xs font-mono text-muted">YOUR SCORE</div>
+        <div class="text-2xl font-black text-ink" id="score-display">0</div>
+      </div>
+      <div class="w-px h-10 bg-orange-100 mx-1"></div>
+      <div class="text-left">
+        <div class="text-xs font-mono text-muted">CONCEPTS</div>
+        <div class="text-2xl font-black text-amber-500" id="concepts-display">0/5</div>
+      </div>
+    </div>
+
+    <!-- Master Formula -->
+    <div class="mt-5 inline-block bg-white border-2 border-yellow-300 rounded-2xl px-8 py-4 shadow-md">
+      <div class="font-mono text-xl font-bold text-ink">∮ <span class="text-blue-600">E</span> · d<span class="text-blue-600">S</span> = <span class="text-red-500">q</span> / <span class="text-green-600">ε₀</span></div>
+      <div class="text-xs font-bold text-muted mt-1">Total Flux through closed surface = Enclosed charge ÷ Permittivity</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="flex flex-wrap gap-3 justify-center mb-8">
+    <button onclick="switchTab(0)" class="tab-pill tab-0 active" id="t0">🔮 Spherical Shell</button>
+    <button onclick="switchTab(1)" class="tab-pill tab-1" id="t1">⚡ Infinite Wire</button>
+    <button onclick="switchTab(2)" class="tab-pill tab-2" id="t2">📋 Plane Sheet</button>
+    <button onclick="switchTab(3)" class="tab-pill tab-3" id="t3">🌍 Solid Sphere</button>
+    <button onclick="switchTab(4)" class="tab-pill tab-4" id="t4">⚖️ Parallel Sheets</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PANEL 0: SPHERICAL SHELL
+  ═══════════════════════════════════════ -->
+  <div id="panel-0" class="panel active">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
+
+      <!-- Canvas -->
+      <div class="lg:col-span-3 card p-4">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="emoji-badge bg-yellow-100 border-yellow-300">🔮</div>
+          <div>
+            <h2 class="font-black text-lg text-ink">Uniformly Charged Thin Spherical Shell</h2>
+            <p class="text-xs text-muted font-semibold">Drag the probe point or use the slider below!</p>
+          </div>
+        </div>
+        <canvas id="c0" width="520" height="340" class="w-full probe-cursor"></canvas>
+
+        <div class="mt-4 px-2">
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-bold text-sm text-ink">📍 Probe distance</span>
+            <span class="chip chip-gold" id="r0-chip">r = 1.8R</span>
+          </div>
+          <input type="range" class="fun-slider sl-gold" id="r0" min="0.05" max="3.0" step="0.05" value="1.8">
+          <div class="flex justify-between text-xs font-bold text-muted mt-1">
+            <span>Centre (0)</span><span>Surface (R)</span><span>Far (3R)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="lg:col-span-2 flex flex-col gap-4">
+
+        <!-- E vs r graph -->
+        <div class="card p-4">
+          <div class="font-black text-sm text-ink mb-2">📊 E vs Distance Graph</div>
+          <canvas id="graph0" width="280" height="130" class="w-full"></canvas>
+        </div>
+
+        <!-- Cases -->
+        <div class="card p-4">
+          <div class="font-black text-sm text-ink mb-3">📘 Three Cases</div>
+          <div class="fact fact-green" id="s0-out">
+            <div class="font-mono text-xs mb-1">r &gt; R (Outside)</div>
+            <div class="font-mono font-bold">E = q / 4πε₀r²</div>
+            <div class="text-xs mt-1 opacity-75">Field same as point charge at centre</div>
+          </div>
+          <div class="fact fact-gold" id="s0-sur">
+            <div class="font-mono text-xs mb-1">r = R (Surface)</div>
+            <div class="font-mono font-bold">E = σ / ε₀ (max!)</div>
+            <div class="text-xs mt-1 opacity-75">Maximum field — right at shell surface</div>
+          </div>
+          <div class="fact fact-pink" id="s0-in">
+            <div class="font-mono text-xs mb-1">r &lt; R (Inside)</div>
+            <div class="font-mono font-bold">E = 0 🚫</div>
+            <div class="text-xs mt-1 opacity-75">No enclosed charge → zero field!</div>
+          </div>
+        </div>
+
+        <!-- Quiz -->
+        <div class="card p-4" id="quiz0">
+          <div class="font-black text-sm text-ink mb-3">🧠 Quick Check!</div>
+          <p class="font-semibold text-sm text-ink mb-3">Why is E = 0 inside a charged shell?</p>
+          <div class="flex flex-col gap-2">
+            <button class="quiz-opt" onclick="checkQuiz(0,0,false)">A) Charges cancel each other</button>
+            <button class="quiz-opt" onclick="checkQuiz(0,1,true)">B) No charge enclosed by Gaussian surface</button>
+            <button class="quiz-opt" onclick="checkQuiz(0,2,false)">C) Shell blocks the field</button>
+          </div>
+          <div class="mt-3 text-sm font-bold hidden text-green-700" id="q0-feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PANEL 1: INFINITE WIRE
+  ═══════════════════════════════════════ -->
+  <div id="panel-1" class="panel">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
+      <div class="lg:col-span-3 card p-4">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="emoji-badge bg-blue-100 border-blue-300">⚡</div>
+          <div>
+            <h2 class="font-black text-lg text-ink">Infinitely Long Straight Charged Wire</h2>
+            <p class="text-xs text-muted font-semibold">Watch the cylindrical Gaussian surface!</p>
+          </div>
+        </div>
+        <canvas id="c1" width="520" height="340" class="w-full"></canvas>
+        <div class="mt-4 px-2">
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-bold text-sm text-ink">📏 Radial distance r</span>
+            <span class="chip chip-blue" id="r1-chip">r = 3.0 cm</span>
+          </div>
+          <input type="range" class="fun-slider sl-blue" id="r1" min="1" max="9" step="0.2" value="3">
+          <div class="flex justify-between text-xs font-bold text-muted mt-1">
+            <span>1 cm</span><span>5 cm</span><span>9 cm</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-2 flex flex-col gap-4">
+        <div class="card p-4">
+          <div class="font-black text-sm text-ink mb-2">📊 E vs r (Wire)</div>
+          <canvas id="graph1" width="280" height="130" class="w-full"></canvas>
+        </div>
+        <div class="card p-4 space-y-3">
+          <div class="font-black text-sm text-ink">⚡ Key Formula</div>
+          <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-3 text-center">
+            <div class="font-mono font-bold text-blue-800 text-lg">E = λ / 2πε₀r</div>
+          </div>
+          <div class="fact fact-blue">
+            <b>E ∝ 1/r</b> — not 1/r² like a point charge!
+          </div>
+          <div class="fact fact-blue">
+            Cylindrical Gaussian surface of length <em>l</em> and radius <em>r</em>
+          </div>
+          <div class="fact fact-blue">
+            Flux through flat ends = 0 (E perpendicular to ñ)
+          </div>
+          <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-3">
+            <div class="text-xs font-mono text-muted mb-1">Live E (λ = 1 µC/m)</div>
+            <div class="font-mono font-bold text-blue-700 text-base" id="wire-E-live">—</div>
+          </div>
+        </div>
+        <div class="card p-4" id="quiz1">
+          <div class="font-black text-sm text-ink mb-3">🧠 Quick Check!</div>
+          <p class="font-semibold text-sm text-ink mb-3">If r doubles, E becomes…</p>
+          <div class="flex flex-col gap-2">
+            <button class="quiz-opt" onclick="checkQuiz(1,0,false)">A) 4 times smaller</button>
+            <button class="quiz-opt" onclick="checkQuiz(1,1,true)">B) 2 times smaller</button>
+            <button class="quiz-opt" onclick="checkQuiz(1,2,false)">C) stays the same</button>
+          </div>
+          <div class="mt-3 text-sm font-bold hidden text-green-700" id="q1-feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PANEL 2: PLANE SHEET
+  ═══════════════════════════════════════ -->
+  <div id="panel-2" class="panel">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
+      <div class="lg:col-span-3 card p-4">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="emoji-badge bg-pink-100 border-pink-300">📋</div>
+          <div>
+            <h2 class="font-black text-lg text-ink">Infinite Plane Sheet of Charge</h2>
+            <p class="text-xs text-muted font-semibold">E is UNIFORM — independent of distance!</p>
+          </div>
+        </div>
+        <canvas id="c2" width="520" height="340" class="w-full"></canvas>
+        <div class="mt-4 px-2">
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-bold text-sm text-ink">⚡ Surface charge density σ</span>
+            <span class="chip chip-pink" id="sig-chip">σ = 5 µC/m²</span>
+          </div>
+          <input type="range" class="fun-slider sl-pink" id="sig" min="1" max="20" step="0.5" value="5">
+        </div>
+      </div>
+
+      <div class="lg:col-span-2 flex flex-col gap-4">
+        <div class="card p-4 space-y-3">
+          <div class="font-black text-sm text-ink">⭐ The AMAZING Result</div>
+          <div class="bg-pink-50 border-2 border-pink-200 rounded-xl p-3 text-center">
+            <div class="font-mono font-bold text-pink-800 text-lg">E = σ / 2ε₀</div>
+            <div class="text-xs text-pink-600 font-bold mt-1">No r dependence!</div>
+          </div>
+          <div class="fact fact-pink">
+            🎯 E is the <b>SAME</b> whether you're 1 cm or 1 km from the sheet!
+          </div>
+          <div class="fact fact-pink">
+            Pillbox (rectangular) Gaussian surface straddles the sheet — flux only through top & bottom faces.
+          </div>
+          <div class="fact fact-pink">
+            2EA = σA/ε₀ → <b>E = σ/2ε₀</b>
+          </div>
+          <div class="bg-pink-50 border-2 border-pink-200 rounded-xl p-3">
+            <div class="text-xs font-mono text-muted mb-1">Live E value</div>
+            <div class="font-mono font-bold text-pink-700 text-base" id="sheet-E-live">—</div>
+          </div>
+        </div>
+        <div class="card p-4">
+          <div class="font-black text-sm text-ink mb-3">📊 Comparison</div>
+          <div class="grid grid-cols-3 gap-2 text-center text-xs font-bold">
+            <div class="bg-gray-50 border border-gray-200 rounded-xl p-2">
+              <div class="text-gray-500 mb-1">Point Charge</div>
+              <div class="font-mono">1/r²</div>
+            </div>
+            <div class="bg-blue-50 border border-blue-200 rounded-xl p-2">
+              <div class="text-blue-500 mb-1">Wire</div>
+              <div class="font-mono text-blue-700">1/r</div>
+            </div>
+            <div class="bg-pink-100 border-2 border-pink-300 rounded-xl p-2">
+              <div class="text-pink-500 mb-1">Sheet</div>
+              <div class="font-mono text-pink-700">constant!</div>
+            </div>
+          </div>
+        </div>
+        <div class="card p-4" id="quiz2">
+          <div class="font-black text-sm text-ink mb-3">🧠 Quick Check!</div>
+          <p class="font-semibold text-sm text-ink mb-3">You move 10× farther from an infinite sheet. E becomes…</p>
+          <div class="flex flex-col gap-2">
+            <button class="quiz-opt" onclick="checkQuiz(2,0,true)">A) Exactly the same</button>
+            <button class="quiz-opt" onclick="checkQuiz(2,1,false)">B) 10 times smaller</button>
+            <button class="quiz-opt" onclick="checkQuiz(2,2,false)">C) 100 times smaller</button>
+          </div>
+          <div class="mt-3 text-sm font-bold hidden text-green-700" id="q2-feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PANEL 3: SOLID SPHERE
+  ═══════════════════════════════════════ -->
+  <div id="panel-3" class="panel">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
+      <div class="lg:col-span-3 card p-4">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="emoji-badge bg-green-100 border-green-300">🌍</div>
+          <div>
+            <h2 class="font-black text-lg text-ink">Non-Conducting Charged Solid Sphere</h2>
+            <p class="text-xs text-muted font-semibold">E rises inside, peaks at surface, falls outside!</p>
+          </div>
+        </div>
+        <canvas id="c3" width="520" height="340" class="w-full probe-cursor"></canvas>
+        <div class="mt-4 px-2">
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-bold text-sm text-ink">📍 Probe distance</span>
+            <span class="chip chip-green" id="r3-chip">r = 1.5R</span>
+          </div>
+          <input type="range" class="fun-slider sl-green" id="r3" min="0.05" max="3.0" step="0.05" value="1.5">
+          <div class="flex justify-between text-xs font-bold text-muted mt-1">
+            <span>Centre</span><span>Surface (R)</span><span>Far (3R)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-2 flex flex-col gap-4">
+        <div class="card p-4">
+          <div class="font-black text-sm text-ink mb-2">📊 E vs r (Solid Sphere)</div>
+          <canvas id="graph3" width="280" height="130" class="w-full"></canvas>
+        </div>
+        <div class="card p-4 space-y-2">
+          <div class="font-black text-sm text-ink">📘 Three Regions</div>
+          <div class="fact fact-purple" id="ss-in">
+            <div class="font-mono text-xs mb-1">Inside (r &lt; R)</div>
+            <div class="font-mono font-bold">E = ρr / 3ε₀ ∝ r</div>
+            <div class="text-xs mt-1 opacity-75">Grows linearly from centre</div>
+          </div>
+          <div class="fact fact-gold" id="ss-sur">
+            <div class="font-mono text-xs mb-1">At Surface (r = R)</div>
+            <div class="font-mono font-bold">E = q / 4πε₀R² (MAX!)</div>
+          </div>
+          <div class="fact fact-green" id="ss-out">
+            <div class="font-mono text-xs mb-1">Outside (r &gt; R)</div>
+            <div class="font-mono font-bold">E = q / 4πε₀r² ∝ 1/r²</div>
+            <div class="text-xs mt-1 opacity-75">Behaves like point charge</div>
+          </div>
+        </div>
+        <div class="card p-4" id="quiz3">
+          <div class="font-black text-sm text-ink mb-3">🧠 Quick Check!</div>
+          <p class="font-semibold text-sm text-ink mb-3">At the centre of a solid sphere, E is…</p>
+          <div class="flex flex-col gap-2">
+            <button class="quiz-opt" onclick="checkQuiz(3,0,true)">A) Zero</button>
+            <button class="quiz-opt" onclick="checkQuiz(3,1,false)">B) Maximum</button>
+            <button class="quiz-opt" onclick="checkQuiz(3,2,false)">C) Same as surface</button>
+          </div>
+          <div class="mt-3 text-sm font-bold hidden text-green-700" id="q3-feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       PANEL 4: PARALLEL SHEETS
+  ═══════════════════════════════════════ -->
+  <div id="panel-4" class="panel">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-5">
+      <div class="lg:col-span-3 card p-4">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="emoji-badge bg-purple-100 border-purple-300">⚖️</div>
+          <div>
+            <h2 class="font-black text-lg text-ink">Two Infinite Parallel Sheets</h2>
+            <p class="text-xs text-muted font-semibold">Superposition of two plane sheets!</p>
+          </div>
+        </div>
+        <canvas id="c4" width="520" height="340" class="w-full"></canvas>
+        <div class="mt-4 px-2 grid grid-cols-2 gap-4">
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <span class="font-bold text-xs text-ink">Sheet 1 (σ₁)</span>
+              <span class="chip chip-pink text-xs py-1" id="s1-chip">5</span>
+            </div>
+            <input type="range" class="fun-slider sl-pink" id="sig1" min="1" max="15" step="0.5" value="5">
+          </div>
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <span class="font-bold text-xs text-ink">Sheet 2 (σ₂)</span>
+              <span class="chip chip-blue text-xs py-1" id="s2-chip">5</span>
+            </div>
+            <input type="range" class="fun-slider sl-blue" id="sig2" min="1" max="15" step="0.5" value="5">
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-2 flex flex-col gap-4">
+        <div class="card p-4 space-y-2">
+          <div class="font-black text-sm text-ink">📐 Field in Each Region</div>
+          <div class="fact fact-purple">
+            <div class="font-mono text-xs mb-1">Region I (left of both)</div>
+            <div class="font-mono font-bold text-xs" id="pE1">E = (σ₁ - σ₂)/2ε₀</div>
+          </div>
+          <div class="fact fact-gold">
+            <div class="font-mono text-xs mb-1">Region II (between)</div>
+            <div class="font-mono font-bold text-xs" id="pE2">E = (σ₁ + σ₂)/2ε₀</div>
+          </div>
+          <div class="fact fact-purple">
+            <div class="font-mono text-xs mb-1">Region III (right of both)</div>
+            <div class="font-mono font-bold text-xs" id="pE3">E = (σ₂ - σ₁)/2ε₀</div>
+          </div>
+
+          <div class="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-3 text-xs font-bold text-yellow-800">
+            🔥 Special case: Capacitor (σ₁ = +σ, σ₂ = -σ)<br>
+            Outside: E = 0 · Inside: E = σ/ε₀
+          </div>
+        </div>
+
+        <div class="card p-4">
+          <div class="font-black text-sm text-ink mb-3">📊 Live Values</div>
+          <div class="grid grid-cols-3 gap-2 text-center">
+            <div class="bg-gray-50 border border-gray-200 rounded-xl p-2">
+              <div class="text-xs font-bold text-gray-500 mb-1">Region I</div>
+              <div class="font-mono text-xs font-bold text-gray-700" id="lE1">—</div>
+            </div>
+            <div class="bg-amber-50 border-2 border-amber-300 rounded-xl p-2">
+              <div class="text-xs font-bold text-amber-600 mb-1">Region II</div>
+              <div class="font-mono text-xs font-bold text-amber-700" id="lE2">—</div>
+            </div>
+            <div class="bg-gray-50 border border-gray-200 rounded-xl p-2">
+              <div class="text-xs font-bold text-gray-500 mb-1">Region III</div>
+              <div class="font-mono text-xs font-bold text-gray-700" id="lE3">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-4" id="quiz4">
+          <div class="font-black text-sm text-ink mb-3">🧠 Quick Check!</div>
+          <p class="font-semibold text-sm text-ink mb-3">In a capacitor (σ₁=+σ, σ₂=-σ), outside field is…</p>
+          <div class="flex flex-col gap-2">
+            <button class="quiz-opt" onclick="checkQuiz(4,0,true)">A) Zero</button>
+            <button class="quiz-opt" onclick="checkQuiz(4,1,false)">B) σ/ε₀</button>
+            <button class="quiz-opt" onclick="checkQuiz(4,2,false)">C) σ/2ε₀</button>
+          </div>
+          <div class="mt-3 text-sm font-bold hidden text-green-700" id="q4-feedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="mt-8 card p-5">
+    <div class="flex items-center justify-between mb-3">
+      <div class="font-black text-base text-ink">🎯 Your Progress</div>
+      <div class="font-mono text-xs text-muted" id="progress-label">0 of 5 concepts mastered</div>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill bg-gradient-to-r from-yellow-400 to-orange-400" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="grid grid-cols-5 gap-2 mt-3 text-center text-xs font-bold">
+      <div id="badge-0" class="opacity-30">🔮<br>Shell</div>
+      <div id="badge-1" class="opacity-30">⚡<br>Wire</div>
+      <div id="badge-2" class="opacity-30">📋<br>Sheet</div>
+      <div id="badge-3" class="opacity-30">🌍<br>Sphere</div>
+      <div id="badge-4" class="opacity-30">⚖️<br>Sheets</div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// ── Constants ─────────────────────────────────────────────────────
+const EPS0 = 8.854e-12;
+const K    = 9e9;
+
+// ── State ─────────────────────────────────────────────────────────
+let score       = 0;
+let conceptsDone = [false,false,false,false,false];
+let currentTab  = 0;
+let frameT      = 0;
+let quizDone    = [false,false,false,false,false];
+
+// ── Confetti ──────────────────────────────────────────────────────
+const confCanvas = document.getElementById('confetti-canvas');
+const confCtx    = confCanvas.getContext('2d');
+let particles    = [];
+
+function resizeConf(){
+  confCanvas.width  = window.innerWidth;
+  confCanvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeConf);
+resizeConf();
+
+function spawnConfetti(x, y, n=40){
+  const colors=['#fbbf24','#f87171','#34d399','#60a5fa','#a78bfa','#fb923c','#f472b6'];
+  for(let i=0;i<n;i++){
+    particles.push({
+      x, y,
+      vx: (Math.random()-0.5)*10,
+      vy: (Math.random()-5)*6,
+      r:  Math.random()*6+3,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      life: 1,
+      rot: Math.random()*Math.PI*2,
+      rotV: (Math.random()-0.5)*0.2
+    });
+  }
+}
+
+function animConf(){
+  confCtx.clearRect(0,0,confCanvas.width,confCanvas.height);
+  particles = particles.filter(p=>p.life>0);
+  particles.forEach(p=>{
+    p.x  += p.vx;
+    p.y  += p.vy;
+    p.vy += 0.25;
+    p.life -= 0.018;
+    p.rot  += p.rotV;
+    confCtx.save();
+    confCtx.globalAlpha = p.life;
+    confCtx.translate(p.x, p.y);
+    confCtx.rotate(p.rot);
+    confCtx.fillStyle = p.color;
+    confCtx.fillRect(-p.r/2, -p.r/2, p.r, p.r*1.6);
+    confCtx.restore();
+  });
+  requestAnimationFrame(animConf);
+}
+animConf();
+
+// ── Score & Progress ─────────────────────────────────────────────
+function addScore(pts, x, y){
+  score += pts;
+  document.getElementById('score-display').textContent = score;
+  // pop
+  const el = document.createElement('div');
+  el.className = 'score-pop';
+  el.style.left = x+'px';
+  el.style.top  = y+'px';
+  el.style.color = pts>0?'#15803d':'#dc2626';
+  el.textContent = (pts>0?'+':'')+pts+'pts';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 1300);
+}
+
+function markConcept(n){
+  if(conceptsDone[n]) return;
+  conceptsDone[n]=true;
+  const done = conceptsDone.filter(Boolean).length;
+  document.getElementById('concepts-display').textContent = done+'/5';
+  document.getElementById('progress-label').textContent = done+' of 5 concepts mastered';
+  document.getElementById('progress-fill').style.width = (done/5*100)+'%';
+  document.getElementById('badge-'+n).classList.remove('opacity-30');
+  document.getElementById('badge-'+n).style.transform='scale(1.2)';
+  setTimeout(()=>{ document.getElementById('badge-'+n).style.transform='scale(1)'; },400);
+  if(done===5){
+    setTimeout(()=>{
+      spawnConfetti(window.innerWidth/2, window.innerHeight/3, 120);
+    },200);
+  }
+}
+
+// ── Quiz ──────────────────────────────────────────────────────────
+const feedbacks = [
+  "🎉 Correct! Gauss's law: no enclosed charge → E = 0 inside!",
+  "🎉 Correct! E = λ/2πε₀r, so doubling r halves E (∝ 1/r)!",
+  "🎉 Correct! E = σ/2ε₀ — completely independent of distance!",
+  "🎉 Correct! At r=0, E = ρ(0)/3ε₀ = 0. Linear rise from centre!",
+  "🎉 Correct! Equal & opposite sheets cancel outside → E = 0!"
+];
+const wrongFeedback = "❌ Not quite! Think about what Gauss's law tells us...";
+
+function checkQuiz(panelN, optN, correct){
+  if(quizDone[panelN]) return;
+  const opts = document.querySelectorAll(`#quiz${panelN} .quiz-opt`);
+  const fb   = document.getElementById(`q${panelN}-feedback`);
+  const rect = opts[optN].getBoundingClientRect();
+
+  opts.forEach(o=>{ o.disabled=true; o.style.cursor='default'; });
+  quizDone[panelN]=true;
+
+  if(correct){
+    opts[optN].classList.add('correct');
+    fb.textContent = feedbacks[panelN];
+    fb.classList.remove('hidden');
+    addScore(50, rect.x+rect.width/2, rect.y);
+    spawnConfetti(rect.x+rect.width/2, rect.y+rect.height/2, 30);
+    markConcept(panelN);
+  } else {
+    opts[optN].classList.add('wrong');
+    // reveal correct
+    opts.forEach((o,i)=>{
+      const answers=[1,1,0,0,0];
+      if(i===answers[panelN]) o.classList.add('correct');
+    });
+    fb.textContent = wrongFeedback;
+    fb.style.color = '#dc2626';
+    fb.classList.remove('hidden');
+    addScore(-10, rect.x+rect.width/2, rect.y);
+  }
+}
+
+// ── Tab Switch ────────────────────────────────────────────────────
+function switchTab(n){
+  currentTab=n;
+  document.querySelectorAll('.panel').forEach((p,i)=>{
+    p.classList.toggle('active', i===n);
+  });
+  const names=['t0','t1','t2','t3','t4'];
+  names.forEach((id,i)=>{
+    document.getElementById(id).classList.toggle('active', i===n);
+  });
+  addScore(5, window.innerWidth/2, 80);
+}
+
+// ── DRAWING HELPERS ───────────────────────────────────────────────
+function arrow(ctx, x1,y1,x2,y2, color='#374151', lw=2){
+  const dx=x2-x1, dy=y2-y1;
+  const len=Math.sqrt(dx*dx+dy*dy);
+  if(len<3) return;
+  const ux=dx/len, uy=dy/len;
+  const hw=5, hl=10;
+  ctx.save();
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=lw;
+  ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2-ux*hl,y2-uy*hl); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-ux*hl-uy*hw, y2-uy*hl+ux*hw);
+  ctx.lineTo(x2-ux*hl+uy*hw, y2-uy*hl-ux*hw);
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+
+function drawGraphAxes(g, W, H, padL, padT, padB, padR, labels){
+  const gW=W-padL-padR, gH=H-padT-padB;
+  g.save();
+  g.strokeStyle='#9ca3af'; g.lineWidth=1.5; g.lineCap='round';
+  g.beginPath();
+  g.moveTo(padL,padT); g.lineTo(padL,padT+gH); g.lineTo(padL+gW,padT+gH);
+  g.stroke();
+  g.fillStyle='#6b7280'; g.font='bold 9px Nunito'; g.textAlign='center';
+  g.fillText(labels.x||'r →', padL+gW-5, padT+gH+14);
+  g.save(); g.translate(10,padT+gH/2); g.rotate(-Math.PI/2);
+  g.fillText(labels.y||'E →',0,0); g.restore();
+  g.restore();
+  return {gW, gH};
+}
+
+// ─────────────────────────────────────────────────────────────────
+// PANEL 0 — SPHERICAL SHELL
+// ─────────────────────────────────────────────────────────────────
+const c0  = document.getElementById('c0');
+const g0  = c0.getContext('2d');
+const gc0 = document.getElementById('graph0');
+const gg0 = gc0.getContext('2d');
+
+function drawShell(){
+  const W=c0.width, H=c0.height;
+  const rRatio = parseFloat(document.getElementById('r0').value);
+  document.getElementById('r0-chip').textContent = `r = ${rRatio.toFixed(2)}R`;
+
+  g0.clearRect(0,0,W,H);
+  g0.fillStyle='#fffbf2'; g0.fillRect(0,0,W,H);
+
+  const cx=W/2, cy=H/2, R=95;
+  const rPx=rRatio*R;
+  const isIn=rRatio<0.97, isSur=rRatio>=0.97&&rRatio<=1.06, isOut=rRatio>1.06;
+
+  // Grid
+  g0.strokeStyle='rgba(200,180,130,0.2)'; g0.lineWidth=1;
+  for(let x=0;x<W;x+=30){ g0.beginPath();g0.moveTo(x,0);g0.lineTo(x,H);g0.stroke(); }
+  for(let y=0;y<H;y+=30){ g0.beginPath();g0.moveTo(0,y);g0.lineTo(W,y);g0.stroke(); }
+
+  // Animated radial field lines (OUTSIDE)
+  const animOff=(frameT*1.2)%24;
+  const nLines=16;
+  for(let i=0;i<nLines;i++){
+    const a=(i/nLines)*Math.PI*2;
+    const startR=R+4;
+    const endR=R+110;
+    for(let d=startR;d<endR;d+=24){
+      const dd=(d+animOff-startR)%(endR-startR)+startR;
+      const alpha=1-((dd-startR)/(endR-startR))*0.7;
+      const x1=cx+Math.cos(a)*dd;
+      const y1=cy+Math.sin(a)*dd;
+      const x2=cx+Math.cos(a)*(dd+14);
+      const y2=cy+Math.sin(a)*(dd+14);
+      g0.save();
+      g0.globalAlpha=alpha*0.7;
+      g0.strokeStyle='#22c55e'; g0.lineWidth=1.5; g0.lineCap='round';
+      g0.beginPath(); g0.moveTo(x1,y1); g0.lineTo(x2,y2); g0.stroke();
+      if(dd+14<endR-4){
+        g0.fillStyle='#22c55e';
+        g0.beginPath();
+        const nx=Math.cos(a),ny=Math.sin(a);
+        g0.moveTo(x2,y2);
+        g0.lineTo(x2-nx*6+ny*4,y2-ny*6-nx*4);
+        g0.lineTo(x2-nx*6-ny*4,y2-ny*6+nx*4);
+        g0.closePath(); g0.fill();
+      }
+      g0.restore();
+    }
+  }
+
+  // Shell glow (outside region)
+  if(isOut){
+    const grd=g0.createRadialGradient(cx,cy,R,cx,cy,R+50);
+    grd.addColorStop(0,'rgba(34,197,94,0.12)');
+    grd.addColorStop(1,'rgba(34,197,94,0)');
+    g0.beginPath(); g0.arc(cx,cy,R+50,0,Math.PI*2);
+    g0.fillStyle=grd; g0.fill();
+  }
+
+  // Inside region fill
+  g0.beginPath(); g0.arc(cx,cy,R-1,0,Math.PI*2);
+  if(isIn){
+    g0.fillStyle='rgba(254,202,202,0.4)';
+  } else {
+    g0.fillStyle='rgba(254,249,195,0.3)';
+  }
+  g0.fill();
+
+  // Shell circle (thick)
+  g0.beginPath(); g0.arc(cx,cy,R,0,Math.PI*2);
+  const shellCol=isSur?'#f59e0b':'#22c55e';
+  g0.strokeStyle=shellCol; g0.lineWidth=4;
+  g0.shadowColor=shellCol; g0.shadowBlur=isOut||isSur?16:0;
+  g0.stroke(); g0.shadowBlur=0;
+
+  // Charge symbols on shell
+  for(let i=0;i<12;i++){
+    const a=(i/12)*Math.PI*2;
+    const sx=cx+Math.cos(a)*R, sy=cy+Math.sin(a)*R;
+    g0.fillStyle='#15803d'; g0.font='bold 11px monospace';
+    g0.textAlign='center'; g0.textBaseline='middle';
+    g0.fillText('+',sx,sy);
+  }
+  g0.textBaseline='alphabetic';
+
+  // E=0 label inside
+  if(isIn){
+    g0.fillStyle='rgba(239,68,68,0.15)';
+    g0.beginPath(); g0.arc(cx,cy,R-2,0,Math.PI*2); g0.fill();
+    g0.fillStyle='#dc2626'; g0.font='bold 20px Nunito';
+    g0.textAlign='center'; g0.fillText('E = 0  🚫',cx,cy+7);
+    g0.font='bold 12px Nunito'; g0.fillStyle='#b91c1c';
+    g0.fillText('No enclosed charge!',cx,cy+26);
+  }
+
+  // Probe dashed line
+  const pA=-Math.PI*0.3;
+  const px=cx+Math.cos(pA)*rPx, py=cy+Math.sin(pA)*rPx;
+  g0.setLineDash([5,5]);
+  g0.beginPath(); g0.moveTo(cx,cy); g0.lineTo(px,py);
+  g0.strokeStyle='#f59e0b'; g0.lineWidth=1.5; g0.stroke();
+  g0.setLineDash([]);
+
+  // Probe dot
+  const pc=isIn?'#ef4444':isSur?'#f59e0b':'#818cf8';
+  g0.beginPath(); g0.arc(px,py,9,0,Math.PI*2);
+  g0.fillStyle=pc; g0.shadowColor=pc; g0.shadowBlur=18; g0.fill(); g0.shadowBlur=0;
+  g0.strokeStyle='white'; g0.lineWidth=2; g0.stroke();
+
+  // Arrow at probe
+  if(isOut){
+    const aLen=28;
+    arrow(g0, px,py, px+Math.cos(pA)*aLen, py+Math.sin(pA)*aLen, '#818cf8', 2.5);
+  }
+
+  // Labels
+  g0.fillStyle='#f59e0b'; g0.font='bold 11px Space Mono'; g0.textAlign='center';
+  g0.fillText(`r = ${rRatio.toFixed(2)}R`,(cx+px)/2+8,(cy+py)/2-10);
+  g0.fillStyle='#15803d'; g0.textAlign='left';
+  g0.fillText('R',cx+R*0.72-4,cy-R*0.72-6);
+
+  // Title
+  g0.fillStyle='#374151'; g0.font='bold 12px Nunito'; g0.textAlign='center';
+  g0.fillText('⚡ Thin Spherical Shell — drag slider!',cx,18);
+
+  // Live E label
+  const eNorm=isIn?0:1/(rRatio*rRatio);
+  g0.fillStyle=pc; g0.font='bold 13px Space Mono'; g0.textAlign='center';
+  g0.fillText(isIn?'E = 0':`E ∝ ${eNorm.toFixed(3)} (normalised)`,cx,H-10);
+
+  // Update case highlights
+  document.getElementById('s0-out').classList.toggle('highlight',isOut);
+  document.getElementById('s0-sur').classList.toggle('highlight',isSur);
+  document.getElementById('s0-in').classList.toggle('highlight',isIn);
+
+  drawGraph0Shell(rRatio);
+}
+
+function drawGraph0Shell(rRatio){
+  const W=gc0.width, H=gc0.height;
+  const padL=32,padT=12,padB=24,padR=12;
+  gg0.clearRect(0,0,W,H);
+  gg0.fillStyle='#fffbf2'; gg0.fillRect(0,0,W,H);
+  const {gW,gH}=drawGraphAxes(gg0,W,H,padL,padT,padB,padR,{x:'r →',y:'E'});
+
+  // R marker
+  const Rx=padL+gW*0.33;
+  gg0.strokeStyle='rgba(34,197,94,0.4)'; gg0.setLineDash([3,3]); gg0.lineWidth=1;
+  gg0.beginPath(); gg0.moveTo(Rx,padT); gg0.lineTo(Rx,padT+gH); gg0.stroke();
+  gg0.setLineDash([]);
+  gg0.fillStyle='#16a34a'; gg0.font='bold 8px Nunito'; gg0.textAlign='center';
+  gg0.fillText('R',Rx,padT+gH+13);
+
+  // Curve
+  gg0.beginPath();
+  let first=true;
+  for(let px=0;px<=gW;px++){
+    const r=px/gW*3;
+    const E=r>1?1/(r*r):0;
+    const ey=padT+gH-E*gH*0.88;
+    const ex=padL+px;
+    if(first){gg0.moveTo(ex,ey);first=false;}
+    else gg0.lineTo(ex,ey);
+  }
+  gg0.strokeStyle='#22c55e'; gg0.lineWidth=2.5; gg0.stroke();
+
+  // Probe line + dot
+  const cx_=padL+(rRatio/3)*gW;
+  gg0.strokeStyle='#f59e0b'; gg0.setLineDash([3,3]); gg0.lineWidth=1.5;
+  gg0.beginPath(); gg0.moveTo(cx_,padT); gg0.lineTo(cx_,padT+gH); gg0.stroke();
+  gg0.setLineDash([]);
+  const E_c=rRatio>1?1/(rRatio*rRatio):0;
+  const dotY=padT+gH-E_c*gH*0.88;
+  gg0.beginPath(); gg0.arc(cx_,dotY,5,0,Math.PI*2);
+  gg0.fillStyle='#818cf8'; gg0.shadowColor='#818cf8'; gg0.shadowBlur=8; gg0.fill(); gg0.shadowBlur=0;
+}
+
+// ─────────────────────────────────────────────────────────────────
+// PANEL 1 — INFINITE WIRE
+// ─────────────────────────────────────────────────────────────────
+const c1  = document.getElementById('c1');
+const g1  = c1.getContext('2d');
+const gc1 = document.getElementById('graph1');
+const gg1 = gc1.getContext('2d');
+
+function drawWire(){
+  const W=c1.width,H=c1.height;
+  const rCm=parseFloat(document.getElementById('r1').value);
+  document.getElementById('r1-chip').textContent=`r = ${rCm.toFixed(1)} cm`;
+
+  const lam=1e-6, r=rCm*0.01;
+  const E=lam/(2*Math.PI*EPS0*r);
+  document.getElementById('wire-E-live').textContent=`E = ${E.toExponential(3)} N/C`;
+
+  g1.clearRect(0,0,W,H);
+  g1.fillStyle='#f0f9ff'; g1.fillRect(0,0,W,H);
+
+  // grid
+  g1.strokeStyle='rgba(147,197,253,0.2)'; g1.lineWidth=1;
+  for(let x=0;x<W;x+=30){g1.beginPath();g1.moveTo(x,0);g1.lineTo(x,H);g1.stroke();}
+  for(let y=0;y<H;y+=30){g1.beginPath();g1.moveTo(0,y);g1.lineTo(W,y);g1.stroke();}
+
+  const cx=W/2, cy=H/2;
+  const cylR=rCm*22, cylH=150;
+  const animOff=(frameT*1.5)%28;
+
+  // Gaussian cylinder (dashed outline)
+  g1.save();
+  g1.strokeStyle='rgba(14,165,233,0.5)'; g1.lineWidth=1.5; g1.setLineDash([5,4]);
+  // top ellipse
+  g1.beginPath(); g1.ellipse(cx,cy-cylH/2,cylR,cylR*0.38,0,0,Math.PI*2); g1.stroke();
+  // bottom ellipse
+  g1.beginPath(); g1.ellipse(cx,cy+cylH/2,cylR,cylR*0.38,0,0,Math.PI*2); g1.stroke();
+  g1.setLineDash([]);
+  // sides
+  g1.beginPath(); g1.moveTo(cx-cylR,cy-cylH/2); g1.lineTo(cx-cylR,cy+cylH/2); g1.stroke();
+  g1.beginPath(); g1.moveTo(cx+cylR,cy-cylH/2); g1.lineTo(cx+cylR,cy+cylH/2); g1.stroke();
+  // Fill cylinder translucent
+  g1.globalAlpha=0.06; g1.fillStyle='#0ea5e9';
+  g1.fillRect(cx-cylR,cy-cylH/2,cylR*2,cylH);
+  g1.globalAlpha=1;
+  g1.restore();
+
+  // Wire
+  const wGrad=g1.createLinearGradient(cx-5,0,cx+5,0);
+  wGrad.addColorStop(0,'#fbbf24'); wGrad.addColorStop(0.5,'#f97316'); wGrad.addColorStop(1,'#fbbf24');
+  g1.fillStyle=wGrad;
+  g1.beginPath(); g1.roundRect(cx-4,cy-H*0.42,8,H*0.84,4); g1.fill();
+  g1.strokeStyle='#ea580c'; g1.lineWidth=1; g1.stroke();
+
+  // + symbols on wire
+  for(let y=cy-H*0.38;y<cy+H*0.4;y+=28){
+    g1.fillStyle='#92400e'; g1.font='bold 11px monospace';
+    g1.textAlign='center'; g1.textBaseline='middle';
+    g1.fillText('+',cx,y);
+  }
+  g1.textBaseline='alphabetic';
+
+  // Radial arrows (animated outward)
+  const nArrows=8;
+  for(let i=0;i<nArrows;i++){
+    const a=(i/nArrows)*Math.PI*2;
+    // Only draw arrows in the plane (not up/down)
+    if(Math.abs(Math.sin(a))>0.85) continue;
+    const cosA=Math.cos(a);
+    const sinAe=Math.sin(a)*0.38; // elliptical
+
+    const d0=cylR*0.45;
+    const d1=cylR+(frameT*1.8%22);
+    const d2=d1+16;
+
+    g1.strokeStyle='rgba(14,165,233,0.7)'; g1.lineWidth=1.8; g1.lineCap='round';
+    // base arrow body
+    g1.beginPath();
+    g1.moveTo(cx+cosA*d0, cy+sinAe*d0);
+    g1.lineTo(cx+cosA*Math.min(d1,cylR+5), cy+sinAe*Math.min(d1,cylR+5));
+    g1.stroke();
+
+    if(d2>cylR){
+      arrow(g1,
+        cx+cosA*Math.max(d1-2,cylR+2), cy+sinAe*Math.max(d1-2,cylR+2),
+        cx+cosA*d2, cy+sinAe*d2,
+        'rgba(14,165,233,0.85)', 1.8
+      );
+    }
+  }
+
+  // r label dashed
+  g1.strokeStyle='#f59e0b'; g1.lineWidth=1.5; g1.setLineDash([4,4]);
+  g1.beginPath(); g1.moveTo(cx,cy); g1.lineTo(cx+cylR,cy); g1.stroke();
+  g1.setLineDash([]);
+  g1.fillStyle='#d97706'; g1.font='bold 11px Space Mono'; g1.textAlign='center';
+  g1.fillText(`r = ${rCm.toFixed(1)} cm`,cx+cylR/2+4,cy-8);
+
+  // l label
+  g1.strokeStyle='rgba(107,114,128,0.5)'; g1.lineWidth=1;
+  g1.beginPath(); g1.moveTo(cx+cylR+22,cy-cylH/2); g1.lineTo(cx+cylR+22,cy+cylH/2); g1.stroke();
+  g1.fillStyle='#6b7280'; g1.font='bold 12px Space Mono'; g1.textAlign='left';
+  g1.fillText('l',cx+cylR+26,cy+4);
+
+  // Flux labels
+  g1.fillStyle='rgba(14,165,233,0.8)'; g1.font='bold 10px Nunito'; g1.textAlign='left';
+  g1.fillText('φ_ends = 0',cx+cylR+5,cy-cylH/2+18);
+  g1.fillText('φ_side = E·2πrl',cx+cylR+5,cy-cylH/2+32);
+
+  // n̂ arrows on ends
+  g1.fillStyle='#6b7280'; g1.font='10px monospace'; g1.textAlign='center';
+  g1.fillText('n̂↑',cx,cy-cylH/2-8);
+  g1.fillText('n̂↓',cx,cy+cylH/2+14);
+
+  g1.fillStyle='#374151'; g1.font='bold 12px Nunito'; g1.textAlign='center';
+  g1.fillText('⚡ Cylindrical Gaussian surface',cx,16);
+
+  drawGraph1Wire(rCm);
+}
+
+function drawGraph1Wire(rCm){
+  const W=gc1.width,H=gc1.height;
+  const padL=32,padT=12,padB=24,padR=12;
+  gg1.clearRect(0,0,W,H);
+  gg1.fillStyle='#f0f9ff'; gg1.fillRect(0,0,W,H);
+  const {gW,gH}=drawGraphAxes(gg1,W,H,padL,padT,padB,padR,{x:'r →',y:'E'});
+
+  gg1.beginPath();
+  let first=true;
+  for(let px=1;px<=gW;px++){
+    const r=px/gW*9;
+    const E=Math.min(1/r, 2);
+    const ey=padT+gH-Math.min(E,1)*gH*0.88;
+    if(first){gg1.moveTo(padL+px,ey);first=false;}
+    else gg1.lineTo(padL+px,ey);
+  }
+  gg1.strokeStyle='#0ea5e9'; gg1.lineWidth=2.5; gg1.stroke();
+
+  const cx_=padL+(rCm/9)*gW;
+  gg1.strokeStyle='#f59e0b'; gg1.setLineDash([3,3]); gg1.lineWidth=1.5;
+  gg1.beginPath(); gg1.moveTo(cx_,padT); gg1.lineTo(cx_,padT+gH); gg1.stroke();
+  gg1.setLineDash([]);
+
+  const E_n=Math.min(1/rCm,2);
+  const dotY=padT+gH-Math.min(E_n,1)*gH*0.88;
+  gg1.beginPath(); gg1.arc(cx_,dotY,5,0,Math.PI*2);
+  gg1.fillStyle='#0ea5e9'; gg1.shadowColor='#0ea5e9'; gg1.shadowBlur=8; gg1.fill(); gg1.shadowBlur=0;
+
+  gg1.fillStyle='rgba(14,165,233,0.7)'; gg1.font='bold 9px Nunito'; gg1.textAlign='left';
+  gg1.fillText('E ∝ 1/r',padL+gW*0.55,padT+16);
+}
+
+// ─────────────────────────────────────────────────────────────────
+// PANEL 2 — PLANE SHEET
+// ─────────────────────────────────────────────────────────────────
+const c2=document.getElementById('c2');
+const g2=c2.getContext('2d');
+
+function drawSheet(){
+  const W=c2.width,H=c2.height;
+  const sigma=parseFloat(document.getElementById('sig').value);
+  document.getElementById('sig-chip').textContent=`σ = ${sigma.toFixed(1)} µC/m²`;
+  const E=sigma*1e-6/(2*EPS0);
+  document.getElementById('sheet-E-live').textContent=`E = ${E.toExponential(3)} N/C`;
+
+  g2.clearRect(0,0,W,H);
+  g2.fillStyle='#fdf2f8'; g2.fillRect(0,0,W,H);
+
+  // grid
+  g2.strokeStyle='rgba(249,168,212,0.2)'; g2.lineWidth=1;
+  for(let x=0;x<W;x+=30){g2.beginPath();g2.moveTo(x,0);g2.lineTo(x,H);g2.stroke();}
+  for(let y=0;y<H;y+=30){g2.beginPath();g2.moveTo(0,y);g2.lineTo(W,y);g2.stroke();}
+
+  const cx=W/2, cy=H/2;
+  const shW=14, shH=H*0.65;
+  const animOff=(frameT*1.4)%32;
+  const fieldLen=Math.min(50+sigma*7,165);
+  const nArrows=9;
+  const spacing=shH/nArrows;
+
+  // Animated field lines both sides
+  for(let i=0;i<nArrows;i++){
+    const fy=cy-shH/2+spacing/2+i*spacing;
+    const alpha=0.5+sigma/40;
+
+    // RIGHT
+    for(let d=0;d<fieldLen;d+=28){
+      const dd=(d+animOff)%fieldLen;
+      const x1=cx+shW+dd+4, x2=Math.min(cx+shW+dd+22,cx+fieldLen+shW);
+      g2.strokeStyle=`rgba(236,72,153,${alpha*0.7})`;
+      g2.lineWidth=2; g2.lineCap='round';
+      g2.beginPath(); g2.moveTo(x1,fy); g2.lineTo(x2,fy); g2.stroke();
+      if(x2<cx+fieldLen+shW-4){
+        g2.fillStyle=`rgba(236,72,153,${alpha*0.7})`;
+        g2.beginPath(); g2.moveTo(x2,fy); g2.lineTo(x2-7,fy-4); g2.lineTo(x2-7,fy+4); g2.closePath(); g2.fill();
+      }
+    }
+    // LEFT
+    for(let d=0;d<fieldLen;d+=28){
+      const dd=(d+animOff)%fieldLen;
+      const x1=cx-shW-dd-4, x2=Math.max(cx-shW-dd-22,cx-fieldLen-shW);
+      g2.strokeStyle=`rgba(236,72,153,${alpha*0.7})`;
+      g2.lineWidth=2; g2.lineCap='round';
+      g2.beginPath(); g2.moveTo(x1,fy); g2.lineTo(x2,fy); g2.stroke();
+      if(x2>cx-fieldLen-shW+4){
+        g2.fillStyle=`rgba(236,72,153,${alpha*0.7})`;
+        g2.beginPath(); g2.moveTo(x2,fy); g2.lineTo(x2+7,fy-4); g2.lineTo(x2+7,fy+4); g2.closePath(); g2.fill();
+      }
+    }
+  }
+
+  // Sheet
+  const sg=g2.createLinearGradient(cx-shW,0,cx+shW,0);
+  sg.addColorStop(0,'rgba(244,114,182,0.3)');
+  sg.addColorStop(0.5,'rgba(244,114,182,0.95)');
+  sg.addColorStop(1,'rgba(244,114,182,0.3)');
+  g2.fillStyle=sg;
+  g2.beginPath(); g2.roundRect(cx-shW,cy-shH/2,shW*2,shH,4); g2.fill();
+  g2.strokeStyle='#be185d'; g2.lineWidth=2; g2.stroke();
+
+  // + symbols
+  for(let y=cy-shH/2+20;y<cy+shH/2-10;y+=28){
+    g2.fillStyle='#9d174d'; g2.font='bold 12px monospace';
+    g2.textAlign='center'; g2.textBaseline='middle';
+    g2.fillText('+',cx,y);
+  }
+  g2.textBaseline='alphabetic';
+
+  // Pillbox Gaussian surface
+  const pbW=70, pbH=60;
+  g2.strokeStyle='rgba(129,140,248,0.7)'; g2.lineWidth=2; g2.setLineDash([5,4]);
+  g2.beginPath(); g2.roundRect(cx-pbW/2,cy-pbH/2,pbW,pbH,6); g2.stroke();
+  g2.setLineDash([]);
+  g2.fillStyle='rgba(129,140,248,0.08)';
+  g2.beginPath(); g2.roundRect(cx-pbW/2,cy-pbH/2,pbW,pbH,6); g2.fill();
+  g2.fillStyle='rgba(99,102,241,0.8)'; g2.font='bold 9px Nunito'; g2.textAlign='center';
+  g2.fillText('Gaussian',cx,cy-pbH/2-10);
+  g2.fillText('Surface',cx,cy-pbH/2-1);
+
+  // n̂ labels
+  g2.fillStyle='#4f46e5'; g2.font='bold 11px monospace';
+  g2.fillText('n̂→',cx+pbW/2+14,cy);
+  g2.fillText('←n̂',cx-pbW/2-18,cy);
+
+  // σ and E labels
+  g2.fillStyle='#be185d'; g2.font='bold 14px Nunito'; g2.textAlign='center';
+  g2.fillText(`σ = ${sigma} µC/m²`,cx,cy-shH/2-18);
+  g2.fillStyle='rgba(236,72,153,0.8)'; g2.font='bold 12px Space Mono';
+  g2.fillText('E = σ/2ε₀',cx+W*0.27,cy-22);
+  g2.fillText('E = σ/2ε₀',cx-W*0.27,cy-22);
+
+  // "UNIFORM!" sticker
+  g2.fillStyle='#fdf4ff';
+  g2.beginPath(); g2.roundRect(cx-42,cy+shH/2+12,84,24,50); g2.fill();
+  g2.strokeStyle='#e879f9'; g2.lineWidth=2; g2.stroke();
+  g2.fillStyle='#7e22ce'; g2.font='bold 10px Nunito'; g2.textAlign='center';
+  g2.fillText('✨ UNIFORM FIELD!',cx,cy+shH/2+28);
+
+  g2.fillStyle='#374151'; g2.font='bold 12px Nunito'; g2.textAlign='center';
+  g2.fillText('📋 Infinite Plane Sheet — E same everywhere!',cx,16);
+}
+
+// ─────────────────────────────────────────────────────────────────
+// PANEL 3 — SOLID SPHERE
+// ─────────────────────────────────────────────────────────────────
+const c3=document.getElementById('c3');
+const g3=c3.getContext('2d');
+const gc3=document.getElementById('graph3');
+const gg3=gc3.getContext('2d');
+
+function drawSolid(){
+  const W=c3.width,H=c3.height;
+  const rR=parseFloat(document.getElementById('r3').value);
+  document.getElementById('r3-chip').textContent=`r = ${rR.toFixed(2)}R`;
+
+  g3.clearRect(0,0,W,H);
+  g3.fillStyle='#f0fdf4'; g3.fillRect(0,0,W,H);
+
+  // grid
+  g3.strokeStyle='rgba(134,239,172,0.2)'; g3.lineWidth=1;
+  for(let x=0;x<W;x+=30){g3.beginPath();g3.moveTo(x,0);g3.lineTo(x,H);g3.stroke();}
+  for(let y=0;y<H;y+=30){g3.beginPath();g3.moveTo(0,y);g3.lineTo(W,y);g3.stroke();}
+
+  const cx=W/2,cy=H/2,R=90;
+  const rPx=rR*R;
+  const isIn=rR<0.96, isSur=rR>=0.96&&rR<=1.07, isOut=rR>1.07;
+  const animOff=(frameT*1.3)%22;
+
+  // Volume charge (fill)
+  const sphGrd=g3.createRadialGradient(cx,cy,0,cx,cy,R);
+  sphGrd.addColorStop(0,'rgba(167,139,250,0.4)');
+  sphGrd.addColorStop(0.7,'rgba(139,92,246,0.2)');
+  sphGrd.addColorStop(1,'rgba(109,40,217,0.05)');
+  g3.beginPath(); g3.arc(cx,cy,R,0,Math.PI*2);
+  g3.fillStyle=sphGrd; g3.fill();
+
+  // Charge dots inside
+  const seed42=[0.12,0.45,0.73,0.21,0.88,0.34,0.67,0.09,0.56,0.82,
+                0.15,0.51,0.78,0.28,0.92,0.39,0.63,0.05,0.47,0.71];
+  for(let i=0;i<20;i++){
+    const a=seed42[i]*Math.PI*2;
+    const rr=seed42[(i+3)%20]*R*0.88;
+    g3.fillStyle='rgba(109,40,217,0.5)'; g3.font='bold 10px monospace';
+    g3.textAlign='center'; g3.textBaseline='middle';
+    g3.fillText('+',cx+Math.cos(a)*rr,cy+Math.sin(a)*rr);
+  }
+  g3.textBaseline='alphabetic';
+
+  // Animated field lines INSIDE (converging toward probe if inside)
+  const nLines=12;
+  if(isIn){
+    for(let i=0;i<nLines;i++){
+      const a=(i/nLines)*Math.PI*2;
+      for(let d=rPx*0.15;d<rPx;d+=20){
+        const dd=(d+animOff)%rPx;
+        const x1=cx+Math.cos(a)*dd, y1=cy+Math.sin(a)*dd;
+        const x2=cx+Math.cos(a)*(dd+13), y2=cy+Math.sin(a)*(dd+13);
+        g3.strokeStyle='rgba(109,40,217,0.4)'; g3.lineWidth=1.3; g3.lineCap='round';
+        g3.beginPath(); g3.moveTo(x1,y1); g3.lineTo(x2,y2); g3.stroke();
+      }
+    }
+  } else {
+    // Outside field lines
+    for(let i=0;i<nLines;i++){
+      const a=(i/nLines)*Math.PI*2;
+      const startR=R+4, endR=R+105;
+      for(let d=startR;d<endR;d+=22){
+        const dd=(d+animOff-startR)%(endR-startR)+startR;
+        g3.strokeStyle='rgba(34,197,94,0.5)'; g3.lineWidth=1.3; g3.lineCap='round';
+        g3.beginPath();
+        g3.moveTo(cx+Math.cos(a)*dd, cy+Math.sin(a)*dd);
+        g3.lineTo(cx+Math.cos(a)*(dd+13), cy+Math.sin(a)*(dd+13));
+        g3.stroke();
+      }
+    }
+  }
+
+  // Sphere border
+  const bCol=isSur?'#f59e0b':isIn?'#7c3aed':'#16a34a';
+  g3.beginPath(); g3.arc(cx,cy,R,0,Math.PI*2);
+  g3.strokeStyle=bCol; g3.lineWidth=3;
+  g3.shadowColor=bCol; g3.shadowBlur=14; g3.stroke(); g3.shadowBlur=0;
+
+  // Probe line
+  const pA=-Math.PI*0.3;
+  const px=cx+Math.cos(pA)*rPx, py=cy+Math.sin(pA)*rPx;
+  g3.setLineDash([5,5]);
+  g3.beginPath(); g3.moveTo(cx,cy); g3.lineTo(px,py);
+  g3.strokeStyle='#f59e0b'; g3.lineWidth=1.5; g3.stroke();
+  g3.setLineDash([]);
+
+  const pc=isIn?'#7c3aed':isSur?'#f59e0b':'#16a34a';
+  g3.beginPath(); g3.arc(px,py,9,0,Math.PI*2);
+  g3.fillStyle=pc; g3.shadowColor=pc; g3.shadowBlur=18; g3.fill(); g3.shadowBlur=0;
+  g3.strokeStyle='white'; g3.lineWidth=2; g3.stroke();
+
+  if(isOut) arrow(g3,px,py,px+Math.cos(pA)*28,py+Math.sin(pA)*28,pc,2.5);
+
+  // Labels
+  g3.fillStyle='#f59e0b'; g3.font='bold 11px Space Mono'; g3.textAlign='center';
+  g3.fillText(`r = ${rR.toFixed(2)}R`,(cx+px)/2+8,(cy+py)/2-10);
+  g3.fillStyle=bCol; g3.textAlign='left';
+  g3.fillText('R',cx+R*0.71-2,cy-R*0.71-6);
+
+  const eLabel=isIn?`E ∝ r = ${rR.toFixed(2)} (norm)`:
+               isSur?`E = MAX at surface`:
+               `E ∝ 1/r² = ${(1/rR/rR).toFixed(3)} (norm)`;
+  g3.fillStyle=pc; g3.font='bold 13px Space Mono'; g3.textAlign='center';
+  g3.fillText(eLabel,cx,H-10);
+
+  g3.fillStyle='#374151'; g3.font='bold 12px Nunito'; g3.textAlign='center';
+  g3.fillText('🌍 Solid Sphere — drag slider!',cx,16);
+
+  document.getElementById('ss-in').classList.toggle('highlight',isIn);
+  document.getElementById('ss-sur').classList.toggle('highlight',isSur);
+  document.getElementById('ss-out').classList.toggle('highlight',isOut);
+
+  drawGraph3Solid(rR);
+}
+
+function drawGraph3Solid(rR){
+  const W=gc3.width,H=gc3.height;
+  const padL=32,padT=12,padB=24,padR=12;
+  gg3.clearRect(0,0,W,H);
+  gg3.fillStyle='#f0fdf4'; gg3.fillRect(0,0,W,H);
+  const {gW,gH}=drawGraphAxes(gg3,W,H,padL,padT,padB,padR,{x:'r →',y:'E'});
+
+  const Rx=padL+gW*0.33;
+  gg3.strokeStyle='rgba(139,92,246,0.35)'; gg3.setLineDash([3,3]); gg3.lineWidth=1;
+  gg3.beginPath(); gg3.moveTo(Rx,padT); gg3.lineTo(Rx,padT+gH); gg3.stroke();
+  gg3.setLineDash([]);
+  gg3.fillStyle='#7c3aed'; gg3.font='bold 8px Nunito'; gg3.textAlign='center';
+  gg3.fillText('R',Rx,padT+gH+13);
+
+  // Inside curve: E∝r
+  gg3.beginPath();
+  for(let px=0;px<=gW*0.33;px++){
+    const r=px/(gW*0.33);
+    const ey=padT+gH-r*gH*0.88;
+    px===0?gg3.moveTo(padL+px,ey):gg3.lineTo(padL+px,ey);
+  }
+  gg3.strokeStyle='#8b5cf6'; gg3.lineWidth=2.5; gg3.stroke();
+
+  // Outside: E∝1/r²
+  gg3.beginPath();
+  let first=true;
+  for(let px=gW*0.33;px<=gW;px++){
+    const r=1+(px-gW*0.33)/(gW*0.67)*2;
+    const E=1/(r*r);
+    const ey=padT+gH-E*gH*0.88;
+    first?(gg3.moveTo(padL+px,ey),first=false):gg3.lineTo(padL+px,ey);
+  }
+  gg3.strokeStyle='#22c55e'; gg3.lineWidth=2.5; gg3.stroke();
+
+  // Dot
+  let dotX,dotY;
+  if(rR<=1){
+    dotX=padL+rR*gW*0.33;
+    dotY=padT+gH-rR*gH*0.88;
+  } else {
+    const frac=(rR-1)/2;
+    dotX=padL+gW*0.33+frac*gW*0.67;
+    dotY=padT+gH-(1/(rR*rR))*gH*0.88;
+  }
+  gg3.beginPath(); gg3.arc(dotX,dotY,5,0,Math.PI*2);
+  gg3.fillStyle='#f59e0b'; gg3.shadowColor='#f59e0b'; gg3.shadowBlur=8; gg3.fill(); gg3.shadowBlur=0;
+
+  gg3.fillStyle='rgba(139,92,246,0.7)'; gg3.font='bold 9px Nunito'; gg3.textAlign='left';
+  gg3.fillText('E∝r',padL+4,padT+gH-28);
+  gg3.fillStyle='rgba(34,197,94,0.7)';
+  gg3.fillText('E∝1/r²',padL+gW*0.55,padT+20);
+}
+
+// ─────────────────────────────────────────────────────────────────
+// PANEL 4 — PARALLEL SHEETS
+// ─────────────────────────────────────────────────────────────────
+const c4=document.getElementById('c4');
+const g4=c4.getContext('2d');
+
+function drawParallel(){
+  const W=c4.width,H=c4.height;
+  const s1=parseFloat(document.getElementById('sig1').value);
+  const s2=parseFloat(document.getElementById('sig2').value);
+  document.getElementById('s1-chip').textContent=s1.toFixed(1)+' µC/m²';
+  document.getElementById('s2-chip').textContent=s2.toFixed(1)+' µC/m²';
+
+  const E12=(s1+s2)*1e-6/(2*EPS0);
+  const Eout=Math.abs(s1-s2)*1e-6/(2*EPS0);
+  document.getElementById('lE1').textContent=Eout<1?'~0':Eout.toExponential(2)+' N/C';
+  document.getElementById('lE2').textContent=E12.toExponential(2)+' N/C';
+  document.getElementById('lE3').textContent=Eout<1?'~0':Eout.toExponential(2)+' N/C';
+
+  g4.clearRect(0,0,W,H);
+  g4.fillStyle='#f5f3ff'; g4.fillRect(0,0,W,H);
+
+  // grid
+  g4.strokeStyle='rgba(196,181,253,0.2)'; g4.lineWidth=1;
+  for(let x=0;x<W;x+=30){g4.beginPath();g4.moveTo(x,0);g4.lineTo(x,H);g4.stroke();}
+  for(let y=0;y<H;y+=30){g4.beginPath();g4.moveTo(0,y);g4.lineTo(W,y);g4.stroke();}
+
+  const sh1x=W*0.31, sh2x=W*0.69;
+  const shH=H*0.68, cy=H/2;
+  const animOff=(frameT*1.4)%28;
+
+  const drawSh=(x,color)=>{
+    const sg=g4.createLinearGradient(x-10,0,x+10,0);
+    sg.addColorStop(0,'transparent'); sg.addColorStop(0.5,color); sg.addColorStop(1,'transparent');
+    g4.fillStyle=sg; g4.beginPath(); g4.roundRect(x-10,cy-shH/2,20,shH,3); g4.fill();
+    g4.strokeStyle=color.replace('0.9','1'); g4.lineWidth=2; g4.stroke();
+    for(let y=cy-shH/2+20;y<cy+shH/2-10;y+=28){
+      g4.fillStyle=color.includes('244')? '#831843':'#1e40af';
+      g4.font='bold 12px monospace'; g4.textAlign='center'; g4.textBaseline='middle';
+      g4.fillText('+',x,y);
+    }
+    g4.textBaseline='alphabetic';
+  };
+
+  drawSh(sh1x,'rgba(244,114,182,0.9)');
+  drawSh(sh2x,'rgba(96,165,250,0.9)');
+
+  // Field lines — between
+  const nLines=8;
+  const sp=shH/nLines;
+  const midFieldLen=(sh2x-sh1x-22);
+  const outFieldLen=Math.min(70+s1*5, sh1x-20);
+
+  for(let i=0;i<nLines;i++){
+    const fy=cy-shH/2+sp/2+i*sp;
+    const alpha=0.5+(s1+s2)/40;
+
+    // BETWEEN (right)
+    for(let d=0;d<midFieldLen;d+=28){
+      const dd=(d+animOff)%midFieldLen;
+      const x1=sh1x+12+dd, x2=Math.min(sh1x+12+dd+18,sh2x-12);
+      g4.strokeStyle=`rgba(251,191,36,${alpha*0.9})`; g4.lineWidth=2; g4.lineCap='round';
+      g4.beginPath(); g4.moveTo(x1,fy); g4.lineTo(x2,fy); g4.stroke();
+      if(x2<sh2x-16){
+        g4.fillStyle=`rgba(251,191,36,${alpha*0.9})`;
+        g4.beginPath(); g4.moveTo(x2,fy); g4.lineTo(x2-7,fy-4); g4.lineTo(x2-7,fy+4); g4.closePath(); g4.fill();
+      }
+    }
+
+    // LEFT of sheet 1
+    if(Eout>100){
+      for(let d=0;d<outFieldLen;d+=28){
+        const dd=(d+animOff)%outFieldLen;
+        const x1=sh1x-12-dd, x2=Math.max(sh1x-12-dd-18,10);
+        g4.strokeStyle=`rgba(160,160,180,0.5)`; g4.lineWidth=1.5; g4.lineCap='round';
+        g4.beginPath(); g4.moveTo(x1,fy); g4.lineTo(x2,fy); g4.stroke();
+      }
+    }
+
+    // RIGHT of sheet 2
+    if(Eout>100){
+      for(let d=0;d<outFieldLen;d+=28){
+        const dd=(d+animOff)%outFieldLen;
+        const x1=sh2x+12+dd, x2=Math.min(sh2x+12+dd+18,W-10);
+        g4.strokeStyle=`rgba(160,160,180,0.5)`; g4.lineWidth=1.5; g4.lineCap='round';
+        g4.beginPath(); g4.moveTo(x1,fy); g4.lineTo(x2,fy); g4.stroke();
+      }
+    }
+  }
+
+  // Region labels
+  g4.fillStyle='rgba(107,114,128,0.7)'; g4.font='bold 10px Nunito'; g4.textAlign='center';
+  g4.fillText('Region I', sh1x/2, cy-shH/2-22);
+  g4.fillStyle='rgba(217,119,6,0.9)'; g4.font='bold 11px Nunito';
+  g4.fillText('Region II', (sh1x+sh2x)/2, cy-shH/2-22);
+  g4.fillStyle='rgba(107,114,128,0.7)'; g4.font='bold 10px Nunito';
+  g4.fillText('Region III',(sh2x+W)/2, cy-shH/2-22);
+
+  // sigma labels
+  g4.fillStyle='#be185d'; g4.font='bold 11px Nunito'; g4.textAlign='center';
+  g4.fillText(`σ₁=${s1}`,sh1x,cy-shH/2-8);
+  g4.fillStyle='#1d4ed8';
+  g4.fillText(`σ₂=${s2}`,sh2x,cy-shH/2-8);
+
+  g4.fillStyle='#374151'; g4.font='bold 12px Nunito'; g4.textAlign='center';
+  g4.fillText('⚖️ Two Parallel Sheets — superposition!',W/2,16);
+}
+
+// ─────────────────────────────────────────────────────────────────
+// ANIMATION LOOP
+// ─────────────────────────────────────────────────────────────────
+function loop(){
+  frameT++;
+  if(currentTab===0) drawShell();
+  if(currentTab===1) drawWire();
+  if(currentTab===2) drawSheet();
+  if(currentTab===3) drawSolid();
+  if(currentTab===4) drawParallel();
+  requestAnimationFrame(loop);
+}
+
+// ─────────────────────────────────────────────────────────────────
+// LISTENERS
+// ─────────────────────────────────────────────────────────────────
+document.getElementById('r0').addEventListener('input', drawShell);
+document.getElementById('r1').addEventListener('input', ()=>{drawWire(); drawGraph1Wire(parseFloat(document.getElementById('r1').value));});
+document.getElementById('sig').addEventListener('input', drawSheet);
+document.getElementById('r3').addEventListener('input', ()=>{drawSolid(); drawGraph3Solid(parseFloat(document.getElementById('r3').value));});
+document.getElementById('sig1').addEventListener('input', drawParallel);
+document.getElementById('sig2').addEventListener('input', drawParallel);
+
+// Click on canvas spawns mini confetti
+[c0,c1,c2,c3,c4].forEach(c=>{
+  c.addEventListener('click', e=>{
+    const rect=c.getBoundingClientRect();
+    spawnConfetti(e.clientX, e.clientY, 18);
+    addScore(2, e.clientX, e.clientY);
+  });
+});
+
+loop();
+</script>
+</body>
+</html>

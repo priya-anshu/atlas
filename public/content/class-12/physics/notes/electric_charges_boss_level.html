@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Electric Charges — Boss Level | ISC Advanced</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['DM Sans', 'sans-serif'],
+            mono: ['Space Mono', 'monospace'],
+          },
+          colors: {
+            boss: {
+              bg: '#0a0a0f',
+              card: '#111118',
+              border: '#1e1e2e',
+              accent: '#e8ff47',
+              red: '#ff4757',
+              cyan: '#00d2d3',
+              orange: '#ff6b35',
+              muted: '#3a3a52',
+              text: '#c8c8e0',
+              dim: '#6b6b8a',
+            }
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4,0,0.6,1) infinite',
+            'fade-in': 'fadeIn 0.4s ease forwards',
+            'slide-down': 'slideDown 0.35s ease forwards',
+          },
+          keyframes: {
+            fadeIn: { '0%': { opacity: '0', transform: 'translateY(-6px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+            slideDown: { '0%': { opacity: '0', maxHeight: '0', transform: 'translateY(-8px)' }, '100%': { opacity: '1', maxHeight: '2000px', transform: 'translateY(0)' } }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    body { background: #0a0a0f; font-family: 'DM Sans', sans-serif; }
+
+    /* Grain overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0;
+    }
+
+    .card-glow:hover { box-shadow: 0 0 0 1px #e8ff4720, 0 8px 32px #e8ff4708; }
+
+    .solution-body { display: none; overflow: hidden; }
+    .solution-body.open { display: block; animation: slideDown 0.35s ease forwards; }
+
+    .tag-dipole { background: #1a1a3e; color: #818cf8; border: 1px solid #2d2d6b; }
+    .tag-coulomb { background: #1f1510; color: #fb923c; border: 1px solid #4a2e18; }
+    .tag-axial { background: #0f1f1f; color: #22d3ee; border: 1px solid #1a4040; }
+    .tag-equatorial { background: #1f1020; color: #e879f9; border: 1px solid #3d1a4a; }
+    .tag-multi { background: #1a1f10; color: #a3e635; border: 1px solid #2f3d15; }
+
+    .diff-badge { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.08em; }
+
+    .step-row:not(:last-child) { border-bottom: 1px solid #1e1e2e; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #0a0a0f; }
+    ::-webkit-scrollbar-thumb { background: #2a2a40; border-radius: 2px; }
+
+    .progress-track { background: #1e1e2e; }
+    .progress-bar { background: linear-gradient(90deg, #e8ff47, #00d2d3); transition: width 0.4s ease; }
+
+    .q-number { font-family: 'Space Mono', monospace; }
+
+    .hint-block { border-left: 2px solid #e8ff4740; }
+    .formula-inline { font-family: 'Space Mono', monospace; background: #16161f; border: 1px solid #2a2a40; }
+
+    .concept-pill { font-size: 10px; font-family: 'Space Mono', monospace; letter-spacing: 0.05em; }
+
+    @keyframes countUp {
+      from { opacity: 0; transform: scale(0.7); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .stat-val { animation: countUp 0.4s ease; }
+
+    .boss-header-glow {
+      background: radial-gradient(ellipse 60% 40% at 50% 0%, #e8ff4712 0%, transparent 70%);
+    }
+  </style>
+</head>
+<body class="min-h-screen text-boss-text relative z-10">
+
+  <div class="max-w-3xl mx-auto px-4 py-10 relative z-10">
+
+    <!-- Header -->
+    <div class="boss-header-glow mb-8 pb-6 border-b border-boss-border">
+      <div class="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs font-mono text-boss-accent tracking-widest uppercase">ISC Physics · Phase 2</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-boss-accent animate-pulse-slow inline-block"></span>
+          </div>
+          <h1 class="text-2xl font-semibold text-white leading-tight">Electric Charges &amp; Fields</h1>
+          <p class="text-sm text-boss-dim mt-1.5">Boss-Level Question Bank — Forces multi-formula integration &amp; out-of-box thinking</p>
+        </div>
+        <div class="text-right">
+          <div class="text-xs font-mono text-boss-dim">DIFFICULTY</div>
+          <div class="text-boss-red font-mono font-bold text-lg tracking-wider">EXTREME ★★★</div>
+        </div>
+      </div>
+
+      <!-- Concept tags -->
+      <div class="flex flex-wrap gap-2 mt-4">
+        <span class="concept-pill tag-dipole px-2 py-0.5 rounded-md">ELECTRIC DIPOLE</span>
+        <span class="concept-pill tag-coulomb px-2 py-0.5 rounded-md">COULOMB'S LAW</span>
+        <span class="concept-pill tag-axial px-2 py-0.5 rounded-md">AXIAL FIELD</span>
+        <span class="concept-pill tag-equatorial px-2 py-0.5 rounded-md">EQUATORIAL FIELD</span>
+        <span class="concept-pill tag-multi px-2 py-0.5 rounded-md">MULTI-FORMULA FUSION</span>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-4 gap-3 mb-4">
+      <div class="bg-boss-card border border-boss-border rounded-xl p-3 text-center">
+        <div class="text-xl font-semibold text-white stat-val" id="total">10</div>
+        <div class="text-xs text-boss-dim mt-0.5">Total</div>
+      </div>
+      <div class="bg-boss-card border border-boss-border rounded-xl p-3 text-center">
+        <div class="text-xl font-semibold text-white stat-val" id="solved">0</div>
+        <div class="text-xs text-boss-dim mt-0.5">Solved</div>
+      </div>
+      <div class="bg-boss-card border border-boss-border rounded-xl p-3 text-center">
+        <div class="text-xl font-semibold text-boss-accent stat-val" id="score">0</div>
+        <div class="text-xs text-boss-dim mt-0.5">XP Earned</div>
+      </div>
+      <div class="bg-boss-card border border-boss-border rounded-xl p-3 text-center">
+        <div class="text-xl font-semibold text-white stat-val" id="pct">0%</div>
+        <div class="text-xs text-boss-dim mt-0.5">Progress</div>
+      </div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress-track h-1.5 rounded-full mb-6">
+      <div class="progress-bar h-full rounded-full" id="progress" style="width:0%"></div>
+    </div>
+
+    <!-- Filter tabs -->
+    <div class="flex flex-wrap gap-2 mb-6" id="tabs">
+      <button onclick="filterTopic(this,'all')" data-t="all" class="tab-btn active-tab text-xs px-3 py-1.5 rounded-lg font-mono border transition-all">ALL (10)</button>
+      <button onclick="filterTopic(this,'dipole')" data-t="dipole" class="tab-btn text-xs px-3 py-1.5 rounded-lg font-mono border border-boss-border text-boss-dim bg-transparent hover:border-indigo-500 hover:text-indigo-400 transition-all">DIPOLE (3)</button>
+      <button onclick="filterTopic(this,'coulomb')" data-t="coulomb" class="tab-btn text-xs px-3 py-1.5 rounded-lg font-mono border border-boss-border text-boss-dim bg-transparent hover:border-orange-500 hover:text-orange-400 transition-all">COULOMB (3)</button>
+      <button onclick="filterTopic(this,'axial')" data-t="axial" class="tab-btn text-xs px-3 py-1.5 rounded-lg font-mono border border-boss-border text-boss-dim bg-transparent hover:border-cyan-500 hover:text-cyan-400 transition-all">AXIAL (2)</button>
+      <button onclick="filterTopic(this,'multi')" data-t="multi" class="tab-btn text-xs px-3 py-1.5 rounded-lg font-mono border border-boss-border text-boss-dim bg-transparent hover:border-lime-500 hover:text-lime-400 transition-all">FUSION (2)</button>
+    </div>
+
+    <!-- Questions -->
+    <div id="qlist"></div>
+
+  </div>
+
+  <script>
+  const questions = [
+    {
+      id: 1, topic: "dipole", xp: 150,
+      tag: "DIPOLE + TORQUE + EQUILIBRIUM FUSION",
+      tagClass: "tag-dipole",
+      title: "The Rotating Dipole Trap",
+      text: "An electric dipole (p = 4×10⁻⁸ C·m, charge separation 2a = 4 mm) is placed in a non-uniform field where E = E₀(1 + αx), with E₀ = 5×10⁴ N/C and α = 2 m⁻¹. The dipole is initially at θ = 60° to the field at x = 0.5 m. (a) Find the torque on the dipole. (b) Using τ = pE sinθ and U = −pE cosθ, find the work done to align it to θ = 0°. (c) Find the net translational force on the dipole using F_net = p·(dE/dx)·cosθ. Combine all three to describe the complete motion.",
+      hint: "You must simultaneously use τ = pE sinθ, U = −pE cosθ, and F = p·(∂E/∂x)·cosθ. The field is non-uniform — so the dipole BOTH rotates AND translates.",
+      formulaFusion: ["τ = pE sinθ", "U = −pE cosθ", "F_net = p·(dE/dx)·cosθ"],
+      given: ["p = 4×10⁻⁸ C·m", "E₀ = 5×10⁴ N/C", "α = 2 m⁻¹", "θ = 60°", "x = 0.5 m"],
+      steps: [
+        { l: "Find E at x = 0.5 m", v: "E = E₀(1 + αx) = 5×10⁴ × (1 + 2×0.5) = 5×10⁴ × 2 = 1×10⁵ N/C", mono: false },
+        { l: "(a) Torque", v: "τ = pE sinθ = 4×10⁻⁸ × 1×10⁵ × sin60° = 4×10⁻³ × 0.866 = 3.46×10⁻³ N·m", mono: false },
+        { l: "(b) Work done to align (θ: 60°→0°)", v: "W = ΔU = U(0°) − U(60°) = −pEcos0° − (−pEcos60°) = −pE + pE/2 = −pE/2", mono: false },
+        { l: "W value", v: "= −4×10⁻⁸ × 1×10⁵ × 0.5 = −2×10⁻³ J  (negative → system releases energy → spontaneous alignment)", mono: false },
+        { l: "(c) Translational force", v: "dE/dx = E₀·α = 5×10⁴ × 2 = 1×10⁵ N/C·m\nF = p·(dE/dx)·cosθ = 4×10⁻⁸ × 1×10⁵ × cos60° = 4×10⁻³ × 0.5 = 2×10⁻³ N", mono: false },
+        { l: "Complete motion description", v: "The dipole simultaneously: (i) rotates toward θ=0° (torque = 3.46 mN·m), (ii) releases 2 mJ of energy during alignment, and (iii) translates in the +x direction with force 2 mN toward higher field region.", mono: false }
+      ],
+      answer: "τ = 3.46×10⁻³ N·m | W = −2×10⁻³ J (released) | F_trans = 2×10⁻³ N in +x"
+    },
+    {
+      id: 2, topic: "coulomb", xp: 180,
+      tag: "COULOMB VECTOR + SUPERPOSITION + GEOMETRY",
+      tagClass: "tag-coulomb",
+      title: "The Hidden Equilibrium",
+      text: "Four charges are placed at corners of a square of side L = 20 cm: q₁ = +q at (0,0), q₂ = +q at (L,0), q₃ = −q at (L,L), q₄ = +q at (0,L), where q = 3 μC. A fifth charge Q = −2 μC is placed at the center. (a) Using vector form of Coulomb's law, find the net force on Q. (b) Now find the value of Q such that the net force on q₁ due to all other charges is zero. Fuse superposition + vector algebra + geometry.",
+      hint: "For part (b), force on q₁ from q₂, q₄ (same sign, along sides) and q₃ (diagonal, opposite sign) and Q (from center) must all cancel. Set up vector equations along x̂ and ŷ separately.",
+      formulaFusion: ["F = kq₁q₂/r² · r̂₁₂", "Superposition: F_net = ΣFᵢ", "Diagonal distance = L√2"],
+      given: ["q = 3 μC", "Q = −2 μC", "L = 20 cm = 0.2 m", "k = 9×10⁹"],
+      steps: [
+        { l: "Center coordinates & distances", v: "Center P = (L/2, L/2). Distance from each corner to center = L√2/2 = 0.1√2 m", mono: false },
+        { l: "(a) Forces on Q from each charge", v: "By symmetry: forces from q₁ and q₃ are along diagonal (0,0)→(L,L). Forces from q₂ and q₄ are along the other diagonal.\nq₁(+) and q₃(−) attract Q differently — net force from this pair ≠ 0 since charges differ in sign.", mono: false },
+        { l: "Force from q₁ on Q", v: "r = L√2/2 = 0.1414 m; F = kqQ/r² = 9×10⁹ × 3×10⁻⁶ × 2×10⁻⁶ / (0.02) = 2.7 N along (L/2,L/2)→(0,0) direction = (−x̂−ŷ)/√2", mono: false },
+        { l: "Net force on Q", v: "q₁=q₂=q₄=+q → attractive toward center (inward); q₃=−q → repulsive from (L,L) corner.\nAll inward forces cancel in pairs (q₁↔q₃ position is diagonal). Net = 0 N by full symmetry analysis — but q₃ breaks it.\nNet F on Q ≠ 0; directed from center toward q₃ side = along +x̂+ŷ direction with |F| = k·q·|Q|/r² × (√2 resultant factor) ≈ 3.82 N at 45°", mono: false },
+        { l: "(b) Q for equilibrium of q₁", v: "Forces on q₁: from q₂ (+x̂): F₁₂ = kq²/L² = 9×10⁹×9×10⁻¹²/0.04 = 2.025 N\nFrom q₄ (+ŷ): F₁₄ = 2.025 N\nFrom q₃ (diagonal, attractive since −q): r=L√2; F₁₃ = kq²/2L² = 1.0125 N along (+x̂+ŷ)/√2 = 0.716x̂+0.716ŷ N\nFrom Q at center: distance = L√2/2; direction = toward center = (+x̂+ŷ)/√2", mono: false },
+        { l: "Equilibrium condition on q₁", v: "x-component: 2.025 + 0.716 + kqQ/(L²/2) × (1/√2) = 0\n⇒ kqQ/(L²/2) × (1/√2) = −2.741\n⇒ Q = −2.741 × L²√2 / (2kq) = −2.741 × 0.04×1.414 / (2×9×10⁹×3×10⁻⁶)\n⇒ Q ≈ −2.86 μC", mono: false }
+      ],
+      answer: "(a) Net F on Q ≈ 3.82 N at 45° toward q₃ corner | (b) Q ≈ −2.86 μC for q₁ equilibrium"
+    },
+    {
+      id: 3, topic: "axial", xp: 200,
+      tag: "AXIAL FIELD + DIPOLE MOMENT + FORCE FUSION",
+      tagClass: "tag-axial",
+      title: "Dipole in the Field of Another Dipole",
+      text: "Dipole A (p₁ = 6×10⁻⁸ C·m) is fixed at origin along x-axis. Dipole B (p₂ = 2×10⁻⁸ C·m) is placed at x = 10 cm on the axial line of A, aligned parallel to A. (a) Find the electric field of A at B's location. (b) Find the torque on B. (c) Find the force on B using F = p₂ · (dE_axial/dx). Derive dE/dx from E_axial = 2kp/x³ yourself.",
+      hint: "You need to: (1) use E_axial = 2kp/r³, then (2) differentiate it to get dE/dx = −6kp/x⁴, then (3) apply F = p₂·(dE/dx). This chains three steps into one seamless calculation.",
+      formulaFusion: ["E_axial = 2kp₁/r³", "F = p₂·(dE/dx)", "dE/dx = d/dx(2kp₁x⁻³) = −6kp₁/x⁴"],
+      given: ["p₁ = 6×10⁻⁸ C·m", "p₂ = 2×10⁻⁸ C·m", "r = 10 cm = 0.1 m", "k = 9×10⁹"],
+      steps: [
+        { l: "(a) E_axial at r = 0.1 m", v: "E = 2kp₁/r³ = 2×9×10⁹×6×10⁻⁸/(0.1)³ = 1080/10⁻³ = 1.08×10⁶ N/C", mono: false },
+        { l: "(b) Torque on B", v: "B is aligned parallel to A (θ = 0°) ⇒ τ = p₂E sinθ = 0 N·m\nDipole B is in stable equilibrium — no torque acts.", mono: false },
+        { l: "(c) Derive dE/dx", v: "E = 2kp₁ · x⁻³  ⇒  dE/dx = 2kp₁ × (−3)x⁻⁴ = −6kp₁/x⁴", mono: true },
+        { l: "Compute dE/dx at x = 0.1 m", v: "= −6 × 9×10⁹ × 6×10⁻⁸ / (0.1)⁴ = −3240 / 10⁻⁴ = −3.24×10⁷ N/C·m", mono: false },
+        { l: "Force on dipole B", v: "F = p₂ × |dE/dx| = 2×10⁻⁸ × 3.24×10⁷ = 0.648 N", mono: false },
+        { l: "Direction", v: "dE/dx is negative (field decreases away from A) → force on B is toward A (in −x̂ direction). Parallel dipoles attract along axial line.", mono: false }
+      ],
+      answer: "E = 1.08×10⁶ N/C | τ = 0 (stable) | F = 0.648 N toward dipole A"
+    },
+    {
+      id: 4, topic: "dipole", xp: 220,
+      tag: "DIPOLE + BOTH FIELD LINES + RATIO TRICK",
+      tagClass: "tag-dipole",
+      title: "The Field Equality Puzzle",
+      text: "A dipole has moment p = 5×10⁻⁸ C·m and half-length a = 2 cm. A point P₁ is on the axial line at distance r₁ from center, and a point P₂ is on the equatorial line at distance r₂. Given that the electric field magnitudes at P₁ and P₂ are equal (E_axial = E_equatorial), and r₁ + r₂ = 25 cm, find r₁, r₂, and the common field magnitude. Use r >> a approximation.",
+      hint: "Set 2kp/r₁³ = kp/r₂³. This gives r₂³ = r₁³/2. Now use the constraint r₁ + r₂ = 25 cm. You're solving a non-linear system — think like a mathematician.",
+      formulaFusion: ["E_axial = 2kp/r₁³", "E_equatorial = kp/r₂³", "Condition: E_axial = E_equatorial", "Constraint: r₁ + r₂ = 0.25 m"],
+      given: ["p = 5×10⁻⁸ C·m", "r₁ + r₂ = 25 cm", "E_axial = E_equatorial", "k = 9×10⁹"],
+      steps: [
+        { l: "Set fields equal", v: "2kp/r₁³ = kp/r₂³  ⇒  2/r₁³ = 1/r₂³  ⇒  r₂³ = r₁³/2  ⇒  r₂ = r₁ / 2^(1/3) = r₁ / 1.2599", mono: false },
+        { l: "Substitute into constraint", v: "r₁ + r₁/1.2599 = 0.25\nr₁(1 + 0.7937) = 0.25\nr₁ × 1.7937 = 0.25\nr₁ = 0.1394 m ≈ 13.9 cm", mono: false },
+        { l: "Find r₂", v: "r₂ = 0.25 − 0.1394 = 0.1106 m ≈ 11.1 cm", mono: false },
+        { l: "Verify ratio", v: "r₂/r₁ = 0.1106/0.1394 = 0.794 ≈ 1/2^(1/3) ✓", mono: false },
+        { l: "Common field magnitude", v: "E = 2kp/r₁³ = 2×9×10⁹×5×10⁻⁸/(0.1394)³\n= 900/(2.714×10⁻³) = 3.32×10⁵ N/C", mono: false },
+        { l: "Cross-check via equatorial", v: "E = kp/r₂³ = 9×10⁹×5×10⁻⁸/(0.1106)³ = 450/1.352×10⁻³ = 3.33×10⁵ N/C ✓", mono: false }
+      ],
+      answer: "r₁ ≈ 13.9 cm | r₂ ≈ 11.1 cm | E_common ≈ 3.32×10⁵ N/C"
+    },
+    {
+      id: 5, topic: "coulomb", xp: 160,
+      tag: "COULOMB + VECTOR + WORK-ENERGY",
+      tagClass: "tag-coulomb",
+      title: "The Moving Charge Energy Trap",
+      text: "Charge q₁ = +5 μC is fixed at origin. A charge q₂ = −2 μC (mass m = 1 g) starts from rest at (30, 0) cm and moves to (10, 0) cm under Coulomb attraction. (a) Using the work-energy theorem fused with Coulomb's law, find the kinetic energy and speed of q₂ at (10, 0) cm. (b) If q₂ overshoots origin and moves to (−10, 0) cm, find its speed there. Ignore gravity. Fuse W = ΔKE with W = k·q₁q₂(1/r_f − 1/r_i).",
+      hint: "W_electric = kq₁q₂(1/r_f − 1/r_i). This is a direct fusion of Coulomb's law with the work-energy theorem. The sign of q₁q₂ determines attraction/repulsion automatically.",
+      formulaFusion: ["W = kq₁q₂(1/r_f − 1/r_i)", "W = ΔKE = ½mv²", "KE = W_net"],
+      given: ["q₁ = +5×10⁻⁶ C", "q₂ = −2×10⁻⁶ C", "m = 10⁻³ kg", "r_i = 0.3 m", "k = 9×10⁹"],
+      steps: [
+        { l: "Formula for work by electric force", v: "W = kq₁q₂(1/r_f − 1/r_i)\nNote: q₁q₂ = (+5)(−2)×10⁻¹² = −10⁻¹¹ C² (negative product = attractive pair)", mono: false },
+        { l: "(a) Work from r=0.3 to r=0.1 m", v: "W = 9×10⁹ × (−10⁻¹¹) × (1/0.1 − 1/0.3)\n= −0.09 × (10 − 3.33) = −0.09 × 6.67 = −0.6003 J\n\nMagnitude check: Work done BY attractive force as charges approach should be positive.\nRecalculate: W = k|q₁q₂|(1/r_f − 1/r_i) for attraction = +0.6 J", mono: false },
+        { l: "Correct sign reasoning", v: "For attractive charges moving closer: potential energy decreases ⇒ KE increases.\nW = ΔKE = KE_f − 0 = +0.6 J", mono: false },
+        { l: "Speed at r = 0.1 m", v: "½mv² = 0.6  ⇒  v² = 1.2/10⁻³ = 1200\nv = √1200 = 34.64 m/s", mono: false },
+        { l: "(b) At r = 0.1 m on other side (−10 cm)", v: "Distance is still 0.1 m from q₁, so same PE.\nBy energy conservation: same KE = 0.6 J, same speed = 34.64 m/s", mono: false },
+        { l: "Key insight", v: "Electric potential energy depends only on separation r, not direction. So at equal distances on either side, KE is identical — a beautiful symmetry of inverse-square forces.", mono: false }
+      ],
+      answer: "(a) KE = 0.6 J, v = 34.6 m/s | (b) Same v = 34.6 m/s (PE depends only on |r|)"
+    },
+    {
+      id: 6, topic: "multi", xp: 250,
+      tag: "MEGA FUSION: DIPOLE + AXIAL + COULOMB + TORQUE",
+      tagClass: "tag-multi",
+      title: "The Boss Fight — Dipole Caught Between Two Charges",
+      text: "A dipole (p = 8×10⁻⁸ C·m, 2a = 4 cm) is placed at origin along x-axis. Two point charges Q₁ = +10 μC at x = −20 cm and Q₂ = +10 μC at x = +20 cm create a combined field. (a) Find the net electric field at the dipole center due to Q₁ and Q₂. (b) Compute torque on the dipole at θ = 45° in this net field. (c) Find force on the dipole using F = p·(dE/dx) evaluated at the midpoint. (d) Is the dipole in stable, unstable, or neutral equilibrium at θ = 0°? Justify using energy arguments.",
+      hint: "The two charges create fields in OPPOSITE directions at origin (both point away from the charges, so they cancel at center). For part (c), since E_net = 0, you must compute the gradient carefully — fields don't cancel in their derivatives! This is the trap.",
+      formulaFusion: ["E from point charge = kQ/r²", "Net E = E₁ + E₂ (vector sum)", "τ = pE sinθ", "F = p·(dE/dx)", "U = −pE cosθ for stability"],
+      given: ["p = 8×10⁻⁸ C·m", "Q₁ = Q₂ = +10×10⁻⁶ C", "r = 0.2 m from each", "k = 9×10⁹"],
+      steps: [
+        { l: "(a) Fields at origin from Q₁ and Q₂", v: "Q₁ at x=−0.2 m: field at origin points in +x̂ (away from Q₁)\nE₁ = kQ/r² = 9×10⁹×10⁻⁵/0.04 = 2.25×10⁶ N/C in +x̂\n\nQ₂ at x=+0.2 m: field at origin points in −x̂ (away from Q₂)\nE₂ = 2.25×10⁶ N/C in −x̂\n\nNet E = E₁ + E₂ = 0 N/C (fields cancel by symmetry)", mono: false },
+        { l: "(b) Torque at θ = 45°", v: "τ = pE_net sinθ = p × 0 × sin45° = 0 N·m\nWith zero net field, torque = 0 regardless of angle.", mono: false },
+        { l: "(c) Force using gradient — the TRAP", v: "E(x) from Q₁ and Q₂ combined:\nE(x) = kQ/(x+0.2)² − kQ/(0.2−x)² [for small x near origin, Q₁ pushes +x, Q₂ pushes −x]\n\nAt x=0: E=0 as shown. But dE/dx ≠ 0!", mono: false },
+        { l: "Compute dE/dx at x=0", v: "dE/dx = d/dx [kQ(x+0.2)⁻² − kQ(0.2−x)⁻²]\n= kQ[−2(x+0.2)⁻³ − 2(0.2−x)⁻³]\nAt x=0: = kQ[−2/(0.2)³ − 2/(0.2)³] = −4kQ/(0.2)³\n= −4×9×10⁹×10⁻⁵/0.008 = −4.5×10⁷ N/C·m", mono: false },
+        { l: "Force on dipole", v: "F = p·cosθ·(dE/dx)  [at θ=45°, cosθ = 1/√2]\n= 8×10⁻⁸ × (1/√2) × (−4.5×10⁷)\n= 8×10⁻⁸ × 0.707 × 4.5×10⁷ = 2.546 N (in −x̂ = restoring toward center) ✓", mono: false },
+        { l: "(d) Stability at θ = 0°", v: "At θ=0°: U = −pE cosθ. But E=0 at origin, so U = 0 for any θ.\nHowever, a small displacement in x creates a gradient force that RESTORES the dipole (as computed above — force is toward center).\nConclusion: NEUTRAL rotational equilibrium (no torque since E=0), but STABLE translational equilibrium (gradient force is restoring).", mono: false }
+      ],
+      answer: "(a) E_net = 0 | (b) τ = 0 | (c) F = 2.55 N restoring | (d) Neutral rotationally, Stable translationally"
+    },
+    {
+      id: 7, topic: "multi", xp: 230,
+      tag: "FIELD SUPERPOSITION + DIPOLE GEOMETRY",
+      tagClass: "tag-multi",
+      title: "The Crossed Dipoles",
+      text: "Two identical dipoles each with p = 3×10⁻⁸ C·m are placed at origin. Dipole 1 points along +x̂, Dipole 2 points along +ŷ. Find the magnitude and direction of the combined electric field at point P = (0, 0, 5 cm) — a point on the z-axis (which is equatorial to BOTH dipoles). Then find the angle the net field makes with the x-axis.",
+      hint: "P is on the equatorial plane of dipole 1 (equatorial in xz plane) AND equatorial plane of dipole 2 (equatorial in yz plane). Both dipoles contribute equatorial fields at P, but in opposite directions to their respective dipole moments.",
+      formulaFusion: ["E_equatorial = kp/r³ anti-parallel to p̂", "Vector addition of two perpendicular fields", "tan α = Ey/Ex for direction"],
+      given: ["p₁ = p₂ = 3×10⁻⁸ C·m", "r = 5 cm = 0.05 m", "P on z-axis", "k = 9×10⁹"],
+      steps: [
+        { l: "Field from Dipole 1 (along x̂) at P on z-axis", v: "P is on equatorial plane of D1 (z-axis is equatorial to x̂ dipole).\nE₁ = kp/r³ = 9×10⁹×3×10⁻⁸/(0.05)³ = 270/1.25×10⁻⁴ = 2.16×10⁶ N/C\nDirection: anti-parallel to p̂₁ = −x̂\nE₁ = −2.16×10⁶ x̂ N/C", mono: false },
+        { l: "Field from Dipole 2 (along ŷ) at P on z-axis", v: "P is also equatorial to D2.\nE₂ = kp/r³ = 2.16×10⁶ N/C (same magnitude)\nDirection: anti-parallel to p̂₂ = −ŷ\nE₂ = −2.16×10⁶ ŷ N/C", mono: false },
+        { l: "Net field", v: "E_net = E₁ + E₂ = −2.16×10⁶ x̂ − 2.16×10⁶ ŷ\n|E_net| = 2.16×10⁶ × √2 = 3.055×10⁶ N/C", mono: false },
+        { l: "Direction angle", v: "Both components equal in magnitude along −x̂ and −ŷ.\nAngle = 45° below −x̂ toward −ŷ, i.e., 225° from +x̂ (or equivalently SW direction in xy-plane)", mono: false },
+        { l: "Physical meaning", v: "The combined field at P is √2 times larger than either single dipole's contribution, pointing diagonally opposite to the vector sum of both dipole moments (p₁ + p₂).", mono: false }
+      ],
+      answer: "|E_net| = 3.055×10⁶ N/C at 225° from +x̂ (anti-parallel to p₁+p₂ diagonal)"
+    },
+    {
+      id: 8, topic: "dipole", xp: 190,
+      tag: "WORK-ENERGY + POTENTIAL + DIPOLE ANGLE",
+      tagClass: "tag-dipole",
+      title: "The Forbidden Rotation",
+      text: "A dipole (p = 6×10⁻⁸ C·m) is in a uniform field E = 4×10⁵ N/C. It starts at θ = 0° (stable equilibrium) and is given a kinetic energy of 8×10⁻³ J. (a) Find the maximum angle θ_max it can reach before stopping, using energy conservation: KE_initial = ΔPE = pE(cosθ_initial − cosθ_max). (b) Will it complete a full revolution (360°)? Find the minimum initial KE required for full rotation.",
+      hint: "At max angle: all KE converts to PE. Set ½mv² = pE(1 − cosθ_max). For full revolution, it must cross θ=180° (the unstable point with maximum PE = 2pE). Min KE for full rotation = 2pE.",
+      formulaFusion: ["U = −pE cosθ", "ΔPE = pE(cosθᵢ − cosθ_f)", "KE_initial = ΔPE at turning point", "Min KE for full rotation = 2pE"],
+      given: ["p = 6×10⁻⁸ C·m", "E = 4×10⁵ N/C", "KE_initial = 8×10⁻³ J"],
+      steps: [
+        { l: "PE change formula", v: "Starting at θ=0°: U_i = −pE cos0° = −pE\nAt angle θ: U_f = −pE cosθ\nΔU = pE(1 − cosθ)", mono: false },
+        { l: "(a) Energy conservation at θ_max", v: "KE_initial = ΔU\n8×10⁻³ = pE(1 − cosθ_max)\n8×10⁻³ = 6×10⁻⁸ × 4×10⁵ × (1 − cosθ_max)\n8×10⁻³ = 24×10⁻³ × (1 − cosθ_max)", mono: false },
+        { l: "Solve for θ_max", v: "1 − cosθ_max = 8×10⁻³ / 24×10⁻³ = 1/3\ncosθ_max = 2/3\nθ_max = cos⁻¹(2/3) ≈ 48.19°", mono: false },
+        { l: "(b) Check for full revolution", v: "For full rotation, dipole must cross θ = 180°.\nΔU needed = pE(1 − cos180°) = pE × 2 = 2pE\n= 2 × 6×10⁻⁸ × 4×10⁵ = 48×10⁻³ J", mono: false },
+        { l: "Minimum KE for full rotation", v: "KE_min = 2pE = 48×10⁻³ J = 48 mJ\nSince 8 mJ < 48 mJ: NO full revolution. Dipole oscillates between −48.2° and +48.2°.", mono: false }
+      ],
+      answer: "(a) θ_max ≈ 48.2° | (b) No full revolution; Min KE needed = 48 mJ > 8 mJ given"
+    },
+    {
+      id: 9, topic: "coulomb", xp: 210,
+      tag: "COULOMB + SHELL THEOREM + CUSTOM FORMULA",
+      tagClass: "tag-coulomb",
+      title: "The Buried Charge Problem",
+      text: "A solid non-conducting sphere of radius R = 10 cm has total charge Q = 12 μC uniformly distributed throughout its volume. A point charge q = 2 μC is placed at distance r = 6 cm from the center (inside the sphere). Using Gauss's Law to find enclosed charge, fuse with Coulomb's law to find the force on q. Then find the force at r = 15 cm (outside). Compare both — build your own formula for F(r) inside and outside.",
+      hint: "Inside: Q_enc = Q × (r³/R³). Force: F = k·Q_enc·q/r² = k·q·Q·r/R³. This is a LINEAR function of r (not inverse square!) inside. Outside: normal Coulomb. Build the piecewise formula yourself.",
+      formulaFusion: ["Gauss: Q_enc = Q·(r/R)³ (inside)", "F_inside = kqQ·r/R³", "F_outside = kqQ/r²", "Piecewise force function F(r)"],
+      given: ["Q = 12×10⁻⁶ C", "q = 2×10⁻⁶ C", "R = 0.1 m", "r_in = 0.06 m", "r_out = 0.15 m", "k = 9×10⁹"],
+      steps: [
+        { l: "Enclosed charge at r = 6 cm (inside)", v: "Q_enc = Q × (r/R)³ = 12×10⁻⁶ × (0.06/0.1)³ = 12×10⁻⁶ × 0.216 = 2.592×10⁻⁶ C", mono: false },
+        { l: "Force on q inside (r = 6 cm)", v: "F = kQ_enc·q/r² = 9×10⁹ × 2.592×10⁻⁶ × 2×10⁻⁶ / (0.06)²\n= 9×10⁹ × 5.184×10⁻¹² / 3.6×10⁻³ = 12.95 N", mono: false },
+        { l: "Custom formula (inside)", v: "F_inside = k·q·Q·r/R³ [force is linear in r — grows with r!]", mono: true },
+        { l: "Force outside (r = 15 cm)", v: "F_outside = kQq/r² = 9×10⁹ × 12×10⁻⁶ × 2×10⁻⁶ / (0.15)²\n= 9×10⁹ × 24×10⁻¹² / 0.0225 = 9.6 N", mono: false },
+        { l: "Piecewise force function (your custom formula)", v: "F(r) = { kqQr/R³       if r ≤ R (linear, increases inward)\n        { kqQ/r²        if r > R (inverse square)", mono: true },
+        { l: "Comparison insight", v: "Inside: F_in(0.06) = 12.95 N > F_out(0.15) = 9.6 N\nAt surface (r=R=0.1m): both give F = kqQ/R² = 21.6 N — formulas match at boundary ✓", mono: false }
+      ],
+      answer: "F_inside = 12.95 N (linear) | F_outside = 9.6 N (inverse sq.) | Custom F(r) piecewise formula derived"
+    },
+    {
+      id: 10, topic: "axial", xp: 240,
+      tag: "FULL INTEGRATION: ALL FIVE CONCEPTS",
+      tagClass: "tag-axial",
+      title: "The Final Boss — Complete System Analysis",
+      text: "A dipole A (pA = 10×10⁻⁸ C·m) is fixed at origin along x-axis. A second dipole B (pB = 4×10⁻⁸ C·m, mass m = 2 g) is placed at x = 8 cm, also along x-axis, and released from rest. (a) Find E_axial of A at x = 8 cm. (b) Find initial torque on B (θ = 0° initially, both aligned). (c) Find initial force on B using F = pB·(dE/dx). (d) Find KE of B when it reaches x = 4 cm using W = ∫F dx or W = pB·[E(4cm) − E(8cm)]. (e) At what distance does the force on B equal 5 N?",
+      hint: "This chains: axial field formula → gradient → force → work → velocity. Part (e) requires inverting the force equation. All five sub-concepts from Phase 2 fire in sequence.",
+      formulaFusion: ["E_axial = 2kpA/r³", "F = pB·|dE/dx| = 6kpApB/r⁴", "W = pB·ΔE = pB[E(r_f)−E(r_i)]", "KE = W", "r⁴ = 6kpApB/F for part (e)"],
+      given: ["pA = 10⁻⁷ C·m", "pB = 4×10⁻⁸ C·m", "m = 2×10⁻³ kg", "k = 9×10⁹", "r_i=0.08 m", "r_f=0.04 m"],
+      steps: [
+        { l: "(a) E_axial at r = 8 cm", v: "E = 2kpA/r³ = 2×9×10⁹×10⁻⁷/(0.08)³\n= 1800 / 5.12×10⁻⁴ = 3.516×10⁶ N/C", mono: false },
+        { l: "(b) Torque on B (θ=0°)", v: "τ = pBE sinθ = pB × E × 0 = 0 N·m\nB is aligned with A, stable equilibrium — no torque. It only translates.", mono: false },
+        { l: "(c) Force on B at r = 8 cm", v: "dE/dx = −6kpA/r⁴\n|F| = pB × 6kpA/r⁴ = 6 × 9×10⁹ × 10⁻⁷ × 4×10⁻⁸ / (0.08)⁴\n= 6×9×10⁹×4×10⁻¹⁵ / 4.096×10⁻⁵\n= 2.16×10⁻⁴ / 4.096×10⁻⁵ = 5.27 N", mono: false },
+        { l: "(d) Work done moving from 8 cm to 4 cm", v: "E at r=0.04m = 2×9×10⁹×10⁻⁷/(0.04)³ = 1800/6.4×10⁻⁵ = 2.8125×10⁷ N/C\nW = pB × [E(4cm) − E(8cm)] = 4×10⁻⁸ × [2.8125×10⁷ − 3.516×10⁶]\n= 4×10⁻⁸ × 2.461×10⁷ = 0.9844 J", mono: false },
+        { l: "Velocity at r = 4 cm", v: "KE = W ⇒ ½mv² = 0.9844\nv² = 2×0.9844/2×10⁻³ = 984.4\nv = 31.37 m/s", mono: false },
+        { l: "(e) Distance where F = 5 N", v: "F = 6kpApB/r⁴ = 5\nr⁴ = 6kpApB/5 = 6×9×10⁹×10⁻⁷×4×10⁻⁸/5\n= 6×9×4×10⁻⁶/5 = 4.32×10⁻⁵\nr = (4.32×10⁻⁵)^(1/4) = (4.32)^0.25 × 10⁻¹·²⁵\n= 1.441 × 0.0562 = 0.08097 m ≈ 8.1 cm ✓ (matches part c, where F ≈ 5.27 N at 8 cm)", mono: false }
+      ],
+      answer: "(a) 3.52×10⁶ N/C | (b) τ=0 | (c) F≈5.27 N | (d) v≈31.4 m/s | (e) r≈8.1 cm"
+    }
+  ];
+
+  let totalSolved = 0;
+  let totalXP = 0;
+  const xpMap = {};
+
+  function renderCards(filter) {
+    const list = document.getElementById("qlist");
+    const filtered = filter === "all" ? questions : questions.filter(q => q.topic === filter);
+    list.innerHTML = filtered.map(q => `
+      <div class="bg-boss-card border border-boss-border rounded-2xl p-5 mb-4 card-glow transition-all" id="card-${q.id}">
+        <!-- Top row -->
+        <div class="flex items-start justify-between gap-3 mb-3 flex-wrap">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="q-number text-xs font-bold text-boss-accent bg-boss-accent/10 border border-boss-accent/20 px-2 py-0.5 rounded-md">Q${q.id}</span>
+            <span class="concept-pill ${q.tagClass} px-2 py-0.5 rounded-md">${q.tag}</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="diff-badge text-boss-orange border border-boss-orange/30 bg-boss-orange/10 px-2 py-0.5 rounded-md">+${q.xp} XP</span>
+          </div>
+        </div>
+
+        <!-- Title -->
+        <h3 class="text-base font-semibold text-white mb-2 leading-snug">${q.title}</h3>
+
+        <!-- Question text -->
+        <p class="text-sm text-boss-text leading-7 mb-3">${q.text}</p>
+
+        <!-- Given -->
+        <div class="bg-[#0f0f18] border border-boss-border rounded-xl px-3 py-2.5 mb-3">
+          <span class="text-xs font-mono text-boss-dim uppercase tracking-wider">Given → </span>
+          <span class="text-xs text-boss-text font-mono">${q.given.join("  ·  ")}</span>
+        </div>
+
+        <!-- Formula fusion tags -->
+        <div class="flex flex-wrap gap-1.5 mb-4">
+          <span class="text-xs text-boss-dim font-mono">Fuse:</span>
+          ${q.formulaFusion.map(f => `<span class="formula-inline text-xs text-boss-cyan px-2 py-0.5 rounded-md">${f}</span>`).join("")}
+        </div>
+
+        <!-- Hint -->
+        <div class="hint-block bg-[#111108] pl-3 pr-3 py-2 rounded-r-xl rounded-l-none mb-4">
+          <span class="text-xs text-boss-accent font-mono uppercase tracking-wider">⚡ Strategy Hint: </span>
+          <span class="text-xs text-boss-text/70">${q.hint}</span>
+        </div>
+
+        <!-- Toggle button -->
+        <button
+          id="btn-${q.id}"
+          onclick="toggleSolution(${q.id}, ${q.xp})"
+          class="flex items-center gap-2 text-xs font-mono border border-boss-muted text-boss-dim hover:border-boss-accent hover:text-boss-accent px-4 py-2 rounded-xl transition-all"
+        >
+          <span id="btn-icon-${q.id}">▶</span>
+          <span id="btn-text-${q.id}">REVEAL SOLUTION</span>
+        </button>
+
+        <!-- Solution body -->
+        <div class="solution-body" id="sol-${q.id}">
+          <div class="mt-4 pt-4 border-t border-boss-border">
+            <div class="flex items-center gap-2 mb-3">
+              <span class="text-xs font-mono text-boss-accent uppercase tracking-widest">Step-by-step breakdown</span>
+              <div class="flex-1 h-px bg-boss-border"></div>
+            </div>
+            ${q.steps.map((s, i) => `
+              <div class="step-row py-2.5">
+                <div class="text-xs text-boss-dim font-mono mb-1 uppercase tracking-wider">STEP ${i+1} · ${s.l}</div>
+                ${s.mono
+                  ? `<code class="block font-mono text-xs text-boss-cyan bg-[#0a0f1a] border border-[#1a2a3a] rounded-xl px-3 py-2 leading-6 whitespace-pre-wrap">${s.v}</code>`
+                  : `<p class="text-sm text-boss-text leading-7 whitespace-pre-wrap">${s.v}</p>`
+                }
+              </div>
+            `).join("")}
+
+            <!-- Final answer -->
+            <div class="mt-3 bg-boss-accent/10 border border-boss-accent/30 rounded-xl px-4 py-2.5">
+              <span class="text-xs font-mono text-boss-accent uppercase tracking-wider">✓ FINAL ANSWER: </span>
+              <span class="text-sm font-semibold text-boss-accent">${q.answer}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    `).join("");
+  }
+
+  function toggleSolution(id, xp) {
+    const sol = document.getElementById("sol-" + id);
+    const btn = document.getElementById("btn-" + id);
+    const icon = document.getElementById("btn-icon-" + id);
+    const txt = document.getElementById("btn-text-" + id);
+    const isOpen = sol.classList.contains("open");
+
+    if (!isOpen) {
+      sol.classList.add("open");
+      btn.classList.add("border-boss-accent", "text-boss-accent");
+      btn.classList.remove("border-boss-muted", "text-boss-dim");
+      icon.textContent = "▼";
+      txt.textContent = "HIDE SOLUTION";
+      if (!xpMap[id]) {
+        xpMap[id] = true;
+        totalSolved++;
+        totalXP += xp;
+        updateStats();
+      }
+    } else {
+      sol.classList.remove("open");
+      btn.classList.remove("border-boss-accent", "text-boss-accent");
+      btn.classList.add("border-boss-muted", "text-boss-dim");
+      icon.textContent = "▶";
+      txt.textContent = "REVEAL SOLUTION";
+    }
+  }
+
+  function updateStats() {
+    document.getElementById("solved").textContent = totalSolved;
+    document.getElementById("score").textContent = totalXP;
+    const pct = Math.round((totalSolved / 10) * 100);
+    document.getElementById("pct").textContent = pct + "%";
+    document.getElementById("progress").style.width = pct + "%";
+  }
+
+  function filterTopic(el, topic) {
+    document.querySelectorAll(".tab-btn").forEach(b => {
+      b.classList.remove("active-tab", "border-boss-accent", "text-boss-accent", "bg-boss-accent/10");
+      b.classList.add("border-boss-border", "text-boss-dim", "bg-transparent");
+    });
+    el.classList.add("active-tab", "border-boss-accent", "text-boss-accent", "bg-boss-accent/10");
+    el.classList.remove("border-boss-border", "text-boss-dim");
+    renderCards(topic);
+  }
+
+  // Set initial active tab style
+  document.querySelector('[data-t="all"]').classList.add("border-boss-accent", "text-boss-accent", "bg-boss-accent/10");
+  document.querySelector('[data-t="all"]').classList.remove("border-boss-border", "text-boss-dim");
+
+  renderCards("all");
+  </script>
+</body>
+</html>

@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chapter 1: Electric Charges & Fields — Complete Question Bank</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Lora', 'serif'],
+            body: ['IBM Plex Sans', 'sans-serif'],
+            mono: ['IBM Plex Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'IBM Plex Sans', sans-serif; background: #faf9f6; }
+    .answer-body { display: none; }
+    .answer-body.open { display: block; animation: revealAns 0.3s ease; }
+    @keyframes revealAns {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .tab-active { background: #1e3a5f; color: #fff; border-color: #1e3a5f; }
+    .tab-inactive { background: #fff; color: #4b5563; border-color: #d1d5db; }
+    .tab-inactive:hover { border-color: #1e3a5f; color: #1e3a5f; }
+
+    /* Category colors */
+    .cat-numerical { border-left: 3px solid #2563eb; }
+    .cat-conceptual { border-left: 3px solid #059669; }
+    .cat-ar { border-left: 3px solid #7c3aed; }
+    .cat-hypothetical { border-left: 3px solid #d97706; }
+    .cat-blindspot { border-left: 3px solid #dc2626; }
+
+    .badge-numerical { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+    .badge-conceptual { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+    .badge-ar { background: #faf5ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+    .badge-hypothetical { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+    .badge-blindspot { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+
+    .formula-box { font-family: 'IBM Plex Mono', monospace; background: #f1f5f9; border: 1px solid #cbd5e1; }
+    .step-line:not(:last-child) { border-bottom: 1px dashed #e5e7eb; }
+
+    .progress-bar-fill { background: linear-gradient(90deg, #1e3a5f, #2563eb); transition: width 0.4s ease; }
+    .q-card { transition: box-shadow 0.2s; }
+    .q-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+
+    .ar-assertion { background: #f0f9ff; border-left: 3px solid #0ea5e9; }
+    .ar-reason { background: #f0fdf4; border-left: 3px solid #22c55e; }
+
+    .hypo-scenario { background: #fffbeb; border: 1px dashed #f59e0b; border-radius: 8px; }
+    .blindspot-tag { background: #fef2f2; border: 1px solid #fca5a5; border-radius: 4px; }
+
+    @media print {
+      .no-print { display: none !important; }
+      .answer-body { display: block !important; }
+      body { background: #fff; }
+    }
+  </style>
+</head>
+<body class="min-h-screen" style="background:#faf9f6;">
+
+<div class="max-w-4xl mx-auto px-4 py-10">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="mb-8">
+    <div class="flex items-center gap-2 mb-2">
+      <span class="text-xs font-mono text-blue-600 tracking-widest uppercase bg-blue-50 px-2 py-0.5 rounded">ISC / CBSE · Class XII · Unit I</span>
+      <span class="text-xs text-gray-400 font-mono">Electrostatics</span>
+    </div>
+    <h1 class="font-display text-3xl font-semibold text-gray-900 leading-tight">Chapter 1: Electric Charges &amp; Fields</h1>
+    <p class="text-sm text-gray-500 mt-1.5 font-body">Complete Question Bank — Numerical · Conceptual · Assertion-Reason · Hypothetical · Blind Spot</p>
+
+    <!-- Topic pills -->
+    <div class="flex flex-wrap gap-2 mt-4">
+      <span class="text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 font-body">Electric Charges</span>
+      <span class="text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 font-body">Conservation of Charge</span>
+      <span class="text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 font-body">Coulomb's Law</span>
+      <span class="text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 font-body">Superposition</span>
+      <span class="text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 font-body">Electric Field</span>
+      <span class="text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 font-body">Field Lines</span>
+      <span class="text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 font-body">Electric Dipole</span>
+      <span class="text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 font-body">Gauss's Theorem</span>
+      <span class="text-xs px-2.5 py-1 rounded-full bg-gray-100 text-gray-600 font-body">Continuous Charge Distribution</span>
+    </div>
+  </div>
+
+  <!-- ═══ STATS ═══ -->
+  <div class="grid grid-cols-5 gap-3 mb-5 no-print">
+    <div class="bg-white border border-gray-200 rounded-xl p-3 text-center shadow-sm">
+      <div class="text-xl font-semibold text-gray-800" id="stat-total">30</div>
+      <div class="text-xs text-gray-400 mt-0.5">Total Qs</div>
+    </div>
+    <div class="bg-white border border-gray-200 rounded-xl p-3 text-center shadow-sm">
+      <div class="text-xl font-semibold text-blue-700" id="stat-solved">0</div>
+      <div class="text-xs text-gray-400 mt-0.5">Attempted</div>
+    </div>
+    <div class="bg-white border border-gray-200 rounded-xl p-3 text-center shadow-sm">
+      <div class="text-xl font-semibold text-emerald-600" id="stat-num">8</div>
+      <div class="text-xs text-gray-400 mt-0.5">Numerical</div>
+    </div>
+    <div class="bg-white border border-gray-200 rounded-xl p-3 text-center shadow-sm">
+      <div class="text-xl font-semibold text-violet-600" id="stat-ar">8</div>
+      <div class="text-xs text-gray-400 mt-0.5">Assert-Reason</div>
+    </div>
+    <div class="bg-white border border-gray-200 rounded-xl p-3 text-center shadow-sm">
+      <div class="text-xl font-semibold text-amber-600" id="stat-hypo">7</div>
+      <div class="text-xs text-gray-400 mt-0.5">Hypothetical</div>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="h-1.5 bg-gray-200 rounded-full mb-6 no-print">
+    <div class="progress-bar-fill h-full rounded-full" id="progress" style="width:0%"></div>
+  </div>
+
+  <!-- ═══ FILTER TABS ═══ -->
+  <div class="flex flex-wrap gap-2 mb-7 no-print" id="tabs">
+    <button onclick="filter(this,'all')" data-f="all" class="tab-btn tab-active text-xs px-4 py-1.5 rounded-lg border font-body font-medium transition-all">All (30)</button>
+    <button onclick="filter(this,'numerical')" data-f="numerical" class="tab-btn tab-inactive text-xs px-4 py-1.5 rounded-lg border font-body font-medium transition-all">Numerical (8)</button>
+    <button onclick="filter(this,'conceptual')" data-f="conceptual" class="tab-btn tab-inactive text-xs px-4 py-1.5 rounded-lg border font-body font-medium transition-all">Conceptual (7)</button>
+    <button onclick="filter(this,'ar')" data-f="ar" class="tab-btn tab-inactive text-xs px-4 py-1.5 rounded-lg border font-body font-medium transition-all">Assertion-Reason (8)</button>
+    <button onclick="filter(this,'hypothetical')" data-f="hypothetical" class="tab-btn tab-inactive text-xs px-4 py-1.5 rounded-lg border font-body font-medium transition-all">Hypothetical (7)</button>
+  </div>
+
+  <!-- ═══ QUESTION LIST ═══ -->
+  <div id="qlist"></div>
+
+  <!-- Footer -->
+  <div class="text-center mt-10 text-xs text-gray-400 font-mono no-print">
+    Chapter 1 · Electric Charges and Fields · ISC/CBSE Class XII
+  </div>
+</div>
+
+<script>
+const QS = [
+
+// ════════════════════════════════════════════
+// SECTION A: NUMERICAL QUESTIONS (1–8)
+// ════════════════════════════════════════════
+{
+  id:1, cat:'numerical', topic:'Coulomb\'s Law + Superposition',
+  title:'Three Charges on a Line — Net Force',
+  q:`Three point charges are placed on the x-axis: q₁ = +6 μC at x = 0, q₂ = −4 μC at x = 4 cm, q₃ = +2 μC at x = 8 cm. Find the net force on q₂ due to q₁ and q₃. (k = 9×10⁹ N·m²/C²)`,
+  given:['q₁ = 6×10⁻⁶ C', 'q₂ = −4×10⁻⁶ C', 'q₃ = 2×10⁻⁶ C', 'r₁₂ = 4×10⁻² m', 'r₂₃ = 4×10⁻² m'],
+  steps:[
+    {l:'Force F₁₂ (q₁ on q₂)', v:'F₁₂ = k|q₁||q₂|/r₁₂² = 9×10⁹ × 6×10⁻⁶ × 4×10⁻⁶ / (16×10⁻⁴)\n= 9×10⁹ × 24×10⁻¹² / 16×10⁻⁴ = 135 N\nq₁(+) and q₂(−) → attractive → F₁₂ points in −x̂ direction (toward q₁)', mono:false},
+    {l:'Force F₃₂ (q₃ on q₂)', v:'F₃₂ = k|q₂||q₃|/r₂₃² = 9×10⁹ × 4×10⁻⁶ × 2×10⁻⁶ / 16×10⁻⁴\n= 45 N\nq₃(+) and q₂(−) → attractive → F₃₂ points in +x̂ direction (toward q₃)', mono:false},
+    {l:'Net force on q₂', v:'F_net = F₃₂ − F₁₂ = 45 − 135 = −90 N (in −x̂ direction)\nMagnitude = 90 N, directed toward q₁ (leftward)', mono:false},
+  ],
+  ans:'F_net = 90 N directed toward q₁ (in −x direction)',
+  explain:'Both charges attract q₂ from opposite sides. q₁ exerts a larger force (larger charge, same distance) so net pull is toward q₁.'
+},
+{
+  id:2, cat:'numerical', topic:'Electric Field — Superposition',
+  title:'Zero Field Point Between Two Charges',
+  q:`Two positive charges q₁ = 16 μC and q₂ = 4 μC are placed 30 cm apart. Find the point on the line joining them where the resultant electric field is zero.`,
+  given:['q₁ = 16 μC', 'q₂ = 4 μC', 'd = 30 cm = 0.3 m'],
+  steps:[
+    {l:'Setup', v:'Let the zero-field point P be at distance x from q₁ (and 0.3−x from q₂).\nAt P: E from q₁ = E from q₂ (both same direction for external point, opposite for point between them)\nFor point BETWEEN two like charges, fields oppose.', mono:false},
+    {l:'Condition', v:'kq₁/x² = kq₂/(0.3−x)²\n16/x² = 4/(0.3−x)²\n4/x = 2/(0.3−x)\n4(0.3−x) = 2x → 1.2 = 6x → x = 0.2 m = 20 cm', mono:false},
+    {l:'Verify', v:'E₁ = k×16×10⁻⁶/(0.2)² = 9×10⁹×16×10⁻⁶/0.04 = 3.6×10⁶ N/C\nE₂ = k×4×10⁻⁶/(0.1)² = 9×10⁹×4×10⁻⁶/0.01 = 3.6×10⁶ N/C ✓', mono:false},
+  ],
+  ans:'Zero field at 20 cm from q₁ (10 cm from q₂)',
+  explain:'For two positive charges, zero field always lies BETWEEN them, closer to the smaller charge. Here ratio of distances = √(q₁/q₂) = 2.'
+},
+{
+  id:3, cat:'numerical', topic:'Electric Field + Continuous Distribution',
+  title:'Field Due to Uniformly Charged Ring at Axis',
+  q:`A ring of radius R = 10 cm carries total charge Q = 5 μC uniformly distributed. Find the electric field at a point P on its axis at distance x = 10√3 cm from the center. Also find the distance x at which E is maximum.`,
+  given:['R = 0.1 m', 'Q = 5×10⁻⁶ C', 'x = 10√3 cm = 0.1√3 m', 'k = 9×10⁹'],
+  steps:[
+    {l:'Axial field formula', v:'E = kQx / (x²+R²)^(3/2)', mono:true},
+    {l:'Compute denominator', v:'x² + R² = (0.1√3)² + (0.1)² = 0.03 + 0.01 = 0.04\n(0.04)^(3/2) = (0.04)^1 × (0.04)^0.5 = 0.04 × 0.2 = 8×10⁻³', mono:false},
+    {l:'Compute E', v:'E = 9×10⁹ × 5×10⁻⁶ × 0.1√3 / 8×10⁻³\n= 9×10⁹ × 5×10⁻⁶ × 0.1732 / 8×10⁻³\n= 9×10⁹ × 8.66×10⁻⁷ / 8×10⁻³\n= 7794 / 8×10⁻³ = 9.74×10⁵ N/C', mono:false},
+    {l:'Distance for maximum E', v:'Differentiate E w.r.t. x and set dE/dx = 0:\nx_max = R/√2 = 0.1/1.414 = 7.07 cm', mono:true},
+  ],
+  ans:'E ≈ 9.74×10⁵ N/C at x = 10√3 cm; E is maximum at x = R/√2 ≈ 7.07 cm',
+  explain:'The axial field of a ring is zero at center (x=0), zero at infinity, with a maximum at x = R/√2. This is a classic result obtained by differentiating the field formula.'
+},
+{
+  id:4, cat:'numerical', topic:'Gauss\'s Theorem — Spherical Shell',
+  title:'Field Inside and Outside a Charged Spherical Shell',
+  q:`A thin spherical shell of radius R = 15 cm has a total charge Q = 8 μC on its surface. Find the electric field at: (a) r = 5 cm (inside), (b) r = 15 cm (on surface), (c) r = 30 cm (outside). Also find the total electric flux through the shell.`,
+  given:['R = 0.15 m', 'Q = 8×10⁻⁶ C', 'ε₀ = 8.85×10⁻¹² C²/N·m²', 'k = 9×10⁹'],
+  steps:[
+    {l:'(a) Inside (r = 5 cm)', v:'By Gauss\'s law, Q_enc = 0 for any point inside a shell.\n∮E·dA = Q_enc/ε₀ = 0 ⇒ E = 0 N/C', mono:false},
+    {l:'(b) On surface (r = R = 15 cm)', v:'Q_enc = Q\nE × 4πR² = Q/ε₀\nE = kQ/R² = 9×10⁹ × 8×10⁻⁶ / (0.15)² = 72000/0.0225 = 3.2×10⁶ N/C', mono:false},
+    {l:'(c) Outside (r = 30 cm)', v:'E = kQ/r² = 9×10⁹ × 8×10⁻⁶ / (0.3)² = 72000/0.09 = 8×10⁵ N/C', mono:false},
+    {l:'Total flux through shell', v:'Φ = Q/ε₀ = 8×10⁻⁶ / 8.85×10⁻¹² = 9.04×10⁵ N·m²/C', mono:false},
+  ],
+  ans:'(a) E = 0 | (b) E = 3.2×10⁶ N/C | (c) E = 8×10⁵ N/C | Flux = 9.04×10⁵ N·m²/C',
+  explain:'Gauss\'s law elegantly shows the shell behaves as a point charge for external points. Interior field is zero — this is the principle behind electrostatic shielding (Faraday cage).'
+},
+{
+  id:5, cat:'numerical', topic:'Continuous Distribution — Infinite Plane Sheet',
+  title:'Field Due to Two Parallel Infinite Plane Sheets',
+  q:`Two large parallel plane sheets carry surface charge densities σ₁ = +4 μC/m² and σ₂ = −4 μC/m². Find the electric field: (a) between the plates, (b) outside (left of σ₁), (c) outside (right of σ₂). Use ε₀ = 8.85×10⁻¹² C²/N·m².`,
+  given:['σ₁ = +4×10⁻⁶ C/m²', 'σ₂ = −4×10⁻⁶ C/m²'],
+  steps:[
+    {l:'Field from single infinite sheet', v:'E_sheet = σ/(2ε₀) on each side', mono:true},
+    {l:'Field values', v:'E₁ = 4×10⁻⁶/(2×8.85×10⁻¹²) = 2.26×10⁵ N/C\nE₂ = 2.26×10⁵ N/C (same magnitude)', mono:false},
+    {l:'(a) Between the plates', v:'Both fields point in same direction (from +σ toward −σ)\nE = E₁ + E₂ = 2×2.26×10⁵ = 4.52×10⁵ N/C = σ/ε₀', mono:false},
+    {l:'(b) & (c) Outside', v:'Fields from each sheet point in OPPOSITE directions.\nE_outside = E₁ − E₂ = 0 N/C\n(This is the capacitor configuration — field confined between plates)', mono:false},
+  ],
+  ans:'(a) E = σ/ε₀ = 4.52×10⁵ N/C (between plates) | (b),(c) E = 0 (outside)',
+  explain:'Equal and opposite sheets (capacitor) → field only between plates. This is why a parallel plate capacitor stores field energy in the gap only, and external field cancels.'
+},
+{
+  id:6, cat:'numerical', topic:'Electric Dipole — Axial & Equatorial',
+  title:'Dipole — Finding p from Measured Field Values',
+  q:`At a point on the axial line of a dipole at r = 20 cm, the field is measured as 1.08×10⁵ N/C. At a point on the equatorial line at r = 20 cm, the field is 5.4×10⁴ N/C. (a) Verify E_axial/E_equatorial = 2. (b) Find the dipole moment p. (c) Find the charge q if the separation is 2 cm.`,
+  given:['E_axial = 1.08×10⁵ N/C', 'E_equatorial = 5.4×10⁴ N/C', 'r = 0.2 m', '2a = 2 cm'],
+  steps:[
+    {l:'(a) Verify ratio', v:'E_axial/E_equatorial = 1.08×10⁵ / 5.4×10⁴ = 2 ✓', mono:false},
+    {l:'(b) Find p using equatorial formula', v:'E_equatorial = kp/r³\n5.4×10⁴ = 9×10⁹ × p / (0.2)³\n5.4×10⁴ = 9×10⁹ × p / 8×10⁻³\np = 5.4×10⁴ × 8×10⁻³ / 9×10⁹ = 432/9×10⁹ = 4.8×10⁻⁸ C·m', mono:false},
+    {l:'(c) Find charge q', v:'p = q × 2a\n4.8×10⁻⁸ = q × 2×10⁻²\nq = 4.8×10⁻⁸ / 2×10⁻² = 2.4×10⁻⁶ C = 2.4 μC', mono:false},
+  ],
+  ans:'(a) Ratio = 2 ✓ | (b) p = 4.8×10⁻⁸ C·m | (c) q = 2.4 μC',
+  explain:'This reverse-engineering question builds the skill of finding unknown quantities from measured field data — a real experimental physics technique.'
+},
+{
+  id:7, cat:'numerical', topic:'Gauss\'s Theorem — Non-Uniform Field',
+  title:'Flux Through a Cube in a Non-Uniform Field',
+  q:`The electric field in a region is given by E = (3x + 2)î N/C. Find the net electric flux through a cube of side L = 0.2 m placed with one face at x = 0 and the opposite face at x = 0.2 m. Then find the charge enclosed.`,
+  given:['E = (3x+2) î N/C', 'L = 0.2 m', 'ε₀ = 8.85×10⁻¹²'],
+  steps:[
+    {l:'Flux through left face (x=0)', v:'E at x=0: E₁ = 3(0)+2 = 2 N/C\nΦ_left = −E₁ × L² = −2 × (0.2)² = −2 × 0.04 = −0.08 N·m²/C\n(negative: field enters this face)', mono:false},
+    {l:'Flux through right face (x=0.2 m)', v:'E at x=0.2: E₂ = 3(0.2)+2 = 2.6 N/C\nΦ_right = +E₂ × L² = 2.6 × 0.04 = +0.104 N·m²/C', mono:false},
+    {l:'Flux through remaining 4 faces', v:'E is in x̂ direction only — no x-component through y and z faces → Φ = 0', mono:false},
+    {l:'Net flux', v:'Φ_net = 0.104 − 0.08 = 0.024 N·m²/C', mono:false},
+    {l:'Charge enclosed', v:'Q_enc = ε₀ × Φ_net = 8.85×10⁻¹² × 0.024 = 2.12×10⁻¹³ C', mono:false},
+  ],
+  ans:'Φ_net = 0.024 N·m²/C | Q_enc = 2.12×10⁻¹³ C',
+  explain:'Non-uniform fields produce a net flux difference. The varying E means charge density is non-zero inside. This tests Gauss\'s law application when E ≠ constant.'
+},
+{
+  id:8, cat:'numerical', topic:'Continuous Distribution — Infinite Wire',
+  title:'Force Between a Point Charge and an Infinite Wire',
+  q:`An infinite straight wire carries linear charge density λ = 2 μC/m. A point charge Q = 5 μC is placed at a perpendicular distance r = 4 cm from the wire. Find the force per unit length on the wire due to Q, and the force on Q due to the wire. Are they equal? Why?`,
+  given:['λ = 2×10⁻⁶ C/m', 'Q = 5×10⁻⁶ C', 'r = 4×10⁻² m', 'ε₀ = 8.85×10⁻¹²'],
+  steps:[
+    {l:'Electric field due to infinite wire at distance r', v:'E = λ/(2πε₀r) = 2×10⁻⁶ / (2π × 8.85×10⁻¹² × 0.04)\n= 2×10⁻⁶ / (2.228×10⁻¹²) = 8.98×10⁵ N/C', mono:false},
+    {l:'Force on Q due to wire', v:'F = QE = 5×10⁻⁶ × 8.98×10⁵ = 4.49 N', mono:false},
+    {l:'Force per unit length on wire', v:'F/L = λ × E_due_to_Q_at_wire\nBy Newton\'s 3rd Law: Force on wire = Force on Q = 4.49 N (per unit consideration)\nForce per unit length = F/L = λE = 2×10⁻⁶ × 8.98×10⁵ = 1.796 N/m', mono:false},
+    {l:'Newton\'s Third Law', v:'Force on Q = 4.49 N (from wire)\nForce on wire = 4.49 N (from Q) — equal and opposite ✓\nNewton\'s Third Law holds universally.', mono:false},
+  ],
+  ans:'E = 8.98×10⁵ N/C | F on Q = 4.49 N | F/L on wire = 1.796 N/m | Equal by Newton\'s 3rd Law',
+  explain:'Students often forget that Newton\'s 3rd law applies to electric forces too. Force on wire from Q = force on Q from wire, always.'
+},
+
+// ════════════════════════════════════════════
+// SECTION B: CONCEPTUAL QUESTIONS (9–15)
+// ════════════════════════════════════════════
+{
+  id:9, cat:'conceptual', topic:'Conservation of Charge',
+  title:'Charge Conservation in Nuclear Reactions',
+  q:`In a nuclear reaction, a neutron decays into a proton, an electron, and an antineutrino: n → p⁺ + e⁻ + ν̄. (a) Verify that charge is conserved. (b) If a student claims a reaction "n → p⁺ + e⁻ + ν̄ + γ" occurs, is charge still conserved? (c) Why is it impossible for a single isolated electron to simply disappear?`,
+  steps:[
+    {l:'(a) Charge conservation check', v:'LHS: neutron charge = 0\nRHS: (+1) + (−1) + 0 = 0 ✓\nTotal charge = 0 on both sides → Conservation satisfied.', mono:false},
+    {l:'(b) With photon γ', v:'Photon γ is electrically neutral (charge = 0)\nSo: RHS charge = +1 − 1 + 0 + 0 = 0\nStill conserved ✓. Adding neutral particles never violates charge conservation.', mono:false},
+    {l:'(c) Why electron can\'t disappear', v:'An electron has charge −e. If it disappeared, total charge of universe would increase by +e.\nThis violates conservation of charge — a fundamental law with no known exceptions.\nElectron can only annihilate with a positron (+e), giving two photons: e⁻ + e⁺ → 2γ (charge: −1+1=0, conserved).', mono:false},
+  ],
+  ans:'(a) 0 = 0 ✓ | (b) Still conserved (γ is neutral) | (c) Isolated electron disappearance violates charge conservation',
+  explain:'This connects electrostatics to nuclear/particle physics. Charge conservation is an absolute law — it constrains all possible particle reactions.'
+},
+{
+  id:10, cat:'conceptual', topic:'Electric Field Lines',
+  title:'Reading Electric Field Line Diagrams',
+  q:`A student draws two field line patterns: Pattern A shows lines starting from a positive charge and ending on a negative charge with 8 lines from each. Pattern B shows lines from a +2q charge (16 lines) and a −q charge (8 lines). Analyze: (a) Do all field lines from +2q end on −q in Pattern B? (b) Can two field lines intersect? (c) Why are field lines closer together near a sharp pointed conductor?`,
+  steps:[
+    {l:'(a) Pattern B — unequal charges', v:'+2q emits 16 lines. −q can absorb only 8 lines (proportional to charge magnitude).\nThe remaining 8 lines go to infinity — they don\'t end anywhere nearby.\nSo NO — only 8 of 16 lines from +2q end on −q; rest go to infinity.', mono:false},
+    {l:'(b) Can field lines intersect?', v:'No. At any intersection point, the field would have two directions simultaneously.\nThis is physically impossible — the field at any point has exactly one direction.\nField lines NEVER cross.', mono:false},
+    {l:'(c) Field lines near sharp points', v:'Field line density ∝ field strength. Near a sharp point, charge accumulates at high density (σ is large at small radius of curvature).\nThis creates very strong fields → very dense field lines → lines appear crowded.\nPrinciple behind lightning rods and electric discharge at points.', mono:false},
+  ],
+  ans:'(a) No — 8 lines go to infinity | (b) Never — unique direction at each point | (c) High charge density → high field → dense lines',
+  explain:'Field line diagrams carry quantitative information: density = field strength, number = charge magnitude. These are often misread by students.'
+},
+{
+  id:11, cat:'conceptual', topic:'Gauss\'s Theorem — Concept',
+  title:'The Blind Spot — Gauss\'s Law When Charge is Outside',
+  q:`(a) A charge Q is placed outside a closed Gaussian surface. What is the total electric flux through the surface? Explain physically. (b) The electric field AT any point on the surface is due to Q (external). Yet flux = 0. How can a field exist but flux be zero? (c) Can you use Gauss's law to find the field at a surface point in this case? Why not?`,
+  steps:[
+    {l:'(a) External charge flux', v:'Gauss\'s law: Φ = Q_enc/ε₀\nQ_enc = 0 (charge is outside) → Φ = 0\nPhysically: every field line that enters the surface also exits it — no net flux.', mono:false},
+    {l:'(b) Field exists but flux is zero — how?', v:'Flux = ∮E·dA is a surface INTEGRAL. Positive flux (lines exiting) and negative flux (lines entering) cancel out exactly.\nThe FIELD itself is non-zero everywhere on the surface, but the integral sums to zero.\nThis is why flux and field magnitude are fundamentally different quantities.', mono:false},
+    {l:'(c) Can Gauss\'s law give field here?', v:'NO. Gauss\'s law Φ = Q_enc/ε₀ gives total flux, not local field.\nTo find E at a specific point using Gauss, you need SYMMETRY so that E is constant over the Gaussian surface.\nWith external charge only, there is no such symmetry → can\'t extract E from flux alone.\nMust use Coulomb\'s law/superposition instead.', mono:false},
+  ],
+  ans:'(a) Φ = 0 (field lines enter and exit equally) | (b) Integral cancels — field ≠ flux | (c) No — symmetry is broken',
+  explain:'This is the most common misconception: students confuse "zero flux" with "zero field". Gauss\'s law is useful for finding E only when symmetry guarantees E is uniform over the surface.'
+},
+{
+  id:12, cat:'conceptual', topic:'Continuous Charge Distribution',
+  title:'Linear vs Surface vs Volume — When to Use Which?',
+  q:`Classify each physical situation and write the appropriate charge element dq: (a) A thin wire of length L with charge Q; (b) A hollow metallic sphere with charge Q; (c) A solid insulating sphere with uniform charge density ρ; (d) A disk of radius R. For each, also state which Gauss surface you would choose to find E.`,
+  steps:[
+    {l:'(a) Thin wire', v:'Linear distribution: λ = Q/L (C/m)\ndq = λ dl\nGauss surface: Coaxial cylinder of radius r and length l', mono:false},
+    {l:'(b) Hollow metallic sphere', v:'Surface distribution: σ = Q/4πR² (C/m²)\ndq = σ dA\nGauss surface: Concentric sphere of radius r (r < R: E=0; r > R: E = kQ/r²)', mono:false},
+    {l:'(c) Solid insulating sphere', v:'Volume distribution: ρ = Q/(4πR³/3) = 3Q/4πR³ (C/m³)\ndq = ρ dV\nGauss surface: Concentric sphere; Q_enc = ρ × (4πr³/3) for r < R', mono:false},
+    {l:'(d) Disk', v:'Surface distribution: σ = Q/πR² (C/m²)\ndq = σ × 2πr dr (annular element)\nNo simple Gauss surface due to finite size — must use direct integration.', mono:false},
+  ],
+  ans:'Wire: λ (linear) | Hollow sphere: σ (surface) | Solid sphere: ρ (volume) | Disk: σ (surface, no Gauss symmetry)',
+  explain:'Identifying the correct charge distribution type is step zero in any problem. Students often blindly apply Gauss\'s law to non-symmetric configurations — it won\'t work.'
+},
+{
+  id:13, cat:'conceptual', topic:'Dipole in Electric Field',
+  title:'Why a Dipole Doesn\'t Translate in a Uniform Field',
+  q:`An electric dipole is placed in a uniform electric field. (a) Prove that the net translational force on the dipole is zero. (b) Is there rotational motion? (c) In which orientation does the dipole have (i) minimum PE, (ii) maximum PE? (d) What happens if the same dipole is in a non-uniform field?`,
+  steps:[
+    {l:'(a) Net force in uniform field', v:'Force on +q: F₊ = +qE (along E)\nForce on −q: F₋ = −qE (opposite to E)\nNet force = qE + (−qE) = 0\nSince E is same at both charges (uniform field), forces cancel.', mono:false},
+    {l:'(b) Rotational motion', v:'Yes. The two forces form a couple (torque).\nτ = pE sinθ ≠ 0 unless θ = 0° or 180°\nDipole rotates to align with the field.', mono:false},
+    {l:'(c) Potential energy', v:'U = −pE cosθ\n(i) Minimum PE: θ = 0° → U = −pE (stable equilibrium, aligned with E)\n(ii) Maximum PE: θ = 180° → U = +pE (unstable equilibrium, anti-parallel to E)', mono:false},
+    {l:'(d) Non-uniform field', v:'If ∂E/∂x ≠ 0, force on +q and −q are different in magnitude.\nNet force F = p·(dE/dx)·cosθ ≠ 0\nDipole BOTH rotates AND translates — toward region of stronger field if aligned.', mono:false},
+  ],
+  ans:'(a) F_net = 0 in uniform field | (b) Yes, torque exists | (c) Min PE at θ=0°, Max at θ=180° | (d) Translation + rotation in non-uniform field',
+  explain:'The key insight: uniform field → torque only, no net force. Non-uniform field → both torque and force. This distinction is frequently tested.'
+},
+{
+  id:14, cat:'conceptual', topic:'Properties of Electric Charge',
+  title:'Quantisation and Additivity of Charge',
+  q:`(a) Why can we not have a charge of 3.2×10⁻²⁰ C? (b) A body has charge −3.2×10⁻¹⁸ C. How many excess or deficit electrons does it have? (c) A friend argues: "At macroscopic scales, charge appears continuous. So quantisation is useless." Critically evaluate this statement. (d) Is charge a scalar or vector? Justify.`,
+  steps:[
+    {l:'(a) Impossible charge value', v:'Charge is quantised: q = ne, where n is integer and e = 1.6×10⁻¹⁹ C.\n3.2×10⁻²⁰ C = 0.2e — not an integer multiple of e → physically impossible.', mono:false},
+    {l:'(b) Number of excess electrons', v:'q = −3.2×10⁻¹⁸ C (negative = excess electrons)\nn = |q|/e = 3.2×10⁻¹⁸ / 1.6×10⁻¹⁹ = 20 electrons\nThe body has 20 excess electrons.', mono:false},
+    {l:'(c) Critical evaluation', v:'The friend is partially correct: at macroscopic scales (charge ~ μC), individual quanta are invisible.\nHowever, quantisation remains fundamentally true and is CRUCIAL at: atomic scale, semiconductor physics, single-electron transistors, quantum Hall effect.\n"Useless" is wrong — its invisibility at macro scale does not negate its reality.', mono:false},
+    {l:'(d) Scalar or vector?', v:'Charge is a SCALAR. It has magnitude and sign, but sign does not indicate direction.\nAddition is algebraic (not vectorial): +2C + (−3C) = −1C.\nUnlike vectors, charge doesn\'t follow parallelogram law of addition.', mono:false},
+  ],
+  ans:'(a) Not integer multiple of e | (b) 20 excess electrons | (c) Useful at atomic/quantum scale | (d) Scalar — algebraic addition',
+  explain:'Charge quantisation is a profound fact of nature whose deeper reason (charge conservation + gauge symmetry) is explained in quantum field theory. At exam level, n = q/e must be an integer.'
+},
+{
+  id:15, cat:'conceptual', topic:'Coulomb\'s Law vs Gravity',
+  title:'Comparing Coulomb and Gravitational Forces',
+  q:`For two protons separated by 1 fm (10⁻¹⁵ m): (a) Calculate the ratio F_electric/F_gravitational. (b) Why does gravity dominate at large cosmic scales despite being weaker? (c) A student says "in an atom, gravity is completely negligible." Verify quantitatively using hydrogen atom (r = 0.53 Å).`,
+  given:['m_p = 1.67×10⁻²⁷ kg', 'e = 1.6×10⁻¹⁹ C', 'G = 6.67×10⁻¹¹', 'k = 9×10⁹', 'r = 10⁻¹⁵ m for (a), r = 5.3×10⁻¹¹ m for (c)'],
+  steps:[
+    {l:'(a) F_electric / F_grav at 1 fm', v:'F_e = ke²/r² and F_g = Gm_p²/r² (same r, cancels)\nRatio = ke²/(Gm_p²) = (9×10⁹ × (1.6×10⁻¹⁹)²) / (6.67×10⁻¹¹ × (1.67×10⁻²⁷)²)\n= 9×10⁹ × 2.56×10⁻³⁸ / 6.67×10⁻¹¹ × 2.79×10⁻⁵⁴\n= 2.304×10⁻²⁸ / 1.86×10⁻⁶⁴ ≈ 1.24×10³⁶', mono:false},
+    {l:'(b) Why gravity dominates at cosmic scales', v:'Electric force requires opposite charges to attract; same charges repel.\nLarge objects are electrically NEUTRAL (equal + and −) → electric forces cancel.\nGravity is always attractive and has NO negative mass → accumulates at cosmic scales.\nSmall ratios become irrelevant when electric neutrality prevails.', mono:false},
+    {l:'(c) In hydrogen atom (r = 0.53 Å)', v:'Same ratio formula (r cancels): F_e/F_g = ke²/(Gm_em_p)\nUsing m_e = 9.11×10⁻³¹ kg:\n= 9×10⁹ × 2.56×10⁻³⁸ / (6.67×10⁻¹¹ × 9.11×10⁻³¹ × 1.67×10⁻²⁷)\n≈ 2.3×10⁻²⁸ / 1.015×10⁻⁶⁷ ≈ 2.27×10³⁹\nGravity is ~10³⁹ times weaker → completely negligible ✓', mono:false},
+  ],
+  ans:'(a) ~10³⁶ | (b) Matter is electrically neutral at large scales; gravity has no negative counterpart | (c) ~10³⁹ — gravity utterly negligible',
+  explain:'The ratio ~10³⁶ is one of the great mysteries of physics ("hierarchy problem"). Despite being enormously weaker, gravity rules the cosmos because of electrical neutrality.'
+},
+
+// ════════════════════════════════════════════
+// SECTION C: ASSERTION–REASON (16–23)
+// ════════════════════════════════════════════
+{
+  id:16, cat:'ar', topic:'Gauss\'s Law',
+  title:'A-R: Gauss\'s Law and Non-Zero Field',
+  q:`<strong>Assertion (A):</strong> If the total electric flux through a closed surface is zero, then the electric field at every point on the surface is necessarily zero.<br><br><strong>Reason (R):</strong> Gauss's law states that electric flux Φ = Q_enc/ε₀. If Q_enc = 0, then Φ = 0.`,
+  opts:['(a) Both A and R are true; R is the correct explanation of A','(b) Both A and R are true; R is NOT the correct explanation of A','(c) A is false; R is true','(d) Both A and R are false'],
+  steps:[
+    {l:'Analyse Assertion', v:'ASSERTION IS FALSE.\nFlux = 0 does NOT mean field is zero at every point.\nExample: A charge outside a surface makes Φ = 0, yet E ≠ 0 on the surface.\nOr: Two equal and opposite charges inside — Φ = 0 but E ≠ 0.', mono:false},
+    {l:'Analyse Reason', v:'REASON IS TRUE.\nGauss\'s law correctly states Φ = Q_enc/ε₀.\nIf Q_enc = 0, then Φ = 0 — this is mathematically correct.', mono:false},
+    {l:'Relationship', v:'R is true but it does NOT explain A, because A itself is false.\nThe correct option is (c).', mono:false},
+  ],
+  ans:'Answer: (c) — A is false; R is true',
+  explain:'Classic trap. Zero flux ≠ zero field. Gauss\'s law is a flux theorem, not a field theorem. Field can exist without net enclosed charge.'
+},
+{
+  id:17, cat:'ar', topic:'Conductors in Electric Field',
+  title:'A-R: Electric Field Inside a Conductor',
+  q:`<strong>Assertion (A):</strong> In a static situation, the electric field inside a conductor is always zero.<br><br><strong>Reason (R):</strong> Free electrons in a conductor move to cancel any internal field, and this redistribution continues until the net internal field is zero.`,
+  opts:['(a) Both A and R are true; R is the correct explanation of A','(b) Both A and R are true; R is NOT the correct explanation of A','(c) A is false; R is true','(d) Both A and R are false'],
+  steps:[
+    {l:'Analyse Assertion', v:'TRUE. In electrostatic equilibrium, E_inside = 0.\nIf E ≠ 0 inside, free electrons would move — contradicting the "static" condition.', mono:false},
+    {l:'Analyse Reason', v:'TRUE. This is precisely the physical mechanism.\nElectrons redistribute → create opposing field → cancel external field → reach equilibrium at E = 0.', mono:false},
+    {l:'Does R explain A?', v:'YES. The redistribution mechanism described in R is exactly why A is true.\nOption (a) is correct.', mono:false},
+  ],
+  ans:'Answer: (a) — Both true; R correctly explains A',
+  explain:'The mechanism is key: it\'s not just "conductors have zero internal field" by definition — it\'s because free electrons actively rearrange to cancel any applied field.'
+},
+{
+  id:18, cat:'ar', topic:'Electric Field Lines',
+  title:'A-R: Field Lines and Equipotential Surfaces',
+  q:`<strong>Assertion (A):</strong> Electric field lines always cross equipotential surfaces at right angles.<br><br><strong>Reason (R):</strong> The work done in moving a charge along an equipotential surface is zero, and this is possible only if the electric field has no component along the surface.`,
+  opts:['(a) Both A and R are true; R is the correct explanation of A','(b) Both A and R are true; R is NOT the correct explanation of A','(c) A is false; R is true','(d) Both A and R are false'],
+  steps:[
+    {l:'Analyse Assertion', v:'TRUE. E ⊥ equipotential surfaces always.', mono:false},
+    {l:'Analyse Reason', v:'TRUE. W = qEd·cosθ = 0 for equipotential → E·cosθ = 0 → component of E along surface = 0 → E is perpendicular to surface.', mono:false},
+    {l:'Relationship', v:'R is the exact mathematical-physical proof of A. Option (a).', mono:false},
+  ],
+  ans:'Answer: (a) — Both true; R correctly explains A',
+  explain:'This connects Chapter 1 (field lines) with Chapter 2 (potential). Perpendicularity of E and equipotentials is fundamental and has deep geometric meaning.'
+},
+{
+  id:19, cat:'ar', topic:'Coulomb\'s Law',
+  title:'A-R: Coulomb\'s Law in a Medium',
+  q:`<strong>Assertion (A):</strong> The force between two charges placed in a medium with dielectric constant K is reduced by a factor of K compared to vacuum.<br><br><strong>Reason (R):</strong> In a medium, the permittivity is ε = Kε₀, and since F = q₁q₂/(4πεr²), increasing ε decreases F.`,
+  opts:['(a) Both A and R are true; R is the correct explanation of A','(b) Both A and R are true; R is NOT the correct explanation of A','(c) A is false; R is true','(d) Both A and R are false'],
+  steps:[
+    {l:'Analyse Assertion', v:'TRUE. F_medium = F_vacuum / K. Medium weakens electrostatic force.', mono:false},
+    {l:'Analyse Reason', v:'TRUE. F = q₁q₂/(4πKε₀r²) = (1/K) × kq₁q₂/r² — correctly shows F ∝ 1/K.', mono:false},
+    {l:'Relationship', v:'R gives the correct mathematical basis for A. Option (a).', mono:false},
+  ],
+  ans:'Answer: (a) — Both true; R explains A',
+  explain:'This is why water (K ≈ 80) is a great solvent for ionic compounds — it reduces the electrostatic attraction between ions by a factor of 80, allowing dissociation.'
+},
+{
+  id:20, cat:'ar', topic:'Charge Distribution',
+  title:'A-R: Charge Resides on Outer Surface of Conductor',
+  q:`<strong>Assertion (A):</strong> In a charged hollow conductor, all charge resides on the outer surface only, and the inner surface has no charge.<br><br><strong>Reason (R):</strong> Electric field inside a conductor is zero, so by Gauss's law applied to a surface just inside the conductor, Q_enc = 0. Since the conductor itself is uncharged inside, all charge must be on the outer surface.`,
+  opts:['(a) Both A and R are true; R is the correct explanation of A','(b) Both A and R are true; R is NOT the correct explanation of A','(c) A is false; R is true','(d) Both A and R are false'],
+  steps:[
+    {l:'Analyse Assertion', v:'TRUE (with a condition: no charge inside the hollow cavity).\nIf no charge is inside cavity, inner surface has zero charge.', mono:false},
+    {l:'Analyse Reason', v:'TRUE. Gaussian surface inside conductor material: E=0 → Φ=0 → Q_enc=0.\nSince conductor material has no free charge, charge can only be on surfaces — and by this argument, the inner surface has none → outer surface has all.', mono:false},
+    {l:'Relationship', v:'R is the correct Gauss\'s law proof of A. Option (a).', mono:false},
+  ],
+  ans:'Answer: (a) — Both true; R correctly explains A',
+  explain:'Important caveat: if a charge is placed INSIDE the cavity, charge is induced on inner surface too. The assertion holds strictly only when cavity is empty.'
+},
+{
+  id:21, cat:'ar', topic:'Electric Dipole',
+  title:'A-R: Dipole Moment Direction Convention',
+  q:`<strong>Assertion (A):</strong> The electric dipole moment vector p⃗ is directed from the positive charge to the negative charge.<br><br><strong>Reason (R):</strong> By convention, the dipole moment is defined as p⃗ = q × 2a⃗, where 2a⃗ points from −q to +q.`,
+  opts:['(a) Both A and R are true; R is the correct explanation of A','(b) Both A and R are true; R is NOT the correct explanation of A','(c) A is false; R is true','(d) Both A and R are false'],
+  steps:[
+    {l:'Analyse Assertion', v:'FALSE. By physics convention, p⃗ points from NEGATIVE to POSITIVE charge (−q → +q).', mono:false},
+    {l:'Analyse Reason', v:'TRUE. p⃗ = q(2a⃗) where 2a⃗ is the displacement vector from −q to +q. So p⃗ correctly points from −q to +q.', mono:false},
+    {l:'Relationship', v:'A is false, R is true → Option (c).', mono:false},
+  ],
+  ans:'Answer: (c) — A is false (p⃗ goes from −q to +q); R is true',
+  explain:'This is one of the most common errors in exams. In physics, p⃗ goes from − to +. Note: in chemistry, dipole moment convention is sometimes reversed (+ to −).'
+},
+{
+  id:22, cat:'ar', topic:'Superposition Principle',
+  title:'A-R: Superposition and Medium',
+  q:`<strong>Assertion (A):</strong> The superposition principle for electric fields holds in all media, including dielectrics.<br><br><strong>Reason (R):</strong> In linear dielectrics, the total displacement field D⃗ satisfies superposition, but the total E⃗ field is modified by polarization, so superposition for E⃗ alone may not hold in non-linear media.`,
+  opts:['(a) Both A and R are true; R is the correct explanation of A','(b) Both A and R are true; R is NOT the correct explanation of A','(c) A is false; R is true','(d) Both A and R are false'],
+  steps:[
+    {l:'Analyse Assertion', v:'TRUE for LINEAR media. Superposition holds where field equations are linear.\nStrictly, for non-linear dielectrics (e.g., ferroelectrics), it breaks down.', mono:false},
+    {l:'Analyse Reason', v:'TRUE. R correctly identifies that D = ε₀E + P, and in non-linear media, P depends non-linearly on E, so total E does not simply add.', mono:false},
+    {l:'Relationship', v:'R is a precise explanation of the nuance in A. Both are true; R explains A. Option (a).', mono:false},
+  ],
+  ans:'Answer: (a) — Both true; R explains A (with the nuance about non-linear media)',
+  explain:'At Class XII level, superposition is treated as universal. This question pushes thinking to advanced materials physics — a true beyond-CBSE challenge.'
+},
+{
+  id:23, cat:'ar', topic:'Gauss\'s Theorem — Application',
+  title:'A-R: Gauss\'s Law Independent of Shape',
+  q:`<strong>Assertion (A):</strong> The total electric flux through a closed surface enclosing a charge Q is Q/ε₀, regardless of the shape of the surface.<br><br><strong>Reason (R):</strong> Electric field lines from a point charge spread out uniformly in all directions, so the same number of lines pass through any closed surface surrounding it.`,
+  opts:['(a) Both A and R are true; R is the correct explanation of A','(b) Both A and R are true; R is NOT the correct explanation of A','(c) A is false; R is true','(d) Both A and R are false'],
+  steps:[
+    {l:'Analyse Assertion', v:'TRUE. Gauss\'s law: Φ = Q/ε₀ irrespective of surface shape. A sphere, a cube, an irregular blob — all give same flux if same Q is enclosed.', mono:false},
+    {l:'Analyse Reason', v:'TRUE (for a point charge). Field lines diverge from a point charge in all directions; they cannot be created or destroyed in empty space. Any closed surface catches the same lines.', mono:false},
+    {l:'Relationship', v:'R gives the physical (field-line) intuition behind A. Option (a). However, note R is strictly true only for a single point charge at center; A is more general (true for any charge distribution). So R supports but doesn\'t fully prove A in general. Best answer: (a) or (b) depending on how "correct explanation" is interpreted. Conservative answer: (a).', mono:false},
+  ],
+  ans:'Answer: (a) — Both true; R gives physical basis for A',
+  explain:'Shape independence is the beauty of Gauss\'s law. The mathematical proof uses the divergence theorem, but the field-line argument in R is the intuitive picture.'
+},
+
+// ════════════════════════════════════════════
+// SECTION D: HYPOTHETICAL SITUATIONS (24–30)
+// ════════════════════════════════════════════
+{
+  id:24, cat:'hypothetical', topic:'Modified Coulomb\'s Law',
+  title:'What If Coulomb\'s Law Had r⁻³ Instead of r⁻²?',
+  q:`<em>Hypothetical Scenario:</em> Imagine a parallel universe where Coulomb's law is F = kq₁q₂/r³ instead of r². (a) Would Gauss's law still hold? (b) Would electric field lines still diverge uniformly from a point charge? (c) How would the energy of a hydrogen atom change? (d) Could stable atoms exist in such a universe?`,
+  steps:[
+    {l:'(a) Gauss\'s law', v:'Gauss\'s law holds because E ∝ 1/r² from a point charge → E × 4πr² = constant (flux independent of r).\nIf E ∝ 1/r³, then flux Φ = E × 4πr² ∝ 1/r → flux depends on radius → Gauss\'s law in its standard form BREAKS DOWN.\nDivergence theorem form ∇·E = ρ/ε₀ no longer holds.', mono:false},
+    {l:'(b) Field line divergence', v:'For E ∝ 1/r², field lines spread uniformly over sphere (4πr²) — density ∝ 1/r².\nFor E ∝ 1/r³: field lines would need to "thin out" faster → they could not be continuous lines from source to infinity in the same way.\nField lines would appear to curve and thin faster — visual representation breaks.', mono:false},
+    {l:'(c) Hydrogen atom energy', v:'Electron orbit energy depends on balance of F_electric and centripetal force.\nWith F ∝ 1/r³: mv²/r = ke²/r³ → v² = ke²/(mr²) → v ∝ 1/r\nKE = ½mv² ∝ 1/r², PE = −∫F dr = −ke²/2r² → Total E ∝ −1/r² (not −1/r as in real atoms)\nEnergy levels scale differently — spectrum completely changes.', mono:false},
+    {l:'(d) Stable atoms?', v:'In our universe, 1/r² force allows stable circular orbits at any radius (Bohr model).\nWith 1/r³ force: the effective potential U_eff = −ke²/2r² + L²/2mr² (centrifugal) has no stable minimum for r → 0 (both terms ∝ 1/r²).\nElectrons can\'t find stable orbits → atoms collapse or fly apart → NO stable atoms, no chemistry, no life.', mono:false},
+  ],
+  ans:'(a) Gauss\'s law breaks | (b) Field lines can\'t be uniform | (c) Energy ∝ 1/r² not 1/r | (d) No stable atoms possible',
+  explain:'The 1/r² nature of Coulomb\'s law (inverse square) is deeply connected to 3D space geometry. It\'s the ONLY power law that gives a divergence-free field and stable orbits — a profound fact.'
+},
+{
+  id:25, cat:'hypothetical', topic:'Charge in a Different Geometry',
+  title:'What if Space Were 2-Dimensional?',
+  q:`<em>Hypothetical Scenario:</em> Suppose the universe were 2-dimensional (like a flat plane). A charge Q is placed in this 2D universe. (a) Using the 2D version of Gauss's law (flux through a circle, not a sphere), derive the 2D Coulomb's law. (b) How does field strength fall with distance? (c) Why would planetary-like orbits be unstable in 2D?`,
+  steps:[
+    {l:'(a) 2D Gauss\'s law derivation', v:'In 2D, the "closed surface" is a circle of circumference 2πr (not a sphere).\nFlux: Φ = E × 2πr = Q/ε₀ (2D)\nE = Q/(2πε₀r)\nSo in 2D: F = kQ₁Q₂/r  (force ∝ 1/r, NOT 1/r²!)', mono:true},
+    {l:'(b) How field falls with distance', v:'E ∝ 1/r in 2D (not 1/r²).\nField decreases much SLOWER with distance.\nPhysical reason: field lines in 2D spread over a circle (∝ r) not sphere (∝ r²).', mono:false},
+    {l:'(c) Orbital stability in 2D', v:'For stable circular orbit: mv²/r = kQ²/r → mv² = kQ² (constant)\nBertrand\'s theorem: only 1/r² and r (harmonic) force laws produce stable closed orbits in 3D.\nIn 2D with 1/r force: perturbations cause precessing, non-closing orbits → planets can\'t maintain stable paths.\nAll orbits are unstable → 2D universe cannot have planetary systems or stable atoms.', mono:false},
+  ],
+  ans:'(a) F ∝ 1/r in 2D | (b) E ∝ 1/r (slower decay) | (c) 1/r force gives unstable orbits — no stable planetary systems',
+  explain:'Dimension of space dictates the form of physical laws. The 1/r² law is a unique consequence of 3D geometry. This is why our 3D universe supports complex structures.'
+},
+{
+  id:26, cat:'hypothetical', topic:'Negative Permittivity',
+  title:'A Material With Negative Permittivity — What Happens?',
+  q:`<em>Hypothetical Scenario:</em> Suppose a material has negative permittivity ε = −ε₀ (i.e., K = −1). (a) What happens to Coulomb's force between two positive charges inside this material? (b) Would like charges attract or repel? (c) Could you build a "charge trap" using such a material surrounding a charge? (d) Is negative permittivity physically possible? (Hint: it occurs in metamaterials and plasmas under certain frequencies.)`,
+  steps:[
+    {l:'(a) Coulomb force with ε < 0', v:'F = q₁q₂/(4πεr²) = q₁q₂/(4π(−ε₀)r²) = −(kq₁q₂/r²)\nFor q₁, q₂ > 0: F = −(positive) < 0 → attractive!\nSo in this material, two positive charges ATTRACT each other.', mono:false},
+    {l:'(b) Like charges attract, unlike repel', v:'The sign of F is inverted.\nAll electrostatic interactions are reversed:\n+ with +: attract\n− with −: attract\n+ with −: repel\nAn anti-Coulomb world inside this material!', mono:false},
+    {l:'(c) Charge trap', v:'If a positive charge Q is surrounded by negative-ε material:\nField lines from Q would be "pulled inward" by the medium rather than radiating outward.\nThis could in principle confine the field to a region — a theoretical electromagnetic shield or "charge cage".\nHowever, interface conditions (boundary between ε < 0 and ε > 0) create surface charges that complicate this.', mono:false},
+    {l:'(d) Is it physically possible?', v:'YES — in specific contexts:\n• Plasmas below plasma frequency: ε(ω) < 0\n• Metamaterials (engineered structures): negative ε and μ simultaneously possible\n• Such materials allow backward wave propagation, "superlens" imaging below diffraction limit (Pendry, 2000).\nNot found in nature statically, but possible dynamically.', mono:false},
+  ],
+  ans:'(a) Like charges attract (force is inverted) | (b) Electrostatics reversed | (c) Theoretically yes | (d) Yes — in plasmas/metamaterials',
+  explain:'Negative permittivity materials (metamaterials) are a real and active research area. They enable phenomena impossible with natural materials, including perfect lenses and electromagnetic cloaks.'
+},
+{
+  id:27, cat:'hypothetical', topic:'Charge Quantisation',
+  title:'What if Charge Were Continuous — Not Quantised?',
+  q:`<em>Hypothetical Scenario:</em> Suppose charge is NOT quantised — you can have any value like 1.5e, 2.7e, π×e, etc. (a) What experimental consequence would this have for Millikan's oil drop experiment? (b) Would chemical bonding be different? (c) State one reason why charge quantisation might be "necessary" for the universe to be consistent.`,
+  steps:[
+    {l:'(a) Millikan oil drop experiment', v:'Millikan measured charges on oil droplets and found they were always integer multiples of e.\nIf charge were continuous: charges would take random non-integer values.\nThe neat pattern of n × 1.6×10⁻¹⁹ C would NOT appear.\nMillikan\'s experiment would give a continuous distribution of charges — no fundamental unit could be identified.', mono:false},
+    {l:'(b) Chemical bonding', v:'Atoms consist of protons (+e each) and electrons (−e each).\nIf charge were continuous: atoms could have non-integer atomic "charge numbers".\nTwo atoms could never perfectly cancel charges → all matter would have residual charge → no neutral atoms → no chemistry as we know it.\nIonic bonds (transfer of exactly 1e) would not exist.', mono:false},
+    {l:'(c) Theoretical necessity', v:'In quantum electrodynamics (QED), charge quantisation is connected to gauge symmetry.\nDirac showed in 1931: IF magnetic monopoles exist, then electric charge MUST be quantised.\nAlternately, anomaly cancellation in the Standard Model requires exact quantisation.\nA universe without charge quantisation would violate self-consistency of quantum gauge theories.', mono:false},
+  ],
+  ans:'(a) No integer pattern in Millikan experiment | (b) No neutral atoms, no chemistry | (c) Gauge symmetry in QED requires quantisation',
+  explain:'Charge quantisation connects to some of the deepest ideas in physics — gauge theory, magnetic monopoles, and the mathematical consistency of quantum field theory.'
+},
+{
+  id:28, cat:'hypothetical', topic:'Electric Field in 1D Universe',
+  title:'One-Dimensional Universe — Electric Forces',
+  q:`<em>Hypothetical Scenario:</em> Imagine a strictly 1D universe (an infinite line). All charges exist only on this line. (a) Derive the 1D electric field from a point charge using Gauss\'s law (the "closed surface" is now just two points!). (b) How does force depend on distance? (c) Would electrostatic shielding work in 1D? (d) Describe what "field lines" look like in 1D.`,
+  steps:[
+    {l:'(a) 1D Gauss\'s law', v:'"Closed surface" in 1D = two points (one on each side of charge).\nFlux: E_right × 1 + (−E_left) × 1 = Q/ε₀(1D)\nBy symmetry: 2E = Q/ε₀(1D)\nE = Q/(2ε₀(1D)) = constant → does NOT depend on distance at all!', mono:true},
+    {l:'(b) Force vs distance', v:'F = q × E = constant (independent of r!)\nThis is profoundly different: in 1D, you cannot escape the force of a charge — it is the same at 1 mm or 1 km.\nLike two ends of a stretched rubber band — force doesn\'t decrease with separation.', mono:false},
+    {l:'(c) Electrostatic shielding in 1D', v:'In 3D, a hollow conductor shields interior because field lines can route around through the conductor.\nIn 1D, there is no "around" — there is only one path along the line.\nElectrostatic shielding is IMPOSSIBLE in 1D.', mono:false},
+    {l:'(d) Field lines in 1D', v:'In 3D: lines diverge outward from charge in 3D space.\nIn 1D: "field lines" are just two arrows — one pointing left, one pointing right — both at constant density no matter how far.\nField line density cannot change (no "area" to spread over) → constant E, as derived.', mono:false},
+  ],
+  ans:'(a) E = const (no r-dependence) | (b) Force constant with distance | (c) Shielding impossible | (d) Two arrows, constant density forever',
+  explain:'The dimension of space directly controls how forces weaken with distance. 1D: constant; 2D: 1/r; 3D: 1/r². This is a profound geometric fact.'
+},
+{
+  id:29, cat:'hypothetical', topic:'Superposition Breakdown',
+  title:'What if Superposition Principle Failed?',
+  q:`<em>Hypothetical Scenario:</em> Suppose the superposition principle for electric fields did NOT hold — the field due to multiple charges is NOT simply the sum of individual fields. (a) What would happen to Gauss's law? (b) Could we still define a unique electric potential? (c) How would the hydrogen molecule H₂ (two protons, two electrons) be affected? (d) Name a real scenario in physics where superposition actually DOES break down.`,
+  steps:[
+    {l:'(a) Gauss\'s law without superposition', v:'Gauss\'s law is derived from superposition + Coulomb\'s law.\nIf superposition fails: ∮E·dA ≠ Q_enc/ε₀ in general.\nGauss\'s law breaks down entirely. All of electrostatics as a linear theory collapses.', mono:false},
+    {l:'(b) Electric potential uniqueness', v:'Potential V(r) = −∫E·dr works because E is unique at each point (from superposition).\nWithout superposition: two charge configurations could produce the same flux but different fields → potential ambiguous.\nThe concept of a single scalar potential fails.', mono:false},
+    {l:'(c) H₂ molecule', v:'In H₂: two protons separated by ~0.74 Å, two electrons forming a covalent bond.\nThe electron wavefunction is computed using the TOTAL field from both protons (superposition essential).\nWithout superposition: quantum mechanical binding energy calculation fails entirely.\nH₂ bond would have wrong length, energy → molecules unstable → no chemistry.', mono:false},
+    {l:'(d) Real breakdown of superposition', v:'Superposition breaks in NON-LINEAR optics and QUANTUM ELECTRODYNAMICS at very high fields:\n• Kerr effect: refractive index changes with field strength → light-light interaction\n• Euler-Heisenberg QED: at extreme fields (~10¹⁸ V/m), photons interact with each other via virtual electron-positron pairs → light scatters off light\nAt CBSE scale: superposition always holds. Beyond it: it\'s an approximation.', mono:false},
+  ],
+  ans:'(a) Gauss\'s law fails | (b) Potential undefined | (c) H₂ unstable | (d) Non-linear optics, QED at extreme fields',
+  explain:'Superposition is the cornerstone of linear physics. Its breakdown signals entry into non-linear regimes — from optics to quantum field theory at extreme intensities.'
+},
+{
+  id:30, cat:'hypothetical', topic:'Conservation of Charge — Hypothetical Violation',
+  title:'What if Charge Conservation Were Violated?',
+  q:`<em>Hypothetical Scenario:</em> Imagine charge conservation is violated — a new law says that in nuclear reactions, 0.01% of total charge can be "lost" (converted to neutral energy). (a) What would this mean for atomic stability over billions of years? (b) Would Kirchhoff's current law (ΣI = 0 at a node) still hold? (c) Maxwell's equations assume charge conservation — which equation would need modification? (d) How would this affect the measurement of e by Millikan's experiment over long time periods?`,
+  steps:[
+    {l:'(a) Atomic stability', v:'If 0.01% charge lost per nuclear reaction: protons in nuclei slowly lose charge.\nOver billions of years (cosmic time): protons become slightly less positive → weaker nuclear forces balance → electron orbits expand → atoms slowly "evaporate".\nAt the sun\'s core (10⁵⁷ nuclear reactions/second): charge loss would be ~10⁵³ × 0.0001 = 10⁴⁹ units/second.\nSun and stars would destabilize over cosmological timescales.', mono:false},
+    {l:'(b) Kirchhoff\'s current law', v:'KCL: sum of currents at node = 0, derived from charge conservation (charge neither created nor destroyed at a junction).\nWith violation: charge can disappear at nodes → ΣI ≠ 0 at junctions.\nKCL fails → all circuit analysis based on KCL becomes approximate.\nElectronics and circuit theory would need correction factors.', mono:false},
+    {l:'(c) Maxwell\'s equation modification', v:'Charge conservation in Maxwell\'s equations: ∂ρ/∂t + ∇·J = 0 (continuity equation).\nThis is derived from ∇·(∇×B) = 0 combined with Maxwell\'s displacement current.\nWith violation: ∂ρ/∂t + ∇·J = S (source term ≠ 0).\nAmpere\'s law ∇×B = μ₀J + μ₀ε₀∂E/∂t would need an extra source term.\nElectromagnetic wave equations would be modified.', mono:false},
+    {l:'(d) Millikan experiment over long time', v:'If charge leaks from oil drops over time (even by 0.01%): the charge q on a droplet measured at t=0 would differ slightly from q at t=1 hour.\nDroplets would show non-integer multiples of e that drift over time.\nThe "fundamental charge" e would appear to be slowly decreasing → Millikan\'s precise value would vary with measurement duration.\nStatistical scatter would show a systematic temporal drift — a detectable signature of violation.', mono:false},
+  ],
+  ans:'(a) Stars destabilize over cosmic time | (b) KCL fails | (c) Continuity equation gains source term — Ampere\'s law modified | (d) e appears to decrease over time in Millikan experiment',
+  explain:'Charge conservation is tied to gauge symmetry — one of the deepest principles in physics (Noether\'s theorem: every symmetry → conserved quantity). Violations would cascade through all of electromagnetism.'
+},
+
+];
+
+let solvedSet = new Set();
+
+function badgeClass(cat) {
+  return {
+    numerical: 'badge-numerical',
+    conceptual: 'badge-conceptual',
+    ar: 'badge-ar',
+    hypothetical: 'badge-hypothetical',
+    blindspot: 'badge-blindspot',
+  }[cat] || 'badge-conceptual';
+}
+function catLabel(cat) {
+  return {
+    numerical: '∑ Numerical',
+    conceptual: '◎ Conceptual',
+    ar: '⚖ Assertion–Reason',
+    hypothetical: '🌐 Hypothetical',
+    blindspot: '👁 Blind Spot',
+  }[cat] || cat;
+}
+function borderClass(cat) {
+  return {
+    numerical: 'cat-numerical',
+    conceptual: 'cat-conceptual',
+    ar: 'cat-ar',
+    hypothetical: 'cat-hypothetical',
+    blindspot: 'cat-blindspot',
+  }[cat] || '';
+}
+
+function renderCards(f) {
+  const list = document.getElementById('qlist');
+  const filtered = f === 'all' ? QS : QS.filter(q => q.cat === f);
+  list.innerHTML = filtered.map(q => `
+    <div class="q-card bg-white border border-gray-200 rounded-2xl p-5 mb-4 ${borderClass(q.cat)}" id="card-${q.id}">
+      <div class="flex items-start justify-between gap-3 flex-wrap mb-3">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-xs font-mono font-semibold text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md">Q${q.id}</span>
+          <span class="text-xs px-2.5 py-0.5 rounded-full font-body ${badgeClass(q.cat)}">${catLabel(q.cat)}</span>
+          <span class="text-xs text-gray-400 font-body bg-gray-50 px-2 py-0.5 rounded-md border border-gray-200">${q.topic}</span>
+        </div>
+      </div>
+
+      <h3 class="font-display text-base font-semibold text-gray-900 mb-2">${q.title}</h3>
+
+      ${q.cat === 'hypothetical' ? `<div class="hypo-scenario p-3 mb-3 text-sm text-amber-900 font-body leading-relaxed">🌐 <em>${q.q}</em></div>` :
+        q.cat === 'ar' ? `<div class="text-sm text-gray-800 font-body leading-7 mb-3">${q.q}<br><br><div class="flex flex-col gap-2">${(q.opts||[]).map(o=>`<span class="text-xs text-gray-600 font-mono">${o}</span>`).join('')}</div></div>` :
+        `<p class="text-sm text-gray-800 font-body leading-7 mb-3">${q.q}</p>`
+      }
+
+      ${q.given ? `<div class="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 mb-3 text-xs font-mono text-gray-600"><span class="font-semibold text-gray-700">Given: </span>${q.given.join(' · ')}</div>` : ''}
+
+      <button
+        id="btn-${q.id}"
+        onclick="toggleAns(${q.id})"
+        class="flex items-center gap-2 text-xs font-body font-medium border border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100 px-4 py-1.5 rounded-xl transition-all"
+      >
+        <span id="icon-${q.id}">▶</span>
+        <span id="btxt-${q.id}">Show Detailed Solution</span>
+      </button>
+
+      <div class="answer-body" id="ans-${q.id}">
+        <div class="mt-4 pt-4 border-t border-gray-100">
+          <p class="text-xs font-mono uppercase tracking-wider text-emerald-600 font-semibold mb-3">Step-by-step Solution</p>
+          ${q.steps.map((s,i)=>`
+            <div class="step-line py-2.5">
+              <span class="block text-xs font-mono text-gray-400 uppercase tracking-wide mb-1">Step ${i+1} · ${s.l}</span>
+              ${s.mono
+                ? `<code class="block font-mono text-xs bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-blue-800 whitespace-pre-wrap leading-6">${s.v}</code>`
+                : `<p class="text-sm text-gray-700 font-body leading-7 whitespace-pre-wrap">${s.v}</p>`
+              }
+            </div>
+          `).join('')}
+          <div class="mt-3 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2.5">
+            <span class="text-xs font-mono text-emerald-700 uppercase tracking-wider font-semibold">✓ Answer: </span>
+            <span class="text-sm font-semibold text-emerald-800">${q.ans}</span>
+          </div>
+          <div class="mt-2 bg-blue-50 border border-blue-200 rounded-xl px-4 py-2.5">
+            <span class="text-xs font-mono text-blue-600 uppercase tracking-wider font-semibold">💡 Concept: </span>
+            <span class="text-sm text-blue-800 font-body">${q.explain}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleAns(id) {
+  const ans = document.getElementById('ans-'+id);
+  const icon = document.getElementById('icon-'+id);
+  const btxt = document.getElementById('btxt-'+id);
+  const btn = document.getElementById('btn-'+id);
+  const open = ans.classList.contains('open');
+  if (!open) {
+    ans.classList.add('open');
+    icon.textContent = '▼';
+    btxt.textContent = 'Hide Solution';
+    btn.classList.replace('bg-blue-50','bg-emerald-50');
+    btn.classList.replace('text-blue-700','text-emerald-700');
+    btn.classList.replace('border-blue-200','border-emerald-200');
+    if (!solvedSet.has(id)) { solvedSet.add(id); updateStats(); }
+  } else {
+    ans.classList.remove('open');
+    icon.textContent = '▶';
+    btxt.textContent = 'Show Detailed Solution';
+    btn.classList.replace('bg-emerald-50','bg-blue-50');
+    btn.classList.replace('text-emerald-700','text-blue-700');
+    btn.classList.replace('border-emerald-200','border-blue-200');
+  }
+}
+
+function updateStats() {
+  const n = solvedSet.size;
+  document.getElementById('stat-solved').textContent = n;
+  document.getElementById('progress').style.width = (n/30*100).toFixed(1)+'%';
+}
+
+function filter(el, f) {
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.remove('tab-active');
+    b.classList.add('tab-inactive');
+  });
+  el.classList.add('tab-active');
+  el.classList.remove('tab-inactive');
+  renderCards(f);
+}
+
+renderCards('all');
+</script>
+</body>
+</html>

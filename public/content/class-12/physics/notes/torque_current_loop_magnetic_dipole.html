@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Torque on a Current Loop — Magnetic Dipole</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Playfair+Display:wght@700&display=swap');
+
+:root {
+  --bg: #F0F4F8;
+  --surface: #FFFFFF;
+  --surface2: #F8FAFC;
+  --border: #E2E8F0;
+  --text: #0F172A;
+  --text2: #475569;
+  --accent: #1E3A5F;
+  --blue: #2563EB;
+  --green: #16A34A;
+  --red: #DC2626;
+  --purple: #7C3AED;
+  --amber: #D97706;
+  --teal: #0D9488;
+  --r: 14px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; font-size:15px; }
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, #0F172A 0%, #1A2F52 45%, #0F3460 100%);
+  color:white; padding:64px 20px 52px; text-align:center; position:relative; overflow:hidden;
+}
+.hero::after {
+  content:''; position:absolute; inset:0;
+  background: radial-gradient(ellipse at 70% 30%, rgba(13,148,136,0.25) 0%, transparent 55%);
+  pointer-events:none;
+}
+.eyebrow { font-size:10.5px; letter-spacing:3px; text-transform:uppercase; color:#5EEAD4; font-weight:700; margin-bottom:12px; }
+.hero h1 { font-family:'Playfair Display',serif; font-size:clamp(24px,5vw,46px); font-weight:700; line-height:1.18; margin-bottom:14px; position:relative; z-index:1; }
+.hero h1 em { color:#5EEAD4; font-style:normal; }
+.hero-sub { color:#CBD5E1; font-size:14.5px; max-width:540px; margin:0 auto 28px; position:relative; z-index:1; }
+.pills { display:flex; flex-wrap:wrap; gap:9px; justify-content:center; position:relative; z-index:1; }
+.pill { border-radius:50px; padding:5px 14px; font-size:11.5px; font-weight:600; border:1px solid; }
+.pill-teal  { background:rgba(13,148,136,.15); border-color:#5EEAD4; color:#5EEAD4; }
+.pill-amber { background:rgba(217,119,6,.15); border-color:#FCD34D; color:#FCD34D; }
+.pill-red   { background:rgba(220,38,38,.15); border-color:#FCA5A5; color:#FCA5A5; }
+.pill-blue  { background:rgba(37,99,235,.15); border-color:#93C5FD; color:#93C5FD; }
+
+/* NAV */
+.nav-float {
+  position:sticky; top:0; z-index:100;
+  background:rgba(255,255,255,0.93); backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border); padding:0 20px; overflow-x:auto; scrollbar-width:none;
+}
+.nav-float::-webkit-scrollbar { display:none; }
+.nav-inner { display:flex; max-width:960px; margin:0 auto; white-space:nowrap; }
+.nb { padding:13px 16px; font-size:12px; font-weight:700; color:var(--text2); background:none; border:none; border-bottom:2.5px solid transparent; cursor:pointer; transition:all .18s; letter-spacing:.2px; text-transform:uppercase; }
+.nb:hover { color:var(--teal); }
+.nb.active { color:var(--teal); border-bottom-color:var(--teal); }
+
+main { max-width:960px; margin:0 auto; padding:0 20px 80px; }
+section { margin-top:52px; scroll-margin-top:58px; }
+.sec-eye { font-size:10.5px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--teal); margin-bottom:7px; }
+h2 { font-family:'Playfair Display',serif; font-size:clamp(19px,3vw,27px); font-weight:700; color:var(--accent); margin-bottom:14px; line-height:1.22; }
+h3 { font-size:15.5px; font-weight:700; color:var(--accent); margin:22px 0 9px; }
+p { color:var(--text2); margin-bottom:11px; }
+strong { color:var(--accent); }
+
+.card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:22px 26px; margin-bottom:16px; box-shadow:0 1px 4px rgba(0,0,0,.04); }
+
+/* FORMULA */
+.fbox {
+  border-radius:11px; padding:18px 22px; margin:18px 0; font-family:'JetBrains Mono',monospace;
+  background:linear-gradient(135deg,#F0FDFA,#ECFDF5); border:1.5px solid #99F6E4; border-left:4px solid var(--teal);
+}
+.fbox.blue { background:linear-gradient(135deg,#EFF6FF,#F0F9FF); border-color:#BFDBFE; border-left-color:var(--blue); }
+.fbox.amber { background:linear-gradient(135deg,#FFFBEB,#FFF7ED); border-color:#FCD34D; border-left-color:var(--amber); }
+.fbox.red { background:linear-gradient(135deg,#FEF2F2,#FEE2E2); border-color:#FCA5A5; border-left-color:var(--red); }
+.fbox.purple { background:linear-gradient(135deg,#F5F3FF,#EDE9FE); border-color:#DDD6FE; border-left-color:var(--purple); }
+.f-label { font-family:'Inter',sans-serif; font-size:10.5px; font-weight:700; letter-spacing:1.8px; text-transform:uppercase; color:var(--teal); margin-bottom:9px; }
+.fbox.blue .f-label { color:var(--blue); }
+.fbox.amber .f-label { color:var(--amber); }
+.fbox.red .f-label { color:var(--red); }
+.fbox.purple .f-label { color:var(--purple); }
+.f-main { font-size:21px; font-weight:600; color:var(--accent); text-align:center; padding:10px 0; }
+.f-note { font-family:'Inter',sans-serif; font-size:12px; color:var(--text2); margin-top:9px; line-height:1.65; font-style:italic; }
+
+/* STEP DERIVATION */
+.deriv { }
+.dstep { display:flex; gap:18px; padding:18px 0; border-bottom:1px dashed var(--border); align-items:flex-start; }
+.dstep:last-child { border-bottom:none; }
+.snum { width:36px; height:36px; border-radius:50%; background:var(--teal); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0; margin-top:2px; }
+.sbody { flex:1; }
+.sbody strong { color:var(--accent); display:block; margin-bottom:5px; font-size:14.5px; }
+
+/* CASE CARDS */
+.case-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:16px; margin:18px 0; }
+.ccase { border-radius:13px; padding:20px; border:1.5px solid; }
+.ccase-I { background:linear-gradient(135deg,#F0FDFA,#CCFBF1); border-color:#5EEAD4; }
+.ccase-II { background:linear-gradient(135deg,#FFF7ED,#FFEDD5); border-color:#FCD34D; }
+.cc-icon { font-size:26px; margin-bottom:8px; }
+.cc-title { font-weight:700; font-size:14.5px; color:var(--accent); margin-bottom:5px; }
+.cc-desc { font-size:12.5px; color:var(--text2); }
+
+/* VIZ SHELL */
+.viz-wrap {
+  background:#080C18; border-radius:var(--r); overflow:hidden;
+  border:1px solid #1E293B; box-shadow:0 8px 36px rgba(0,0,0,.22); margin:22px 0;
+}
+.viz-hdr {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:11px 17px; background:rgba(255,255,255,.035); border-bottom:1px solid rgba(255,255,255,.06);
+}
+.viz-title { color:#E2E8F0; font-size:12px; font-weight:700; letter-spacing:.3px; }
+.legend { display:flex; gap:12px; align-items:center; }
+.leg { display:flex; align-items:center; gap:5px; font-size:10.5px; color:#94A3B8; }
+.leg-dot { width:8px; height:8px; border-radius:50%; }
+.three-container { width:100%; position:relative; }
+.three-container canvas { display:block; width:100% !important; }
+.viz-ctrl {
+  padding:13px 17px; background:rgba(255,255,255,.02);
+  border-top:1px solid rgba(255,255,255,.055);
+  display:flex; flex-wrap:wrap; gap:14px; align-items:center;
+}
+.cg { display:flex; flex-direction:column; gap:3px; min-width:115px; }
+.cl { font-size:10px; color:#64748B; font-weight:700; letter-spacing:.6px; text-transform:uppercase; }
+.cv { font-size:11px; color:#5EEAD4; font-family:'JetBrains Mono',monospace; }
+input[type=range] { width:100%; accent-color:#0D9488; cursor:pointer; }
+.btn { padding:7px 16px; border:none; border-radius:7px; font-size:11.5px; font-weight:700; cursor:pointer; transition:background .18s; }
+.btn-teal { background:#0D9488; color:white; }
+.btn-teal:hover { background:#0F766E; }
+.btn-pause { background:#D97706; color:white; }
+.btn-pause:hover { background:#B45309; }
+select.dark { background:#1E293B; color:#E2E8F0; border:1px solid #334155; padding:5px 8px; border-radius:6px; font-size:12px; }
+
+/* ACCORDION */
+.acc { border:1px solid var(--border); border-radius:11px; overflow:hidden; margin:13px 0; }
+.acc-h { padding:15px 19px; background:var(--surface); cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:13.5px; color:var(--accent); transition:background .18s; user-select:none; }
+.acc-h:hover { background:#F1F5F9; }
+.acc-b { display:none; padding:16px 19px; background:var(--surface2); border-top:1px solid var(--border); color:var(--text2); font-size:13px; line-height:1.72; }
+.acc-b.open { display:block; }
+.arr { transition:transform .2s; color:var(--teal); }
+.acc-h.open .arr { transform:rotate(180deg); }
+
+/* TABLE */
+table { width:100%; border-collapse:collapse; font-size:13px; margin:14px 0; }
+th { background:var(--accent); color:white; padding:11px 13px; text-align:left; font-size:12px; font-weight:700; letter-spacing:.2px; }
+td { padding:10px 13px; border-bottom:1px solid var(--border); color:var(--text2); }
+tr:nth-child(even) td { background:#F8FAFC; }
+tr:last-child td { border-bottom:none; }
+code { font-family:'JetBrains Mono',monospace; background:#F0FDF4; color:#0F766E; padding:1px 6px; border-radius:4px; font-size:12.5px; }
+
+.hibox { background:linear-gradient(135deg,#FFFBEB,#FFF7ED); border:1.5px solid #FCD34D; border-left:4px solid var(--amber); border-radius:11px; padding:14px 18px; margin:14px 0; font-size:13px; color:#92400E; }
+.hibox strong { color:#78350F; }
+.badge { display:inline-block; padding:2px 9px; border-radius:50px; font-size:11px; font-weight:700; }
+.b-teal { background:#CCFBF1; color:#0F766E; }
+.b-red { background:#FEE2E2; color:#B91C1C; }
+.b-amber { background:#FEF3C7; color:#92400E; }
+.b-purple { background:#EDE9FE; color:#6D28D9; }
+
+/* vector legend strip */
+.vstrip { display:flex; flex-wrap:wrap; gap:10px; margin:16px 0; }
+.vi { display:flex; align-items:center; gap:9px; background:var(--surface); border:1px solid var(--border); border-radius:9px; padding:10px 14px; flex:1; min-width:140px; }
+.vi-dot { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; flex-shrink:0; }
+.vi-lbl { font-size:12px; font-weight:600; color:var(--text); }
+.vi-sub { font-size:11px; color:var(--text2); }
+
+@media(max-width:600px) { .dstep { flex-direction:column; } .legend { display:none; } }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="eyebrow">Class 12 Physics · Moving Charges & Magnetism · Topic 4.3</div>
+  <h1>Torque on a <em>Current Loop</em><br>in Uniform Magnetic Field</h1>
+  <p class="hero-sub">From force on each arm → net torque → magnetic dipole moment — with live 3D Three.js animations for both cases.</p>
+  <div class="pills">
+    <span class="pill pill-teal">🔵 Current Loop ABCD</span>
+    <span class="pill pill-amber">τ = NIAB sinθ</span>
+    <span class="pill pill-red">m = NIA (dipole moment)</span>
+    <span class="pill pill-blue">τ = m × B</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav-float" id="mainNav">
+  <div class="nav-inner">
+    <button class="nb active" onclick="nav('s1',this)">Setup</button>
+    <button class="nb" onclick="nav('s2',this)">Force on Arms</button>
+    <button class="nb" onclick="nav('s3',this)">Case I — B in Plane</button>
+    <button class="nb" onclick="nav('s4',this)">Case II — B at Angle</button>
+    <button class="nb" onclick="nav('s5',this)">Torque Derivation</button>
+    <button class="nb" onclick="nav('s6',this)">Magnetic Dipole</button>
+    <button class="nb" onclick="nav('s7',this)">3D Simulator</button>
+    <button class="nb" onclick="nav('s8',this)">Summary</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- ═══════════════ S1 SETUP ═══════════════ -->
+<section id="s1">
+  <div class="sec-eye">Foundation</div>
+  <h2>The Setup — Rectangular Loop in Magnetic Field</h2>
+
+  <div class="card">
+    <p>Consider a <strong>rectangular current loop ABCD</strong> suspended in a uniform magnetic field <strong>B</strong>. This is the core geometry for understanding how motors, galvanometers, and all rotating electrical machines work.</p>
+
+    <div class="vstrip">
+      <div class="vi">
+        <div class="vi-dot" style="background:#5EEAD4;color:#0F172A">a</div>
+        <div><div class="vi-lbl">Length of loop</div><div class="vi-sub">sides AB and CD = a</div></div>
+      </div>
+      <div class="vi">
+        <div class="vi-dot" style="background:#FCD34D;color:#0F172A">b</div>
+        <div><div class="vi-lbl">Breadth of loop</div><div class="vi-sub">sides BC and AD = b</div></div>
+      </div>
+      <div class="vi">
+        <div class="vi-dot" style="background:#4ADE80;color:#0F172A">I</div>
+        <div><div class="vi-lbl">Current flowing</div><div class="vi-sub">through loop ABCD</div></div>
+      </div>
+      <div class="vi">
+        <div class="vi-dot" style="background:#A78BFA;color:white">B</div>
+        <div><div class="vi-lbl">Magnetic Field B</div><div class="vi-sub">uniform, horizontal</div></div>
+      </div>
+    </div>
+
+    <div class="fbox">
+      <div class="f-label">Area of rectangular loop</div>
+      <div class="f-main">A = a × b</div>
+      <div class="f-note">This area A is the most important quantity — it appears in the final torque formula and magnetic dipole moment.</div>
+    </div>
+
+    <div class="hibox">
+      <strong>Goal:</strong> Find the net torque (τ) experienced by this loop when placed in the uniform magnetic field B. This torque tries to rotate the loop about its axis, which is the working principle of an electric motor.
+    </div>
+  </div>
+
+  <!-- STATIC 3D SETUP VIEWER -->
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">🔷 3D Setup — Loop ABCD in Field B (drag to rotate)</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#5EEAD4"></div>Loop</div>
+        <div class="leg"><div class="leg-dot" style="background:#A78BFA"></div>B field</div>
+        <div class="leg"><div class="leg-dot" style="background:#FCD34D"></div>Current I</div>
+      </div>
+    </div>
+    <div class="three-container" id="setupContainer" style="height:380px"></div>
+    <div class="viz-ctrl">
+      <div style="color:#64748B;font-size:11px;">🖱️ Click and drag to orbit · Scroll to zoom</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ S2 FORCE ON ARMS ═══════════════ -->
+<section id="s2">
+  <div class="sec-eye">Step by Step</div>
+  <h2>Force on Each Arm of the Loop</h2>
+
+  <div class="card">
+    <p>The key formula is <strong>F = BIl sinθ</strong>. Apply this to each of the 4 arms separately. The angle θ here is between the current direction in that arm and the field B.</p>
+
+    <div class="deriv">
+      <div class="dstep">
+        <div class="snum">1</div>
+        <div class="sbody">
+          <strong>Arms AD and BC (length = b, parallel to rotation axis)</strong>
+          <p>Current in AD is parallel (or anti-parallel) to B. So θ = 0° or 180°.</p>
+          <div class="fbox" style="margin:8px 0">
+            <div class="f-label">Force on AD and BC</div>
+            <div class="f-main">F = BIb sin0° = 0</div>
+            <div class="f-note">These two arms produce zero force — they contribute nothing to torque. Ignore them.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dstep">
+        <div class="snum">2</div>
+        <div class="sbody">
+          <strong>Arms AB and CD (length = a, perpendicular to rotation axis)</strong>
+          <p>Current in AB and CD is always <strong>perpendicular to B</strong> (θ = 90°). These are the arms that experience force.</p>
+          <div class="fbox blue" style="margin:8px 0">
+            <div class="f-label">Force on arm AB</div>
+            <div class="f-main">F₁ = BIa sin90° = BIa</div>
+          </div>
+          <div class="fbox blue" style="margin:8px 0">
+            <div class="f-label">Force on arm CD</div>
+            <div class="f-main">F₂ = BIa sin90° = BIa</div>
+          </div>
+          <p>The magnitudes are equal: <strong>F₁ = F₂ = BIa</strong></p>
+          <div class="hibox">
+            <strong>Critical:</strong> F₁ and F₂ are equal in magnitude but <strong>opposite in direction</strong>! So net force = F₁ − F₂ = 0. The loop doesn't translate (move linearly). But since they act on different arms (separated by distance b), they form a <strong>couple</strong> that produces TORQUE.
+          </div>
+        </div>
+      </div>
+
+      <div class="dstep">
+        <div class="snum">3</div>
+        <div class="sbody">
+          <strong>Why does a "couple" produce torque even with zero net force?</strong>
+          <p>Two equal, opposite, parallel forces separated by a perpendicular distance form a <strong>couple</strong>. A couple has zero net force but non-zero torque: τ = F × d (perpendicular distance between the forces).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORCE DIRECTION CANVAS -->
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">⚡ Force Directions on Loop Arms (top view)</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#F87171"></div>F₁ (on AB)</div>
+        <div class="leg"><div class="leg-dot" style="background:#4ADE80"></div>F₂ (on CD)</div>
+        <div class="leg"><div class="leg-dot" style="background:#A78BFA"></div>B field</div>
+      </div>
+    </div>
+    <canvas id="forceCanvas" height="300"></canvas>
+    <div class="viz-ctrl">
+      <div class="cg">
+        <div class="cl">Angle θ with B</div>
+        <input type="range" id="angleSlider" min="0" max="90" value="90" oninput="updateForceCanvas()">
+        <div class="cv" id="angleVal">θ = 90°</div>
+      </div>
+      <div id="forceInfo" style="background:rgba(13,148,136,.15);border:1px solid #5EEAD4;border-radius:8px;padding:8px 13px;color:#5EEAD4;font-size:11.5px;flex:1">
+        F₁ = BIa = max &nbsp;|&nbsp; Couple arm = b sinθ &nbsp;|&nbsp; τ = BIab sinθ
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ S3 CASE I ═══════════════ -->
+<section id="s3">
+  <div class="sec-eye">Special Case</div>
+  <h2>Case I — Magnetic Field B is in the Plane of the Loop</h2>
+
+  <div class="case-grid">
+    <div class="ccase ccase-I">
+      <div class="cc-icon">📐</div>
+      <div class="cc-title">Condition</div>
+      <div class="cc-desc">The plane of loop ABCD lies in the same plane as the field B. The <strong>area vector</strong> (normal to loop) is perpendicular to B.</div>
+    </div>
+    <div class="ccase ccase-I">
+      <div class="cc-icon">🔄</div>
+      <div class="cc-title">What happens?</div>
+      <div class="cc-desc">F₁ acts upward on AB, F₂ acts downward on CD. They form a couple. The perpendicular distance between them = full breadth <strong>b</strong>.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Torque Derivation for Case I</h3>
+    <div class="deriv">
+      <div class="dstep">
+        <div class="snum">1</div>
+        <div class="sbody">
+          <strong>Forces form a couple</strong>
+          <p>F₁ (on AB) = BIa upward &nbsp;|&nbsp; F₂ (on CD) = BIa downward</p>
+          <p>They don't cancel rotationally because they act on opposite arms.</p>
+        </div>
+      </div>
+      <div class="dstep">
+        <div class="snum">2</div>
+        <div class="sbody">
+          <strong>Torque = Force × Perpendicular distance</strong>
+          <div class="fbox" style="margin:8px 0">
+            <div class="f-label">Torque due to couple (Case I, θ = 90°)</div>
+            <div class="f-main">τ = F₁ × b = BIa × b = BIab = BIA</div>
+            <div class="f-note">Since A = ab (area of loop), τ = BIA. This is the <strong>maximum torque</strong> — happens when B is in the plane of the loop.</div>
+          </div>
+        </div>
+      </div>
+      <div class="dstep">
+        <div class="snum">3</div>
+        <div class="sbody">
+          <strong>Direction of rotation</strong>
+          <p>Using the right hand rule: the loop rotates in the <strong>anti-clockwise direction</strong> (when viewed from the front, with B pointing right and current flowing as shown in NCERT diagram).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="fbox amber">
+      <div class="f-label">Maximum Torque (Case I — B in plane of loop)</div>
+      <div class="f-main">τ_max = BIA</div>
+      <div class="f-note">This is the maximum possible torque. The loop will rotate away from this position — this is an <strong>unstable equilibrium</strong> position in the context of a motor.</div>
+    </div>
+  </div>
+
+  <!-- CASE I 3D ANIMATION -->
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">🔴 Case I — B in plane of loop, τ = BIA (maximum) — Live 3D</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#F87171"></div>F₁ up</div>
+        <div class="leg"><div class="leg-dot" style="background:#4ADE80"></div>F₂ down</div>
+        <div class="leg"><div class="leg-dot" style="background:#A78BFA"></div>B →</div>
+      </div>
+    </div>
+    <div class="three-container" id="case1Container" style="height:400px"></div>
+    <div class="viz-ctrl">
+      <div class="cg">
+        <div class="cl">Animation Speed</div>
+        <input type="range" id="c1speed" min="0.2" max="3" step="0.2" value="1">
+        <div class="cv">speed</div>
+      </div>
+      <div class="cg" style="justify-content:flex-end">
+        <button class="btn btn-teal" id="c1btn" onclick="toggleC1()">⏸ Pause</button>
+        <button class="btn btn-teal" style="margin-top:4px" onclick="resetC1()">↺ Reset</button>
+      </div>
+      <div id="c1info" style="flex:1;background:rgba(248,113,113,.12);border:1px solid #F87171;border-radius:8px;padding:8px 13px;color:#FCA5A5;font-size:11px;">
+        B is in the plane of the loop. Forces F₁↑ and F₂↓ form a couple → loop rotates about its vertical axis.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ S4 CASE II ═══════════════ -->
+<section id="s4">
+  <div class="sec-eye">General Case</div>
+  <h2>Case II — Plane of Loop at Angle θ to Magnetic Field</h2>
+
+  <div class="case-grid">
+    <div class="ccase ccase-II">
+      <div class="cc-icon">📏</div>
+      <div class="cc-title">Condition</div>
+      <div class="cc-desc">The plane of the loop makes an angle φ with B. Equivalently, the normal to the loop (area vector) makes angle θ = (90° − φ) with B.</div>
+    </div>
+    <div class="ccase ccase-II">
+      <div class="cc-icon">📐</div>
+      <div class="cc-title">Key difference</div>
+      <div class="cc-desc">The perpendicular distance between F₁ and F₂ is no longer the full breadth b. It reduces to <strong>b sinθ</strong> where θ is angle between area normal and B.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Step-by-Step Derivation</h3>
+    <div class="deriv">
+      <div class="dstep">
+        <div class="snum">1</div>
+        <div class="sbody">
+          <strong>Forces on AB and CD — still F = BIa each</strong>
+          <p>Current in AB and CD is always perpendicular to B (the loop can only rotate about its central axis, keeping AB and CD perpendicular to B). So F₁ = F₂ = BIa. This doesn't change with angle.</p>
+        </div>
+      </div>
+      <div class="dstep">
+        <div class="snum">2</div>
+        <div class="sbody">
+          <strong>Effective perpendicular distance reduces</strong>
+          <p>When the plane makes angle φ with B, the perpendicular distance between the lines of action of F₁ and F₂ is not b — it is <strong>b sinθ</strong> (where θ is angle between area normal and B field).</p>
+          <div class="hibox" style="margin:8px 0">
+            <strong>Geometry trick:</strong> If the loop plane makes angle φ with B, then the area normal makes (90° − φ) with B. Call this angle θ. The perpendicular arm of the couple = b sinθ.
+          </div>
+        </div>
+      </div>
+      <div class="dstep">
+        <div class="snum">3</div>
+        <div class="sbody">
+          <strong>Torque = F × perpendicular arm</strong>
+          <div class="fbox amber" style="margin:8px 0">
+            <div class="f-label">Torque for General Case II</div>
+            <div class="f-main">τ = F₁ × (b sinθ) = BIa × b sinθ = BIAb sinθ</div>
+            <div class="f-note">Where A = ab is area of loop and θ is the angle between area normal (m̂) and field B.</div>
+          </div>
+        </div>
+      </div>
+      <div class="dstep">
+        <div class="snum">4</div>
+        <div class="sbody">
+          <strong>For N turns of the coil</strong>
+          <div class="fbox" style="margin:8px 0">
+            <div class="f-label">Final Torque Formula (N-turn coil)</div>
+            <div class="f-main">τ = NIAB sinθ</div>
+            <div class="f-note">N = number of turns, I = current, A = area, B = field strength, θ = angle between area normal and B</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CASE II 3D ANIMATION -->
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">🌀 Case II — Adjustable θ — Watch torque change — Live 3D</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#FCD34D"></div>Area normal m̂</div>
+        <div class="leg"><div class="leg-dot" style="background:#A78BFA"></div>B field</div>
+        <div class="leg"><div class="leg-dot" style="background:#F87171"></div>Forces</div>
+      </div>
+    </div>
+    <div class="three-container" id="case2Container" style="height:420px"></div>
+    <div class="viz-ctrl">
+      <div class="cg">
+        <div class="cl">Angle θ (normal to B)</div>
+        <input type="range" id="c2theta" min="0" max="180" step="5" value="90" oninput="updateCase2Angle()">
+        <div class="cv" id="c2thetaVal">θ = 90°</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Current I</div>
+        <input type="range" id="c2current" min="1" max="5" step="0.5" value="2" oninput="updateCase2Angle()">
+        <div class="cv" id="c2currentVal">I = 2 A</div>
+      </div>
+      <div class="cg" style="justify-content:flex-end">
+        <button class="btn btn-teal" id="c2autoBtn" onclick="toggleC2Auto()">▶ Auto-rotate</button>
+      </div>
+      <div id="c2info" style="flex:1;background:rgba(13,148,136,.12);border:1px solid #5EEAD4;border-radius:8px;padding:8px 13px;color:#5EEAD4;font-size:11.5px;">
+        τ = NIAB sinθ = <strong id="c2torque">max</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ S5 TORQUE DERIVATION ═══════════════ -->
+<section id="s5">
+  <div class="sec-eye">Complete Derivation</div>
+  <h2>Full Torque Derivation — Both Cases Together</h2>
+
+  <div class="card">
+    <h3>Compact Step-by-Step</h3>
+    <div class="deriv">
+      <div class="dstep">
+        <div class="snum">1</div>
+        <div class="sbody">
+          <strong>Loop ABCD in field B. AB = CD = a (active arms). AD = BC = b.</strong>
+          <p>Current direction: A→B→C→D→A (counterclockwise when viewed from front).</p>
+        </div>
+      </div>
+      <div class="dstep">
+        <div class="snum">2</div>
+        <div class="sbody">
+          <strong>Force on AD = 0 and BC = 0</strong>
+          <p>These run parallel/anti-parallel to B → sin0° = 0 → F = 0.</p>
+        </div>
+      </div>
+      <div class="dstep">
+        <div class="snum">3</div>
+        <div class="sbody">
+          <strong>Force on AB: F₁ = BIa (say, upward ↑)</strong><br>
+          <strong>Force on CD: F₂ = BIa (downward ↓)</strong>
+          <p>Equal and opposite → net translational force = 0, but they create a couple!</p>
+        </div>
+      </div>
+      <div class="dstep">
+        <div class="snum">4</div>
+        <div class="sbody">
+          <strong>Torque by each force about the central axis (MM')</strong>
+          <div class="fbox" style="margin:8px 0">
+            <div class="f-label">Torque from F₁ (on AB)</div>
+            <div class="f-main">τ₁ = F₁ × (a/2) sinθ = BIa × (a/2) sinθ</div>
+          </div>
+          <div class="fbox" style="margin:8px 0">
+            <div class="f-label">Torque from F₂ (on CD) — same direction!</div>
+            <div class="f-main">τ₂ = F₂ × (a/2) sinθ = BIa × (a/2) sinθ</div>
+          </div>
+        </div>
+      </div>
+      <div class="dstep">
+        <div class="snum">5</div>
+        <div class="sbody">
+          <strong>Total torque τ = τ₁ + τ₂</strong>
+          <div class="fbox amber" style="margin:8px 0">
+            <div class="f-label">Net Torque on loop (single turn)</div>
+            <div class="f-main">τ = BIa × (a/2) sinθ + BIa × (a/2) sinθ = BIa² sinθ</div>
+            <div class="f-note">Wait — this uses a² because the torque arm is a/2 from MM' for each force, where MM' bisects AB and CD. But the full derivation using couple gives: τ = BIab sinθ = BIA sinθ, since A = ab for rectangular loop.</div>
+          </div>
+          <div class="fbox" style="margin:8px 0; background:linear-gradient(135deg,#F0FDF4,#DCFCE7); border-color:#86EFAC; border-left-color:#16A34A;">
+            <div class="f-label" style="color:#15803D">✅ Correct Final Result (using couple approach)</div>
+            <div class="f-main" style="color:#14532D">τ = BIab sinθ = BIA sinθ</div>
+            <div class="f-note">Couple torque = one force × perpendicular distance = BIa × b sinθ = BIAb sinθ... with A = ab gives τ = BIA sinθ ✓</div>
+          </div>
+        </div>
+      </div>
+      <div class="dstep">
+        <div class="snum">6</div>
+        <div class="sbody">
+          <strong>For a coil of N turns</strong>
+          <div class="fbox purple">
+            <div class="f-label">Master Formula — Torque on N-turn coil</div>
+            <div class="f-main">τ = NIAB sinθ</div>
+            <div class="f-note">
+              N = number of turns &nbsp;|&nbsp; I = current (A) &nbsp;|&nbsp; A = area (m²) &nbsp;|&nbsp; B = field (T)<br>
+              θ = angle between area normal m̂ and field B
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="acc">
+    <div class="acc-h" onclick="acc(this)">❓ Why do F₁ and F₂ add up in torque instead of cancelling? <span class="arr">▼</span></div>
+    <div class="acc-b">
+      F₁ and F₂ are equal and opposite, so they cancel for <strong>linear (translational) motion</strong>. But torque depends on <strong>force × perpendicular arm about a specific axis</strong>. Both F₁ (upward on AB) and F₂ (downward on CD) try to rotate the loop in the <strong>same direction</strong> about the central axis MM'. So their torques ADD, not cancel. This is the definition of a couple.
+    </div>
+  </div>
+
+  <div class="acc">
+    <div class="acc-h" onclick="acc(this)">❓ Why is θ the angle between area normal and B, not between loop plane and B? <span class="arr">▼</span></div>
+    <div class="acc-b">
+      The area vector (m̂) is defined as <strong>perpendicular to the plane</strong> of the loop. So if the loop plane makes angle φ with B, the area normal makes angle (90°−φ) with B. We call this (90°−φ) as θ. The torque formula τ = BIA sinθ uses θ as angle between <strong>normal to loop</strong> and <strong>B</strong>. At θ=90°, normal ⊥ B means B is in the plane → maximum torque. At θ=0°, normal ∥ B → zero torque (equilibrium).
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ S6 MAGNETIC DIPOLE ═══════════════ -->
+<section id="s6">
+  <div class="sec-eye">Magnetic Dipole Moment</div>
+  <h2>The Loop as a Magnetic Dipole (m)</h2>
+
+  <div class="card">
+    <p>The torque formula τ = NIAB sinθ looks exactly like the torque on an electric dipole in an electric field: τ = pE sinθ. This analogy is not a coincidence — a current loop IS a magnetic dipole.</p>
+
+    <div class="fbox purple">
+      <div class="f-label">Magnetic Dipole Moment</div>
+      <div class="f-main">m = NIA</div>
+      <div class="f-note">
+        m = magnetic dipole moment (A·m²) &nbsp;|&nbsp; N = turns &nbsp;|&nbsp; I = current &nbsp;|&nbsp; A = area<br>
+        Direction of m: given by <strong>right hand rule</strong> — curl fingers in direction of current → thumb points along m (area normal).
+      </div>
+    </div>
+
+    <h3>Torque in Vector Form</h3>
+    <div class="fbox red">
+      <div class="f-label">Vector form of torque (elegant!)</div>
+      <div class="f-main">τ = m × B</div>
+      <div class="f-note">
+        |τ| = mB sinθ = NIAB sinθ ✓<br>
+        This is the most compact and powerful form — it tells you both magnitude AND direction of torque via cross product.
+      </div>
+    </div>
+
+    <h3>Analogy Table — Electric Dipole vs Magnetic Dipole</h3>
+    <table>
+      <tr><th>Quantity</th><th>Electric Dipole</th><th>Magnetic Dipole (current loop)</th></tr>
+      <tr><td>Dipole moment</td><td><code>p = q × 2l</code></td><td><code>m = NIA</code></td></tr>
+      <tr><td>Torque</td><td><code>τ = p × E</code></td><td><code>τ = m × B</code></td></tr>
+      <tr><td>Max torque</td><td><code>τ_max = pE</code></td><td><code>τ_max = mB = NIAB</code></td></tr>
+      <tr><td>Stable equilibrium</td><td>p ∥ E (θ=0°)</td><td>m ∥ B (θ=0°, τ=0)</td></tr>
+      <tr><td>Unstable equilibrium</td><td>p anti-∥ E (θ=180°)</td><td>m anti-∥ B (θ=180°, τ=0 but unstable)</td></tr>
+      <tr><td>At θ=90°</td><td>τ = pE (max)</td><td>τ = mB (max)</td></tr>
+    </table>
+
+    <div class="hibox">
+      <strong>Equilibrium positions:</strong> When θ=0° (m ∥ B), τ=0 — this is <strong>stable equilibrium</strong> (like a compass needle aligned with Earth's field). When θ=180° (m anti-parallel to B), τ=0 again — but this is <strong>unstable equilibrium</strong> (any small disturbance flips it).
+    </div>
+  </div>
+
+  <div class="acc">
+    <div class="acc-h" onclick="acc(this)">❓ A bar magnet is also a magnetic dipole — how does it relate? <span class="arr">▼</span></div>
+    <div class="acc-b">
+      A bar magnet has a north and south pole separated by distance 2l. Its magnetic dipole moment is m = p_m = M = m·2l (from S to N inside the magnet). A current loop with moment m = NIA behaves identically to a bar magnet of the same dipole moment. This is why solenoids (multi-turn coils) behave exactly like bar magnets — they have N and S poles at the two ends!
+    </div>
+  </div>
+
+  <div class="acc">
+    <div class="acc-h" onclick="acc(this)">❓ What's the unit and direction of magnetic dipole moment? <span class="arr">▼</span></div>
+    <div class="acc-b">
+      <strong>Unit:</strong> A·m² (ampere × metre squared) or equivalently J/T (joule per tesla).<br>
+      <strong>Direction:</strong> Use the right-hand thumb rule — curl the fingers of your right hand in the direction of conventional current flow in the loop. Your thumb points in the direction of the magnetic moment m (which is the same as the area vector direction, i.e., normal to the loop plane following the right-hand rule).
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ S7 3D SIMULATOR ═══════════════ -->
+<section id="s7">
+  <div class="sec-eye">Interactive Lab</div>
+  <h2>Full 3D Torque Simulator</h2>
+
+  <div class="card" style="margin-bottom:0">
+    <p>Control all parameters — see the loop rotate, forces update, and torque value change in real time. This is the full picture of both Case I and Case II combined.</p>
+  </div>
+
+  <div class="viz-wrap">
+    <div class="viz-hdr">
+      <span class="viz-title">🎮 Full Interactive Magnetic Torque Simulator — Three.js</span>
+      <div class="legend">
+        <div class="leg"><div class="leg-dot" style="background:#5EEAD4"></div>Loop ABCD</div>
+        <div class="leg"><div class="leg-dot" style="background:#FCD34D"></div>m (dipole)</div>
+        <div class="leg"><div class="leg-dot" style="background:#A78BFA"></div>B field</div>
+        <div class="leg"><div class="leg-dot" style="background:#F87171"></div>Forces</div>
+      </div>
+    </div>
+    <div class="three-container" id="simContainer" style="height:460px"></div>
+    <div class="viz-ctrl">
+      <div class="cg">
+        <div class="cl">Turns N</div>
+        <input type="range" id="simN" min="1" max="10" step="1" value="1" oninput="calcSim()">
+        <div class="cv" id="simNv">N = 1</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Current I (A)</div>
+        <input type="range" id="simI" min="0.5" max="10" step="0.5" value="2" oninput="calcSim()">
+        <div class="cv" id="simIv">I = 2 A</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Area A (cm²)</div>
+        <input type="range" id="simA" min="1" max="50" step="1" value="10" oninput="calcSim()">
+        <div class="cv" id="simAv">A = 10 cm²</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Field B (T)</div>
+        <input type="range" id="simB" min="0.1" max="2" step="0.1" value="0.5" oninput="calcSim()">
+        <div class="cv" id="simBv">B = 0.5 T</div>
+      </div>
+      <div class="cg">
+        <div class="cl">Auto-rotate loop</div>
+        <button class="btn btn-teal" id="simRotBtn" onclick="toggleSimRot()" style="margin-top:4px">▶ Start Rotation</button>
+        <button class="btn btn-teal" onclick="resetSim()" style="margin-top:4px">↺ Reset θ=90°</button>
+      </div>
+    </div>
+    <!-- Results panel -->
+    <div id="simResults" style="background:#080C18; padding:16px 20px; border-top:1px solid #1E293B;">
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ S8 SUMMARY ═══════════════ -->
+<section id="s8">
+  <div class="sec-eye">Quick Revision</div>
+  <h2>Complete Summary</h2>
+
+  <div class="card">
+    <table>
+      <tr><th>Quantity</th><th>Formula</th><th>Note</th></tr>
+      <tr><td>Force on AD, BC</td><td><code>F = 0</code></td><td>Current ∥ B → no force</td></tr>
+      <tr><td>Force on AB, CD</td><td><code>F = BIa</code></td><td>Current ⊥ B → max force</td></tr>
+      <tr><td>Net force on loop</td><td><code>F_net = 0</code></td><td>Equal & opposite → no translation</td></tr>
+      <tr><td>Torque (1 turn)</td><td><code>τ = BIA sinθ</code></td><td>θ = angle between m̂ and B</td></tr>
+      <tr><td>Torque (N turns)</td><td><code>τ = NIAB sinθ</code></td><td>Master formula ⭐</td></tr>
+      <tr><td>Magnetic moment</td><td><code>m = NIA</code></td><td>Unit: A·m²</td></tr>
+      <tr><td>Torque (vector)</td><td><code>τ = m × B</code></td><td>Cross product form</td></tr>
+      <tr><td>Max torque</td><td><code>τ_max = NIAB</code></td><td>When θ = 90° (B in loop plane)</td></tr>
+      <tr><td>Zero torque</td><td><code>τ = 0</code></td><td>When θ = 0° or 180° (m ∥ B)</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>⚠️ Common Exam Mistakes</h3>
+    <div class="acc">
+      <div class="acc-h" onclick="acc(this)">Mistake 1: Using wrong angle in τ = NIAB sinθ <span class="arr">▼</span></div>
+      <div class="acc-b">θ is the angle between the <strong>area normal (m̂)</strong> and B — NOT between the loop plane and B. If the loop plane makes angle φ with B, then θ = 90° − φ. At maximum torque (B in plane), φ = 0°, so θ = 90°, sin90° = 1 → maximum. This trips up most students.</div>
+    </div>
+    <div class="acc">
+      <div class="acc-h" onclick="acc(this)">Mistake 2: Saying net force = 0 means no effect <span class="arr">▼</span></div>
+      <div class="acc-b">Net force = 0 means no <strong>translational</strong> acceleration (loop doesn't fly away). But net torque ≠ 0 means there IS rotational effect. The loop spins in place. This is exactly how an electric motor works.</div>
+    </div>
+    <div class="acc">
+      <div class="acc-h" onclick="acc(this)">Mistake 3: Forgetting N (number of turns) <span class="arr">▼</span></div>
+      <div class="acc-b">The formula for a single loop is τ = BIA sinθ. For a coil of N turns, every turn contributes, so τ = NIAB sinθ. In NCERT problems, "coil of 50 turns" means N=50. Always check if N is given.</div>
+    </div>
+    <div class="acc">
+      <div class="acc-h" onclick="acc(this)">Mistake 4: Confusing stable and unstable equilibrium <span class="arr">▼</span></div>
+      <div class="acc-b">At θ=0°: m is parallel to B. Torque = 0. If disturbed slightly, torque brings it back → <span class="badge b-teal">STABLE</span>. At θ=180°: m is anti-parallel to B. Torque = 0. But any small disturbance causes torque that pushes it further away → <span class="badge b-red">UNSTABLE</span>. Think of a pencil balanced on its tip (unstable) vs lying flat (stable).</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div style="background:var(--accent);color:white;text-align:center;padding:28px 20px;font-size:12.5px;opacity:0.9">
+  <strong>Torque on Current Loop — Magnetic Dipole</strong> · Class 12 NCERT Moving Charges & Magnetism<br>
+  <span style="opacity:0.65">Quantum Tuitions / Priyanshu Informatics · Dehradun</span>
+</div>
+
+<script>
+// ══════ UTILITY ══════
+function nav(id, btn) {
+  document.getElementById(id).scrollIntoView({behavior:'smooth'});
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function acc(h) {
+  h.classList.toggle('open');
+  h.nextElementSibling.classList.toggle('open');
+}
+
+// ══════ THREE.JS SHARED UTILS ══════
+function makeArrow(scene, from, to, color, label) {
+  const dir = new THREE.Vector3().subVectors(to, from).normalize();
+  const len = from.distanceTo(to);
+  const origin = from.clone().add(to).multiplyScalar(0.5);
+  // shaft
+  const geo = new THREE.CylinderGeometry(0.04, 0.04, len, 8);
+  const mat = new THREE.MeshBasicMaterial({color});
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.position.copy(from.clone().add(to).multiplyScalar(0.5));
+  const axis = new THREE.Vector3(0,1,0);
+  mesh.quaternion.setFromUnitVectors(axis, dir);
+  scene.add(mesh);
+  // head
+  const hgeo = new THREE.ConeGeometry(0.12, 0.3, 8);
+  const hm = new THREE.Mesh(hgeo, mat);
+  hm.position.copy(to.clone().sub(dir.clone().multiplyScalar(0.15)));
+  hm.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir);
+  scene.add(hm);
+  return {mesh, hm};
+}
+
+function makeLabel(text, x, y, z, color) {
+  const cv = document.createElement('canvas');
+  cv.width = 200; cv.height = 48;
+  const ctx = cv.getContext('2d');
+  ctx.fillStyle = color||'#ffffff';
+  ctx.font = 'bold 22px Inter, sans-serif';
+  ctx.fillText(text, 6, 34);
+  const tex = new THREE.CanvasTexture(cv);
+  const sp = new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true}));
+  sp.scale.set(2.5, 0.6, 1);
+  sp.position.set(x,y,z);
+  return sp;
+}
+
+function makeRectLoop(w, h, color, linewidth) {
+  const geo = new THREE.BufferGeometry();
+  const hw = w/2, hh = h/2;
+  const pts = [
+    -hw,-hh,0, hw,-hh,0, hw,hh,0, -hw,hh,0, -hw,-hh,0
+  ];
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pts,3));
+  return new THREE.Line(geo, new THREE.LineBasicMaterial({color, linewidth:linewidth||2}));
+}
+
+function addFieldLines(scene, count, spacing, length, color) {
+  for(let i=0;i<count;i++) {
+    const z = (i - (count-1)/2) * spacing;
+    const pts = [-length/2, 0, z, length/2, 0, z];
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(pts,3));
+    const line = new THREE.Line(geo, new THREE.LineBasicMaterial({color, opacity:0.35, transparent:true}));
+    scene.add(line);
+    // arrow at end
+    const cg = new THREE.ConeGeometry(0.06, 0.22, 6);
+    const m = new THREE.Mesh(cg, new THREE.MeshBasicMaterial({color}));
+    m.position.set(length/2 - 0.2, 0, z);
+    m.rotation.z = -Math.PI/2;
+    scene.add(m);
+  }
+}
+
+// ══════ SETUP SCENE (S1) ══════
+(function initSetup() {
+  const container = document.getElementById('setupContainer');
+  const W = container.clientWidth, H = 380;
+  const renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  renderer.setSize(W, H);
+  renderer.setClearColor(0x080C18, 1);
+  container.appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, W/H, 0.1, 100);
+  camera.position.set(5, 4, 8);
+  camera.lookAt(0,0,0);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+  const dl = new THREE.DirectionalLight(0xffffff, 0.6);
+  dl.position.set(5,5,5); scene.add(dl);
+
+  // Loop
+  const loop = makeRectLoop(3, 2, 0x5EEAD4, 3);
+  loop.rotation.y = Math.PI/2; // stand upright, face field
+  scene.add(loop);
+
+  // Labels A B C D
+  ['A','B','C','D'].forEach((l,i) => {
+    const positions = [[-1.5,-1,0],[1.5,-1,0],[1.5,1,0],[-1.5,1,0]];
+    const sp = makeLabel(l, positions[i][0]*1.5, positions[i][1]*1.1, 0.1, i<2?'#FCD34D':'#FCD34D');
+    scene.add(sp);
+  });
+
+  // B field lines (x direction)
+  addFieldLines(scene, 5, 0.6, 8, 0xA78BFA);
+  scene.add(makeLabel('B →', 3.5, 0.3, 0, '#A78BFA'));
+
+  // Current direction arrows on loop
+  const curMat = new THREE.MeshBasicMaterial({color:0x4ADE80});
+  [[0,-1,0.02,1,0],[1,0,0.02,0,1],[-1,0,0.02,0,-1],[0,1,0.02,-1,0]].forEach(([x,y,z,dx,dy]) => {
+    const cg = new THREE.ConeGeometry(0.1, 0.3, 6);
+    const cm = new THREE.Mesh(cg, curMat);
+    cm.position.set(x*1.5, y, 0.02);
+    cm.rotation.z = Math.atan2(dy, dx) + Math.PI/2;
+    scene.add(cm);
+  });
+
+  // rotation axis (MM')
+  const axGeo = new THREE.CylinderGeometry(0.04, 0.04, 5, 6);
+  const axMat = new THREE.MeshBasicMaterial({color:0xFF6B6B, opacity:0.5, transparent:true});
+  const ax = new THREE.Mesh(axGeo, axMat);
+  ax.rotation.x = Math.PI/2;
+  scene.add(ax);
+  scene.add(makeLabel("MM' (rotation axis)", 0, 2.8, 0, '#FF6B6B'));
+
+  // Orbit controls (manual)
+  let drag=false, px=0, py=0;
+  const el = renderer.domElement;
+  el.addEventListener('mousedown', e=>{drag=true;px=e.clientX;py=e.clientY;});
+  el.addEventListener('mouseup', ()=>drag=false);
+  el.addEventListener('mousemove', e=>{
+    if(!drag) return;
+    const dx=(e.clientX-px)*0.01, dy=(e.clientY-py)*0.01;
+    camera.position.applyQuaternion(new THREE.Quaternion().setFromEuler(new THREE.Euler(dy,dx,0)));
+    px=e.clientX; py=e.clientY;
+  });
+  el.addEventListener('wheel', e=>{ camera.position.multiplyScalar(1+e.deltaY*0.001); });
+
+  function animate() {
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+// ══════ FORCE CANVAS (S2) ══════
+function updateForceCanvas() {
+  const canvas = document.getElementById('forceCanvas');
+  canvas.width = canvas.offsetWidth;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = 300;
+  const theta = parseFloat(document.getElementById('angleSlider').value);
+  document.getElementById('angleVal').textContent = `θ = ${theta}°`;
+  const tRad = theta * Math.PI / 180;
+
+  ctx.fillStyle = '#080C18'; ctx.fillRect(0,0,W,H);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+  ctx.lineWidth = 1;
+  for(let x=0;x<W;x+=30){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=30){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  // B field lines (horizontal, into page shown as dots alternating)
+  for(let y=20;y<H;y+=40){
+    for(let x=20;x<W;x+=40){
+      ctx.fillStyle='rgba(167,139,250,0.35)';
+      ctx.font='15px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('⊙',x,y+5);
+    }
+  }
+
+  const cx=W/2, cy=H/2;
+  const lw=70, lh=50; // loop half-dims in px
+
+  // Draw the loop rotated by theta
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  // Loop rectangle (in perspective, foreshortened)
+  const effectiveH = lh * 2 * Math.sin(tRad);
+  ctx.strokeStyle='#5EEAD4'; ctx.lineWidth=2.5;
+  ctx.strokeRect(-lw, -lh, lw*2, lh*2);
+
+  // Current arrows
+  ctx.fillStyle='#4ADE80';
+  [[0,-lh,1,0],[lw,0,0,1],[-lw,0,0,-1],[0,lh,-1,0]].forEach(([x,y,dx,dy])=>{
+    ctx.save(); ctx.translate(x,y); ctx.rotate(Math.atan2(dy,dx)+Math.PI/2);
+    ctx.beginPath(); ctx.moveTo(0,-8); ctx.lineTo(5,8); ctx.lineTo(-5,8); ctx.closePath();
+    ctx.fill(); ctx.restore();
+  });
+
+  // Labels
+  ctx.fillStyle='#FCD34D'; ctx.font='bold 12px Inter';
+  ctx.textAlign='center';
+  [[-lw-12,-lh-8,'A'],[lw+12,-lh-8,'B'],[lw+12,lh+12,'C'],[-lw-12,lh+12,'D']].forEach(([x,y,l])=>{
+    ctx.fillText(l,x,y);
+  });
+
+  ctx.restore();
+
+  // Force arrows
+  const fScale = Math.max(0.1, 1);
+  const fLen = 55;
+  drawArr(ctx, cx-lw, cy, cx-lw, cy-fLen*fScale, '#F87171', 'F₁↑');
+  drawArr(ctx, cx+lw, cy, cx+lw, cy+fLen*fScale, '#4ADE80', 'F₂↓');
+
+  // Perpendicular arm annotation
+  const armPx = lh*2*Math.sin(tRad);
+  ctx.strokeStyle='rgba(253,224,71,0.6)'; ctx.lineWidth=1.5; ctx.setLineDash([4,3]);
+  ctx.beginPath(); ctx.moveTo(cx-lw,cy-armPx/2); ctx.lineTo(cx-lw,cy+armPx/2); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#FDE047'; ctx.font='11px JetBrains Mono'; ctx.textAlign='left';
+  ctx.fillText(`arm=b sinθ=${(Math.sin(tRad)).toFixed(2)}b`, cx-lw+6, cy+armPx/2+14);
+
+  // torque value
+  const tau = Math.sin(tRad).toFixed(3);
+  document.getElementById('forceInfo').innerHTML =
+    `F₁ = F₂ = BIa &nbsp;|&nbsp; Couple arm = b×sin${theta}° = ${(Math.sin(tRad)).toFixed(3)}b &nbsp;|&nbsp; <strong>τ = BIA×${tau} = ${(parseFloat(tau)).toFixed(3)} BIA</strong>`;
+}
+
+function drawArr(ctx, x1,y1,x2,y2, color, label) {
+  const ang = Math.atan2(y2-y1,x2-x1);
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=2.5;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  ctx.save(); ctx.translate(x2,y2); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-10,5); ctx.lineTo(-10,-5); ctx.closePath(); ctx.fill();
+  ctx.restore();
+  if(label){
+    ctx.fillStyle=color; ctx.font='bold 12px Inter'; ctx.textAlign='center';
+    ctx.fillText(label, (x1+x2)/2 + (y2>y1?18:-18), (y1+y2)/2);
+  }
+}
+
+window.addEventListener('resize',()=>{ updateForceCanvas(); });
+updateForceCanvas();
+
+// ══════ CASE I SCENE ══════
+let c1Paused=false, c1Scene, c1Camera, c1Renderer, c1Loop, c1Angle=0, c1F1arrow, c1F2arrow;
+(function initCase1() {
+  const container = document.getElementById('case1Container');
+  const W = container.clientWidth;
+  c1Renderer = new THREE.WebGLRenderer({antialias:true});
+  c1Renderer.setSize(W, 400);
+  c1Renderer.setClearColor(0x080C18);
+  container.appendChild(c1Renderer.domElement);
+
+  c1Scene = new THREE.Scene();
+  c1Camera = new THREE.PerspectiveCamera(45, W/400, 0.1, 100);
+  c1Camera.position.set(6, 5, 9);
+  c1Camera.lookAt(0,0,0);
+  c1Scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+  const dl = new THREE.DirectionalLight(0xffffff,0.5); dl.position.set(3,5,3); c1Scene.add(dl);
+
+  // B field arrows (x direction)
+  addFieldLines(c1Scene, 5, 0.7, 10, 0xA78BFA);
+  c1Scene.add(makeLabel('B', 4.5, 0, 0, '#A78BFA'));
+
+  // Loop (will rotate)
+  c1Loop = new THREE.Group();
+  const loopLine = makeRectLoop(3, 2, 0x5EEAD4, 3);
+  c1Loop.add(loopLine);
+  // Labels on loop
+  ['A','B','C','D'].forEach((lbl,i) => {
+    const pos = [[-1.5,-1,0.1],[1.5,-1,0.1],[1.5,1,0.1],[-1.5,1,0.1]];
+    c1Loop.add(makeLabel(lbl, pos[i][0], pos[i][1], pos[i][2], '#FCD34D'));
+  });
+  c1Scene.add(c1Loop);
+
+  // Area normal arrow (magnetic moment m)
+  const mArr = makeArrow(c1Loop, new THREE.Vector3(0,0,0), new THREE.Vector3(0,0,2.2), 0xFCD34D, 'm');
+  c1Scene.add(makeLabel('m', 0.3, 0, 2.4, '#FCD34D'));
+
+  // Force arrows (fixed up/down, rotate with context)
+  function makeFArrow(scene, from, to, color, lbl) {
+    const grp = new THREE.Group();
+    const len = from.distanceTo(to);
+    const cg = new THREE.CylinderGeometry(0.05,0.05,len,6);
+    const mat = new THREE.MeshBasicMaterial({color});
+    const m = new THREE.Mesh(cg, mat);
+    m.position.copy(from.clone().add(to).multiplyScalar(0.5));
+    const dir = new THREE.Vector3().subVectors(to,from).normalize();
+    m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir);
+    grp.add(m);
+    const hg = new THREE.ConeGeometry(0.12,0.3,6);
+    const hm = new THREE.Mesh(hg, mat);
+    hm.position.copy(to);
+    hm.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir);
+    grp.add(hm);
+    grp.add(makeLabel(lbl, to.x+0.3, to.y, to.z, color));
+    scene.add(grp);
+    return grp;
+  }
+
+  c1F1arrow = makeFArrow(c1Scene, new THREE.Vector3(-1.5,0,0), new THREE.Vector3(-1.5,2.2,0), 0xF87171, 'F₁↑');
+  c1F2arrow = makeFArrow(c1Scene, new THREE.Vector3(1.5,0,0), new THREE.Vector3(1.5,-2.2,0), 0x4ADE80, 'F₂↓');
+
+  // Rotation axis
+  const rg = new THREE.CylinderGeometry(0.04,0.04,6,6);
+  const rm = new THREE.MeshBasicMaterial({color:0xFF6B6B,opacity:0.45,transparent:true});
+  const rx = new THREE.Mesh(rg,rm); rx.rotation.z=Math.PI/2; c1Scene.add(rx);
+  c1Scene.add(makeLabel("rotation axis →", 2.2, -0.5, 0, '#FF6B6B'));
+
+  function animC1() {
+    requestAnimationFrame(animC1);
+    if(!c1Paused) {
+      const speed = parseFloat(document.getElementById('c1speed').value)||1;
+      c1Angle += 0.012 * speed;
+      c1Loop.rotation.x = c1Angle;
+    }
+    c1Renderer.render(c1Scene, c1Camera);
+  }
+  animC1();
+})();
+
+function toggleC1() {
+  c1Paused=!c1Paused;
+  const btn=document.getElementById('c1btn');
+  btn.textContent=c1Paused?'▶ Resume':'⏸ Pause';
+  btn.className=c1Paused?'btn btn-pause':'btn btn-teal';
+}
+function resetC1() { c1Angle=0; c1Loop.rotation.x=0; }
+
+// ══════ CASE II SCENE ══════
+let c2Scene, c2Camera, c2Renderer, c2Loop, c2mArrow, c2Auto=false, c2AutoAngle=0;
+(function initCase2() {
+  const container = document.getElementById('case2Container');
+  const W = container.clientWidth;
+  c2Renderer = new THREE.WebGLRenderer({antialias:true});
+  c2Renderer.setSize(W, 420);
+  c2Renderer.setClearColor(0x080C18);
+  container.appendChild(c2Renderer.domElement);
+
+  c2Scene = new THREE.Scene();
+  c2Camera = new THREE.PerspectiveCamera(45, W/420, 0.1, 100);
+  c2Camera.position.set(7, 5, 9); c2Camera.lookAt(0,0,0);
+  c2Scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+  const dl=new THREE.DirectionalLight(0xffffff,.5); dl.position.set(5,5,5); c2Scene.add(dl);
+
+  addFieldLines(c2Scene, 6, 0.7, 11, 0xA78BFA);
+  c2Scene.add(makeLabel('B', 5, 0, 0, '#A78BFA'));
+
+  c2Loop = new THREE.Group();
+  c2Loop.add(makeRectLoop(3,2,0x5EEAD4,3));
+  ['A','B','C','D'].forEach((lbl,i)=>{
+    const pos=[[-1.5,-1,0.1],[1.5,-1,0.1],[1.5,1,0.1],[-1.5,1,0.1]];
+    c2Loop.add(makeLabel(lbl,pos[i][0],pos[i][1],pos[i][2],'#FCD34D'));
+  });
+  c2Scene.add(c2Loop);
+
+  // Torque arc indicator
+  const tCurve = new THREE.ArcCurve(0,0,1.8,0,Math.PI,false);
+  const tPts = tCurve.getPoints(40);
+  const tGeo = new THREE.BufferGeometry().setFromPoints(tPts.map(p=>new THREE.Vector3(p.x,p.y,0)));
+  const tLine = new THREE.Line(tGeo, new THREE.LineBasicMaterial({color:0xFCD34D,opacity:.7,transparent:true}));
+  c2Scene.add(tLine);
+
+  // m normal arrow (will rotate with loop)
+  const mGeo=new THREE.CylinderGeometry(0.05,0.05,2.5,6);
+  const mMat=new THREE.MeshBasicMaterial({color:0xFCD34D});
+  const mMesh=new THREE.Mesh(mGeo,mMat);
+  mMesh.position.set(0,0,1.25); mMesh.rotation.x=Math.PI/2;
+  const mHead=new THREE.ConeGeometry(0.13,0.35,6);
+  const mHMesh=new THREE.Mesh(mHead,mMat);
+  mHMesh.position.set(0,0,2.5); mHMesh.rotation.x=Math.PI/2;
+  c2mArrow=new THREE.Group(); c2mArrow.add(mMesh,mHMesh);
+  c2Scene.add(c2mArrow);
+  c2Scene.add(makeLabel('m', 0.3, 0.3, 2.8, '#FCD34D'));
+
+  // Force indicators on AB and CD
+  function addForceAt(scene, x, color, label) {
+    const cg=new THREE.ConeGeometry(0.12,0.4,6);
+    const cm=new THREE.Mesh(cg,new THREE.MeshBasicMaterial({color}));
+    const y_dir = color===0xF87171?1:-1;
+    cm.position.set(x,y_dir*1.8,0);
+    cm.rotation.z = color===0xF87171?0:Math.PI;
+    scene.add(cm);
+    scene.add(makeLabel(label,x+0.2,y_dir*2.2,0.1,color===0xF87171?'#F87171':'#4ADE80'));
+  }
+  addForceAt(c2Scene,-1.5,0xF87171,'F₁↑');
+  addForceAt(c2Scene,1.5,0x4ADE80,'F₂↓');
+
+  updateCase2Angle();
+
+  function animC2() {
+    requestAnimationFrame(animC2);
+    if(c2Auto) {
+      c2AutoAngle += 0.01;
+      const deg = ((c2AutoAngle*180/Math.PI) % 180)|0;
+      document.getElementById('c2theta').value = deg;
+      updateCase2Angle();
+    }
+    c2Renderer.render(c2Scene, c2Camera);
+  }
+  animC2();
+})();
+
+function updateCase2Angle() {
+  const theta = parseFloat(document.getElementById('c2theta').value);
+  const I = parseFloat(document.getElementById('c2current').value);
+  document.getElementById('c2thetaVal').textContent = `θ = ${theta}°`;
+  document.getElementById('c2currentVal').textContent = `I = ${I} A`;
+  const tRad = theta*Math.PI/180;
+  // rotate loop and m arrow about x axis
+  if(c2Loop) c2Loop.rotation.x = -tRad + Math.PI/2;
+  if(c2mArrow) c2mArrow.rotation.x = -tRad + Math.PI/2;
+  const tau = (I * 0.001 * 0.5 * Math.sin(tRad)).toExponential(3);
+  const tauRel = Math.sin(tRad).toFixed(3);
+  document.getElementById('c2torque').textContent = `NIAB×sin${theta}° = ${tauRel} × NIAB`;
+}
+
+function toggleC2Auto() {
+  c2Auto=!c2Auto;
+  document.getElementById('c2autoBtn').textContent=c2Auto?'⏹ Stop':'▶ Auto-rotate';
+  document.getElementById('c2autoBtn').className=c2Auto?'btn btn-pause':'btn btn-teal';
+}
+
+// ══════ FULL SIMULATOR (S7) ══════
+let simScene, simCamera, simRenderer, simLoop, simAngle=0, simRotating=false, simRAF;
+(function initSim() {
+  const container = document.getElementById('simContainer');
+  const W = container.clientWidth;
+  simRenderer = new THREE.WebGLRenderer({antialias:true});
+  simRenderer.setSize(W, 460);
+  simRenderer.setClearColor(0x080C18);
+  container.appendChild(simRenderer.domElement);
+
+  simScene = new THREE.Scene();
+  simCamera = new THREE.PerspectiveCamera(42, W/460, 0.1, 100);
+  simCamera.position.set(8, 6, 10); simCamera.lookAt(0,0,0);
+  simScene.add(new THREE.AmbientLight(0xffffff,0.6));
+  const dl=new THREE.DirectionalLight(0xffffff,.6); dl.position.set(5,5,5); simScene.add(dl);
+
+  // B field lines
+  addFieldLines(simScene, 7, 0.65, 12, 0xA78BFA);
+  simScene.add(makeLabel('B →', 5.5, 0, 0, '#A78BFA'));
+
+  // Loop group
+  simLoop = new THREE.Group();
+  simLoop.rotation.x = Math.PI/2; // start at θ=90°
+
+  const loopLine = makeRectLoop(3, 2, 0x5EEAD4, 3);
+  simLoop.add(loopLine);
+
+  // thick border
+  const edges = [
+    [[-1.5,-1,0],[1.5,-1,0]],
+    [[1.5,-1,0],[1.5,1,0]],
+    [[1.5,1,0],[-1.5,1,0]],
+    [[-1.5,1,0],[-1.5,-1,0]]
+  ];
+  edges.forEach(([s,e])=>{
+    const pts=[new THREE.Vector3(...s),new THREE.Vector3(...e)];
+    const geo=new THREE.BufferGeometry().setFromPoints(pts);
+    simLoop.add(new THREE.Line(geo,new THREE.LineBasicMaterial({color:0x5EEAD4})));
+  });
+
+  // Loop surface
+  const surfGeo = new THREE.PlaneGeometry(3,2);
+  const surfMat = new THREE.MeshBasicMaterial({color:0x5EEAD4, opacity:0.08, transparent:true, side:THREE.DoubleSide});
+  simLoop.add(new THREE.Mesh(surfGeo, surfMat));
+
+  // m arrow
+  const mGeo=new THREE.CylinderGeometry(.05,.05,2.5,6);
+  const mMesh=new THREE.Mesh(mGeo,new THREE.MeshBasicMaterial({color:0xFCD34D}));
+  mMesh.rotation.x=Math.PI/2; mMesh.position.set(0,0,1.25);
+  const mHGeo=new THREE.ConeGeometry(.13,.35,6);
+  const mHMesh=new THREE.Mesh(mHGeo,new THREE.MeshBasicMaterial({color:0xFCD34D}));
+  mHMesh.rotation.x=Math.PI/2; mHMesh.position.set(0,0,2.5);
+  simLoop.add(mMesh,mHMesh);
+  simScene.add(simLoop);
+
+  // Force arrows (fixed in world space)
+  function worldForce(scene,x,up) {
+    const y1=0,y2=up?2.5:-2.5;
+    const cg=new THREE.CylinderGeometry(.04,.04,2.5,6);
+    const mat=new THREE.MeshBasicMaterial({color:up?0xF87171:0x4ADE80});
+    const m=new THREE.Mesh(cg,mat);
+    m.position.set(x,(y1+y2)/2,0); scene.add(m);
+    const hg=new THREE.ConeGeometry(.12,.3,6);
+    const hm=new THREE.Mesh(hg,mat);
+    hm.position.set(x,y2,0);
+    if(!up) hm.rotation.z=Math.PI;
+    scene.add(hm);
+    scene.add(makeLabel(up?'F₁↑':'F₂↓',x+(up?0.3:-0.7),y2+(up?0.4:-0.4),0,up?'#F87171':'#4ADE80'));
+  }
+  worldForce(simScene,-1.5,true);
+  worldForce(simScene,1.5,false);
+
+  // Rotation axis
+  const rg=new THREE.CylinderGeometry(.04,.04,7,6);
+  const rm=new THREE.MeshBasicMaterial({color:0xFF6B6B,opacity:.35,transparent:true});
+  const rx=new THREE.Mesh(rg,rm); rx.rotation.z=Math.PI/2; simScene.add(rx);
+
+  // Labels
+  simScene.add(makeLabel('ABCD loop', -1.5, 1.3, 0.5, '#5EEAD4'));
+  simScene.add(makeLabel('m = NIA', 0.4, 0, 2.8, '#FCD34D'));
+
+  // Orbit
+  let drag2=false,ox=0,oy=0;
+  const el=simRenderer.domElement;
+  el.addEventListener('mousedown',e=>{drag2=true;ox=e.clientX;oy=e.clientY;});
+  el.addEventListener('mouseup',()=>drag2=false);
+  el.addEventListener('mousemove',e=>{
+    if(!drag2) return;
+    const dx=(e.clientX-ox)*.008,dy=(e.clientY-oy)*.008;
+    simCamera.position.applyQuaternion(new THREE.Quaternion().setFromEuler(new THREE.Euler(dy,dx,0)));
+    ox=e.clientX;oy=e.clientY;
+  });
+  el.addEventListener('wheel',e=>{simCamera.position.multiplyScalar(1+e.deltaY*.001);});
+
+  function animSim() {
+    simRAF=requestAnimationFrame(animSim);
+    if(simRotating) {
+      simAngle += 0.012;
+      simLoop.rotation.x = simAngle;
+    }
+    simRenderer.render(simScene, simCamera);
+    updateSimResults();
+  }
+  animSim();
+})();
+
+function toggleSimRot() {
+  simRotating=!simRotating;
+  const btn=document.getElementById('simRotBtn');
+  btn.textContent=simRotating?'⏸ Pause Rotation':'▶ Start Rotation';
+  btn.className=simRotating?'btn btn-pause':'btn btn-teal';
+}
+function resetSim() {
+  simAngle=Math.PI/2;
+  simLoop.rotation.x=simAngle;
+}
+
+function calcSim() {
+  document.getElementById('simNv').textContent=`N = ${document.getElementById('simN').value}`;
+  document.getElementById('simIv').textContent=`I = ${document.getElementById('simI').value} A`;
+  document.getElementById('simAv').textContent=`A = ${document.getElementById('simA').value} cm²`;
+  document.getElementById('simBv').textContent=`B = ${document.getElementById('simB').value} T`;
+}
+calcSim();
+
+function updateSimResults() {
+  const N=parseFloat(document.getElementById('simN').value);
+  const I=parseFloat(document.getElementById('simI').value);
+  const A=parseFloat(document.getElementById('simA').value)*1e-4;
+  const B=parseFloat(document.getElementById('simB').value);
+  const theta = ((simLoop.rotation.x%(2*Math.PI)) + 2*Math.PI)%(2*Math.PI);
+  const thetaDeg = (theta*180/Math.PI).toFixed(1);
+  const sinT = Math.abs(Math.sin(theta));
+  const tau = (N*I*A*B*sinT).toFixed(5);
+  const m_val = (N*I*A).toFixed(5);
+  const tauMax = (N*I*A*B).toFixed(5);
+
+  document.getElementById('simResults').innerHTML=`
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;">
+    ${sr('θ (current)', thetaDeg+'°', '#5EEAD4')}
+    ${sr('sin θ', sinT.toFixed(4), '#94A3B8')}
+    ${sr('m = NIA', m_val+' A·m²', '#FCD34D')}
+    ${sr('τ = mB sinθ', tau+' N·m', '#F87171')}
+    ${sr('τ_max = NIAB', tauMax+' N·m', '#F87171')}
+    ${sr('τ / τ_max', (tau/tauMax).toFixed(4), sinT>0.99?'#4ADE80':sinT<0.01?'#F87171':'#94A3B8')}
+  </div>`;
+}
+function sr(lbl,val,color) {
+  return `<div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:11px 14px">
+    <div style="font-size:10px;color:#64748B;font-weight:700;letter-spacing:.4px;text-transform:uppercase;margin-bottom:4px">${lbl}</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:${color};font-weight:600">${val}</div>
+  </div>`;
+}
+
+// resize handlers
+window.addEventListener('resize', ()=>{
+  ['case1Container','case2Container','simContainer'].forEach(id=>{
+    const c=document.getElementById(id);
+    const r={case1Container:c1Renderer,case2Container:c2Renderer,simContainer:simRenderer}[id];
+    const cam={case1Container:c1Camera,case2Container:c2Camera,simContainer:simCamera}[id];
+    const h={case1Container:400,case2Container:420,simContainer:460}[id];
+    if(r&&cam){r.setSize(c.clientWidth,h);cam.aspect=c.clientWidth/h;cam.updateProjectionMatrix();}
+  });
+  updateForceCanvas();
+});
+</script>
+</body>
+</html>

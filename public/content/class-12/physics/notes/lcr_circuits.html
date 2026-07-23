@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LCR Circuits — Class 12 Physics</title>
+<style>*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.19 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.static{position:static}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0}.top-0{top:0}.z-10{z-index:10}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:.25rem}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-5{margin-left:1.25rem}.mt-1{margin-top:.25rem}.mt-12{margin-top:3rem}.mt-14{margin-top:3.5rem}.mt-2{margin-top:.5rem}.mt-3{margin-top:.75rem}.mt-4{margin-top:1rem}.mt-5{margin-top:1.25rem}.mt-6{margin-top:1.5rem}.flex{display:flex}.table{display:table}.grid{display:grid}.w-1\/3{width:33.333333%}.w-full{width:100%}.max-w-3xl{max-width:48rem}.max-w-5xl{max-width:64rem}.max-w-xl{max-width:36rem}.flex-1{flex:1 1 0%}.border-collapse{border-collapse:collapse}.cursor-pointer{cursor:pointer}.scroll-mt-16{scroll-margin-top:4rem}.list-decimal{list-style-type:decimal}.list-none{list-style-type:none}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.space-y-1>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.25rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.25rem*var(--tw-space-y-reverse))}.space-y-2>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.5rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.5rem*var(--tw-space-y-reverse))}.space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse:0;margin-top:calc(.75rem*(1 - var(--tw-space-y-reverse)));margin-bottom:calc(.75rem*var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.whitespace-nowrap{white-space:nowrap}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-xl{border-radius:.75rem}.rounded-tl-lg{border-top-left-radius:.5rem}.rounded-tr-lg{border-top-right-radius:.5rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-b-2{border-bottom-width:2px}.border-l-4{border-left-width:4px}.border-t{border-top-width:1px}.border-amber-200{--tw-border-opacity:1;border-color:rgb(253 230 138/var(--tw-border-opacity,1))}.border-amber-300\/40{border-color:rgba(252,211,77,.4)}.border-amber-500{--tw-border-opacity:1;border-color:rgb(245 158 11/var(--tw-border-opacity,1))}.border-cyan-300\/40{border-color:rgba(103,232,249,.4)}.border-cyan-600{--tw-border-opacity:1;border-color:rgb(8 145 178/var(--tw-border-opacity,1))}.border-emerald-200{--tw-border-opacity:1;border-color:rgb(167 243 208/var(--tw-border-opacity,1))}.border-green-600{--tw-border-opacity:1;border-color:rgb(22 163 74/var(--tw-border-opacity,1))}.border-rose-200{--tw-border-opacity:1;border-color:rgb(254 205 211/var(--tw-border-opacity,1))}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249/var(--tw-border-opacity,1))}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240/var(--tw-border-opacity,1))}.border-transparent{border-color:transparent}.border-violet-300\/40{border-color:rgba(196,181,253,.4)}.border-violet-600{--tw-border-opacity:1;border-color:rgb(124 58 237/var(--tw-border-opacity,1))}.bg-amber-50{--tw-bg-opacity:1;background-color:rgb(255 251 235/var(--tw-bg-opacity,1))}.bg-amber-500\/15{background-color:rgba(245,158,11,.15)}.bg-cyan-50{--tw-bg-opacity:1;background-color:rgb(236 254 255/var(--tw-bg-opacity,1))}.bg-cyan-500\/15{background-color:rgba(6,182,212,.15)}.bg-cyan-600{--tw-bg-opacity:1;background-color:rgb(8 145 178/var(--tw-bg-opacity,1))}.bg-green-50{--tw-bg-opacity:1;background-color:rgb(240 253 244/var(--tw-bg-opacity,1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252/var(--tw-bg-opacity,1))}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42/var(--tw-bg-opacity,1))}.bg-violet-50{--tw-bg-opacity:1;background-color:rgb(245 243 255/var(--tw-bg-opacity,1))}.bg-violet-500\/15{background-color:rgba(139,92,246,.15)}.bg-violet-600{--tw-bg-opacity:1;background-color:rgb(124 58 237/var(--tw-bg-opacity,1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.bg-white\/95{background-color:hsla(0,0%,100%,.95)}.bg-\[radial-gradient\(ellipse_at_30\%_40\%\2c rgba\(124\2c 58\2c 237\2c 0\.25\)\2c transparent_55\%\)\]{background-image:radial-gradient(ellipse at 30% 40%,rgba(124,58,237,.25),transparent 55%)}.bg-\[radial-gradient\(ellipse_at_30\%_40\%\2c rgba\(8\2c 145\2c 178\2c 0\.25\)\2c transparent_55\%\)\]{background-image:radial-gradient(ellipse at 30% 40%,rgba(8,145,178,.25),transparent 55%)}.bg-gradient-to-br{background-image:linear-gradient(to bottom right,var(--tw-gradient-stops))}.from-slate-900{--tw-gradient-from:#0f172a var(--tw-gradient-from-position);--tw-gradient-to:rgba(15,23,42,0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}.via-cyan-950{--tw-gradient-to:rgba(8,51,68,0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),#083344 var(--tw-gradient-via-position),var(--tw-gradient-to)}.via-violet-950{--tw-gradient-to:rgba(46,16,101,0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from),#2e1065 var(--tw-gradient-via-position),var(--tw-gradient-to)}.to-slate-800{--tw-gradient-to:#1e293b var(--tw-gradient-to-position)}.p-2\.5{padding:.625rem}.p-3{padding:.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-14{padding-top:3.5rem;padding-bottom:3.5rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-20{padding-bottom:5rem}.pt-0{padding-top:0}.text-left{text-align:left}.text-center{text-align:center}.font-sans{font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xs{font-size:.75rem;line-height:1rem}.font-bold{font-weight:700}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-\[2\.5px\]{letter-spacing:2.5px}.tracking-\[3px\]{letter-spacing:3px}.tracking-wide{letter-spacing:.025em}.tracking-wider{letter-spacing:.05em}.text-amber-200{--tw-text-opacity:1;color:rgb(253 230 138/var(--tw-text-opacity,1))}.text-amber-700{--tw-text-opacity:1;color:rgb(180 83 9/var(--tw-text-opacity,1))}.text-amber-900{--tw-text-opacity:1;color:rgb(120 53 15/var(--tw-text-opacity,1))}.text-amber-950{--tw-text-opacity:1;color:rgb(69 26 3/var(--tw-text-opacity,1))}.text-blue-700{--tw-text-opacity:1;color:rgb(29 78 216/var(--tw-text-opacity,1))}.text-cyan-200{--tw-text-opacity:1;color:rgb(165 243 252/var(--tw-text-opacity,1))}.text-cyan-300{--tw-text-opacity:1;color:rgb(103 232 249/var(--tw-text-opacity,1))}.text-cyan-600{--tw-text-opacity:1;color:rgb(8 145 178/var(--tw-text-opacity,1))}.text-cyan-700{--tw-text-opacity:1;color:rgb(14 116 144/var(--tw-text-opacity,1))}.text-cyan-900{--tw-text-opacity:1;color:rgb(22 78 99/var(--tw-text-opacity,1))}.text-cyan-950{--tw-text-opacity:1;color:rgb(8 51 68/var(--tw-text-opacity,1))}.text-emerald-700{--tw-text-opacity:1;color:rgb(4 120 87/var(--tw-text-opacity,1))}.text-green-700{--tw-text-opacity:1;color:rgb(21 128 61/var(--tw-text-opacity,1))}.text-green-900{--tw-text-opacity:1;color:rgb(20 83 45/var(--tw-text-opacity,1))}.text-green-950{--tw-text-opacity:1;color:rgb(5 46 22/var(--tw-text-opacity,1))}.text-red-600{--tw-text-opacity:1;color:rgb(220 38 38/var(--tw-text-opacity,1))}.text-red-700{--tw-text-opacity:1;color:rgb(185 28 28/var(--tw-text-opacity,1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225/var(--tw-text-opacity,1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184/var(--tw-text-opacity,1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139/var(--tw-text-opacity,1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105/var(--tw-text-opacity,1))}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59/var(--tw-text-opacity,1))}.text-slate-900{--tw-text-opacity:1;color:rgb(15 23 42/var(--tw-text-opacity,1))}.text-teal-700{--tw-text-opacity:1;color:rgb(15 118 110/var(--tw-text-opacity,1))}.text-violet-200{--tw-text-opacity:1;color:rgb(221 214 254/var(--tw-text-opacity,1))}.text-violet-300{--tw-text-opacity:1;color:rgb(196 181 253/var(--tw-text-opacity,1))}.text-violet-600{--tw-text-opacity:1;color:rgb(124 58 237/var(--tw-text-opacity,1))}.text-violet-700{--tw-text-opacity:1;color:rgb(109 40 217/var(--tw-text-opacity,1))}.text-violet-900{--tw-text-opacity:1;color:rgb(76 29 149/var(--tw-text-opacity,1))}.text-violet-950{--tw-text-opacity:1;color:rgb(46 16 101/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.opacity-60{opacity:.6}.opacity-80{opacity:.8}.shadow-sm{--tw-shadow:0 1px 2px 0 rgba(0,0,0,.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.hover\:bg-slate-50:hover{--tw-bg-opacity:1;background-color:rgb(248 250 252/var(--tw-bg-opacity,1))}.group[open] .group-open\:rotate-180{--tw-rotate:180deg;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@media (min-width:640px){.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.sm\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}}@media (min-width:768px){.md\:text-5xl{font-size:3rem;line-height:1}.md\:text-base{font-size:1rem;line-height:1.5rem}}</style>
+<style>
+*{box-sizing:border-box;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;}
+.serif{font-family:Georgia,'Times New Roman',serif;}
+.mono{font-family:'SF Mono',Consolas,'Liberation Mono',Menlo,monospace;}
+.formula-box{background:linear-gradient(135deg,#EFF6FF,#F0F9FF);border:1.5px solid #BFDBFE;border-left:4px solid #2563EB;border-radius:12px;}
+.formula-box.teal{background:linear-gradient(135deg,#F0FDFA,#ECFDF5);border-color:#99F6E4;border-left-color:#0D9488;}
+.formula-box.amber{background:linear-gradient(135deg,#FFFBEB,#FFF7ED);border-color:#FCD34D;border-left-color:#D97706;}
+.formula-box.red{background:linear-gradient(135deg,#FEF2F2,#FEE2E2);border-color:#FCA5A5;border-left-color:#DC2626;}
+.formula-box.purple{background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border-color:#DDD6FE;border-left-color:#7C3AED;}
+.formula-box.green{background:linear-gradient(135deg,#F0FDF4,#DCFCE7);border-color:#86EFAC;border-left-color:#16A34A;}
+canvas{max-width:100%;}
+.nav-link{transition:color .15s,border-color .15s;}
+.nav-link.active{color:#0E7490;border-bottom-color:#0E7490;}
+::-webkit-scrollbar{height:6px;}
+.step-num{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0;}
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800 leading-relaxed">
+
+<!-- HERO -->
+<header class="bg-gradient-to-br from-slate-900 via-cyan-950 to-slate-800 text-white py-14 px-5 text-center relative overflow-hidden">
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_40%,rgba(8,145,178,0.25),transparent_55%)]"></div>
+  <div class="relative z-10 max-w-3xl mx-auto">
+    <p class="text-cyan-300 text-[11px] font-bold tracking-[3px] uppercase mb-3">Class 12 Physics · Chapter 7 · Section 7.2–7.3</p>
+    <h1 class="serif text-3xl md:text-5xl font-bold leading-tight mb-4">LCR Circuits <span class="text-cyan-300">— Complete Theory</span></h1>
+    <p class="text-slate-300 text-sm md:text-base max-w-xl mx-auto mb-6">R-C, L-C-R, impedance, resonance, power, and AC devices — exact CBSE derivations with every special case, blind spot, and extreme condition flagged.</p>
+    <div class="flex flex-wrap gap-2 justify-center text-xs font-semibold">
+      <span class="bg-cyan-500/15 border border-cyan-300/40 text-cyan-200 rounded-full px-3 py-1">Z = √(R²+(X_L−X_C)²)</span>
+      <span class="bg-amber-500/15 border border-amber-300/40 text-amber-200 rounded-full px-3 py-1">ω_r = 1/√(LC)</span>
+      <span class="bg-violet-500/15 border border-violet-300/40 text-violet-200 rounded-full px-3 py-1">P_av = E_rms·I_rms·cosφ</span>
+    </div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200 overflow-x-auto">
+  <div class="flex max-w-5xl mx-auto whitespace-nowrap text-[11px] font-bold uppercase tracking-wide" id="navBar">
+    <a href="#s1" class="nav-link px-4 py-3 text-slate-500 border-b-2 border-transparent">R-C Circuit</a>
+    <a href="#s2" class="nav-link px-4 py-3 text-slate-500 border-b-2 border-transparent">LCR Circuit</a>
+    <a href="#s3" class="nav-link px-4 py-3 text-slate-500 border-b-2 border-transparent">Impedance</a>
+    <a href="#s4" class="nav-link px-4 py-3 text-slate-500 border-b-2 border-transparent">Resonance</a>
+    <a href="#s5" class="nav-link px-4 py-3 text-slate-500 border-b-2 border-transparent">Average Power</a>
+    <a href="#s6" class="nav-link px-4 py-3 text-slate-500 border-b-2 border-transparent">Special Cases</a>
+    <a href="#s7" class="nav-link px-4 py-3 text-slate-500 border-b-2 border-transparent">Blind Spots</a>
+    <a href="#s8" class="nav-link px-4 py-3 text-slate-500 border-b-2 border-transparent">Summary</a>
+  </div>
+</nav>
+
+<main class="max-w-3xl mx-auto px-5 pb-20">
+
+<!-- ═══ S1: R-C CIRCUIT ═══ -->
+<section id="s1" class="mt-12 scroll-mt-16">
+  <p class="text-[11px] font-bold tracking-[2.5px] uppercase text-cyan-700 mb-1">Building Block 1</p>
+  <h2 class="serif text-2xl font-bold text-slate-900 mb-3">AC Circuit Containing Resistance and Capacitance</h2>
+
+  <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-4">
+    <p class="mb-3">R and C are connected in series to an AC source E. Current through both is the same (series circuit), but voltage across each lags/leads differently.</p>
+
+    <div class="flex gap-4 mb-3">
+      <div class="step-num bg-cyan-600 text-white">1</div>
+      <div class="flex-1">
+        <p class="font-semibold text-slate-900 mb-1">Voltage across R is in phase with current; voltage across C lags current by 90°</p>
+        <p class="text-sm text-slate-600">V_R = I₀R (in phase with I) &nbsp;|&nbsp; V_C = I₀X_C (lags I by π/2)</p>
+      </div>
+    </div>
+    <div class="flex gap-4 mb-3">
+      <div class="step-num bg-cyan-600 text-white">2</div>
+      <div class="flex-1">
+        <p class="font-semibold text-slate-900 mb-1">Add as phasors (NOT algebraically) — V_R and V_C are 90° apart</p>
+        <div class="formula-box rounded-xl p-4 mt-2 mono text-center">
+          <p class="text-[10px] font-sans font-bold uppercase tracking-wider text-blue-700 mb-2 text-left">Resultant peak EMF</p>
+          <p class="text-lg font-semibold text-slate-800">E₀ = √[(I₀R)² + (I₀X_C)²] = I₀√(R² + X_C²)</p>
+        </div>
+      </div>
+    </div>
+    <div class="flex gap-4">
+      <div class="step-num bg-cyan-600 text-white">3</div>
+      <div class="flex-1">
+        <p class="font-semibold text-slate-900 mb-1">Define Impedance Z = E₀/I₀</p>
+        <div class="formula-box teal rounded-xl p-4 mt-2 mono text-center">
+          <p class="text-[10px] font-sans font-bold uppercase tracking-wider text-teal-700 mb-2 text-left">Impedance of R-C circuit</p>
+          <p class="text-lg font-semibold text-slate-800">Z = √(R² + X_C²)</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-cyan-50 border-l-4 border-cyan-600 rounded-xl p-4 mt-4 text-sm text-cyan-900">
+      <strong class="text-cyan-950">Phase angle:</strong> tan φ = X_C/R = (1/ωC)/R. In an R-C circuit, voltage <strong>lags</strong> behind current by phase angle φ (opposite of what happens in pure inductor where voltage leads).
+    </div>
+  </div>
+
+  <!-- STATIC GRAPH: Phasor diagram for R-C -->
+  <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm mb-8">
+    <p class="text-xs font-bold uppercase tracking-wide text-slate-400 mb-2">Static Reference — Phasor Diagram (R-C)</p>
+    <canvas id="rcPhasor" width="600" height="320"></canvas>
+    <p class="text-xs text-slate-500 mt-2">V_R along current axis (horizontal); V_C drawn 90° below (lagging); E₀ is the vector sum (hypotenuse).</p>
+  </div>
+</section>
+
+<!-- ═══ S2: LCR CIRCUIT ═══ -->
+<section id="s2" class="mt-14 scroll-mt-16">
+  <p class="text-[11px] font-bold tracking-[2.5px] uppercase text-cyan-700 mb-1">Combining Everything</p>
+  <h2 class="serif text-2xl font-bold text-slate-900 mb-3">AC Through L-C-R Circuit</h2>
+
+  <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-4">
+    <p class="mb-3">R, L, C connected in <strong>series</strong> to an AC source. Current through all three is identical in amplitude and phase: I = I₀sinωt. But each element's voltage has a different phase relationship with this current.</p>
+
+    <table class="w-full text-sm border-collapse mb-4">
+      <thead><tr class="bg-slate-900 text-white"><th class="text-left p-2.5 rounded-tl-lg">Element</th><th class="text-left p-2.5">Peak Voltage</th><th class="text-left p-2.5 rounded-tr-lg">Phase vs Current</th></tr></thead>
+      <tbody class="text-slate-600">
+        <tr class="bg-slate-50"><td class="p-2.5">Resistor R</td><td class="p-2.5 mono">V_R = I₀R</td><td class="p-2.5">In phase</td></tr>
+        <tr><td class="p-2.5">Inductor L</td><td class="p-2.5 mono">V_L = I₀X_L</td><td class="p-2.5">Leads I by 90°</td></tr>
+        <tr class="bg-slate-50"><td class="p-2.5">Capacitor C</td><td class="p-2.5 mono">V_C = I₀X_C</td><td class="p-2.5">Lags I by 90°</td></tr>
+      </tbody>
+    </table>
+
+    <div class="flex gap-4 mb-3">
+      <div class="step-num bg-cyan-600 text-white">1</div>
+      <div class="flex-1">
+        <p class="font-semibold text-slate-900 mb-1">V_L and V_C are exactly opposite in direction (180° apart from each other)</p>
+        <p class="text-sm text-slate-600">Since V_L leads I by 90° and V_C lags I by 90°, they point in <strong>opposite</strong> directions on the phasor diagram. Net vertical voltage = V_L − V_C (assuming V_L &gt; V_C).</p>
+      </div>
+    </div>
+    <div class="flex gap-4 mb-3">
+      <div class="step-num bg-cyan-600 text-white">2</div>
+      <div class="flex-1">
+        <p class="font-semibold text-slate-900 mb-1">Combine (V_L − V_C) with V_R using Pythagoras (they're 90° apart)</p>
+        <div class="formula-box rounded-xl p-4 mt-2 mono text-center">
+          <p class="text-[10px] font-sans font-bold uppercase tracking-wider text-blue-700 mb-2 text-left">Resultant peak EMF</p>
+          <p class="text-lg font-semibold text-slate-800">E₀ = √[(I₀R)² + (I₀X_L − I₀X_C)²] = I₀√[R² + (X_L−X_C)²]</p>
+        </div>
+      </div>
+    </div>
+    <div class="flex gap-4">
+      <div class="step-num bg-cyan-600 text-white">3</div>
+      <div class="flex-1">
+        <p class="font-semibold text-slate-900 mb-1">Impedance and phase angle of LCR circuit</p>
+        <div class="formula-box teal rounded-xl p-4 mt-2 mono text-center mb-3">
+          <p class="text-[10px] font-sans font-bold uppercase tracking-wider text-teal-700 mb-2 text-left">Impedance</p>
+          <p class="text-lg font-semibold text-slate-800">Z = E₀/I₀ = √[R² + (X_L−X_C)²]</p>
+        </div>
+        <div class="formula-box amber rounded-xl p-4 mono text-center">
+          <p class="text-[10px] font-sans font-bold uppercase tracking-wider text-amber-700 mb-2 text-left">Phase angle</p>
+          <p class="text-lg font-semibold text-slate-800">tan φ = (X_L − X_C)/R</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-amber-50 border-l-4 border-amber-500 rounded-xl p-4 mt-4 text-sm text-amber-900">
+      <strong class="text-amber-950">The reactance X = X_L − X_C</strong> is the net "opposing" component, separate from R. The right-angled triangle with R, X (=X_L−X_C), and Z as hypotenuse is called the <strong>impedance diagram</strong> — memorize this triangle, it solves 90% of LCR numerical problems instantly.
+    </div>
+
+    <p class="mt-4">The complete alternating current equation: <span class="mono font-semibold">I = I₀ sin(ωt + φ')</span> where φ' may be positive or negative depending on whether X_L &gt; X_C or X_C &gt; X_L (explained fully in Special Cases below).</p>
+  </div>
+
+  <!-- STATIC GRAPH: LCR Phasor diagram -->
+  <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm mb-4">
+    <p class="text-xs font-bold uppercase tracking-wide text-slate-400 mb-2">Static Reference — Phasor Diagram (Series L-C-R)</p>
+    <canvas id="lcrPhasor" width="600" height="380"></canvas>
+    <p class="text-xs text-slate-500 mt-2">V_L (up) and V_C (down) are opposite; their difference combines with V_R (horizontal) at 90° to give resultant E₀.</p>
+  </div>
+
+  <!-- STATIC GRAPH: Impedance triangle -->
+  <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm mb-8">
+    <p class="text-xs font-bold uppercase tracking-wide text-slate-400 mb-2">Static Reference — Impedance Diagram (Right Triangle)</p>
+    <canvas id="impTriangle" width="600" height="320"></canvas>
+    <p class="text-xs text-slate-500 mt-2">Base = R, Perpendicular = X (= X_L − X_C), Hypotenuse = Z. This triangle directly gives tan φ = X/R and Z = √(R²+X²).</p>
+  </div>
+</section>
+
+<!-- ═══ S3: IMPEDANCE DEEP DIVE ═══ -->
+<section id="s3" class="mt-14 scroll-mt-16">
+  <p class="text-[11px] font-bold tracking-[2.5px] uppercase text-cyan-700 mb-1">Worked Example</p>
+  <h2 class="serif text-2xl font-bold text-slate-900 mb-3">Impedance — Full Numerical Walkthrough</h2>
+
+  <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-4">
+    <p class="text-sm text-slate-500 mb-3 font-semibold">Example 7 (from book): C=100μF, R=50Ω, L=0.5H, connected in series to 110V-50Hz source. Find RMS current.</p>
+    <div class="space-y-2 text-sm mono bg-slate-50 rounded-xl p-4 border border-slate-200">
+      <p>X_C = 1/(2πνC) = 1/(2×3.14×50×100×10⁻⁶) = <strong>31.85 Ω</strong></p>
+      <p>X_L = ωL = 2πνL = 2×3.14×50×0.5 = <strong>157 Ω</strong></p>
+      <p>Z = √[R² + (X_L−X_C)²] = √[(50)² + (157−31.85)²] = √[2500+15660.5] = <strong>134.77 Ω</strong></p>
+      <p>E_rms = 110V (given as RMS already) → I_rms = E_rms/Z = 110/134.77 = <strong>0.816 A</strong></p>
+    </div>
+    <div class="bg-cyan-50 border-l-4 border-cyan-600 rounded-xl p-4 mt-4 text-sm text-cyan-900">
+      <strong>Note the trap:</strong> Since X_L (157Ω) &gt; X_C (31.85Ω), the circuit is <strong>inductance-dominated</strong> — voltage leads current. If the question had asked for phase angle direction, you'd say "voltage leads current by φ = tan⁻¹[(157−31.85)/50] ≈ 68.2°".
+    </div>
+  </div>
+
+  <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-8">
+    <p class="text-sm text-slate-500 mb-3 font-semibold">Example 8: L=0.01H, R=1Ω coil connected to 200V, 50Hz AC. Find impedance and time lag.</p>
+    <div class="space-y-2 text-sm mono bg-slate-50 rounded-xl p-4 border border-slate-200">
+      <p>Z = √(R² + X_L²) = √[1² + (2π×50×0.01)²] = √(1+9.86) = √10.86 = <strong>3.3 Ω</strong></p>
+      <p>tan φ = ωL/R = (2×3.14×50×0.01)/1 = <strong>3.14</strong> → φ = tan⁻¹(3.14) ≈ <strong>72°</strong></p>
+      <p>Time lag Δt = φ/ω = (72π/180)/(2π×50) = <strong>1/250 s = 4 ms</strong></p>
+    </div>
+    <p class="text-sm text-slate-600 mt-3"><strong>Why convert phase angle to time?</strong> φ is in radians (angle), but "time lag" must be in seconds. Use Δt = φ/ω — this conversion is asked frequently and many students forget the ω in the denominator.</p>
+  </div>
+</section>
+
+<!-- ═══ S4: RESONANCE ═══ -->
+<section id="s4" class="mt-14 scroll-mt-16">
+  <p class="text-[11px] font-bold tracking-[2.5px] uppercase text-cyan-700 mb-1">The Most Tested Concept</p>
+  <h2 class="serif text-2xl font-bold text-slate-900 mb-3">Resonance in Series LCR Circuit</h2>
+
+  <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-4">
+    <div class="bg-amber-50 border-l-4 border-amber-500 rounded-xl p-4 mb-4 text-sm text-amber-900">
+      <strong class="text-amber-950">Definition (exact):</strong> When the phase difference φ between current and voltage becomes <strong>zero</strong>, the circuit is said to be in resonance. This happens when X_L = X_C exactly.
+    </div>
+
+    <div class="flex gap-4 mb-3">
+      <div class="step-num bg-cyan-600 text-white">1</div>
+      <div class="flex-1">
+        <p class="font-semibold text-slate-900 mb-1">As frequency increases, X_L increases and X_C decreases</p>
+        <p class="text-sm text-slate-600">X_L = ωL (∝ω, increasing) &nbsp;|&nbsp; X_C = 1/ωC (∝1/ω, decreasing). At some specific angular frequency ω_r, they become exactly equal.</p>
+      </div>
+    </div>
+    <div class="flex gap-4 mb-3">
+      <div class="step-num bg-cyan-600 text-white">2</div>
+      <div class="flex-1">
+        <p class="font-semibold text-slate-900 mb-1">Set X_L = X_C and solve for ω_r</p>
+        <div class="formula-box rounded-xl p-4 mt-2 mono text-center">
+          <p class="text-slate-800">ω_rL = 1/(ω_rC) &nbsp;⟹&nbsp; ω_r² = 1/(LC)</p>
+        </div>
+      </div>
+    </div>
+    <div class="flex gap-4 mb-3">
+      <div class="step-num bg-cyan-600 text-white">3</div>
+      <div class="flex-1">
+        <div class="formula-box teal rounded-xl p-4 mono text-center mb-3">
+          <p class="text-[10px] font-sans font-bold uppercase tracking-wider text-teal-700 mb-2 text-left">Resonant Angular Frequency</p>
+          <p class="text-lg font-semibold text-slate-800">ω_r = 1/√(LC)</p>
+        </div>
+        <div class="formula-box green rounded-xl p-4 mono text-center">
+          <p class="text-[10px] font-sans font-bold uppercase tracking-wider text-green-700 mb-2 text-left">Resonant Frequency (ν_r)</p>
+          <p class="text-lg font-semibold text-slate-800">ν_r = 1/(2π√(LC))</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-green-50 border-l-4 border-green-600 rounded-xl p-4 mt-4 text-sm text-green-900">
+      <strong class="text-green-950">At resonance — three things happen simultaneously (memorize all three):</strong>
+      <ol class="list-decimal ml-5 mt-2 space-y-1">
+        <li>Impedance is <strong>minimum</strong>: Z = R (since X_L−X_C=0, only R remains)</li>
+        <li>Current is <strong>maximum</strong>: I₀ = E₀/Z = E₀/R</li>
+        <li>The circuit behaves as a <strong>purely resistive circuit</strong> (φ=0, current and voltage in phase)</li>
+      </ol>
+    </div>
+
+    <p class="mt-4 text-sm text-slate-600"><strong>Real-world application:</strong> This exact principle is used in the <strong>tuning mechanism of a radio or TV</strong> — turning the tuning knob changes C (or L), shifting ω_r to match the broadcast frequency you want to pick up. Only that frequency produces maximum current/signal strength; all others are suppressed.</p>
+  </div>
+
+  <!-- STATIC GRAPH: I0 vs omega for different R -->
+  <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm mb-8">
+    <p class="text-xs font-bold uppercase tracking-wide text-slate-400 mb-2">Static Reference — Resonance Curve (I₀ vs ω for R₁ &gt; R₂ &gt; R₃)</p>
+    <canvas id="resonanceCurve" width="600" height="340"></canvas>
+    <p class="text-xs text-slate-500 mt-2">Peak occurs at the same ω_r regardless of R — but lower resistance gives a sharper, taller peak (higher selectivity). This sharpness is called the "quality factor" or Q of the circuit.</p>
+  </div>
+</section>
+
+<!-- ═══ S5: AVERAGE POWER ═══ -->
+<section id="s5" class="mt-14 scroll-mt-16">
+  <p class="text-[11px] font-bold tracking-[2.5px] uppercase text-cyan-700 mb-1">Energy Dissipation</p>
+  <h2 class="serif text-2xl font-bold text-slate-900 mb-3">Average Power in AC Circuit</h2>
+
+  <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-4">
+    <p class="mb-3">In AC, both EMF and current change continuously with time — so we must average power over a complete cycle (0 to T), not just compute it at one instant.</p>
+
+    <div class="flex gap-4 mb-3">
+      <div class="step-num bg-cyan-600 text-white">1</div>
+      <div class="flex-1">
+        <p class="font-semibold text-slate-900 mb-1">Instantaneous power and instantaneous work</p>
+        <p class="text-sm text-slate-600 mono">P = EI = E₀sinωt · I₀sin(ωt+φ) &nbsp;&nbsp;|&nbsp;&nbsp; dW = EI dt</p>
+      </div>
+    </div>
+    <div class="flex gap-4 mb-3">
+      <div class="step-num bg-cyan-600 text-white">2</div>
+      <div class="flex-1">
+        <p class="font-semibold text-slate-900 mb-1">Integrate over one full cycle (0 to T) — expand using trig identity</p>
+        <p class="text-sm text-slate-600">Using sin(ωt+φ) = sinωt cosφ + cosωt sinφ, then integrating: ∫sin²ωt dt over one period gives T/2, while ∫sinωt cosωt dt = 0. The sinφ term vanishes completely!</p>
+      </div>
+    </div>
+    <div class="flex gap-4">
+      <div class="step-num bg-cyan-600 text-white">3</div>
+      <div class="flex-1">
+        <p class="font-semibold text-slate-900 mb-1">Result: Total work, then average power</p>
+        <div class="formula-box rounded-xl p-4 mt-2 mono text-center mb-3">
+          <p class="text-slate-800">W = (E₀I₀T/2) cosφ</p>
+        </div>
+        <div class="formula-box amber rounded-xl p-4 mono text-center">
+          <p class="text-[10px] font-sans font-bold uppercase tracking-wider text-amber-700 mb-2 text-left">Average Power — Master Formula</p>
+          <p class="text-lg font-semibold text-slate-800">P_av = (E₀I₀/2) cosφ = E_rms · I_rms · cosφ</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-3 mt-5">
+      <div class="formula-box purple rounded-xl p-4 mono text-center">
+        <p class="text-[10px] font-sans font-bold uppercase tracking-wider text-violet-700 mb-2 text-left">Alternate form</p>
+        <p class="text-base font-semibold text-slate-800">P_av = I²Z cosφ</p>
+      </div>
+      <div class="formula-box red rounded-xl p-4 mono text-center">
+        <p class="text-[10px] font-sans font-bold uppercase tracking-wider text-red-700 mb-2 text-left">Power Factor</p>
+        <p class="text-base font-semibold text-slate-800">cosφ = P_av/(E_rms·I_rms) = R/Z</p>
+      </div>
+    </div>
+
+    <div class="bg-cyan-50 border-l-4 border-cyan-600 rounded-xl p-4 mt-4 text-sm text-cyan-900">
+      <strong class="text-cyan-950">Power factor cosφ = R/Z</strong> is dimensionless, ranges 0 to 1, and tells you what FRACTION of the apparent power (E_rms×I_rms) is actually converted to useful work (true power). cosφ = "True power / Apparent power".
+    </div>
+
+    <h3 class="font-bold text-slate-900 mt-5 mb-2">Power in Each Pure Element (memorize all three results)</h3>
+    <table class="w-full text-sm border-collapse">
+      <thead><tr class="bg-slate-900 text-white"><th class="text-left p-2.5 rounded-tl-lg">Element</th><th class="text-left p-2.5">φ</th><th class="text-left p-2.5 rounded-tr-lg">Average Power</th></tr></thead>
+      <tbody class="text-slate-600">
+        <tr class="bg-slate-50"><td class="p-2.5">Pure R</td><td class="p-2.5">0°</td><td class="p-2.5 mono font-semibold text-emerald-700">P_av = E_v·I_v (MAXIMUM)</td></tr>
+        <tr><td class="p-2.5">Pure L</td><td class="p-2.5">90°</td><td class="p-2.5 mono font-semibold text-red-600">P_av = 0 (ZERO)</td></tr>
+        <tr class="bg-slate-50"><td class="p-2.5">Pure C</td><td class="p-2.5">90°</td><td class="p-2.5 mono font-semibold text-red-600">P_av = 0 (ZERO)</td></tr>
+      </tbody>
+    </table>
+    <div class="bg-amber-50 border-l-4 border-amber-500 rounded-xl p-4 mt-3 text-sm text-amber-900">
+      <strong>Why is power zero in pure L and pure C?</strong> Because cosφ = cos90° = 0. Physically: energy is stored in the magnetic field (L) or electric field (C) during one quarter cycle and given back to the source during the next quarter cycle — net energy consumed over a full cycle is exactly zero. This is called <strong>wattless current</strong> or <strong>idle current</strong>.
+    </div>
+  </div>
+
+  <!-- Special cases for power -->
+  <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-8">
+    <h3 class="font-bold text-slate-900 mb-3">Power Factor — All Circuit Combinations</h3>
+    <div class="space-y-3 text-sm">
+      <div class="bg-slate-50 rounded-lg p-3 border border-slate-200"><strong>(i) Pure R:</strong> φ=0 → P_av = E_vI_v <span class="text-slate-400">(maximum possible)</span></div>
+      <div class="bg-slate-50 rounded-lg p-3 border border-slate-200"><strong>(ii) Pure L:</strong> φ=π/2 → P_av = 0</div>
+      <div class="bg-slate-50 rounded-lg p-3 border border-slate-200"><strong>(iii) Pure C:</strong> φ=π/2 → P_av = 0</div>
+      <div class="bg-slate-50 rounded-lg p-3 border border-slate-200"><strong>(iv) L and R:</strong> tanφ=ωL/R → cosφ=R/√(R²+ω²L²) → P_av = E_vI_v·R/√(R²+ω²L²)</div>
+      <div class="bg-slate-50 rounded-lg p-3 border border-slate-200"><strong>(v) C and R:</strong> tanφ=1/(ωCR) → cosφ=R/√(R²+1/ω²C²) → P_av = E_vI_v·R/√(R²+1/ω²C²)</div>
+      <div class="bg-slate-50 rounded-lg p-3 border border-slate-200"><strong>(vi) L, C and R:</strong> tanφ=(ωL−1/ωC)/R → cosφ=R/√[R²+(ωL−1/ωC)²] → P_av = E_vI_v·R/Z</div>
+    </div>
+  </div>
+
+  <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-8">
+    <p class="text-sm text-slate-500 mb-3 font-semibold">Example 10: E₀=283V, ν=50Hz, R=3Ω, L=25.48mH, C=796μF — find impedance, phase, power, power factor.</p>
+    <div class="space-y-2 text-sm mono bg-slate-50 rounded-xl p-4 border border-slate-200">
+      <p>X_L = 2πνL = 2×3.14×50×25.48×10⁻³ ≈ <strong>8Ω</strong></p>
+      <p>X_C = 1/(2πνC) = 1/(2×3.14×50×796×10⁻⁶) ≈ <strong>4Ω</strong></p>
+      <p>Z = √[R²+(X_L−X_C)²] = √[3²+(8−4)²] = √(9+16) = √25 = <strong>5Ω</strong></p>
+      <p>φ = tan⁻¹[(X_L−X_C)/R] = tan⁻¹(4/3) = <strong>53.1°</strong> (current lags voltage since X_L&gt;X_C)</p>
+      <p>cosφ = R/Z = 3/5 = <strong>0.6</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S6: SPECIAL CASES (X_L vs X_C) ═══ -->
+<section id="s6" class="mt-14 scroll-mt-16">
+  <p class="text-[11px] font-bold tracking-[2.5px] uppercase text-cyan-700 mb-1">Critical for Exams</p>
+  <h2 class="serif text-2xl font-bold text-slate-900 mb-3">Special Cases — Comparing X_L and X_C</h2>
+
+  <div class="grid sm:grid-cols-3 gap-3 mb-8">
+    <div class="bg-white border-2 border-emerald-200 rounded-2xl p-5">
+      <p class="text-2xl mb-2">⚖️</p>
+      <p class="font-bold text-slate-900 mb-1">X_L = X_C</p>
+      <p class="text-sm text-slate-600">Z = R, tanφ = 0, φ = 0°. Circuit is purely resistive — this is the resonance condition.</p>
+    </div>
+    <div class="bg-white border-2 border-amber-200 rounded-2xl p-5">
+      <p class="text-2xl mb-2">⬆️</p>
+      <p class="font-bold text-slate-900 mb-1">X_L &gt; X_C</p>
+      <p class="text-sm text-slate-600">tanφ is positive. <strong>Voltage leads current</strong> — circuit is inductance-dominated (inductive circuit).</p>
+    </div>
+    <div class="bg-white border-2 border-rose-200 rounded-2xl p-5">
+      <p class="text-2xl mb-2">⬇️</p>
+      <p class="font-bold text-slate-900 mb-1">X_C &gt; X_L</p>
+      <p class="text-sm text-slate-600">tanφ is negative. <strong>Voltage lags current</strong> (current leads) — circuit is capacitance-dominated (capacitive circuit).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ S7: BLIND SPOTS ═══ -->
+<section id="s7" class="mt-14 scroll-mt-16">
+  <p class="text-[11px] font-bold tracking-[2.5px] uppercase text-cyan-700 mb-1">Where Marks Get Lost</p>
+  <h2 class="serif text-2xl font-bold text-slate-900 mb-3">Blind Spots — Read Before Every Exam</h2>
+
+  <div class="space-y-3 mb-8">
+    <details class="bg-white border border-slate-200 rounded-xl overflow-hidden group">
+      <summary class="p-4 cursor-pointer font-semibold text-slate-900 hover:bg-slate-50 list-none flex justify-between items-center">
+        <span>Blind spot 1: Adding V_R, V_L, V_C algebraically instead of as phasors</span>
+        <span class="text-cyan-600 group-open:rotate-180 transition-transform">▾</span>
+      </summary>
+      <div class="p-4 pt-0 text-sm text-slate-600 border-t border-slate-100">
+        This is the #1 mistake. V_R, V_L, V_C peak at different times (different phases), so you can NEVER write E₀ = V_R + V_L + V_C directly. You must use E₀ = √[V_R² + (V_L−V_C)²]. The only exception: if asked for INSTANTANEOUS values at one specific frozen moment with known phase angles, you can substitute numbers — but the general peak-value relationship is always the vector sum.
+      </div>
+    </details>
+
+    <details class="bg-white border border-slate-200 rounded-xl overflow-hidden group">
+      <summary class="p-4 cursor-pointer font-semibold text-slate-900 hover:bg-slate-50 list-none flex justify-between items-center">
+        <span>Blind spot 2: Forgetting which reactance term goes first in (X_L − X_C)</span>
+        <span class="text-cyan-600 group-open:rotate-180 transition-transform">▾</span>
+      </summary>
+      <div class="p-4 pt-0 text-sm text-slate-600 border-t border-slate-100">
+        Always write X = X_L − X_C (inductive minus capacitive), never the reverse. The SIGN of this result tells you the circuit's nature: positive → inductive (V leads I), negative → capacitive (I leads V). If you accidentally flip the subtraction order, you'll get the phase direction backwards even if the magnitude (squared in Z) comes out the same.
+      </div>
+    </details>
+
+    <details class="bg-white border border-slate-200 rounded-xl overflow-hidden group">
+      <summary class="p-4 cursor-pointer font-semibold text-slate-900 hover:bg-slate-50 list-none flex justify-between items-center">
+        <span>Blind spot 3: At resonance, thinking voltage across L and C individually becomes zero too</span>
+        <span class="text-cyan-600 group-open:rotate-180 transition-transform">▾</span>
+      </summary>
+      <div class="p-4 pt-0 text-sm text-slate-600 border-t border-slate-100">
+        At resonance, X_L = X_C, so the NET reactive voltage (V_L − V_C) becomes zero — but V_L and V_C individually can still be very large (and equal to each other)! In fact, at resonance with low R, V_L and V_C can both be many times larger than the source voltage E. This is called <strong>voltage magnification</strong> and is a classic "explain why" question.
+      </div>
+    </details>
+
+    <details class="bg-white border border-slate-200 rounded-xl overflow-hidden group">
+      <summary class="p-4 cursor-pointer font-semibold text-slate-900 hover:bg-slate-50 list-none flex justify-between items-center">
+        <span>Blind spot 4: Confusing power factor (cosφ) with phase angle (φ) itself</span>
+        <span class="text-cyan-600 group-open:rotate-180 transition-transform">▾</span>
+      </summary>
+      <div class="p-4 pt-0 text-sm text-slate-600 border-t border-slate-100">
+        Power factor is cosφ (a number between 0 and 1), NOT φ (an angle). If a question asks "find power factor," your final numeric answer should be a pure number like 0.6 or 0.866 — not an angle in degrees. If it asks "find phase angle," THEN you give degrees or radians via tan⁻¹.
+      </div>
+    </details>
+
+    <details class="bg-white border border-slate-200 rounded-xl overflow-hidden group">
+      <summary class="p-4 cursor-pointer font-semibold text-slate-900 hover:bg-slate-50 list-none flex justify-between items-center">
+        <span>Blind spot 5: Phasor diagrams "don't convey initial conditions" — limitation explicitly noted in NCERT</span>
+        <span class="text-cyan-600 group-open:rotate-180 transition-transform">▾</span>
+      </summary>
+      <div class="p-4 pt-0 text-sm text-slate-600 border-t border-slate-100">
+        The book explicitly states: phasor diagrams only depict the <strong>steady-state solution</strong> (relative phase angle), not transient/initial-condition behavior right after switching the circuit on. Don't use phasor diagrams to analyze what happens in the first few milliseconds after a switch closes — they assume the AC has already settled into steady oscillation.
+      </div>
+    </details>
+
+    <details class="bg-white border border-slate-200 rounded-xl overflow-hidden group">
+      <summary class="p-4 cursor-pointer font-semibold text-slate-900 hover:bg-slate-50 list-none flex justify-between items-center">
+        <span>Blind spot 6: Mixing up resonant ANGULAR frequency (ω_r) with resonant frequency (ν_r)</span>
+        <span class="text-cyan-600 group-open:rotate-180 transition-transform">▾</span>
+      </summary>
+      <div class="p-4 pt-0 text-sm text-slate-600 border-t border-slate-100">
+        ω_r = 1/√(LC) is in rad/s. ν_r = 1/(2π√(LC)) is in Hz. They differ by a factor of 2π. If a question gives you L and C and asks for "resonant frequency," check carefully whether it wants ω_r or ν_r — plugging into the wrong formula form is a very common silly mistake under exam pressure.
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ═══ S8: SUMMARY ═══ -->
+<section id="s8" class="mt-14 scroll-mt-16">
+  <p class="text-[11px] font-bold tracking-[2.5px] uppercase text-cyan-700 mb-1">Quick Revision</p>
+  <h2 class="serif text-2xl font-bold text-slate-900 mb-3">Complete Formula Summary</h2>
+
+  <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm mb-8 overflow-x-auto">
+    <table class="w-full text-sm border-collapse">
+      <thead><tr class="bg-slate-900 text-white"><th class="text-left p-2.5 rounded-tl-lg">Concept</th><th class="text-left p-2.5">Formula</th><th class="text-left p-2.5 rounded-tr-lg">Key Point</th></tr></thead>
+      <tbody class="text-slate-600">
+        <tr class="bg-slate-50"><td class="p-2.5">R-C impedance</td><td class="p-2.5 mono">Z=√(R²+X_C²)</td><td class="p-2.5">Voltage lags current</td></tr>
+        <tr><td class="p-2.5">LCR impedance</td><td class="p-2.5 mono">Z=√[R²+(X_L−X_C)²]</td><td class="p-2.5">Master formula</td></tr>
+        <tr class="bg-slate-50"><td class="p-2.5">Phase angle</td><td class="p-2.5 mono">tanφ=(X_L−X_C)/R</td><td class="p-2.5">Sign tells you inductive/capacitive</td></tr>
+        <tr><td class="p-2.5">Resonant ω</td><td class="p-2.5 mono">ω_r=1/√(LC)</td><td class="p-2.5">rad/s</td></tr>
+        <tr class="bg-slate-50"><td class="p-2.5">Resonant ν</td><td class="p-2.5 mono">ν_r=1/(2π√(LC))</td><td class="p-2.5">Hz</td></tr>
+        <tr><td class="p-2.5">At resonance</td><td class="p-2.5 mono">Z=R, I₀=max</td><td class="p-2.5">Purely resistive behavior</td></tr>
+        <tr class="bg-slate-50"><td class="p-2.5">Average power</td><td class="p-2.5 mono">P_av=E_v I_v cosφ</td><td class="p-2.5">cosφ=R/Z</td></tr>
+        <tr><td class="p-2.5">Power factor</td><td class="p-2.5 mono">cosφ=True/Apparent power</td><td class="p-2.5">Pure number, 0 to 1</td></tr>
+        <tr class="bg-slate-50"><td class="p-2.5">Power in pure L,C</td><td class="p-2.5 mono">P_av=0</td><td class="p-2.5">Wattless/idle current</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<footer class="bg-slate-900 text-white text-center py-8 px-5 text-xs opacity-80">
+  <p class="font-semibold mb-1">LCR Circuits — Complete CBSE Theory</p>
+  <p class="opacity-60">Class 12 Physics · Alternating Current · Quantum Tuitions / Priyanshu Informatics · Dehradun</p>
+</footer>
+
+<script>
+// Scroll-spy nav
+const sections = document.querySelectorAll('main section');
+const navLinks = document.querySelectorAll('.nav-link');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(sec => {
+    const rect = sec.getBoundingClientRect();
+    if (rect.top <= 100) current = sec.id;
+  });
+  navLinks.forEach(link => {
+    link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+  });
+});
+
+// ═══════════ STATIC CANVAS GRAPHS ═══════════
+
+function setupCanvas(id) {
+  const canvas = document.getElementById(id);
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const w = canvas.width, h = canvas.height;
+  canvas.style.width = w + 'px';
+  canvas.style.height = h + 'px';
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  ctx.scale(dpr, dpr);
+  return {ctx, w, h};
+}
+
+function drawArrow(ctx, x1, y1, x2, y2, color, lw, label, labelOffsetX, labelOffsetY) {
+  const ang = Math.atan2(y2-y1, x2-x1);
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = lw || 2.5;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  ctx.save(); ctx.translate(x2,y2); ctx.rotate(ang);
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-11,5); ctx.lineTo(-11,-5); ctx.closePath(); ctx.fill();
+  ctx.restore();
+  if (label) {
+    ctx.fillStyle = color; ctx.font = 'bold 14px Inter, sans-serif';
+    ctx.fillText(label, x2 + (labelOffsetX||8), y2 + (labelOffsetY||0));
+  }
+}
+
+// ── 1. R-C Phasor Diagram ──
+(function() {
+  const {ctx, w, h} = setupCanvas('rcPhasor');
+  ctx.fillStyle = '#F8FAFC'; ctx.fillRect(0,0,w,h);
+  const ox = 130, oy = 110;
+  // Axes
+  ctx.strokeStyle = '#CBD5E1'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(40,oy); ctx.lineTo(w-40,oy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(ox,20); ctx.lineTo(ox,h-20); ctx.stroke();
+  // I axis label
+  ctx.fillStyle = '#64748B'; ctx.font = '12px Inter'; ctx.fillText('I (reference axis)', w-150, oy-10);
+  // V_R (horizontal, along I)
+  drawArrow(ctx, ox, oy, ox+220, oy, '#0D9488', 3, 'V_R', 8, 4);
+  // V_C (downward, lagging 90°)
+  drawArrow(ctx, ox, oy, ox, oy+150, '#DC2626', 3, 'V_C', 10, 0);
+  // E0 resultant
+  drawArrow(ctx, ox, oy, ox+220, oy+150, '#2563EB', 3, 'E₀', 10, 5);
+  // angle arc
+  ctx.strokeStyle = '#94A3B8'; ctx.beginPath(); ctx.arc(ox, oy, 40, 0, Math.atan2(150,220)); ctx.stroke();
+  ctx.fillStyle = '#475569'; ctx.font = '13px Inter'; ctx.fillText('φ', ox+45, oy+25);
+})();
+
+// ── 2. LCR Phasor Diagram ──
+(function() {
+  const {ctx, w, h} = setupCanvas('lcrPhasor');
+  ctx.fillStyle = '#F8FAFC'; ctx.fillRect(0,0,w,h);
+  const ox = 150, oy = 200;
+  ctx.strokeStyle = '#CBD5E1'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(40,oy); ctx.lineTo(w-40,oy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(ox,20); ctx.lineTo(ox,h-20); ctx.stroke();
+  ctx.fillStyle = '#64748B'; ctx.font = '12px Inter'; ctx.fillText('I₀ (current, reference)', w-180, oy-10);
+  // V_R horizontal
+  drawArrow(ctx, ox, oy, ox+200, oy, '#0D9488', 3, 'V_R', 8, 4);
+  // V_L upward
+  drawArrow(ctx, ox, oy, ox, oy-150, '#7C3AED', 3, 'V_L', 10, -5);
+  // V_C downward
+  drawArrow(ctx, ox, oy, ox, oy+90, '#DC2626', 3, 'V_C', 10, 15);
+  // V_L - V_C net (dashed, upward from origin)
+  ctx.setLineDash([5,4]);
+  ctx.strokeStyle = '#A78BFA'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ox, oy-60); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#7C3AED'; ctx.font = '12px Inter'; ctx.fillText('V_L − V_C', ox+8, oy-65);
+  // E0 resultant (from origin to top of net reactive + V_R)
+  drawArrow(ctx, ox, oy, ox+200, oy-60, '#2563EB', 3, 'E₀', 10, -8);
+  // angle
+  ctx.strokeStyle = '#94A3B8'; ctx.beginPath(); ctx.arc(ox, oy, 45, -Math.atan2(60,200), 0); ctx.stroke();
+  ctx.fillStyle = '#475569'; ctx.font = '13px Inter'; ctx.fillText('φ', ox+50, oy-15);
+})();
+
+// ── 3. Impedance Triangle ──
+(function() {
+  const {ctx, w, h} = setupCanvas('impTriangle');
+  ctx.fillStyle = '#F8FAFC'; ctx.fillRect(0,0,w,h);
+  const ox = 130, oy = 250;
+  const rx = 350, ry = 90; // R horizontal length, X vertical length
+  // Triangle
+  ctx.strokeStyle = '#1E293B'; ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(ox, oy);
+  ctx.lineTo(ox+rx, oy);
+  ctx.lineTo(ox+rx, oy-ry);
+  ctx.closePath();
+  ctx.stroke();
+  // Fill light
+  ctx.fillStyle = 'rgba(37,99,235,0.06)';
+  ctx.fill();
+  // Labels
+  ctx.fillStyle = '#0D9488'; ctx.font = 'bold 15px Inter'; ctx.fillText('R', ox+rx/2-10, oy+25);
+  ctx.fillStyle = '#D97706'; ctx.fillText('X = X_L − X_C', ox+rx+10, oy-ry/2);
+  ctx.fillStyle = '#2563EB'; ctx.fillText('Z', ox+rx/2-40, oy-ry/2-10);
+  // angle phi
+  ctx.strokeStyle = '#94A3B8'; ctx.beginPath(); ctx.arc(ox+rx, oy, 35, Math.PI*0.5, Math.PI*0.78, true); ctx.stroke();
+  ctx.fillStyle = '#475569'; ctx.font = '13px Inter'; ctx.fillText('φ', ox+rx-30, oy-25);
+  // Right angle marker
+  ctx.strokeStyle = '#94A3B8';
+  ctx.strokeRect(ox+rx-14, oy-14, 14, 14);
+})();
+
+// ── 4. Resonance Curve I0 vs omega for R1>R2>R3 ──
+(function() {
+  const {ctx, w, h} = setupCanvas('resonanceCurve');
+  ctx.fillStyle = '#F8FAFC'; ctx.fillRect(0,0,w,h);
+  const ox = 60, oy = h-50, plotW = w-100, plotH = h-90;
+  // Axes
+  ctx.strokeStyle = '#94A3B8'; ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(ox+plotW,oy); ctx.stroke(); // x axis
+  ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(ox,oy-plotH); ctx.stroke(); // y axis
+  ctx.fillStyle = '#475569'; ctx.font = '13px Inter';
+  ctx.fillText('I₀', ox-25, oy-plotH+10);
+  ctx.fillText('ω →', ox+plotW-20, oy+25);
+
+  function lorentzian(x, peakX, width, height) {
+    return height / (1 + Math.pow((x-peakX)/width, 2));
+  }
+  const peakX = 0.5;
+  const curves = [
+    {width: 0.045, height: 0.92, color: '#DC2626', label:'R₁ (large R)'},
+    {width: 0.085, height: 0.72, color: '#D97706', label:'R₂'},
+    {width: 0.16, height: 0.5, color: '#0D9488', label:'R₃ (small R)'}
+  ];
+  curves.forEach(c => {
+    ctx.beginPath();
+    for (let i = 0; i <= 300; i++) {
+      const xNorm = i/300;
+      const y = lorentzian(xNorm, peakX, c.width, c.height);
+      const px = ox + xNorm*plotW;
+      const py = oy - y*plotH;
+      i===0 ? ctx.moveTo(px,py) : ctx.lineTo(px,py);
+    }
+    ctx.strokeStyle = c.color; ctx.lineWidth = 2.5; ctx.stroke();
+  });
+  // Dashed vertical at resonance
+  ctx.setLineDash([4,4]); ctx.strokeStyle = '#94A3B8'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(ox+peakX*plotW, oy); ctx.lineTo(ox+peakX*plotW, oy-plotH*0.95); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#64748B'; ctx.font = '12px Inter'; ctx.fillText('ω_r', ox+peakX*plotW-12, oy+20);
+  // Legend
+  let ly = 30;
+  curves.forEach(c => {
+    ctx.fillStyle = c.color;
+    ctx.fillRect(w-160, ly, 14, 4);
+    ctx.fillStyle = '#475569'; ctx.font = '11px Inter';
+    ctx.fillText(c.label, w-140, ly+7);
+    ly += 20;
+  });
+})();
+</script>
+</body>
+</html>

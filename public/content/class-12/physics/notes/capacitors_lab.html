@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Capacitors & Capacitance — Interactive Lab | Ch.2</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg: #f7f5f0;
+  --card: #ffffff;
+  --ink: #1c1917;
+  --ink2: #57534e;
+  --border: #e7e5e0;
+  --blue: #1d4ed8;
+  --blue-l: #eff6ff;
+  --blue-b: #bfdbfe;
+  --red: #dc2626;
+  --green: #059669;
+  --amber: #d97706;
+  --purple: #7c3aed;
+  --slate: #334155;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;}
+h1,h2,h3,h4{font-family:'Playfair Display',serif;}
+code,pre,.mono{font-family:'DM Mono',monospace;}
+
+/* NAV */
+.topnav{background:#1c1917;position:sticky;top:0;z-index:100;padding:10px 0;border-bottom:1px solid #292524;}
+.nav-inner{max-width:1280px;margin:0 auto;padding:0 20px;}
+.nav-title{color:#fafaf9;font-family:'Playfair Display',serif;font-size:16px;font-weight:700;}
+.nav-sub{color:#78716c;font-size:11px;font-family:'DM Mono',monospace;margin-left:8px;}
+.tab-strip{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.tab{padding:5px 13px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;
+  font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:.02em;
+  border:1px solid #44403c;background:transparent;color:#a8a29e;transition:all .18s;white-space:nowrap;}
+.tab:hover{border-color:#78716c;color:#e7e5e0;}
+.tab.on{background:#1d4ed8;color:#fff;border-color:#1d4ed8;}
+
+/* LAYOUT */
+.page{max-width:1280px;margin:0 auto;padding:20px;}
+.section{display:none;}.section.active{display:block;}
+.cols{display:grid;grid-template-columns:320px 1fr;gap:16px;align-items:start;}
+@media(max-width:860px){.cols{grid-template-columns:1fr;}}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.card+.card{margin-top:12px;}
+
+/* TYPOGRAPHY */
+.sec-label{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  color:#a8a29e;margin-bottom:6px;font-family:'DM Mono',monospace;}
+.formula{font-family:'DM Mono',monospace;background:#faf5ff;border:1px solid #e9d5ff;
+  border-radius:6px;padding:4px 10px;display:inline-block;color:#6d28d9;font-size:12px;margin:3px 2px;}
+.formula.blue{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8;}
+.formula.green{background:#f0fdf4;border-color:#86efac;color:#15803d;}
+.formula.amber{background:#fffbeb;border-color:#fde68a;color:#b45309;}
+.vbadge{font-family:'DM Mono',monospace;font-size:11px;background:#eff6ff;
+  border:1px solid #bfdbfe;color:#1d4ed8;padding:2px 8px;border-radius:5px;min-width:36px;text-align:right;}
+
+/* SLIDER */
+.sl-wrap{margin-bottom:11px;}
+.sl-wrap .sl-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;}
+.sl-wrap label{font-size:11px;font-weight:600;color:#57534e;letter-spacing:.04em;text-transform:uppercase;}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:#d6d3d1;
+  border-radius:2px;outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;
+  border-radius:50%;background:#1d4ed8;box-shadow:0 0 0 3px #bfdbfe;}
+
+/* READOUT */
+.readout{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.readout.three{grid-template-columns:1fr 1fr 1fr;}
+.rc{border-radius:9px;padding:10px;text-align:center;}
+.rc .rl{font-size:9px;color:#78716c;margin-bottom:2px;font-family:'DM Mono',monospace;letter-spacing:.06em;text-transform:uppercase;}
+.rc .rv{font-size:16px;font-weight:700;font-family:'Playfair Display',serif;}
+
+/* MODE BUTTONS */
+.modebtns{display:flex;flex-direction:column;gap:5px;margin-bottom:10px;}
+.mbtn{text-align:left;padding:8px 12px;border-radius:8px;font-size:12px;font-weight:600;
+  cursor:pointer;border:1px solid var(--border);background:#fafaf9;color:#44403c;
+  font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s;}
+.mbtn:hover{border-color:#93c5fd;color:#1d4ed8;background:#eff6ff;}
+.mbtn.on{background:#1c1917;color:#fafaf9;border-color:#1c1917;}
+
+/* INFO PANELS */
+.infopanel{border-radius:10px;padding:10px 13px;margin:8px 0;font-size:12px;line-height:1.75;}
+
+/* CANVAS */
+canvas{display:block;width:100%;border-radius:10px;border:1px solid var(--border);background:#f9f8f5;}
+.canvas-wrap{position:relative;}
+
+/* UTILS */
+.pos{color:#059669;} .neg{color:#dc2626;}
+.anim-btn{width:100%;padding:9px;border-radius:9px;background:#1c1917;color:#fafaf9;
+  font-size:12px;font-weight:700;cursor:pointer;border:none;margin-top:8px;
+  font-family:'Plus Jakarta Sans',sans-serif;transition:background .2s;}
+.anim-btn:hover{background:#292524;}
+.tag{font-size:10px;font-weight:700;border-radius:20px;padding:2px 9px;font-family:'DM Mono',monospace;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="topnav">
+  <div class="nav-inner">
+    <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;">
+      <span class="nav-title">Capacitors &amp; Capacitance</span>
+      <span class="nav-sub">Ch.2 · Interactive Visualization Lab</span>
+    </div>
+    <div class="tab-strip" id="tabs">
+      <button class="tab on"  onclick="go('s1',this)">🔋 Capacitance</button>
+      <button class="tab" onclick="go('s2',this)">📐 Parallel Plate</button>
+      <button class="tab" onclick="go('s3',this)">🔬 Dielectric Effect</button>
+      <button class="tab" onclick="go('s4',this)">⚡ Series &amp; Parallel</button>
+      <button class="tab" onclick="go('s5',this)">💡 Energy Stored</button>
+      <button class="tab" onclick="go('s6',this)">🔗 Common Potential</button>
+      <button class="tab" onclick="go('s7',this)">🏠 Conductors</button>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- ══════════════════════════════
+     S1: CAPACITANCE BASICS
+══════════════════════════════ -->
+<div id="s1" class="section active">
+<div class="cols">
+  <div>
+    <div class="card">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:4px;">Capacitance</h2>
+      <p style="font-size:12px;color:#78716c;margin-bottom:10px;">Ability to store charge per unit potential difference.</p>
+      <div class="formula blue">C = Q / V</div>
+      <div class="formula blue">Q = CV</div>
+      <div class="formula blue">V = Q / C</div>
+      <div class="infopanel" style="background:#fefce8;border:1px solid #fde047;">
+        <div class="sec-label">Units &amp; Scale</div>
+        <div>SI unit: <b>Farad (F)</b> = coulomb/volt</div>
+        <div>1 μF = 10⁻⁶ F &nbsp;|&nbsp; 1 nF = 10⁻⁹ F &nbsp;|&nbsp; 1 pF = 10⁻¹² F</div>
+        <div style="margin-top:4px;">Capacitance depends on <b>shape, size, separation</b> of conductors and medium between them.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-label">Adjust Charge &amp; Capacitance</div>
+      <div class="sl-wrap">
+        <div class="sl-head"><label>Charge Q (μC)</label><span class="vbadge" id="v-Q">50</span></div>
+        <input type="range" id="capQ" min="1" max="200" value="50" oninput="updateCap()"/>
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-head"><label>Capacitance C (μF)</label><span class="vbadge" id="v-C">10</span></div>
+        <input type="range" id="capC" min="1" max="100" value="10" oninput="updateCap()"/>
+      </div>
+      <div class="readout three">
+        <div class="rc" style="background:#eff6ff;border:1px solid #bfdbfe;">
+          <div class="rl">Charge Q</div>
+          <div class="rv" style="color:#1d4ed8;" id="r-Q">50 μC</div>
+        </div>
+        <div class="rc" style="background:#fdf4ff;border:1px solid #e9d5ff;">
+          <div class="rl">Capacitance</div>
+          <div class="rv" style="color:#7c3aed;" id="r-C">10 μF</div>
+        </div>
+        <div class="rc" style="background:#f0fdf4;border:1px solid #86efac;">
+          <div class="rl">Voltage V</div>
+          <div class="rv" style="color:#059669;" id="r-V">5.0 V</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-label">Q–V Graph (C = slope)</div>
+      <canvas id="cvCanvas" width="320" height="200"></canvas>
+      <div style="font-size:11px;color:#78716c;margin-top:6px;">Steeper slope = Higher capacitance. Same charge = lower voltage.</div>
+    </div>
+  </div>
+  <div>
+    <div class="card">
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:8px;">Capacitor Charge Visualization</h3>
+      <canvas id="capVizCanvas" width="800" height="360"></canvas>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:6px;">Special Capacitors</h3>
+      <canvas id="specialCapCanvas" width="800" height="220"></canvas>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;font-size:11px;color:#78716c;">
+        <span>① Isolated sphere: C = 4πε₀r</span>
+        <span>② Cylindrical: C = 2πε₀L/ln(r₂/r₁)</span>
+        <span>③ Spherical shell: C = 4πε₀r₁r₂/(r₂−r₁)</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════
+     S2: PARALLEL PLATE CAPACITOR
+══════════════════════════════ -->
+<div id="s2" class="section">
+<div class="cols">
+  <div>
+    <div class="card">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:4px;">Parallel Plate Capacitor</h2>
+      <p style="font-size:12px;color:#78716c;margin-bottom:10px;">Two conducting plates of area A separated by distance d.</p>
+      <div class="formula blue">C = ε₀A / d</div>
+      <div class="formula blue" style="display:block;margin-top:4px;">E = σ/ε₀ = Q/(ε₀A)</div>
+      <div class="formula blue" style="display:block;margin-top:4px;">V = Ed = Qd/(ε₀A)</div>
+      <div class="infopanel" style="background:#f0f9ff;border:1px solid #bae6fd;">
+        <div class="sec-label">To Increase Capacitance</div>
+        <div>① Increase plate area A ↑</div>
+        <div>② Decrease separation d ↓</div>
+        <div>③ Insert dielectric (K &gt; 1)</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-label">Controls</div>
+      <div class="sl-wrap">
+        <div class="sl-head"><label>Plate Area A (cm²)</label><span class="vbadge" id="v-ppA">100</span></div>
+        <input type="range" id="ppA" min="10" max="500" value="100" oninput="updatePP()"/>
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-head"><label>Separation d (mm)</label><span class="vbadge" id="v-ppD">3</span></div>
+        <input type="range" id="ppD" min="1" max="20" value="3" step="0.5" oninput="updatePP()"/>
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-head"><label>Applied Voltage V (V)</label><span class="vbadge" id="v-ppV">100</span></div>
+        <input type="range" id="ppV" min="10" max="500" value="100" oninput="updatePP()"/>
+      </div>
+      <div class="readout">
+        <div class="rc" style="background:#eff6ff;border:1px solid #bfdbfe;">
+          <div class="rl">Capacitance C</div>
+          <div class="rv" style="color:#1d4ed8;font-size:13px;" id="r-ppC">—</div>
+        </div>
+        <div class="rc" style="background:#fdf4ff;border:1px solid #e9d5ff;">
+          <div class="rl">Charge Q</div>
+          <div class="rv" style="color:#7c3aed;font-size:13px;" id="r-ppQ">—</div>
+        </div>
+        <div class="rc" style="background:#fff7ed;border:1px solid #fed7aa;">
+          <div class="rl">E Field</div>
+          <div class="rv" style="color:#d97706;font-size:13px;" id="r-ppE">—</div>
+        </div>
+        <div class="rc" style="background:#f0fdf4;border:1px solid #86efac;">
+          <div class="rl">Energy U</div>
+          <div class="rv" style="color:#059669;font-size:13px;" id="r-ppU">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-label">C vs d &amp; C vs A Graphs</div>
+      <canvas id="ppGraphCanvas" width="320" height="200"></canvas>
+      <div style="display:flex;gap:12px;margin-top:6px;font-size:11px;">
+        <span style="color:#1d4ed8;">— C vs d (hyperbola)</span>
+        <span style="color:#dc2626;">— C vs A (linear)</span>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <h3 style="font-size:14px;font-weight:700;">Parallel Plate Live Visualization</h3>
+        <span class="tag" style="background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;" id="pp-tag">Air gap</span>
+      </div>
+      <canvas id="ppCanvas" width="800" height="380"></canvas>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;font-size:11px;color:#78716c;">
+        <span>→ Arrows = E field lines</span>
+        <span style="color:#dc2626;">+σ = positive plate</span>
+        <span style="color:#1d4ed8;">−σ = negative plate</span>
+        <span style="color:#78716c;">Dashed = equipotential</span>
+      </div>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:6px;">Force Between Plates</h3>
+      <div class="formula blue">F = Q²/(2ε₀A) = σ²A/(2ε₀)</div>
+      <canvas id="forceCanvas" width="800" height="160"></canvas>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════
+     S3: DIELECTRIC EFFECT
+══════════════════════════════ -->
+<div id="s3" class="section">
+<div class="cols">
+  <div>
+    <div class="card">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:4px;">Dielectric Effect</h2>
+      <p style="font-size:12px;color:#78716c;margin-bottom:8px;">Inserting a dielectric changes C, E, V, and U differently depending on whether battery is connected.</p>
+      <div class="formula">C = ε₀KA/d = KC₀</div>
+      <div class="infopanel" style="background:#fdf4ff;border:1px solid #e9d5ff;margin-top:8px;">
+        <div class="sec-label">Two Cases</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;">
+          <div style="background:#fff;border:1px solid #e9d5ff;border-radius:8px;padding:8px;font-size:11px;">
+            <div style="font-weight:700;color:#7c3aed;margin-bottom:4px;">🔋 Battery Connected</div>
+            <div>V = constant</div>
+            <div>C → KC</div>
+            <div>Q → KQ</div>
+            <div>E = constant</div>
+            <div class="pos">U → KU (increases)</div>
+          </div>
+          <div style="background:#fff;border:1px solid #e9d5ff;border-radius:8px;padding:8px;font-size:11px;">
+            <div style="font-weight:700;color:#d97706;margin-bottom:4px;">🔌 Battery Disconnected</div>
+            <div>Q = constant</div>
+            <div>C → KC</div>
+            <div>V → V/K</div>
+            <div>E → E/K</div>
+            <div class="neg">U → U/K (decreases)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-label">Controls</div>
+      <div class="modebtns">
+        <button class="mbtn on" onclick="setDielMode('conn',this)" id="dm1">🔋 Battery Connected (V = const)</button>
+        <button class="mbtn" onclick="setDielMode('disc',this)" id="dm2">🔌 Battery Disconnected (Q = const)</button>
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-head"><label>Dielectric Constant K</label><span class="vbadge" id="v-K">1.0</span></div>
+        <input type="range" id="dielK" min="1" max="80" value="1" step="0.5" oninput="updateDiel()"/>
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-head"><label>Slab thickness (% of d)</label><span class="vbadge" id="v-Kt">100</span></div>
+        <input type="range" id="dielT" min="10" max="100" value="100" step="5" oninput="updateDiel()"/>
+      </div>
+      <div class="readout">
+        <div class="rc" style="background:#eff6ff;border:1px solid #bfdbfe;">
+          <div class="rl">C / C₀</div>
+          <div class="rv" style="color:#1d4ed8;" id="r-dC">1.0×</div>
+        </div>
+        <div class="rc" style="background:#fdf4ff;border:1px solid #e9d5ff;">
+          <div class="rl">V / V₀</div>
+          <div class="rv" style="color:#7c3aed;" id="r-dV">1.0×</div>
+        </div>
+        <div class="rc" style="background:#fff7ed;border:1px solid #fed7aa;">
+          <div class="rl">E / E₀</div>
+          <div class="rv" style="color:#d97706;" id="r-dE">1.0×</div>
+        </div>
+        <div class="rc" style="background:#f0fdf4;border:1px solid #86efac;">
+          <div class="rl">U / U₀</div>
+          <div class="rv" id="r-dU">1.0×</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="card">
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:8px;">Dielectric Polarization Visualization</h3>
+      <canvas id="dielCanvas" width="800" height="380"></canvas>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:6px;">K vs C, V, E, U Graph</h3>
+      <canvas id="dielGraphCanvas" width="800" height="190"></canvas>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;font-size:11px;">
+        <span style="color:#1d4ed8;">— C (always increases)</span>
+        <span style="color:#7c3aed;">— V</span>
+        <span style="color:#d97706;">— E</span>
+        <span style="color:#059669;">— U</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════
+     S4: SERIES & PARALLEL
+══════════════════════════════ -->
+<div id="s4" class="section">
+<div class="cols">
+  <div>
+    <div class="card">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:4px;">Series &amp; Parallel</h2>
+      <div class="infopanel" style="background:#f0fdf4;border:1px solid #86efac;">
+        <div class="sec-label">Series</div>
+        <div class="formula green">1/C_eq = 1/C₁ + 1/C₂ + 1/C₃</div>
+        <div style="font-size:11px;margin-top:4px;">Same charge on all · V distributed</div>
+      </div>
+      <div class="infopanel" style="background:#eff6ff;border:1px solid #bfdbfe;">
+        <div class="sec-label">Parallel</div>
+        <div class="formula blue">C_eq = C₁ + C₂ + C₃</div>
+        <div style="font-size:11px;margin-top:4px;">Same voltage · Charge distributed</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-label">Configuration</div>
+      <div class="modebtns">
+        <button class="mbtn on" onclick="setCombMode('series',this)">— Series Connection</button>
+        <button class="mbtn" onclick="setCombMode('parallel',this)">‖ Parallel Connection</button>
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-head"><label>C₁ (μF)</label><span class="vbadge" id="v-c1">3</span></div>
+        <input type="range" id="cc1" min="1" max="20" value="3" oninput="updateComb()"/>
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-head"><label>C₂ (μF)</label><span class="vbadge" id="v-c2">6</span></div>
+        <input type="range" id="cc2" min="1" max="20" value="6" oninput="updateComb()"/>
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-head"><label>C₃ (μF)</label><span class="vbadge" id="v-c3">9</span></div>
+        <input type="range" id="cc3" min="1" max="20" value="9" oninput="updateComb()"/>
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-head"><label>Battery Voltage V</label><span class="vbadge" id="v-cv">120</span></div>
+        <input type="range" id="ccV" min="10" max="300" value="120" oninput="updateComb()"/>
+      </div>
+      <div class="readout">
+        <div class="rc" style="background:#eff6ff;border:1px solid #bfdbfe;">
+          <div class="rl">C_eq</div>
+          <div class="rv" style="color:#1d4ed8;font-size:14px;" id="r-ceq">—</div>
+        </div>
+        <div class="rc" style="background:#fdf4ff;border:1px solid #e9d5ff;">
+          <div class="rl">Total Q</div>
+          <div class="rv" style="color:#7c3aed;font-size:14px;" id="r-cq">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-label" id="comb-dist-label">Charge &amp; Voltage Distribution</div>
+      <canvas id="combBarCanvas" width="320" height="180"></canvas>
+    </div>
+  </div>
+  <div>
+    <div class="card">
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:8px;">Circuit Visualization</h3>
+      <canvas id="combCanvas" width="800" height="380"></canvas>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:6px;">Individual Capacitor Values</h3>
+      <canvas id="combDetailCanvas" width="800" height="180"></canvas>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════
+     S5: ENERGY STORED
+══════════════════════════════ -->
+<div id="s5" class="section">
+<div class="cols">
+  <div>
+    <div class="card">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:4px;">Energy Stored in Capacitor</h2>
+      <div class="formula">U = Q²/2C = ½CV² = QV/2</div>
+      <div class="formula amber" style="margin-top:4px;">u = ½ε₀E² (energy density)</div>
+      <div class="infopanel" style="background:#fffbeb;border:1px solid #fde68a;margin-top:8px;">
+        <div class="sec-label">Energy Density</div>
+        <div>Energy per unit volume of E field.</div>
+        <div>u = ½ε₀E² J/m³</div>
+        <div style="margin-top:4px;">All three formulas give same U:</div>
+        <div class="formula amber" style="font-size:11px;">U = ½CV² = Q²/2C = QV/2</div>
+      </div>
+      <div class="infopanel" style="background:#fff1f2;border:1px solid #fecdd3;margin-top:6px;">
+        <div class="sec-label">Dielectric Slab Inserted</div>
+        <div><b>Battery connected:</b> U → KU (energy ↑)</div>
+        <div><b>Battery disconnected:</b> U → U/K (energy ↓)</div>
+        <div style="margin-top:4px;font-size:11px;">Work done by external force = ΔU</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-label">Controls</div>
+      <div class="sl-wrap">
+        <div class="sl-head"><label>Capacitance C (μF)</label><span class="vbadge" id="v-enC">10</span></div>
+        <input type="range" id="enC" min="1" max="50" value="10" oninput="updateEnergy()"/>
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-head"><label>Voltage V (V)</label><span class="vbadge" id="v-enV">10</span></div>
+        <input type="range" id="enV" min="1" max="100" value="10" oninput="updateEnergy()"/>
+      </div>
+      <div class="readout three">
+        <div class="rc" style="background:#eff6ff;border:1px solid #bfdbfe;">
+          <div class="rl">Q = CV</div>
+          <div class="rv" style="color:#1d4ed8;font-size:13px;" id="r-enQ">100 μC</div>
+        </div>
+        <div class="rc" style="background:#fdf4ff;border:1px solid #e9d5ff;">
+          <div class="rl">½CV²</div>
+          <div class="rv" style="color:#7c3aed;font-size:13px;" id="r-enU1">—</div>
+        </div>
+        <div class="rc" style="background:#fff7ed;border:1px solid #fed7aa;">
+          <div class="rl">Q²/2C</div>
+          <div class="rv" style="color:#d97706;font-size:13px;" id="r-enU2">—</div>
+        </div>
+      </div>
+      <div class="rc" style="background:#f0fdf4;border:1px solid #86efac;margin-top:8px;border-radius:9px;padding:12px;text-align:center;">
+        <div class="rl">Total Energy U</div>
+        <div style="font-size:22px;font-weight:700;color:#059669;font-family:'Playfair Display',serif;" id="r-enU">5×10⁻⁴ J</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-label">Energy Loss on Charge Sharing</div>
+      <div class="formula">ΔU = C₁C₂(V₁−V₂)²/2(C₁+C₂)</div>
+      <div class="sl-wrap" style="margin-top:8px;">
+        <div class="sl-head"><label>V₁ (initial)</label><span class="vbadge" id="v-V1">200</span></div>
+        <input type="range" id="lossV1" min="0" max="500" value="200" oninput="updateLoss()"/>
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-head"><label>V₂ (uncharged)</label><span class="vbadge" id="v-V2">0</span></div>
+        <input type="range" id="lossV2" min="0" max="500" value="0" oninput="updateLoss()"/>
+      </div>
+      <div class="rc" style="background:#fff1f2;border:1px solid #fecdd3;margin-top:6px;border-radius:9px;padding:10px;text-align:center;">
+        <div class="rl">Energy Lost (always ≥ 0)</div>
+        <div style="font-size:18px;font-weight:700;color:#dc2626;font-family:'Playfair Display',serif;" id="r-loss">—</div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="card">
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:8px;">Energy Visualization</h3>
+      <canvas id="energyCanvas" width="800" height="360"></canvas>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:6px;">U vs V &amp; U vs Q Graphs</h3>
+      <canvas id="energyGraphCanvas" width="800" height="190"></canvas>
+      <div style="display:flex;gap:12px;margin-top:6px;font-size:11px;">
+        <span style="color:#1d4ed8;">— U = ½CV² (parabola in V)</span>
+        <span style="color:#dc2626;">— U = Q²/2C (parabola in Q)</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════
+     S6: COMMON POTENTIAL
+══════════════════════════════ -->
+<div id="s6" class="section">
+<div class="cols">
+  <div>
+    <div class="card">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:4px;">Common Potential</h2>
+      <p style="font-size:12px;color:#78716c;margin-bottom:8px;">When two charged capacitors are connected, charge flows until potentials equalise.</p>
+      <div class="formula blue">V_common = (C₁V₁ + C₂V₂)/(C₁ + C₂)</div>
+      <div class="formula" style="margin-top:4px;">ΔU = C₁C₂(V₁−V₂)²/2(C₁+C₂)</div>
+      <div class="infopanel" style="background:#fefce8;border:1px solid #fde047;margin-top:8px;">
+        <div class="sec-label">Key Points</div>
+        <div>● Charge is conserved: Q₁+Q₂ = Q₁'+Q₂'</div>
+        <div>● Energy is always <b class="neg">lost</b> (heat in wire)</div>
+        <div>● Loss = 0 only if V₁ = V₂</div>
+        <div>● Potential lost ≠ Potential gained (capacities differ)</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-label">Controls</div>
+      <div class="sl-wrap">
+        <div class="sl-head"><label>C₁ (μF)</label><span class="vbadge" id="v-cp1">6</span></div>
+        <input type="range" id="cpC1" min="1" max="20" value="6" oninput="updateCommon()"/>
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-head"><label>V₁ (V)</label><span class="vbadge" id="v-cpV1">200</span></div>
+        <input type="range" id="cpV1" min="0" max="500" value="200" oninput="updateCommon()"/>
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-head"><label>C₂ (μF)</label><span class="vbadge" id="v-cp2">6</span></div>
+        <input type="range" id="cpC2" min="1" max="20" value="6" oninput="updateCommon()"/>
+      </div>
+      <div class="sl-wrap">
+        <div class="sl-head"><label>V₂ (V)</label><span class="vbadge" id="v-cpV2">0</span></div>
+        <input type="range" id="cpV2" min="0" max="500" value="0" oninput="updateCommon()"/>
+      </div>
+      <div class="readout">
+        <div class="rc" style="background:#eff6ff;border:1px solid #bfdbfe;">
+          <div class="rl">V_common</div>
+          <div class="rv" style="color:#1d4ed8;font-size:14px;" id="r-cpV">100 V</div>
+        </div>
+        <div class="rc" style="background:#fff1f2;border:1px solid #fecdd3;">
+          <div class="rl">Energy Lost</div>
+          <div class="rv neg;font-size:14px;" style="color:#dc2626;font-size:14px;" id="r-cpU">—</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-label">Before vs After Comparison</div>
+      <canvas id="cpBarCanvas" width="320" height="200"></canvas>
+    </div>
+  </div>
+  <div>
+    <div class="card">
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:8px;">Charge Flow Animation</h3>
+      <canvas id="cpCanvas" width="800" height="360"></canvas>
+      <button class="anim-btn" onclick="animateCommon()">▶ Animate Charge Flow</button>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:6px;">Energy Conservation Check</h3>
+      <canvas id="cpEnergyCanvas" width="800" height="160"></canvas>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════
+     S7: CONDUCTORS & SHIELDING
+══════════════════════════════ -->
+<div id="s7" class="section">
+<div class="cols">
+  <div>
+    <div class="card">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:4px;">Conductors in Electrostatics</h2>
+      <div class="infopanel" style="background:#f0fdf4;border:1px solid #86efac;">
+        <div class="sec-label">Properties of Conductors</div>
+        <div style="font-size:12px;line-height:1.8;">
+          <div>① E_inside = 0 (static condition)</div>
+          <div>② E at surface = σ/ε₀ (normal to surface)</div>
+          <div>③ No excess charge inside volume</div>
+          <div>④ V = constant throughout</div>
+          <div>⑤ Surface charge density σ varies by curvature</div>
+          <div>⑥ High σ at sharp points → E large → discharge</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-label">Choose Configuration</div>
+      <div class="modebtns">
+        <button class="mbtn on" onclick="setCondMode('sphere',this)">⭕ Solid Charged Sphere</button>
+        <button class="mbtn" onclick="setCondMode('shell',this)">○ Hollow Spherical Shell</button>
+        <button class="mbtn" onclick="setCondMode('shield',this)">🛡 Electrostatic Shielding</button>
+        <button class="mbtn" onclick="setCondMode('point',this)">📍 Sharp Point Discharge</button>
+      </div>
+      <div class="infopanel" style="background:#f8f7ff;border:1px solid #ddd6fe;" id="cond-info">
+        E outside: kQ/r² | E inside: 0 | Surface: kQ/R²
+      </div>
+    </div>
+    <div class="card">
+      <div class="sec-label">E Field Graph (vs r)</div>
+      <canvas id="condGraphCanvas" width="320" height="200"></canvas>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;font-size:11px;">
+        <span style="color:#1d4ed8;">— E field</span>
+        <span style="color:#7c3aed;">— V potential</span>
+        <span style="color:#d1d5db;">| R = surface</span>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="card">
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:8px;">Conductor Visualization</h3>
+      <canvas id="condCanvas" width="800" height="440"></canvas>
+    </div>
+    <div class="card" style="margin-top:12px;">
+      <div class="sec-label">Dielectrics: Polar vs Non-polar</div>
+      <canvas id="dielTypeCanvas" width="800" height="170"></canvas>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- end page -->
+
+<script>
+// ═══════════════ HELPERS ═══════════════
+function el(id){return document.getElementById(id);}
+function setText(id,v){const e=el(id);if(e)e.textContent=v;}
+function sci(n,d=3){
+  if(n===0)return'0';
+  const exp=Math.floor(Math.log10(Math.abs(n)));
+  if(Math.abs(exp)>=3){
+    const m=(n/Math.pow(10,exp)).toFixed(d-1);
+    return `${m}×10^${exp}`;
+  }
+  return n.toPrecision(d);
+}
+function fmt(n,unit='',dp=3){
+  const abs=Math.abs(n);
+  if(abs===0)return`0 ${unit}`;
+  if(abs>=1e6)return`${(n/1e6).toFixed(2)} M${unit}`;
+  if(abs>=1e3)return`${(n/1e3).toFixed(2)} k${unit}`;
+  if(abs>=1)return`${n.toFixed(dp)} ${unit}`;
+  if(abs>=1e-3)return`${(n*1e3).toFixed(dp)} m${unit}`;
+  if(abs>=1e-6)return`${(n*1e6).toFixed(dp)} μ${unit}`;
+  if(abs>=1e-9)return`${(n*1e9).toFixed(dp)} n${unit}`;
+  return`${(n*1e12).toFixed(dp)} p${unit}`;
+}
+function arrow(ctx,x1,y1,x2,y2,col,lw=1.5,hs=8){
+  ctx.save();ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=lw;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  const a=Math.atan2(y2-y1,x2-x1);
+  ctx.beginPath();ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-hs*Math.cos(a-0.4),y2-hs*Math.sin(a-0.4));
+  ctx.lineTo(x2-hs*Math.cos(a+0.4),y2-hs*Math.sin(a+0.4));
+  ctx.closePath();ctx.fill();ctx.restore();
+}
+function clearCanvas(id,bg='#f9f8f5'){
+  const cv=el(id); if(!cv)return null;
+  const ctx=cv.getContext('2d');
+  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.fillStyle=bg;ctx.fillRect(0,0,cv.width,cv.height);
+  return{cv,ctx,W:cv.width,H:cv.height};
+}
+function resizeAll(){
+  ['cvCanvas','capVizCanvas','specialCapCanvas','ppCanvas','ppGraphCanvas','forceCanvas',
+   'dielCanvas','dielGraphCanvas','combCanvas','combBarCanvas','combDetailCanvas',
+   'energyCanvas','energyGraphCanvas','cpCanvas','cpBarCanvas','cpEnergyCanvas',
+   'condCanvas','condGraphCanvas','dielTypeCanvas'].forEach(id=>{
+    const cv=el(id); if(!cv)return;
+    const w=Math.round(cv.getBoundingClientRect().width);
+    if(w>50&&cv.width!==w)cv.width=w;
+  });
+}
+
+// ═══════════════ NAVIGATION ═══════════════
+function go(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b=>{b.classList.remove('on');});
+  el(id).classList.add('active');
+  btn.classList.add('on');
+  requestAnimationFrame(()=>{
+    resizeAll();
+    const fns={s1:()=>{updateCap();drawSpecialCaps();},
+               s2:()=>{updatePP();},
+               s3:()=>{updateDiel();},
+               s4:()=>{updateComb();},
+               s5:()=>{updateEnergy();updateLoss();},
+               s6:()=>{updateCommon();},
+               s7:()=>{updateCond();}};
+    if(fns[id])fns[id]();
+  });
+}
+
+// ═══════════════════════════════════
+// S1: CAPACITANCE
+// ═══════════════════════════════════
+function updateCap(){
+  const Q=parseFloat(el('capQ').value)*1e-6;
+  const C=parseFloat(el('capC').value)*1e-6;
+  const V=Q/C;
+  setText('v-Q',parseFloat(el('capQ').value));
+  setText('v-C',parseFloat(el('capC').value));
+  setText('r-Q',fmt(Q,'C'));
+  setText('r-C',fmt(C,'F'));
+  setText('r-V',V.toFixed(2)+' V');
+  drawCVgraph(C);
+  drawCapViz(Q,C,V);
+}
+
+function drawCVgraph(curC){
+  const r=clearCanvas('cvCanvas','#fafaf8');if(!r)return;
+  const{ctx,W,H}=r;
+  const pad={l:45,r:15,t:20,b:35};
+  const gW=W-pad.l-pad.r,gH=H-pad.t-pad.b;
+  // axes
+  ctx.strokeStyle='#d6d3d1';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+gH);ctx.lineTo(pad.l+gW,pad.t+gH);ctx.stroke();
+  // lines for 3 C values
+  const Cvals=[5e-6,10e-6,30e-6];
+  const colors=['#bfdbfe','#1d4ed8','#7c3aed'];
+  const maxQ=200e-6,maxV=maxQ/Math.min(...Cvals);
+  Cvals.forEach((c,i)=>{
+    ctx.strokeStyle=colors[i];ctx.lineWidth=i===1?2.5:1.5;
+    ctx.beginPath();
+    for(let px=0;px<=gW;px++){
+      const q=px/gW*maxQ;
+      const v=q/c;
+      const y=pad.t+gH-v/maxV*gH;
+      if(px===0)ctx.moveTo(pad.l+px,y);else ctx.lineTo(pad.l+px,y);
+    }ctx.stroke();
+    ctx.fillStyle=colors[i];ctx.font='10px DM Mono';ctx.textAlign='left';
+    ctx.fillText('C='+(c*1e6).toFixed(0)+'μF',pad.l+5,pad.t+8+(i*14));
+  });
+  // current point
+  const Qcur=parseFloat(el('capQ').value)*1e-6;
+  const Vcur=Qcur/curC;
+  const px=Qcur/maxQ*gW;
+  const py=pad.t+gH-Math.min(1,Vcur/maxV)*gH;
+  ctx.beginPath();ctx.arc(pad.l+px,py,5,0,Math.PI*2);
+  ctx.fillStyle='#dc2626';ctx.fill();
+  // labels
+  ctx.fillStyle='#78716c';ctx.font='10px DM Mono';ctx.textAlign='center';
+  ctx.fillText('Q →',pad.l+gW/2,H-5);
+  ctx.save();ctx.translate(12,H/2);ctx.rotate(-Math.PI/2);ctx.fillText('V →',0,0);ctx.restore();
+}
+
+function drawCapViz(Q,C,V){
+  const r=clearCanvas('capVizCanvas');if(!r)return;
+  const{ctx,W,H}=r;
+  const cx=W/2,cy=H/2;
+  // Draw capacitor symbol
+  const pw=W*0.35,ph=H*0.55,px=cx-pw/2,py=cy-ph/2;
+  const plW=12;
+  // Positive plate
+  ctx.fillStyle='#fecdd3';ctx.fillRect(px,py,plW,ph);
+  ctx.strokeStyle='#dc2626';ctx.lineWidth=2;ctx.strokeRect(px,py,plW,ph);
+  // Negative plate
+  ctx.fillStyle='#bfdbfe';ctx.fillRect(px+pw-plW,py,plW,ph);
+  ctx.strokeStyle='#1d4ed8';ctx.lineWidth=2;ctx.strokeRect(px+pw-plW,py,plW,ph);
+  // + charges on left plate
+  const nCharges=Math.min(16,Math.max(2,Math.round(Q/1e-6)));
+  const rows=4,cols=Math.ceil(nCharges/rows);
+  for(let i=0;i<nCharges;i++){
+    const row=i%rows,col=Math.floor(i/rows);
+    const cx2=px+plW/2,cy2=py+12+(row*(ph-24)/Math.max(1,rows-1));
+    ctx.fillStyle='#dc2626';ctx.font='bold 11px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('+',cx2,cy2);ctx.textBaseline='alphabetic';
+  }
+  // - charges on right plate
+  for(let i=0;i<nCharges;i++){
+    const row=i%rows;
+    const cx2=px+pw-plW/2,cy2=py+12+(row*(ph-24)/Math.max(1,rows-1));
+    ctx.fillStyle='#1d4ed8';ctx.font='bold 11px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('−',cx2,cy2);ctx.textBaseline='alphabetic';
+  }
+  // E field arrows in gap
+  const nArrows=6;
+  for(let i=0;i<nArrows;i++){
+    const y=py+20+(i*(ph-40)/(nArrows-1));
+    arrow(ctx,px+plW+10,y,px+pw-plW-10,y,'#374151',1.5,7);
+  }
+  ctx.fillStyle='#374151';ctx.font='12px DM Mono';ctx.textAlign='center';
+  ctx.fillText('E⃗',cx,cy-ph/2-12);
+  // V label
+  arrow(ctx,px+pw+15,cy-30,px+pw+15,cy+30,'#7c3aed',2,8);
+  ctx.save();ctx.translate(px+pw+30,cy);ctx.rotate(Math.PI/2);
+  ctx.fillStyle='#7c3aed';ctx.font='11px DM Mono';ctx.textAlign='center';
+  ctx.fillText('V = '+V.toFixed(1)+' V',0,0);ctx.restore();
+  // Labels
+  ctx.fillStyle='#dc2626';ctx.font='bold 12px Plus Jakarta Sans';ctx.textAlign='center';
+  ctx.fillText('+Q = '+fmt(Q,'C'),px+plW/2,py-10);
+  ctx.fillStyle='#1d4ed8';
+  ctx.fillText('−Q',px+pw-plW/2,py-10);
+  // C badge
+  ctx.fillStyle='#1c1917';ctx.font='bold 14px Playfair Display';ctx.textAlign='center';
+  ctx.fillText('C = '+fmt(C,'F'),cx,H-15);
+  // Side annotation
+  const infoX=px-60,infoY=cy;
+  ctx.fillStyle='#374151';ctx.font='11px DM Mono';ctx.textAlign='center';
+  ctx.fillText('Q = CV',infoX,infoY-10);
+  ctx.fillText(fmt(Q,'C'),infoX,infoY+8);
+}
+
+function drawSpecialCaps(){
+  const r=clearCanvas('specialCapCanvas');if(!r)return;
+  const{ctx,W,H}=r;
+  const sections=[
+    {label:'Spherical Conductor\nC = 4πε₀R',x:W*0.15,y:H/2,draw:drawSphere},
+    {label:'Cylindrical Capacitor\nC = 2πε₀L/ln(r₂/r₁)',x:W*0.5,y:H/2,draw:drawCylinder},
+    {label:'Spherical Shell\nC = 4πε₀r₁r₂/(r₂−r₁)',x:W*0.82,y:H/2,draw:drawShellCap},
+  ];
+  sections.forEach(s=>s.draw(ctx,s.x,s.y,s.label));
+}
+function drawSphere(ctx,cx,cy,label){
+  const R=50;
+  const grad=ctx.createRadialGradient(cx-10,cy-10,5,cx,cy,R);
+  grad.addColorStop(0,'#fecdd3');grad.addColorStop(1,'#dc2626');
+  ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.fillStyle=grad;ctx.fill();
+  ctx.strokeStyle='#991b1b';ctx.lineWidth=2;ctx.stroke();
+  // surface charge dots
+  for(let i=0;i<12;i++){
+    const a=i*Math.PI*2/12;
+    ctx.fillStyle='#fff';ctx.font='bold 10px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('+',(cx+R*Math.cos(a)*0.88),(cy+R*Math.sin(a)*0.88));ctx.textBaseline='alphabetic';
+  }
+  ctx.fillStyle='#1c1917';ctx.font='11px Plus Jakarta Sans';ctx.textAlign='center';
+  label.split('\n').forEach((l,i)=>ctx.fillText(l,cx,cy+R+16+i*14));
+}
+function drawCylinder(ctx,cx,cy,label){
+  const rIn=20,rOut=40,h=70;
+  // outer cylinder
+  ctx.strokeStyle='#1d4ed8';ctx.lineWidth=2;ctx.fillStyle='#eff6ff';
+  ctx.beginPath();ctx.ellipse(cx,cy-h/2,rOut,12,0,0,Math.PI*2);ctx.fill();ctx.stroke();
+  ctx.fillStyle='#eff6ff';
+  ctx.fillRect(cx-rOut,cy-h/2,rOut*2,h);
+  ctx.strokeStyle='#1d4ed8';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(cx-rOut,cy-h/2);ctx.lineTo(cx-rOut,cy+h/2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx+rOut,cy-h/2);ctx.lineTo(cx+rOut,cy+h/2);ctx.stroke();
+  ctx.beginPath();ctx.ellipse(cx,cy+h/2,rOut,12,0,0,Math.PI*2);ctx.fillStyle='#eff6ff';ctx.fill();ctx.stroke();
+  // inner
+  ctx.strokeStyle='#dc2626';ctx.lineWidth=2;ctx.fillStyle='#fecdd3';
+  ctx.fillRect(cx-rIn,cy-h/2,rIn*2,h);
+  ctx.beginPath();ctx.moveTo(cx-rIn,cy-h/2);ctx.lineTo(cx-rIn,cy+h/2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx+rIn,cy-h/2);ctx.lineTo(cx+rIn,cy+h/2);ctx.stroke();
+  ctx.fillStyle='#1c1917';ctx.font='11px Plus Jakarta Sans';ctx.textAlign='center';
+  label.split('\n').forEach((l,i)=>ctx.fillText(l,cx,cy+h/2+16+i*14));
+}
+function drawShellCap(ctx,cx,cy,label){
+  const r1=30,r2=50;
+  ctx.beginPath();ctx.arc(cx,cy,r2,0,Math.PI*2);
+  ctx.fillStyle='#eff6ff';ctx.fill();ctx.strokeStyle='#1d4ed8';ctx.lineWidth=2;ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,r1,0,Math.PI*2);
+  ctx.fillStyle='#fecdd3';ctx.fill();ctx.strokeStyle='#dc2626';ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle='#dc2626';ctx.font='10px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('+q',cx,cy);ctx.textBaseline='alphabetic';
+  ctx.fillStyle='#1d4ed8';ctx.fillText('−q',cx+r1+(r2-r1)/2,cy);
+  ctx.fillStyle='#1c1917';ctx.font='11px Plus Jakarta Sans';ctx.textAlign='center';
+  label.split('\n').forEach((l,i)=>ctx.fillText(l,cx,cy+r2+16+i*14));
+}
+
+// ═══════════════════════════════════
+// S2: PARALLEL PLATE
+// ═══════════════════════════════════
+const eps0=8.85e-12;
+function updatePP(){
+  const A=parseFloat(el('ppA').value)*1e-4;
+  const d=parseFloat(el('ppD').value)*1e-3;
+  const V=parseFloat(el('ppV').value);
+  setText('v-ppA',parseFloat(el('ppA').value));
+  setText('v-ppD',parseFloat(el('ppD').value));
+  setText('v-ppV',parseFloat(el('ppV').value));
+  const C=eps0*A/d;
+  const Q=C*V;
+  const E=V/d;
+  const U=0.5*C*V*V;
+  setText('r-ppC',fmt(C,'F'));
+  setText('r-ppQ',fmt(Q,'C'));
+  setText('r-ppE',sci(E,3)+' V/m');
+  setText('r-ppU',fmt(U,'J'));
+  drawPPCanvas(A,d,V,C,Q,E);
+  drawPPGraph(A,d);
+  drawForceCanvas(Q,A);
+}
+
+function drawPPCanvas(A,d,V,C,Q,E){
+  const r=clearCanvas('ppCanvas');if(!r)return;
+  const{ctx,W,H}=r;
+  const pw=W*0.65,ph=H*0.62;
+  const px=(W-pw)/2,py=(H-ph)/2;
+  const plW=14;
+
+  // Voltage gradient background
+  const grad=ctx.createLinearGradient(px+plW,0,px+pw-plW,0);
+  grad.addColorStop(0,'rgba(254,202,202,0.35)');
+  grad.addColorStop(1,'rgba(191,219,254,0.35)');
+  ctx.fillStyle=grad;ctx.fillRect(px+plW,py,pw-2*plW,ph);
+
+  // Plates
+  ctx.fillStyle='#dc2626';ctx.fillRect(px,py,plW,ph);
+  ctx.fillStyle='#1d4ed8';ctx.fillRect(px+pw-plW,py,plW,ph);
+
+  // + charges on left plate
+  const n=Math.min(10,Math.max(3,Math.round(Q/1e-9)));
+  for(let i=0;i<n;i++){
+    const cy2=py+ph/(n+1)*(i+1);
+    ctx.fillStyle='white';ctx.font='bold 13px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('+',px+plW/2,cy2);
+  }
+  // - charges on right plate
+  for(let i=0;i<n;i++){
+    const cy2=py+ph/(n+1)*(i+1);
+    ctx.fillStyle='white';ctx.font='bold 13px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('−',px+pw-plW/2,cy2);
+  }
+  ctx.textBaseline='alphabetic';
+
+  // E field arrows in gap
+  for(let i=0;i<5;i++){
+    const ay=py+ph/6*(i+0.8);
+    arrow(ctx,px+plW+15,ay,px+pw-plW-15,ay,'#374151',2,8);
+  }
+  ctx.fillStyle='#374151';ctx.font='bold 12px DM Mono';ctx.textAlign='center';
+  ctx.fillText('E⃗ = '+sci(E,2)+' V/m',W/2,py+ph/2);
+
+  // Equipotential lines (dashed)
+  ctx.setLineDash([5,5]);ctx.strokeStyle='rgba(124,58,237,0.4)';ctx.lineWidth=1;
+  for(let i=1;i<=4;i++){
+    const x=px+plW+(pw-2*plW)*i/5;
+    ctx.beginPath();ctx.moveTo(x,py);ctx.lineTo(x,py+ph);ctx.stroke();
+    ctx.fillStyle='rgba(124,58,237,0.7)';ctx.font='9px DM Mono';ctx.textAlign='center';
+    ctx.fillText((V*(1-i/5)).toFixed(0)+'V',x,py-5);
+  }
+  ctx.setLineDash([]);
+
+  // d dimension line
+  ctx.strokeStyle='#44403c';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(px,py+ph+25);ctx.lineTo(px+pw,py+ph+25);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(px,py+ph+20);ctx.lineTo(px,py+ph+30);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(px+pw,py+ph+20);ctx.lineTo(px+pw,py+ph+30);ctx.stroke();
+  ctx.fillStyle='#44403c';ctx.font='11px DM Mono';ctx.textAlign='center';
+  ctx.fillText('d = '+parseFloat(el('ppD').value)+' mm',px+pw/2,py+ph+40);
+
+  // A label
+  ctx.save();ctx.translate(px-20,py+ph/2);ctx.rotate(-Math.PI/2);
+  ctx.fillStyle='#44403c';ctx.font='11px DM Mono';ctx.textAlign='center';
+  ctx.fillText('A = '+parseFloat(el('ppA').value)+' cm²',0,0);ctx.restore();
+
+  // Top labels
+  ctx.fillStyle='#dc2626';ctx.font='bold 12px Plus Jakarta Sans';ctx.textAlign='center';
+  ctx.fillText('+σ  V='+V,px+plW/2+10,py-8);
+  ctx.fillStyle='#1d4ed8';
+  ctx.fillText('−σ  V=0',px+pw-plW/2-10,py-8);
+
+  // C formula box
+  ctx.fillStyle='white';ctx.strokeStyle='#ddd6fe';
+  ctx.beginPath();ctx.roundRect(W-150,H-38,145,32,6);ctx.fill();ctx.stroke();
+  ctx.fillStyle='#5b21b6';ctx.font='11px DM Mono';ctx.textAlign='center';
+  ctx.fillText('C = ε₀A/d = '+fmt(C,'F'),W-77,H-18);
+}
+
+function drawPPGraph(A,d){
+  const r=clearCanvas('ppGraphCanvas','#fafaf8');if(!r)return;
+  const{ctx,W,H}=r;
+  const pad={l:45,r:15,t:15,b:30};
+  const gW=W-pad.l-pad.r,gH=H-pad.t-pad.b;
+  ctx.strokeStyle='#d6d3d1';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+gH);ctx.lineTo(pad.l+gW,pad.t+gH);ctx.stroke();
+  // C vs d (hyperbola) — blue
+  ctx.strokeStyle='#1d4ed8';ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let px2=2;px2<=gW;px2++){
+    const dv=1+(px2/gW)*19; // 1 to 20 mm
+    const Cv=eps0*A/(dv*1e-3);
+    const maxC=eps0*A/1e-3;
+    const y=pad.t+gH-(Cv/maxC)*gH*0.85;
+    if(px2===2)ctx.moveTo(pad.l+px2,y);else ctx.lineTo(pad.l+px2,y);
+  }ctx.stroke();
+  // Current d marker
+  const dCur=parseFloat(el('ppD').value);
+  const pxD=(dCur-1)/19*gW;
+  const yCur=pad.t+gH-(eps0*A/(dCur*1e-3))/(eps0*A/1e-3)*gH*0.85;
+  ctx.beginPath();ctx.arc(pad.l+pxD,yCur,5,0,Math.PI*2);ctx.fillStyle='#7c3aed';ctx.fill();
+  // labels
+  ctx.fillStyle='#1d4ed8';ctx.font='10px DM Mono';ctx.textAlign='left';ctx.fillText('C ∝ 1/d',pad.l+5,pad.t+12);
+  ctx.fillStyle='#78716c';ctx.font='10px DM Mono';ctx.textAlign='center';
+  ctx.fillText('d (mm) →',pad.l+gW/2,H-4);
+  ctx.save();ctx.translate(12,H/2);ctx.rotate(-Math.PI/2);ctx.fillText('C →',0,0);ctx.restore();
+}
+
+function drawForceCanvas(Q,A){
+  const r=clearCanvas('forceCanvas');if(!r)return;
+  const{ctx,W,H}=r;
+  const F=Q*Q/(2*eps0*A);
+  // Simple bar
+  const barMax=W*0.7,barW=Math.min(barMax,F*1e6*barMax/200);
+  const bx=W*0.15,by=H/2-16;
+  ctx.fillStyle='#fecdd3';ctx.fillRect(bx,by,barW,32);
+  ctx.strokeStyle='#dc2626';ctx.lineWidth=2;ctx.strokeRect(bx,by,barW,32);
+  arrow(ctx,bx-10,H/2,bx-50,H/2,'#dc2626',2,8);
+  arrow(ctx,bx+barW+10,H/2,bx+barW+50,H/2,'#dc2626',2,8);
+  ctx.fillStyle='#1c1917';ctx.font='11px DM Mono';ctx.textAlign='center';
+  ctx.fillText('Attractive force: F = Q²/(2ε₀A) = '+sci(F,2)+' N',W/2,H-8);
+}
+
+// ═══════════════════════════════════
+// S3: DIELECTRIC
+// ═══════════════════════════════════
+let dielMode='conn';
+function setDielMode(m,btn){
+  dielMode=m;
+  document.querySelectorAll('.mbtn').forEach(b=>{if(b.id.startsWith('dm'))b.classList.remove('on');});
+  btn.classList.add('on');updateDiel();
+}
+
+function updateDiel(){
+  const K=parseFloat(el('dielK').value);
+  const t=parseFloat(el('dielT').value)/100;
+  setText('v-K',K.toFixed(1));
+  setText('v-Kt',parseFloat(el('dielT').value));
+  // Effective K for partial slab: 1/(1-t+t/K)
+  const Keff=1/(1-t+t/K);
+  const Cr=Keff; // C/C0
+  let Vr,Er,Ur;
+  if(dielMode==='conn'){
+    Vr=1;Er=1/Keff;Ur=Keff;
+  }else{
+    Vr=1/Keff;Er=1/Keff;Ur=1/Keff;
+  }
+  setText('r-dC',Cr.toFixed(2)+'×');
+  setText('r-dV',Vr.toFixed(2)+'×');
+  setText('r-dE',Er.toFixed(2)+'×');
+  const uEl=el('r-dU');
+  if(uEl){uEl.textContent=Ur.toFixed(2)+'×';uEl.style.color=Ur>=1?'#059669':'#dc2626';}
+  drawDielCanvas(K,t,dielMode,Keff);
+  drawDielGraph(dielMode);
+}
+
+function drawDielCanvas(K,t,mode,Keff){
+  const r=clearCanvas('dielCanvas');if(!r)return;
+  const{ctx,W,H}=r;
+  const pw=W*0.55,ph=H*0.62;
+  const px=(W-pw)/2,py=(H-ph)/2;
+  const plW=14,gapW=pw-2*plW;
+  const slabW=gapW*t;
+
+  // Gap background
+  ctx.fillStyle='rgba(248,250,252,0.9)';ctx.fillRect(px+plW,py,gapW,ph);
+  // Dielectric slab
+  if(t>0.05){
+    const grad2=ctx.createLinearGradient(px+plW,0,px+plW+slabW,0);
+    grad2.addColorStop(0,'rgba(221,214,254,0.6)');
+    grad2.addColorStop(1,'rgba(196,181,253,0.3)');
+    ctx.fillStyle=grad2;ctx.fillRect(px+plW,py,slabW,ph);
+    ctx.strokeStyle='#7c3aed';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
+    ctx.strokeRect(px+plW,py,slabW,ph);ctx.setLineDash([]);
+    ctx.fillStyle='#7c3aed';ctx.font='11px DM Mono';ctx.textAlign='center';
+    ctx.fillText('K = '+K.toFixed(1),px+plW+slabW/2,py+ph/2-8);
+    ctx.fillText('Dielectric',px+plW+slabW/2,py+ph/2+8);
+  }
+
+  // Plates
+  ctx.fillStyle='#dc2626';ctx.fillRect(px,py,plW,ph);
+  ctx.fillStyle='#1d4ed8';ctx.fillRect(px+pw-plW,py,plW,ph);
+
+  // Dipoles inside dielectric — show polarization
+  if(t>0.1&&K>1.5){
+    const dipoles=Math.min(20,Math.round(t*20));
+    for(let i=0;i<dipoles;i++){
+      const dx=px+plW+slabW*((i%5+0.5)/5);
+      const dy=py+ph*((Math.floor(i/5)+0.5)/Math.max(1,Math.ceil(dipoles/5)));
+      // mini dipole arrow (polarized opposite to E field)
+      ctx.strokeStyle='rgba(124,58,237,0.8)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(dx-8,dy);ctx.lineTo(dx+8,dy);ctx.stroke();
+      ctx.fillStyle='#dc2626';ctx.font='9px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText('+',dx+9,dy);
+      ctx.fillStyle='#1d4ed8';ctx.fillText('−',dx-9,dy);ctx.textBaseline='alphabetic';
+    }
+    // Induced surface charges
+    ctx.fillStyle='#059669';ctx.font='10px DM Mono';ctx.textAlign='center';
+    ctx.fillText('−σ_p',px+plW+5,py-5);
+    ctx.fillText('+σ_p',px+plW+slabW-5,py-5);
+  }
+
+  // E field arrows (reduced inside dielectric)
+  const nArrows=5;
+  for(let i=0;i<nArrows;i++){
+    const ay=py+ph/(nArrows+1)*(i+1);
+    const inSlab=true; // simplified
+    const col=K>2?'rgba(55,65,81,0.5)':'#374151';
+    arrow(ctx,px+plW+5,ay,px+pw-plW-5,ay,col,1.5,6);
+  }
+
+  // Mode badge
+  ctx.fillStyle='white';ctx.strokeStyle=mode==='conn'?'#1d4ed8':'#d97706';
+  ctx.lineWidth=1.5;ctx.beginPath();ctx.roundRect(W-160,10,155,28,6);ctx.fill();ctx.stroke();
+  ctx.fillStyle=mode==='conn'?'#1d4ed8':'#d97706';ctx.font='11px DM Mono';ctx.textAlign='center';
+  ctx.fillText(mode==='conn'?'🔋 Battery Connected':'🔌 Battery Disconnected',W-82,28);
+
+  // Ratios overlay
+  const ratios=mode==='conn'?['C × '+Keff.toFixed(1),'V × 1.0','U × '+Keff.toFixed(1)]:
+                              ['C × '+Keff.toFixed(1),'V / '+Keff.toFixed(1),'U / '+Keff.toFixed(1)];
+  ratios.forEach((txt,i)=>{
+    ctx.fillStyle=['#1d4ed8','#7c3aed','#059669'][i];
+    ctx.font='11px DM Mono';ctx.textAlign='left';
+    ctx.fillText(txt,15,H-40+i*14);
+  });
+}
+
+function drawDielGraph(mode){
+  const r=clearCanvas('dielGraphCanvas','#fafaf8');if(!r)return;
+  const{ctx,W,H}=r;
+  const pad={l:40,r:15,t:15,b:30};
+  const gW=W-pad.l-pad.r,gH=H-pad.t-pad.b;
+  const zeroY=pad.t+gH/2;
+  ctx.strokeStyle='#d6d3d1';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+gH);ctx.lineTo(pad.l+gW,pad.t+gH);ctx.stroke();
+  ctx.setLineDash([3,3]);ctx.strokeStyle='#e7e5e0';
+  ctx.beginPath();ctx.moveTo(pad.l,zeroY);ctx.lineTo(pad.l+gW,zeroY);ctx.stroke();ctx.setLineDash([]);
+  const maxK=80;
+  const lines=[
+    {fn:K=>K,col:'#1d4ed8',lbl:'C'},
+    {fn:K=>mode==='conn'?1:1/K,col:'#7c3aed',lbl:'V'},
+    {fn:K=>1/K,col:'#d97706',lbl:'E'},
+    {fn:K=>mode==='conn'?K:1/K,col:'#059669',lbl:'U'},
+  ];
+  lines.forEach(line=>{
+    ctx.strokeStyle=line.col;ctx.lineWidth=2;ctx.beginPath();
+    for(let px=0;px<=gW;px++){
+      const K=1+px/gW*(maxK-1);
+      const val=line.fn(K);
+      const normVal=Math.max(0.02,Math.min(3,val));
+      const y=pad.t+gH-normVal/3*gH*0.85;
+      if(px===0)ctx.moveTo(pad.l+px,y);else ctx.lineTo(pad.l+px,y);
+    }ctx.stroke();
+    // label at right
+    const K80=line.fn(maxK);
+    const yL=pad.t+gH-Math.max(0.02,Math.min(3,K80))/3*gH*0.85;
+    ctx.fillStyle=line.col;ctx.font='10px DM Mono';ctx.textAlign='left';
+    ctx.fillText(line.lbl,pad.l+gW-20,Math.max(pad.t+8,Math.min(pad.t+gH-5,yL)));
+  });
+  // Current K
+  const K=parseFloat(el('dielK').value);
+  const curPx=(K-1)/(maxK-1)*gW;
+  ctx.strokeStyle='rgba(220,38,38,0.4)';ctx.lineWidth=1;ctx.setLineDash([4,3]);
+  ctx.beginPath();ctx.moveTo(pad.l+curPx,pad.t);ctx.lineTo(pad.l+curPx,pad.t+gH);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#78716c';ctx.font='10px DM Mono';ctx.textAlign='center';
+  ctx.fillText('K →',pad.l+gW/2,H-4);
+  ctx.fillText('K=1',pad.l,pad.t+gH+12);ctx.fillText('K=80',pad.l+gW,pad.t+gH+12);
+}
+
+// ═══════════════════════════════════
+// S4: SERIES & PARALLEL
+// ═══════════════════════════════════
+let combMode='series';
+function setCombMode(m,btn){
+  combMode=m;
+  document.querySelectorAll('#s4 .mbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');updateComb();
+}
+
+function updateComb(){
+  const C1=parseFloat(el('cc1').value)*1e-6,C2=parseFloat(el('cc2').value)*1e-6,C3=parseFloat(el('cc3').value)*1e-6;
+  const V=parseFloat(el('ccV').value);
+  setText('v-c1',parseFloat(el('cc1').value));
+  setText('v-c2',parseFloat(el('cc2').value));
+  setText('v-c3',parseFloat(el('cc3').value));
+  setText('v-cv',V);
+  let Ceq,Q1,Q2,Q3,V1,V2,V3;
+  if(combMode==='series'){
+    Ceq=1/(1/C1+1/C2+1/C3);
+    Q1=Q2=Q3=Ceq*V;
+    V1=Q1/C1;V2=Q2/C2;V3=Q3/C3;
+  }else{
+    Ceq=C1+C2+C3;
+    V1=V2=V3=V;
+    Q1=C1*V;Q2=C2*V;Q3=C3*V;
+  }
+  setText('r-ceq',fmt(Ceq,'F'));
+  setText('r-cq',fmt(Ceq*V,'C'));
+  drawCombCanvas(C1,C2,C3,V,Ceq,Q1,Q2,Q3,V1,V2,V3);
+  drawCombBar(C1,C2,C3,Q1,Q2,Q3,V1,V2,V3);
+  drawCombDetail(C1,C2,C3,Q1,Q2,Q3,V1,V2,V3);
+}
+
+function drawCombCanvas(C1,C2,C3,Vtot,Ceq,Q1,Q2,Q3,V1,V2,V3){
+  const r=clearCanvas('combCanvas');if(!r)return;
+  const{ctx,W,H}=r;
+  const isSeries=combMode==='series';
+  // Battery
+  const bx=35,by=H/2;
+  ctx.strokeStyle='#374151';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(bx,by-30);ctx.lineTo(bx,by+30);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(bx-8,by-20);ctx.lineTo(bx+8,by-20);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(bx-4,by-10);ctx.lineTo(bx+4,by-10);ctx.stroke();
+  ctx.fillStyle='#374151';ctx.font='bold 12px DM Mono';ctx.textAlign='left';
+  ctx.fillText(Vtot+'V',bx+12,by-5);
+
+  if(isSeries){
+    // Series: caps in a row
+    const caps=[{C:C1,Q:Q1,V:V1},{C:C2,Q:Q2,V:V2},{C:C3,Q:Q3,V:V3}];
+    const spacing=W*0.22,startX=100,cy=H/2;
+    // top wire
+    ctx.strokeStyle='#374151';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(bx,cy-60);ctx.lineTo(startX+spacing*3+30,cy-60);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(bx,cy+60);ctx.lineTo(startX+spacing*3+30,cy+60);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(bx,cy-60);ctx.lineTo(bx,cy-30);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(bx,cy+60);ctx.lineTo(bx,cy+30);ctx.stroke();
+    caps.forEach((cap,i)=>{
+      const cx2=startX+spacing*i;
+      // connecting wire
+      if(i===0){ctx.beginPath();ctx.moveTo(bx,cy);ctx.lineTo(cx2-12,cy);ctx.stroke();}
+      else{ctx.beginPath();ctx.moveTo(startX+spacing*(i-1)+32,cy);ctx.lineTo(cx2-12,cy);ctx.stroke();}
+      // cap plates
+      ctx.fillStyle='#dc2626';ctx.fillRect(cx2-12,cy-28,6,56);
+      ctx.fillStyle='#1d4ed8';ctx.fillRect(cx2+6,cy-28,6,56);
+      ctx.strokeStyle='#dc2626';ctx.lineWidth=2;ctx.strokeRect(cx2-12,cy-28,6,56);
+      ctx.strokeStyle='#1d4ed8';ctx.strokeRect(cx2+6,cy-28,6,56);
+      // labels
+      ctx.fillStyle='#1c1917';ctx.font='bold 11px DM Mono';ctx.textAlign='center';
+      ctx.fillText('C'+(i+1)+'='+Math.round(cap.C*1e6)+'μF',cx2,cy-40);
+      ctx.fillStyle='#7c3aed';ctx.font='10px DM Mono';
+      ctx.fillText('V'+(i+1)+'='+cap.V.toFixed(1)+'V',cx2,cy+48);
+      ctx.fillStyle='#059669';
+      ctx.fillText('q='+fmt(cap.Q,'C'),cx2,cy+62);
+    });
+    // last wire
+    ctx.strokeStyle='#374151';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(startX+spacing*2+32,cy);ctx.lineTo(startX+spacing*3+30,cy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(startX+spacing*3+30,cy-60);ctx.lineTo(startX+spacing*3+30,cy+60);ctx.stroke();
+    // Ceq box
+    ctx.fillStyle='#eff6ff';ctx.strokeStyle='#1d4ed8';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.roundRect(W-160,H-45,155,38,8);ctx.fill();ctx.stroke();
+    ctx.fillStyle='#1d4ed8';ctx.font='11px DM Mono';ctx.textAlign='center';
+    ctx.fillText('1/C_eq = 1/C₁+1/C₂+1/C₃',W-82,H-28);
+    ctx.fillText('C_eq = '+fmt(Ceq,'F'),W-82,H-14);
+  }else{
+    // Parallel: caps stacked
+    const caps=[{C:C1,Q:Q1,V:V1},{C:C2,Q:Q2,V:V2},{C:C3,Q:Q3,V:V3}];
+    const topY=H*0.18,botY=H*0.82,rowH=(botY-topY)/3;
+    const cx2=W/2;
+    // rails
+    ctx.strokeStyle='#374151';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(bx,topY);ctx.lineTo(W-30,topY);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(bx,botY);ctx.lineTo(W-30,botY);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(bx,topY);ctx.lineTo(bx,botY);ctx.stroke();
+    caps.forEach((cap,i)=>{
+      const cy3=topY+rowH*(i+0.5);
+      const cx3=cx2-30+(i-1)*80;
+      // wire to cap
+      ctx.beginPath();ctx.moveTo(cx3,topY);ctx.lineTo(cx3,cy3-28);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(cx3,cy3+28);ctx.lineTo(cx3,botY);ctx.stroke();
+      // plates
+      ctx.fillStyle='#dc2626';ctx.fillRect(cx3-28,cy3-28,56,8);
+      ctx.fillStyle='#1d4ed8';ctx.fillRect(cx3-28,cy3+20,56,8);
+      ctx.strokeStyle='#dc2626';ctx.lineWidth=2;ctx.strokeRect(cx3-28,cy3-28,56,8);
+      ctx.strokeStyle='#1d4ed8';ctx.strokeRect(cx3-28,cy3+20,56,8);
+      ctx.fillStyle='#1c1917';ctx.font='bold 11px DM Mono';ctx.textAlign='center';
+      ctx.fillText('C'+(i+1)+'='+Math.round(cap.C*1e6)+'μF',cx3,cy3+45);
+      ctx.fillStyle='#059669';ctx.font='10px DM Mono';
+      ctx.fillText('q='+fmt(cap.Q,'C'),cx3,cy3+58);
+    });
+    // Ceq box
+    ctx.fillStyle='#eff6ff';ctx.strokeStyle='#1d4ed8';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.roundRect(W-165,H-45,160,38,8);ctx.fill();ctx.stroke();
+    ctx.fillStyle='#1d4ed8';ctx.font='11px DM Mono';ctx.textAlign='center';
+    ctx.fillText('C_eq = C₁+C₂+C₃',W-85,H-28);
+    ctx.fillText('= '+fmt(Ceq,'F'),W-85,H-14);
+  }
+}
+
+function drawCombBar(C1,C2,C3,Q1,Q2,Q3,V1,V2,V3){
+  const r=clearCanvas('combBarCanvas','#fafaf8');if(!r)return;
+  const{ctx,W,H}=r;
+  const isSeries=combMode==='series';
+  const maxVal=isSeries?Math.max(V1,V2,V3)+1:Math.max(Q1,Q2,Q3)*1.2;
+  const colors=['#1d4ed8','#7c3aed','#059669'];
+  const vals=isSeries?[V1,V2,V3]:[Q1,Q2,Q3];
+  const labels=['C₁','C₂','C₃'];
+  const barW=W*0.18,gap=W*0.08,startX=W*0.1;
+  vals.forEach((v,i)=>{
+    const bh=(v/maxVal)*(H-50);
+    const bx2=startX+(barW+gap)*i;
+    const by2=H-30-bh;
+    ctx.fillStyle=colors[i]+'44';ctx.fillRect(bx2,by2,barW,bh);
+    ctx.strokeStyle=colors[i];ctx.lineWidth=2;ctx.strokeRect(bx2,by2,barW,bh);
+    ctx.fillStyle=colors[i];ctx.font='10px DM Mono';ctx.textAlign='center';
+    ctx.fillText(labels[i],bx2+barW/2,H-15);
+    const unit=isSeries?'V':'C';
+    ctx.fillText(fmt(v,unit,2),bx2+barW/2,by2-3);
+  });
+  ctx.fillStyle='#78716c';ctx.font='10px DM Mono';ctx.textAlign='center';
+  ctx.fillText(isSeries?'Voltage Distribution (equal Q)':'Charge Distribution (equal V)',W/2,H-2);
+}
+
+function drawCombDetail(C1,C2,C3,Q1,Q2,Q3,V1,V2,V3){
+  const r=clearCanvas('combDetailCanvas','#fafaf8');if(!r)return;
+  const{ctx,W,H}=r;
+  const caps=[{C:C1,Q:Q1,V:V1},{C:C2,Q:Q2,V:V2},{C:C3,Q:Q3,V:V3}];
+  const cols=['#1d4ed8','#7c3aed','#059669'];
+  caps.forEach((cap,i)=>{
+    const cx2=W/6*(2*i+1);
+    ctx.fillStyle=cols[i]+'22';ctx.strokeStyle=cols[i];ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.roundRect(cx2-70,10,140,H-20,8);ctx.fill();ctx.stroke();
+    ctx.fillStyle=cols[i];ctx.font='bold 11px DM Mono';ctx.textAlign='center';
+    ctx.fillText('C'+(i+1)+' = '+fmt(cap.C,'F'),cx2,30);
+    ctx.fillStyle='#374151';ctx.font='10px DM Mono';
+    ctx.fillText('V = '+cap.V.toFixed(2)+' V',cx2,50);
+    ctx.fillText('Q = '+fmt(cap.Q,'C'),cx2,66);
+    ctx.fillText('U = '+fmt(0.5*cap.C*cap.V*cap.V,'J'),cx2,82);
+  });
+}
+
+// ═══════════════════════════════════
+// S5: ENERGY
+// ═══════════════════════════════════
+function updateEnergy(){
+  const C=parseFloat(el('enC').value)*1e-6;
+  const V=parseFloat(el('enV').value);
+  setText('v-enC',parseFloat(el('enC').value));
+  setText('v-enV',V);
+  const Q=C*V;
+  const U=0.5*C*V*V;
+  setText('r-enQ',fmt(Q,'C'));
+  setText('r-enU1',fmt(U,'J'));
+  setText('r-enU2',fmt(U,'J'));
+  setText('r-enU',fmt(U,'J'));
+  drawEnergyCanvas(C,V,Q,U);
+  drawEnergyGraph(C);
+}
+
+function updateLoss(){
+  const V1=parseFloat(el('lossV1').value);
+  const V2=parseFloat(el('lossV2').value);
+  const C=parseFloat(el('enC').value)*1e-6;
+  setText('v-V1',V1);setText('v-V2',V2);
+  const loss=C*C*(V1-V2)*(V1-V2)/(2*(C+C));
+  setText('r-loss',fmt(loss,'J')+' (always ≥ 0)');
+}
+
+function drawEnergyCanvas(C,V,Q,U){
+  const r=clearCanvas('energyCanvas');if(!r)return;
+  const{ctx,W,H}=r;
+  const pw=W*0.4,ph=H*0.6;
+  const px=(W-pw)/2-60,py=(H-ph)/2;
+  const plW=12,gapW=pw-2*plW;
+
+  // Cap plates
+  ctx.fillStyle='#dc2626';ctx.fillRect(px,py,plW,ph);
+  ctx.fillStyle='#1d4ed8';ctx.fillRect(px+pw-plW,py,plW,ph);
+
+  // Energy density field fill
+  const nLines=Math.min(12,Math.max(2,Math.round(V/8)));
+  for(let i=0;i<nLines;i++){
+    const intensity=Math.min(1,V/100);
+    ctx.fillStyle=`rgba(251,146,60,${0.06+intensity*0.2})`;
+    ctx.fillRect(px+plW,py+i*(ph/nLines),gapW,ph/nLines-1);
+  }
+  // E arrows
+  for(let i=0;i<5;i++){
+    const ay=py+ph/6*(i+0.8);
+    arrow(ctx,px+plW+8,ay,px+pw-plW-8,ay,'#374151',2,7);
+  }
+
+  // Energy bar (right side)
+  const barX=W*0.68,barY=H*0.1,barH=H*0.75,barW2=50;
+  const maxU=0.5*50e-6*100*100;
+  const fillH=(U/maxU)*barH;
+  // background
+  ctx.fillStyle='#f3f4f6';ctx.strokeStyle='#d1d5db';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.roundRect(barX,barY,barW2,barH,6);ctx.fill();ctx.stroke();
+  // fill
+  const grad=ctx.createLinearGradient(0,barY+barH-fillH,0,barY+barH);
+  grad.addColorStop(0,'#fbbf24');grad.addColorStop(1,'#f59e0b');
+  ctx.fillStyle=grad;ctx.beginPath();ctx.roundRect(barX,barY+barH-fillH,barW2,fillH,6);ctx.fill();
+  ctx.fillStyle='#b45309';ctx.font='bold 11px DM Mono';ctx.textAlign='center';
+  ctx.fillText(fmt(U,'J'),barX+barW2/2,barY+barH-fillH-5);
+  ctx.fillText('U',barX+barW2/2,barY+barH+15);
+  ctx.fillText('½CV²',barX+barW2/2,H-5);
+
+  // Three formulas
+  const fx=W*0.66;
+  [[`U = ½CV²`,'#1d4ed8'],[`= Q²/2C`,'#7c3aed'],[`= QV/2`,'#059669']].forEach(([txt,col],i)=>{
+    ctx.fillStyle=col;ctx.font='bold 12px DM Mono';ctx.textAlign='left';
+    ctx.fillText(txt,fx,py+i*22+20);
+  });
+  ctx.fillStyle='#1c1917';ctx.font='bold 13px Playfair Display';ctx.textAlign='center';
+  ctx.fillText('U = '+fmt(U,'J'),W*0.78,H-20);
+
+  // Energy density
+  const E=V/(parseFloat(el('ppD').value||3)*1e-3);
+  const u=0.5*eps0*E*E;
+  ctx.fillStyle='#d97706';ctx.font='11px DM Mono';ctx.textAlign='left';
+  ctx.fillText('u = ½ε₀E²',px-80,py+ph/2-8);
+  ctx.fillText(sci(u,2)+' J/m³',px-80,py+ph/2+8);
+}
+
+function drawEnergyGraph(C){
+  const r=clearCanvas('energyGraphCanvas','#fafaf8');if(!r)return;
+  const{ctx,W,H}=r;
+  const pad={l:40,r:15,t:15,b:30};
+  const gW=W-pad.l-pad.r,gH=H-pad.t-pad.b;
+  ctx.strokeStyle='#d6d3d1';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+gH);ctx.lineTo(pad.l+gW,pad.t+gH);ctx.stroke();
+  const maxV=100,maxQ=C*maxV,maxU=0.5*C*maxV*maxV;
+  // U vs V (parabola)
+  ctx.strokeStyle='#1d4ed8';ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let px=0;px<=gW;px++){
+    const Vv=px/gW*maxV;
+    const Uv=0.5*C*Vv*Vv;
+    const y=pad.t+gH-Uv/maxU*gH*0.85;
+    if(px===0)ctx.moveTo(pad.l+px,y);else ctx.lineTo(pad.l+px,y);
+  }ctx.stroke();
+  // U vs Q (parabola) - same shape
+  ctx.strokeStyle='#dc2626';ctx.lineWidth=2;ctx.setLineDash([5,4]);
+  ctx.beginPath();
+  for(let px=0;px<=gW;px++){
+    const Qv=px/gW*maxQ;
+    const Uv=Qv*Qv/(2*C);
+    const y=pad.t+gH-Uv/maxU*gH*0.85;
+    if(px===0)ctx.moveTo(pad.l+px,y);else ctx.lineTo(pad.l+px,y);
+  }ctx.stroke();ctx.setLineDash([]);
+  // cur V dot
+  const Vcur=parseFloat(el('enV').value);
+  const Ucur=0.5*C*Vcur*Vcur;
+  ctx.beginPath();ctx.arc(pad.l+Vcur/maxV*gW,pad.t+gH-Ucur/maxU*gH*0.85,5,0,Math.PI*2);
+  ctx.fillStyle='#7c3aed';ctx.fill();
+  ctx.fillStyle='#78716c';ctx.font='10px DM Mono';ctx.textAlign='center';
+  ctx.fillText('V or Q →',pad.l+gW/2,H-4);
+  ctx.save();ctx.translate(12,H/2);ctx.rotate(-Math.PI/2);ctx.fillText('U →',0,0);ctx.restore();
+}
+
+// ═══════════════════════════════════
+// S6: COMMON POTENTIAL
+// ═══════════════════════════════════
+let cpAnim=null;let cpAnimPhase=0;
+function updateCommon(){
+  const C1=parseFloat(el('cpC1').value)*1e-6;
+  const V1=parseFloat(el('cpV1').value);
+  const C2=parseFloat(el('cpC2').value)*1e-6;
+  const V2=parseFloat(el('cpV2').value);
+  setText('v-cp1',parseFloat(el('cpC1').value));
+  setText('v-cpV1',V1);
+  setText('v-cp2',parseFloat(el('cpC2').value));
+  setText('v-cpV2',V2);
+  const Vc=(C1*V1+C2*V2)/(C1+C2);
+  const Ui=0.5*C1*V1*V1+0.5*C2*V2*V2;
+  const Uf=0.5*(C1+C2)*Vc*Vc;
+  const loss=Ui-Uf;
+  setText('r-cpV',Vc.toFixed(2)+' V');
+  setText('r-cpU',fmt(Math.max(0,loss),'J'));
+  drawCpCanvas(C1,V1,C2,V2,Vc,0);
+  drawCpBar(C1,V1,C2,V2,Vc,Ui,Uf);
+  drawCpEnergy(Ui,Uf,loss);
+}
+
+function drawCpCanvas(C1,V1,C2,V2,Vc,phase){
+  const r=clearCanvas('cpCanvas');if(!r)return;
+  const{ctx,W,H}=r;
+  const Vf=Vc;
+  const V1disp=phase<1?V1:V1+(Vf-V1)*phase;
+  const V2disp=phase<1?V2:V2+(Vf-V2)*phase;
+  // Cap 1
+  drawCapSymbol(ctx,W*0.22,H/2,C1,V1disp,'C₁',1);
+  // Wire
+  ctx.strokeStyle='#374151';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.moveTo(W*0.38,H/2-50);ctx.lineTo(W*0.62,H/2-50);
+  ctx.moveTo(W*0.38,H/2+50);ctx.lineTo(W*0.62,H/2+50);ctx.stroke();
+  // Switch visual
+  const swX=W/2,swY=H/2-50;
+  ctx.fillStyle='#1c1917';ctx.beginPath();ctx.arc(swX,swY,6,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#374151';ctx.font='10px DM Mono';ctx.textAlign='center';ctx.fillText('wire',swX,swY+20);
+  // Charge flow arrow (if V1 != V2)
+  if(Math.abs(V1-V2)>0.1&&phase>0&&phase<1){
+    const dir=V1>V2?1:-1;
+    arrow(ctx,W/2-30,H/2-50,W/2+30*dir,H/2-50,'#f59e0b',2.5,8);
+    ctx.fillStyle='#d97706';ctx.font='10px DM Mono';ctx.textAlign='center';
+    ctx.fillText('charge flow',W/2,H/2-65);
+  }
+  // Cap 2
+  drawCapSymbol(ctx,W*0.78,H/2,C2,V2disp,'C₂',2);
+  // Vc label
+  if(phase>=1){
+    ctx.fillStyle='#059669';ctx.font='bold 13px DM Mono';ctx.textAlign='center';
+    ctx.fillText('V_common = '+Vc.toFixed(2)+' V',W/2,H-15);
+  }
+}
+
+function drawCapSymbol(ctx,cx,cy,C,V,label,idx){
+  const ph=80,plW=10,pw=50;
+  const col=idx===1?'#dc2626':'#1d4ed8';
+  ctx.fillStyle=col+'33';ctx.strokeStyle=col;ctx.lineWidth=2;
+  ctx.fillRect(cx-pw/2,cy-ph/2,plW,ph);ctx.strokeRect(cx-pw/2,cy-ph/2,plW,ph);
+  ctx.fillRect(cx+pw/2-plW,cy-ph/2,plW,ph);ctx.strokeRect(cx+pw/2-plW,cy-ph/2,plW,ph);
+  ctx.fillStyle='#1c1917';ctx.font='bold 11px DM Mono';ctx.textAlign='center';
+  ctx.fillText(label,cx,cy-ph/2-10);
+  ctx.fillStyle=col;ctx.font='10px DM Mono';
+  ctx.fillText(fmt(C,'F'),cx,cy+ph/2+14);
+  ctx.fillStyle='#7c3aed';
+  ctx.fillText('V = '+V.toFixed(1)+' V',cx,cy+ph/2+28);
+}
+
+function drawCpBar(C1,V1,C2,V2,Vc,Ui,Uf){
+  const r=clearCanvas('cpBarCanvas','#fafaf8');if(!r)return;
+  const{ctx,W,H}=r;
+  const maxV=Math.max(V1,V2,Vc)*1.1||1;
+  const bars=[
+    {lbl:'V₁ (before)',val:V1,col:'#dc2626'},
+    {lbl:'V₂ (before)',val:V2,col:'#1d4ed8'},
+    {lbl:'V_common',val:Vc,col:'#059669'},
+  ];
+  const bw=W*0.18,gap=W*0.07,sx=W*0.08;
+  bars.forEach((b,i)=>{
+    const bh=(b.val/maxV)*(H-55);
+    const bx2=sx+(bw+gap)*i;
+    const by2=H-35-bh;
+    ctx.fillStyle=b.col+'33';ctx.fillRect(bx2,by2,bw,bh);
+    ctx.strokeStyle=b.col;ctx.lineWidth=2;ctx.strokeRect(bx2,by2,bw,bh);
+    ctx.fillStyle=b.col;ctx.font='10px DM Mono';ctx.textAlign='center';
+    ctx.fillText(b.val.toFixed(1)+'V',bx2+bw/2,by2-3);
+    ctx.fillStyle='#78716c';ctx.fillText(b.lbl,bx2+bw/2,H-18);
+  });
+  ctx.fillStyle='#dc2626';ctx.font='10px DM Mono';ctx.textAlign='center';
+  ctx.fillText('ΔU lost = '+fmt(Math.max(0,Ui-Uf),'J'),W/2,H-3);
+}
+
+function drawCpEnergy(Ui,Uf,loss){
+  const r=clearCanvas('cpEnergyCanvas','#fafaf8');if(!r)return;
+  const{ctx,W,H}=r;
+  const barH=H*0.55,barW2=W*0.22;
+  const vals=[{lbl:'U_initial',val:Ui,col:'#1d4ed8'},{lbl:'U_final',val:Uf,col:'#059669'},{lbl:'Energy Lost',val:Math.max(0,loss),col:'#dc2626'}];
+  const maxU=Math.max(Ui,1e-10);
+  vals.forEach((v,i)=>{
+    const bx2=W*0.1+i*(barW2+W*0.06);
+    const bh=(v.val/maxU)*barH;
+    const by2=H*0.1+barH-bh;
+    ctx.fillStyle=v.col+'33';ctx.fillRect(bx2,by2,barW2,bh);
+    ctx.strokeStyle=v.col;ctx.lineWidth=2;ctx.strokeRect(bx2,by2,barW2,bh);
+    ctx.fillStyle=v.col;ctx.font='10px DM Mono';ctx.textAlign='center';
+    ctx.fillText(fmt(v.val,'J',2),bx2+barW2/2,by2-3);
+    ctx.fillStyle='#78716c';ctx.fillText(v.lbl,bx2+barW2/2,H*0.1+barH+14);
+  });
+  ctx.fillStyle='#78716c';ctx.font='10px DM Mono';ctx.textAlign='center';
+  ctx.fillText('Energy lost = C₁C₂(V₁−V₂)²/[2(C₁+C₂)] ≥ 0 always',W/2,H-5);
+}
+
+function animateCommon(){
+  if(cpAnim){cancelAnimationFrame(cpAnim);cpAnim=null;cpAnimPhase=0;updateCommon();return;}
+  const C1=parseFloat(el('cpC1').value)*1e-6;
+  const V1=parseFloat(el('cpV1').value);
+  const C2=parseFloat(el('cpC2').value)*1e-6;
+  const V2=parseFloat(el('cpV2').value);
+  const Vc=(C1*V1+C2*V2)/(C1+C2);
+  cpAnimPhase=0;
+  function step(){
+    cpAnimPhase=Math.min(1,cpAnimPhase+0.015);
+    drawCpCanvas(C1,V1,C2,V2,Vc,cpAnimPhase);
+    if(cpAnimPhase<1)cpAnim=requestAnimationFrame(step);
+    else{cpAnim=null;}
+  }
+  cpAnim=requestAnimationFrame(step);
+}
+
+// ═══════════════════════════════════
+// S7: CONDUCTORS
+// ═══════════════════════════════════
+let condMode='sphere';
+const condInfoText={
+  sphere:'E outside: kQ/r² (like point charge) | E inside: 0 | V inside = const = kQ/R',
+  shell:'E outside: kQ/r² | E inside cavity: 0 | Charge only on outer surface',
+  shield:'Inner cavity shielded from external fields. E inside = 0 regardless of outside. Faraday cage principle.',
+  point:'Charge accumulates at sharp points. High curvature → high σ → very strong E → corona discharge'
+};
+function setCondMode(m,btn){
+  condMode=m;
+  document.querySelectorAll('#s7 .mbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  setText('cond-info',condInfoText[m]);
+  updateCond();
+}
+function updateCond(){
+  drawCondCanvas(condMode);
+  drawCondGraph(condMode);
+  drawDielTypes();
+}
+
+function drawCondCanvas(mode){
+  const r=clearCanvas('condCanvas');if(!r)return;
+  const{ctx,W,H}=r;
+  const cx=W/2,cy=H*0.45;
+
+  if(mode==='sphere'){
+    const R=90;
+    // Radial field lines
+    for(let i=0;i<16;i++){
+      const a=i*Math.PI*2/16;
+      const endX=cx+Math.cos(a)*(R+120),endY=cy+Math.sin(a)*(R+120);
+      ctx.strokeStyle='rgba(251,146,60,0.5)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(cx+Math.cos(a)*R,cy+Math.sin(a)*R);ctx.lineTo(endX,endY);ctx.stroke();
+      arrow(ctx,cx+Math.cos(a)*(R+50),cy+Math.sin(a)*(R+50),endX,endY,'rgba(251,146,60,0.8)',1,6);
+    }
+    // Sphere
+    const grad=ctx.createRadialGradient(cx-20,cy-20,5,cx,cy,R);
+    grad.addColorStop(0,'#fecdd3');grad.addColorStop(1,'#f87171');
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.fillStyle=grad;ctx.fill();
+    ctx.strokeStyle='#dc2626';ctx.lineWidth=2.5;ctx.stroke();
+    // +charges on surface
+    for(let i=0;i<12;i++){
+      const a=i*Math.PI*2/12;
+      ctx.fillStyle='white';ctx.font='bold 11px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText('+',(cx+R*0.9*Math.cos(a)),(cy+R*0.9*Math.sin(a)));
+    }ctx.textBaseline='alphabetic';
+    // Inside: E=0
+    ctx.fillStyle='#059669';ctx.font='bold 13px DM Mono';ctx.textAlign='center';
+    ctx.fillText('E = 0 inside',cx,cy);
+    ctx.fillText('V = constant',cx,cy+18);
+    // labels
+    ctx.fillStyle='#dc2626';ctx.font='11px DM Mono';ctx.textAlign='left';
+    ctx.fillText('E = kQ/r²',cx+R+10,cy);
+    ctx.fillText('(outside)',cx+R+10,cy+14);
+
+  }else if(mode==='shell'){
+    const R=90,rIn=50;
+    for(let i=0;i<12;i++){
+      const a=i*Math.PI*2/12;
+      arrow(ctx,cx+Math.cos(a)*R,cy+Math.sin(a)*R,cx+Math.cos(a)*(R+100),cy+Math.sin(a)*(R+100),'rgba(251,146,60,0.7)',1.5,6);
+    }
+    // outer shell
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.fillStyle='rgba(254,202,202,0.3)';ctx.fill();ctx.strokeStyle='#dc2626';ctx.lineWidth=3;ctx.stroke();
+    // inner cavity
+    ctx.beginPath();ctx.arc(cx,cy,rIn,0,Math.PI*2);
+    ctx.fillStyle='rgba(240,253,244,0.8)';ctx.fill();ctx.strokeStyle='#059669';ctx.lineWidth=1.5;ctx.setLineDash([4,3]);ctx.stroke();ctx.setLineDash([]);
+    // + charges on outer surface
+    for(let i=0;i<12;i++){
+      const a=i*Math.PI*2/12;
+      ctx.fillStyle='#dc2626';ctx.font='bold 10px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText('+',cx+R*Math.cos(a)*0.93,cy+R*Math.sin(a)*0.93);
+    }ctx.textBaseline='alphabetic';
+    ctx.fillStyle='#059669';ctx.font='bold 13px DM Mono';ctx.textAlign='center';
+    ctx.fillText('E = 0',cx,cy-8);ctx.fillText('(hollow)',cx,cy+8);
+    ctx.fillStyle='#78716c';ctx.font='11px DM Mono';
+    ctx.fillText('all charge on',cx,cy+50);ctx.fillText('outer surface',cx,cy+64);
+
+  }else if(mode==='shield'){
+    const rOuter=120,rInner=70;
+    // External field lines (horizontal)
+    for(let y=-3;y<=3;y++){
+      const fy=cy+y*30;
+      arrow(ctx,30,fy,cx-rOuter-10,fy,'rgba(37,99,235,0.5)',1.5,7);
+      arrow(ctx,cx+rOuter+10,fy,W-30,fy,'rgba(37,99,235,0.5)',1.5,7);
+    }
+    // Outer conductor
+    ctx.beginPath();ctx.arc(cx,cy,rOuter,0,Math.PI*2);
+    ctx.fillStyle='rgba(229,231,235,0.9)';ctx.fill();ctx.strokeStyle='#374151';ctx.lineWidth=3;ctx.stroke();
+    // Induced charges
+    for(let i=0;i<16;i++){
+      const a=i*Math.PI*2/16;
+      const sign=Math.cos(a)>0?'+':'−';
+      ctx.fillStyle=Math.cos(a)>0?'#dc2626':'#1d4ed8';
+      ctx.font='bold 11px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(sign,cx+rOuter*0.9*Math.cos(a),cy+rOuter*0.9*Math.sin(a));
+    }ctx.textBaseline='alphabetic';
+    // Inner cavity (shielded)
+    ctx.beginPath();ctx.arc(cx,cy,rInner,0,Math.PI*2);
+    ctx.fillStyle='rgba(240,253,244,0.95)';ctx.fill();ctx.strokeStyle='#059669';ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle='#059669';ctx.font='bold 13px DM Mono';ctx.textAlign='center';
+    ctx.fillText('🛡 SHIELDED',cx,cy-10);ctx.fillText('E = 0',cx,cy+10);
+    ctx.fillStyle='#1d4ed8';ctx.font='11px DM Mono';
+    ctx.fillText('External E⃗ →',35,cy-110);
+    ctx.fillStyle='#374151';ctx.font='11px DM Mono';
+    ctx.fillText('Faraday Cage / Car / Aeroplane',cx,H-15);
+
+  }else if(mode==='point'){
+    // Irregular conductor with a sharp point
+    const pts=[[cx-80,cy+60],[cx-80,cy-40],[cx-20,cy-50],[cx+20,cy-80],[cx+80,cy-50],[cx+90,cy+60]];
+    ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);
+    pts.forEach(p=>ctx.lineTo(p[0],p[1]));ctx.closePath();
+    ctx.fillStyle='#fde68a';ctx.fill();ctx.strokeStyle='#d97706';ctx.lineWidth=2.5;ctx.stroke();
+    // Dense field lines at tip
+    const tipX=cx+20,tipY=cy-80;
+    for(let i=-4;i<=4;i++){
+      const a=-Math.PI/2+i*0.15;
+      arrow(ctx,tipX,tipY,tipX+Math.cos(a)*80,tipY+Math.sin(a)*80,'rgba(220,38,38,0.7)',i===0?2:1,7);
+    }
+    // sparse lines elsewhere
+    arrow(ctx,cx-80,cy,'#5555',ctx,null,null,null,null,null);
+    ctx.strokeStyle='rgba(180,83,9,0.4)';ctx.lineWidth=1;
+    for(let i=0;i<4;i++){
+      const sy=cy-20+i*20,sx=cx+90;
+      ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(sx+60,sy);ctx.stroke();
+    }
+    ctx.fillStyle='#dc2626';ctx.font='bold 11px DM Mono';ctx.textAlign='center';
+    ctx.fillText('Dense E field',tipX,tipY-15);ctx.fillText('at sharp tip',tipX,tipY-1);
+    ctx.fillStyle='#d97706';ctx.font='11px DM Mono';
+    ctx.fillText('σ large → E large → corona discharge',cx,H-15);
+  }
+  // Title
+  const titles={sphere:'Solid Conducting Sphere',shell:'Hollow Spherical Shell',shield:'Electrostatic Shielding',point:'Sharp Point Discharge'};
+  ctx.fillStyle='#1c1917';ctx.font='bold 14px Playfair Display';ctx.textAlign='center';
+  ctx.fillText(titles[mode],cx,H-30);
+}
+
+function drawCondGraph(mode){
+  const r=clearCanvas('condGraphCanvas','#fafaf8');if(!r)return;
+  const{ctx,W,H}=r;
+  const pad={l:40,r:15,t:15,b:30};
+  const gW=W-pad.l-pad.r,gH=H-pad.t-pad.b;
+  const R=0.3,rMax=1.2;
+  ctx.strokeStyle='#d6d3d1';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+gH);ctx.lineTo(pad.l+gW,pad.t+gH);ctx.stroke();
+  // R line
+  const Rpx=pad.l+(R/rMax)*gW;
+  ctx.strokeStyle='#d1d5db';ctx.lineWidth=1;ctx.setLineDash([4,3]);
+  ctx.beginPath();ctx.moveTo(Rpx,pad.t);ctx.lineTo(Rpx,pad.t+gH);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#9ca3af';ctx.font='9px DM Mono';ctx.textAlign='center';ctx.fillText('R',Rpx,pad.t+gH+12);
+
+  // E field
+  ctx.strokeStyle='#1d4ed8';ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let px=0;px<=gW;px++){
+    const rv=0.01+px/gW*rMax;
+    let E;
+    if(mode==='sphere'||mode==='shell'||mode==='shield'){
+      E=rv<R?0:R*R/(rv*rv);
+    }else{E=rv<R?0:R*R/(rv*rv);}
+    const y=pad.t+gH-Math.min(0.98,E)*gH*0.85;
+    if(px===0)ctx.moveTo(pad.l+px,y);else ctx.lineTo(pad.l+px,y);
+  }ctx.stroke();
+
+  // V potential
+  ctx.strokeStyle='#7c3aed';ctx.lineWidth=2;ctx.setLineDash([5,4]);
+  ctx.beginPath();
+  for(let px=0;px<=gW;px++){
+    const rv=0.01+px/gW*rMax;
+    const V=rv<R?1:R/rv;
+    const y=pad.t+gH-V*gH*0.85;
+    if(px===0)ctx.moveTo(pad.l+px,y);else ctx.lineTo(pad.l+px,y);
+  }ctx.stroke();ctx.setLineDash([]);
+
+  ctx.fillStyle='#1d4ed8';ctx.font='9px DM Mono';ctx.textAlign='left';ctx.fillText('E',pad.l+2,pad.t+10);
+  ctx.fillStyle='#7c3aed';ctx.fillText('V',pad.l+10,pad.t+10);
+  ctx.fillStyle='#78716c';ctx.font='10px DM Mono';ctx.textAlign='center';
+  ctx.fillText('r →',pad.l+gW/2,H-4);
+}
+
+function drawDielTypes(){
+  const r=clearCanvas('dielTypeCanvas');if(!r)return;
+  const{ctx,W,H}=r;
+  const hw=W/2,title_y=18;
+  ctx.fillStyle='#1c1917';ctx.font='bold 12px Playfair Display';ctx.textAlign='center';
+  ctx.fillText('Polar Dielectric (e.g. H₂O)',hw*0.5,title_y);
+  ctx.fillText('Non-polar Dielectric (e.g. CO₂)',hw*1.5,title_y);
+  // Polar: random orientation without field, aligned with field
+  for(let i=0;i<8;i++){
+    const x=hw*0.5-60+(i%4)*32,y=35+(Math.floor(i/4)*35);
+    const angle=(i%3-1)*0.8+(i%5)*0.3;
+    ctx.save();ctx.translate(x,y);ctx.rotate(angle);
+    ctx.fillStyle='#dc2626';ctx.beginPath();ctx.arc(6,0,7,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#1d4ed8';ctx.beginPath();ctx.arc(-6,0,7,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+  }
+  ctx.fillStyle='#78716c';ctx.font='9px DM Mono';ctx.textAlign='center';
+  ctx.fillText('Random (no E field)',hw*0.5,H-8);
+  // Non-polar: symmetric
+  for(let i=0;i<8;i++){
+    const x=hw*1.5-60+(i%4)*32,y=35+(Math.floor(i/4)*35);
+    ctx.beginPath();ctx.arc(x,y,10,0,Math.PI*2);
+    ctx.fillStyle='#e7e5e0';ctx.fill();ctx.strokeStyle='#78716c';ctx.lineWidth=1;ctx.stroke();
+    ctx.fillStyle='#78716c';ctx.font='9px DM Mono';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('⊕⊖',x,y);ctx.textBaseline='alphabetic';
+  }
+  ctx.fillStyle='#78716c';ctx.font='9px DM Mono';ctx.textAlign='center';
+  ctx.fillText('Symmetric (centres coincide)',hw*1.5,H-8);
+  // Divider
+  ctx.strokeStyle='#e7e5e0';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(hw,0);ctx.lineTo(hw,H);ctx.stroke();
+}
+
+// ═══ INIT ═══
+function initAll(){
+  resizeAll();
+  updateCap();drawSpecialCaps();
+}
+requestAnimationFrame(()=>requestAnimationFrame(initAll));
+window.addEventListener('resize',()=>{
+  resizeAll();
+  const a=document.querySelector('.section.active');
+  if(!a)return;
+  const fns={s1:()=>{updateCap();drawSpecialCaps();},s2:updatePP,s3:updateDiel,
+             s4:updateComb,s5:()=>{updateEnergy();updateLoss();},s6:updateCommon,s7:updateCond};
+  const fn=fns[a.id];if(fn)fn();
+});
+</script>
+</body>
+</html>

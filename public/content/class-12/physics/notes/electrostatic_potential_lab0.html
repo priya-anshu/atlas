@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Electrostatic Potential — Interactive Lab | Ch.2</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Fira+Code:wght@400;500&family=Nunito:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  theme: { extend: { fontFamily: { display: ["Syne","sans-serif"], body: ["Nunito","sans-serif"], mono: ["Fira Code","monospace"] } } }
+}
+</script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:#f5f4f0;color:#1a1a2e;font-family:"Nunito",sans-serif;}
+h1,h2,h3,h4{font-family:"Syne",sans-serif;}
+
+/* ── NAV ── */
+.topnav{background:#1e293b;position:sticky;top:0;z-index:100;border-bottom:1px solid #334155;}
+.topnav-inner{max-width:1200px;margin:0 auto;padding:10px 16px;}
+.nav-title{color:#f1f5f9;font-family:"Syne",sans-serif;font-size:14px;font-weight:700;white-space:nowrap;}
+.nav-subtitle{color:#64748b;font-size:11px;font-family:"Fira Code",monospace;}
+.tab-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.tab-pill{padding:5px 14px;border-radius:50px;font-size:12px;font-weight:600;cursor:pointer;
+  font-family:"Syne",sans-serif;border:1px solid #475569;background:transparent;
+  color:#94a3b8;transition:all 0.18s;white-space:nowrap;}
+.tab-pill:hover{border-color:#7dd3fc;color:#7dd3fc;}
+.tab-pill.on{background:#2563eb;color:#fff;border-color:#2563eb;}
+
+/* ── LAYOUT ── */
+.page{max-width:1200px;margin:0 auto;padding:20px 16px;}
+.section{display:none;}
+.section.active{display:block;}
+.two-col{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start;}
+@media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+
+/* ── CARDS ── */
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;}
+.card-sm{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:12px;}
+
+/* ── TYPOGRAPHY ── */
+.section-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:#64748b;margin-bottom:6px;font-family:"Syne",sans-serif;}
+.formula{font-family:"Fira Code",monospace;background:#f8f7ff;border:1px solid #ddd6fe;
+  border-radius:7px;padding:5px 11px;display:inline-block;color:#5b21b6;font-size:12px;margin:3px 0;}
+.val-badge{font-family:"Fira Code",monospace;font-size:11px;background:#eff6ff;
+  border:1px solid #bfdbfe;color:#1d4ed8;padding:2px 8px;border-radius:5px;}
+.result-box{border-radius:10px;padding:12px;}
+.chip{font-size:10px;border-radius:20px;padding:3px 10px;font-weight:600;font-family:"Syne",sans-serif;}
+
+/* ── SLIDERS ── */
+.slider-row{margin-bottom:12px;}
+.slider-row label{font-size:11px;font-weight:600;color:#475569;letter-spacing:.04em;
+  text-transform:uppercase;font-family:"Syne",sans-serif;}
+input[type=range]{-webkit-appearance:none;width:100%;height:4px;background:#cbd5e1;
+  border-radius:2px;outline:none;cursor:pointer;margin-top:4px;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;
+  border-radius:50%;background:#2563eb;box-shadow:0 0 0 3px #bfdbfe;}
+
+/* ── MODE BUTTONS ── */
+.mode-btn{display:block;width:100%;text-align:left;padding:8px 12px;border-radius:9px;
+  font-size:12px;font-weight:600;font-family:"Syne",sans-serif;cursor:pointer;
+  border:1px solid #e2e8f0;background:#f9fafb;color:#374151;
+  transition:all .15s;margin-bottom:6px;}
+.mode-btn:hover{border-color:#93c5fd;color:#1d4ed8;background:#eff6ff;}
+.mode-btn.active{background:#1e293b;color:#fff;border-color:#1e293b;}
+
+/* ── CANVAS ── */
+canvas{display:block;width:100%;border-radius:10px;background:#f9fafb;border:1px solid #e2e8f0;}
+
+/* ── COLOUR UTILS ── */
+.pos{color:#059669;} .neg{color:#dc2626;}
+.text-blue{color:#2563eb;} .text-purple{color:#7c3aed;} .text-amber{color:#d97706;}
+
+/* ── INFO PANELS ── */
+.info-panel{border-radius:10px;padding:10px 12px;margin-bottom:10px;}
+.special-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.special-cell{background:#fff;border:1px solid #e2e8f0;border-radius:8px;
+  padding:8px;text-align:center;font-size:11px;}
+.special-cell .label{font-size:13px;font-weight:700;font-family:"Syne",sans-serif;}
+
+/* animate btn */
+.anim-btn{width:100%;padding:9px;border-radius:10px;background:#1e293b;color:#fff;
+  font-size:12px;font-weight:700;font-family:"Syne",sans-serif;cursor:pointer;
+  border:none;margin-top:10px;transition:background .2s;}
+.anim-btn:hover{background:#334155;}
+
+/* result readout */
+.readout{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+.readout-cell{border-radius:9px;padding:10px;text-align:center;}
+.readout-cell .r-label{font-size:10px;color:#64748b;margin-bottom:2px;}
+.readout-cell .r-val{font-size:18px;font-weight:700;font-family:"Syne",sans-serif;}
+</style>
+</head>
+<body>
+
+<!-- ══ TOP NAV ══ -->
+<div class="topnav">
+  <div class="topnav-inner">
+    <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;">
+      <span class="nav-title">Chapter 2 · Electrostatic Potential &amp; Capacitance</span>
+      <span class="nav-subtitle">Interactive Visualization Lab</span>
+    </div>
+    <div class="tab-row" id="mainTabs">
+      <button class="tab-pill on"  onclick="showSection('s1',this)">⚡ PE of Charges</button>
+      <button class="tab-pill off" onclick="showSection('s2',this)">🎯 Dipole Potential</button>
+      <button class="tab-pill off" onclick="showSection('s3',this)">🔵 Equipotential</button>
+      <button class="tab-pill off" onclick="showSection('s4',this)">🌀 Dipole in Field</button>
+      <button class="tab-pill off" onclick="showSection('s5',this)">📐 E–V Relation</button>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+<!-- ════════════════ S1: PE OF CHARGES ════════════════ -->
+<div id="s1" class="section active">
+  <div class="two-col">
+    <!-- LEFT PANEL -->
+    <div>
+      <div class="card" style="margin-bottom:12px;">
+        <h2 style="font-size:17px;font-weight:700;margin-bottom:4px;">Electrostatic Potential Energy</h2>
+        <p style="font-size:12px;color:#64748b;margin-bottom:10px;">Work done assembling charges from infinity to current positions.</p>
+        <div class="formula">U = kq₁q₂ / r</div>
+        <div class="formula" style="margin-left:6px;">k = 9×10⁹ N·m²/C²</div>
+        <div class="info-panel" style="background:#fff8f0;border:1px solid #fed7aa;margin-top:10px;">
+          <div class="section-label">Special Cases</div>
+          <div style="font-size:12px;line-height:1.8;">
+            <div>● <b class="pos">q₁q₂ &gt; 0</b> → U positive (repulsive)</div>
+            <div>● <b class="neg">q₁q₂ &lt; 0</b> → U negative (attractive)</div>
+            <div>● r → ∞ → U → 0 (reference point)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px;">
+        <div class="section-label">Charge Controls</div>
+        <div class="slider-row">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <label>q₁ (μC)</label><span class="val-badge" id="v-q1">+3</span>
+          </div>
+          <input type="range" id="q1" min="-10" max="10" value="3" step="0.5" oninput="updatePE()"/>
+        </div>
+        <div class="slider-row">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <label>q₂ (μC)</label><span class="val-badge" id="v-q2">+3</span>
+          </div>
+          <input type="range" id="q2" min="-10" max="10" value="3" step="0.5" oninput="updatePE()"/>
+        </div>
+        <div class="slider-row">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <label>Separation r (cm)</label><span class="val-badge" id="v-r">30</span>
+          </div>
+          <input type="range" id="sep" min="5" max="100" value="30" step="1" oninput="updatePE()"/>
+        </div>
+        <div class="result-box" style="background:#f0fdf4;border:1px solid #86efac;margin-top:6px;">
+          <div class="section-label">Result</div>
+          <div style="font-size:22px;font-weight:700;font-family:Syne,sans-serif;" id="pe-result">+0.27 J</div>
+          <div style="font-size:11px;color:#64748b;margin-top:2px;" id="pe-nature">Like charges — U positive</div>
+          <div style="font-size:10px;font-family:Fira Code,monospace;color:#94a3b8;margin-top:4px;" id="pe-formula"></div>
+        </div>
+        <div class="readout">
+          <div class="readout-cell" style="background:#f8f7ff;border:1px solid #e9d5ff;">
+            <div class="r-label">Force</div>
+            <div class="r-val text-purple" id="force-nature">Repulsive</div>
+          </div>
+          <div class="readout-cell" style="background:#f0fdf4;border:1px solid #86efac;">
+            <div class="r-label">PE Sign</div>
+            <div class="r-val pos" id="pe-sign">Positive</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="font-size:13px;font-weight:700;margin-bottom:8px;">3-Charge System (Equilateral △)</h3>
+        <div class="formula">U_net = 3kq²/r</div>
+        <div class="slider-row" style="margin-top:10px;">
+          <div style="display:flex;justify-content:space-between;"><label>q (μC)</label><span class="val-badge" id="v-q3ch">10</span></div>
+          <input type="range" id="q3ch" min="1" max="20" value="10" step="1" oninput="update3ch()"/>
+        </div>
+        <div class="slider-row">
+          <div style="display:flex;justify-content:space-between;"><label>Side r (m)</label><span class="val-badge" id="v-r3ch">2.0</span></div>
+          <input type="range" id="r3ch" min="0.5" max="5" value="2" step="0.1" oninput="update3ch()"/>
+        </div>
+        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:9px;padding:10px;text-align:center;">
+          <div style="font-size:10px;color:#64748b;">Total PE of System</div>
+          <div style="font-size:20px;font-weight:700;font-family:Syne,sans-serif;color:#1d4ed8;" id="pe3ch-result">1.35 J</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div>
+      <div class="card" style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <h3 style="font-size:14px;font-weight:700;">Live Visualization</h3>
+          <span class="chip" style="background:#fefce8;border:1px solid #fde047;color:#713f12;" id="mode-badge">Repulsive</span>
+        </div>
+        <canvas id="peCanvas" width="700" height="300"></canvas>
+      </div>
+      <div class="card">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:8px;">U vs r Graph <span style="font-size:11px;color:#94a3b8;font-weight:400;">(drag slider)</span></h3>
+        <canvas id="graphCanvas" width="700" height="180"></canvas>
+        <div style="display:flex;gap:16px;margin-top:8px;font-size:11px;">
+          <span style="color:#2563eb;">— Like charges (U&gt;0)</span>
+          <span style="color:#dc2626;">— Unlike charges (U&lt;0)</span>
+          <span style="color:#7c3aed;">● Current position</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ S2: DIPOLE POTENTIAL ════════════════ -->
+<div id="s2" class="section">
+  <div class="two-col">
+    <div>
+      <div class="card" style="margin-bottom:12px;">
+        <h2 style="font-size:17px;font-weight:700;margin-bottom:4px;">Dipole Electric Potential</h2>
+        <p style="font-size:12px;color:#64748b;margin-bottom:10px;">Potential at P depends on distance r AND angle θ with dipole axis.</p>
+        <div class="formula">V = kp·cosθ / r²</div>
+        <div class="info-panel" style="background:#fefce8;border:1px solid #fde047;margin-top:10px;">
+          <div class="section-label">Key Special Cases</div>
+          <div style="font-size:12px;line-height:1.9;">
+            <div><span style="color:#2563eb;font-weight:700;">θ=0° (Axial):</span> V = +kp/r² <span class="pos">(max positive)</span></div>
+            <div><span style="color:#dc2626;font-weight:700;">θ=180°:</span> V = −kp/r² <span class="neg">(max negative)</span></div>
+            <div><span style="color:#059669;font-weight:700;">θ=90° (Equatorial):</span> V = 0 always!</div>
+            <div><span style="color:#7c3aed;font-weight:700;">V ∝ 1/r²</span> (faster than point charge 1/r)</div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:12px;">
+        <div class="section-label">Controls</div>
+        <div class="slider-row">
+          <div style="display:flex;justify-content:space-between;"><label>p (×10⁻⁸ C·m)</label><span class="val-badge" id="v-dp">5</span></div>
+          <input type="range" id="dp" min="1" max="20" value="5" step="0.5" oninput="updateDipole()"/>
+        </div>
+        <div class="slider-row">
+          <div style="display:flex;justify-content:space-between;"><label>Angle θ (°)</label><span class="val-badge" id="v-dtheta">0°</span></div>
+          <input type="range" id="dtheta" min="0" max="360" value="0" step="1" oninput="updateDipole()"/>
+        </div>
+        <div class="slider-row">
+          <div style="display:flex;justify-content:space-between;"><label>Distance r (cm)</label><span class="val-badge" id="v-dr">20</span></div>
+          <input type="range" id="dr" min="5" max="60" value="20" step="1" oninput="updateDipole()"/>
+        </div>
+        <div class="readout">
+          <div class="readout-cell" style="background:#eff6ff;border:1px solid #bfdbfe;">
+            <div class="r-label">V at Point P</div>
+            <div class="r-val text-blue" id="dip-V" style="font-size:14px;">+1.35×10⁵</div>
+          </div>
+          <div class="readout-cell" style="background:#fdf4ff;border:1px solid #e9d5ff;">
+            <div class="r-label">Case</div>
+            <div class="r-val text-purple" style="font-size:12px;" id="dip-case">Axial (+max)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:12px;">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:4px;">Dipole Potential Map</h3>
+        <p style="font-size:11px;color:#94a3b8;margin-bottom:8px;">Colors: red=+V, blue=−V. Sweep θ to move point P.</p>
+        <canvas id="dipoleCanvas" width="700" height="340"></canvas>
+      </div>
+      <div class="card">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:4px;">V vs θ at fixed r</h3>
+        <canvas id="vthetaCanvas" width="700" height="150"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ S3: EQUIPOTENTIAL ════════════════ -->
+<div id="s3" class="section">
+  <div class="two-col">
+    <div>
+      <div class="card" style="margin-bottom:12px;">
+        <h2 style="font-size:17px;font-weight:700;margin-bottom:4px;">Equipotential Surfaces</h2>
+        <p style="font-size:12px;color:#64748b;margin-bottom:10px;">Every point on the surface has the same electric potential.</p>
+        <div class="formula">W = q(V_A − V_B) = 0</div>
+        <div class="info-panel" style="background:#f0fdf4;border:1px solid #86efac;margin-top:10px;">
+          <div class="section-label">Properties</div>
+          <div style="font-size:12px;line-height:1.9;">
+            <div>① No work moving charge along surface</div>
+            <div>② E always ⊥ to equipotential surface</div>
+            <div>③ Two surfaces NEVER intersect</div>
+            <div>④ Closer spacing → Stronger E field</div>
+            <div>⑤ Conductor surface is equipotential</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-label">Configuration</div>
+        <button class="mode-btn active" onclick="setEqMode('point',this)">⊕ Single Point Charge</button>
+        <button class="mode-btn" onclick="setEqMode('dipole',this)">⊕⊖ Electric Dipole</button>
+        <button class="mode-btn" onclick="setEqMode('twopos',this)">⊕⊕ Two Positive Charges</button>
+        <button class="mode-btn" onclick="setEqMode('uniform',this)">≡ Uniform Field (Capacitor)</button>
+        <div style="background:#f8f7ff;border:1px solid #ddd6fe;border-radius:9px;padding:10px;font-size:12px;color:#4b5563;margin:8px 0;" id="eq-desc">
+          Concentric spheres. Closer spacing near charge = stronger E field.
+        </div>
+        <div class="slider-row">
+          <div style="display:flex;justify-content:space-between;"><label>Contour Levels</label><span class="val-badge" id="v-eqlvl">8</span></div>
+          <input type="range" id="eqlvl" min="3" max="15" value="8" step="1" oninput="drawEquipotential()"/>
+        </div>
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;margin-top:6px;">
+          <input type="checkbox" id="showFieldLines" onchange="drawEquipotential()" checked style="accent-color:#1e293b;"/>
+          Show Electric Field Lines
+        </label>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <h3 style="font-size:14px;font-weight:700;">Equipotential Surface Map</h3>
+          <span class="chip" style="background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;" id="eq-mode-label">Point Charge</span>
+        </div>
+        <canvas id="eqCanvas" width="700" height="480"></canvas>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;font-size:11px;color:#64748b;">
+          <span>🔵 Blue curves = Equipotential</span>
+          <span style="color:#d97706;">— Amber = E field lines</span>
+          <span style="color:#dc2626;">⊕ Red = +charge</span>
+          <span style="color:#2563eb;">⊖ Blue = −charge</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ S4: DIPOLE IN FIELD ════════════════ -->
+<div id="s4" class="section">
+  <div class="two-col">
+    <div>
+      <div class="card" style="margin-bottom:12px;">
+        <h2 style="font-size:17px;font-weight:700;margin-bottom:4px;">Dipole in External Field</h2>
+        <p style="font-size:12px;color:#64748b;margin-bottom:10px;">Uniform field gives torque but zero net force.</p>
+        <div class="formula">τ = pE sinθ</div>
+        <div class="formula" style="margin-left:4px;">U = −pE cosθ</div>
+        <div class="formula" style="margin-left:4px;">W = pE(cosθ₁−cosθ₂)</div>
+        <div class="info-panel" style="background:#fff1f2;border:1px solid #fecdd3;margin-top:10px;">
+          <div class="section-label">Special Orientations</div>
+          <div class="special-grid">
+            <div class="special-cell">
+              <div class="label">θ = 0°</div>
+              <div style="color:#059669;font-size:11px;">τ=0, U=−pE</div>
+              <div style="color:#7c3aed;font-size:10px;font-weight:700;">STABLE</div>
+            </div>
+            <div class="special-cell">
+              <div class="label">θ = 90°</div>
+              <div style="color:#2563eb;font-size:11px;">τ=pE (max)</div>
+              <div style="color:#64748b;font-size:10px;">U = 0</div>
+            </div>
+            <div class="special-cell">
+              <div class="label">θ = 180°</div>
+              <div style="color:#dc2626;font-size:11px;">τ=0, U=+pE</div>
+              <div style="color:#dc2626;font-size:10px;font-weight:700;">UNSTABLE</div>
+            </div>
+            <div class="special-cell">
+              <div class="label">Full Rot.</div>
+              <div style="color:#d97706;font-size:11px;">W = 2pE</div>
+              <div style="color:#64748b;font-size:10px;">0°→180°</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-label">Controls</div>
+        <div class="slider-row">
+          <div style="display:flex;justify-content:space-between;"><label>Angle θ (°)</label><span class="val-badge" id="v-ftheta">0°</span></div>
+          <input type="range" id="ftheta" min="0" max="360" value="0" step="1" oninput="updateDipoleField()"/>
+        </div>
+        <div class="slider-row">
+          <div style="display:flex;justify-content:space-between;"><label>Dipole moment p</label><span class="val-badge" id="v-fp">5</span></div>
+          <input type="range" id="fp" min="1" max="10" value="5" step="0.5" oninput="updateDipoleField()"/>
+        </div>
+        <div class="slider-row">
+          <div style="display:flex;justify-content:space-between;"><label>Field strength E</label><span class="val-badge" id="v-fe">5</span></div>
+          <input type="range" id="fe" min="1" max="10" value="5" step="0.5" oninput="updateDipoleField()"/>
+        </div>
+        <div class="readout">
+          <div class="readout-cell" style="background:#fffbeb;border:1px solid #fde68a;">
+            <div class="r-label">Torque τ</div>
+            <div class="r-val text-amber" id="f-torque">0.00</div>
+          </div>
+          <div class="readout-cell" style="background:#eff6ff;border:1px solid #bfdbfe;">
+            <div class="r-label">PE (U)</div>
+            <div class="r-val text-blue" id="f-pe">−25.00</div>
+          </div>
+        </div>
+        <div style="background:#fdf4ff;border:1px solid #e9d5ff;border-radius:9px;padding:9px;text-align:center;margin-top:8px;">
+          <div style="font-size:10px;color:#64748b;">Equilibrium</div>
+          <div style="font-size:12px;font-weight:700;font-family:Syne,sans-serif;color:#7c3aed;" id="f-equil">STABLE</div>
+        </div>
+        <button class="anim-btn" onclick="animateDipole()">▶ Animate Rotation</button>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:12px;">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:8px;">Dipole Rotation Visualizer</h3>
+        <canvas id="fieldCanvas" width="700" height="320"></canvas>
+      </div>
+      <div class="card">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:4px;">τ and U vs θ — Full 360°</h3>
+        <canvas id="tauCanvas" width="700" height="170"></canvas>
+        <div style="display:flex;gap:16px;margin-top:6px;font-size:11px;">
+          <span style="color:#d97706;">— τ = pE sinθ</span>
+          <span style="color:#2563eb;">— U = −pE cosθ</span>
+          <span style="color:#dc2626;">● Current θ</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ S5: E-V RELATION ════════════════ -->
+<div id="s5" class="section">
+  <div class="two-col">
+    <div>
+      <div class="card" style="margin-bottom:12px;">
+        <h2 style="font-size:17px;font-weight:700;margin-bottom:4px;">E–V Relation</h2>
+        <p style="font-size:12px;color:#64748b;margin-bottom:10px;">E field = negative gradient of potential. Points from high→low V.</p>
+        <div class="formula">E = −dV/dx</div>
+        <div class="formula" style="margin-left:4px;margin-top:4px;">E⃗ = −∇V</div>
+        <div class="formula" style="margin-left:4px;margin-top:4px;">V_A − V_B = ∫E·dr</div>
+        <div class="info-panel" style="background:#f0f9ff;border:1px solid #bae6fd;margin-top:10px;">
+          <div class="section-label">Key Insights</div>
+          <div style="font-size:12px;line-height:1.9;">
+            <div>● E in direction of <b>decreasing V</b></div>
+            <div>● Steep V gradient → Strong E</div>
+            <div>● V=const → E ⊥ surface</div>
+            <div>● Unit: E in V/m = N/C</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-label">Potential Function V(x)</div>
+        <button class="mode-btn active" onclick="setEVMode('linear',this)">V = ax + b  (Linear)</button>
+        <button class="mode-btn" onclick="setEVMode('quadratic',this)">V = ax² + b  (Quadratic)</button>
+        <button class="mode-btn" onclick="setEVMode('coulomb',this)">V = k/r  (Point Charge)</button>
+        <button class="mode-btn" onclick="setEVMode('custom',this)">V = sin(x)  (Oscillating)</button>
+        <div class="slider-row" style="margin-top:10px;">
+          <div style="display:flex;justify-content:space-between;"><label>x position</label><span class="val-badge" id="v-xpos">2.0</span></div>
+          <input type="range" id="xpos" min="0.1" max="9.9" value="2" step="0.1" oninput="updateEV()"/>
+        </div>
+        <div class="readout">
+          <div class="readout-cell" style="background:#f0fdf4;border:1px solid #86efac;">
+            <div class="r-label">V(x)</div>
+            <div class="r-val" style="color:#059669;" id="ev-V">10.00</div>
+          </div>
+          <div class="readout-cell" style="background:#fff7ed;border:1px solid #fed7aa;">
+            <div class="r-label">E = −dV/dx</div>
+            <div class="r-val text-amber" id="ev-E">+10.00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:12px;">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:4px;">V(x) and E(x) Graph</h3>
+        <p style="font-size:11px;color:#94a3b8;margin-bottom:6px;">Tangent slope on V curve = −E at that point.</p>
+        <canvas id="evCanvas" width="700" height="300"></canvas>
+        <div style="display:flex;gap:16px;margin-top:6px;font-size:11px;">
+          <span style="color:#2563eb;">— V(x)</span>
+          <span style="color:#dc2626;">— E(x) = −dV/dx</span>
+          <span style="color:#d97706;">— Tangent at x</span>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:4px;">Point Charge: V ∝ 1/r vs E ∝ 1/r²</h3>
+        <canvas id="pointChargeCanvas" width="700" height="170"></canvas>
+        <div style="display:flex;gap:16px;margin-top:6px;font-size:11px;">
+          <span style="color:#7c3aed;">— V = kq/r (1/r)</span>
+          <span style="color:#dc2626;">— E = kq/r² (1/r²)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end page -->
+
+<script>
+
+// ══════════════════════
+// NAVIGATION
+// ══════════════════════
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-pill').forEach(b => { b.classList.remove('on'); b.classList.add('off'); });
+  document.getElementById(id).classList.add('active');
+  btn.classList.remove('off'); btn.classList.add('on');
+  // Redraw all canvases when switching
+  if(id==='s1') { updatePE(); update3ch(); }
+  if(id==='s2') updateDipole();
+  if(id==='s3') drawEquipotential();
+  if(id==='s4') updateDipoleField();
+  if(id==='s5') { updateEV(); drawPointCharge(); }
+}
+
+// ══════════════════════
+// SECTION 1: PE
+// ══════════════════════
+function getV(id) { return parseFloat(document.getElementById(id).value); }
+
+let animFrame = null;
+
+function updatePE() {
+  const q1 = getV('q1'), q2 = getV('q2'), r = getV('sep')/100;
+  document.getElementById('v-q1').textContent = q1 > 0 ? '+'+q1 : q1;
+  document.getElementById('v-q2').textContent = q2 > 0 ? '+'+q2 : q2;
+  document.getElementById('v-r').textContent = getV('sep');
+
+  const U = 9e9 * q1*1e-6 * q2*1e-6 / r;
+  const Ustr = U > 0 ? '+' : '';
+  document.getElementById('pe-result').textContent = Ustr + formatSci(U) + ' J';
+  document.getElementById('pe-result').className = 'text-2xl font-display font-bold ' + (U>=0?'pos':'neg');
+  document.getElementById('sys-energy').textContent = Ustr + formatSci(U) + ' J';
+  document.getElementById('pe-formula').textContent = `U = 9×10⁹ × ${q1}×10⁻⁶ × ${q2}×10⁻⁶ / ${r.toFixed(2)}`;
+
+  const like = (q1*q2 > 0);
+  const nature = like ? 'Repulsive (like charges — U > 0)' : (q1*q2 < 0 ? 'Attractive (unlike charges — U < 0)' : 'Zero (one charge is zero)');
+  document.getElementById('pe-nature').textContent = nature;
+  document.getElementById('pe-sign').textContent = U > 0 ? 'Positive' : U < 0 ? 'Negative' : 'Zero';
+  document.getElementById('pe-sign').className = U >= 0 ? 'text-sm font-700 font-display pos' : 'text-sm font-700 font-display neg';
+  document.getElementById('force-nature').textContent = like ? 'Repulsive' : 'Attractive';
+  document.getElementById('mode-badge').textContent = like ? 'Repulsive System' : 'Attractive System';
+
+  drawPECanvas(q1, q2, r, U);
+  drawPEGraph(q1, q2);
+}
+
+function drawPECanvas(q1, q2, r, U) {
+  const cv = document.getElementById('peCanvas');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  // Background
+  ctx.fillStyle = '#fafaf8';
+  ctx.fillRect(0,0,W,H);
+
+  const cx = W/2, cy = H/2;
+  const pxPerM = Math.min(200, (W*0.7)/(r+0.05));
+  const x1 = cx - r*pxPerM/2, x2 = cx + r*pxPerM/2;
+
+  // Force arrows
+  const like = q1*q2 > 0;
+  const arrowLen = 40 + Math.min(60, Math.abs(U)*5);
+
+  if(Math.abs(U) > 0.001) {
+    // Arrow on q1 (left)
+    drawArrow(ctx, x1, cy, x1 + (like ? -arrowLen : arrowLen), cy, like ? '#dc2626' : '#059669', 2.5);
+    // Arrow on q2 (right)
+    drawArrow(ctx, x2, cy, x2 + (like ? arrowLen : -arrowLen), cy, like ? '#dc2626' : '#059669', 2.5);
+  }
+
+  // Separation line
+  ctx.setLineDash([6,4]);
+  ctx.strokeStyle = '#d1d5db';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x1,cy+30); ctx.lineTo(x2,cy+30); ctx.stroke();
+  ctx.setLineDash([]);
+  // r label
+  ctx.fillStyle='#6b7280'; ctx.font='13px Fira Code'; ctx.textAlign='center';
+  ctx.fillText('r = ' + (r*100).toFixed(0) + ' cm', cx, cy+50);
+
+  // Draw charges
+  drawCharge(ctx, x1, cy, q1, 26);
+  drawCharge(ctx, x2, cy, q2, 26);
+
+  // Energy label
+  const color = U > 0 ? '#dc2626' : U < 0 ? '#059669' : '#6b7280';
+  ctx.fillStyle = color;
+  ctx.font = 'bold 16px Syne, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('U = ' + (U >= 0 ? '+' : '') + formatSci(U) + ' J', cx, cy - 70);
+
+  // Force label
+  ctx.fillStyle='#374151'; ctx.font='12px Nunito, sans-serif';
+  if(like) {
+    ctx.fillText('← F_repulsion', x1 - 50, cy - 10);
+    ctx.fillText('F_repulsion →', x2 + 50, cy - 10);
+  } else if(q1*q2 < 0) {
+    ctx.fillText('→ F_attraction', x1 + 10, cy - 10);
+    ctx.fillText('← F_attraction', x2 - 10, cy - 10);
+  }
+
+  // Field lines (5 lines between charges if attractive)
+  if(q1*q2 < 0) {
+    for(let i=1;i<=5;i++) {
+      const fy = cy - 50 + i*20;
+      const col = `rgba(37,99,235,${0.3+i*0.05})`;
+      ctx.strokeStyle = col; ctx.lineWidth = 1;
+      ctx.beginPath();
+      if(q1 > 0) { ctx.moveTo(x1,fy); ctx.lineTo(x2,fy); }
+      else { ctx.moveTo(x2,fy); ctx.lineTo(x1,fy); }
+      ctx.stroke();
+    }
+  }
+}
+
+function drawCharge(ctx, x, y, q, r) {
+  const color = q > 0 ? '#dc2626' : q < 0 ? '#2563eb' : '#9ca3af';
+  ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.fillStyle = color + '33'; ctx.fill();
+  ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.stroke();
+  ctx.fillStyle = color;
+  ctx.font = `bold ${Math.min(16,12+Math.abs(q)*0.5)}px Syne, sans-serif`;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  const label = q > 0 ? `+${Math.abs(q).toFixed(0)}μ` : `−${Math.abs(q).toFixed(0)}μ`;
+  ctx.fillText(label, x, y);
+  ctx.textBaseline = 'alphabetic';
+}
+
+function drawArrow(ctx, x1, y1, x2, y2, color, lw) {
+  ctx.strokeStyle = color; ctx.lineWidth = lw; ctx.fillStyle = color;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  const ang = Math.atan2(y2-y1, x2-x1);
+  const aLen = 10;
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - aLen*Math.cos(ang-0.4), y2 - aLen*Math.sin(ang-0.4));
+  ctx.lineTo(x2 - aLen*Math.cos(ang+0.4), y2 - aLen*Math.sin(ang+0.4));
+  ctx.closePath(); ctx.fill();
+}
+
+function drawPEGraph(q1, q2) {
+  const cv = document.getElementById('graphCanvas');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#fafaf8'; ctx.fillRect(0,0,W,H);
+
+  const pad = {l:50,r:20,t:20,b:30};
+  const gW = W-pad.l-pad.r, gH = H-pad.t-pad.b;
+
+  // Axes
+  ctx.strokeStyle='#9ca3af'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+gH); ctx.lineTo(pad.l+gW,pad.t+gH); ctx.stroke();
+
+  // Grid
+  ctx.setLineDash([3,4]); ctx.strokeStyle='#e5e7eb';
+  for(let i=1;i<=3;i++) {
+    const y = pad.t + gH/4*i;
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+gW,y); ctx.stroke();
+  }
+  ctx.setLineDash([]);
+
+  // Labels
+  ctx.fillStyle='#6b7280'; ctx.font='11px Fira Code'; ctx.textAlign='center';
+  ctx.fillText('r (cm)', pad.l+gW/2, H-5);
+  ctx.save(); ctx.translate(14,H/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('U (J)', 0, 0); ctx.restore();
+
+  const maxR = 1.0; // in meters
+  const rMin = 0.02;
+
+  // Like charges (blue)
+  const sign1 = 1; // like
+  ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 2;
+  ctx.beginPath();
+  for(let px=0;px<=gW;px++) {
+    const r = rMin + (px/gW)*maxR;
+    const U = 9e9 * Math.abs(q1) * 1e-6 * Math.abs(q2) * 1e-6 / r;
+    const Unorm = Math.min(1, U / (9e9*Math.abs(q1)*1e-6*Math.abs(q2)*1e-6/rMin));
+    const y = pad.t + gH - Unorm * gH * 0.8;
+    if(px===0) ctx.moveTo(pad.l+px, y); else ctx.lineTo(pad.l+px, y);
+  }
+  ctx.stroke();
+
+  // Unlike charges (red)
+  ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 2;
+  ctx.beginPath();
+  for(let px=0;px<=gW;px++) {
+    const r = rMin + (px/gW)*maxR;
+    const U = -9e9 * Math.abs(q1) * 1e-6 * Math.abs(q2) * 1e-6 / r;
+    const Unorm = Math.min(1, Math.abs(U) / (9e9*Math.abs(q1)*1e-6*Math.abs(q2)*1e-6/rMin));
+    const y = pad.t + gH + Unorm * gH * 0.8;
+    if(px===0) ctx.moveTo(pad.l+px, Math.min(H,y)); else ctx.lineTo(pad.l+px, Math.min(H,y));
+  }
+  ctx.stroke();
+
+  // Current r dot
+  const curR = getV('sep')/100;
+  const px = (curR-rMin)/(maxR-rMin)*gW;
+  const curU = 9e9 * q1*1e-6 * q2*1e-6 / curR;
+  const scale = 9e9*Math.abs(q1)*1e-6*Math.abs(q2)*1e-6/rMin;
+  const norm = Math.min(1, Math.abs(curU)/scale);
+  const dotY = curU >= 0 ? pad.t + gH - norm*gH*0.8 : pad.t + gH + norm*gH*0.8;
+  ctx.beginPath(); ctx.arc(pad.l+px, dotY, 5, 0, Math.PI*2);
+  ctx.fillStyle = '#7c3aed'; ctx.fill();
+
+  // Zero line
+  ctx.strokeStyle='#374151'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(pad.l, pad.t+gH); ctx.lineTo(pad.l+gW, pad.t+gH); ctx.stroke();
+  ctx.fillStyle='#374151'; ctx.font='11px Fira Code'; ctx.textAlign='right';
+  ctx.fillText('U=0', pad.l-4, pad.t+gH+4);
+}
+
+function update3ch() {
+  const q = getV('q3ch'), r = getV('r3ch');
+  document.getElementById('v-q3ch').textContent = q;
+  document.getElementById('v-r3ch').textContent = r.toFixed(1);
+  const U = 3 * 9e9 * q*1e-6 * q*1e-6 / r;
+  document.getElementById('pe3ch-result').textContent = formatSci(U) + ' J';
+}
+
+function formatSci(n) {
+  if(Math.abs(n) < 1e-3 || Math.abs(n) > 1e6) {
+    const exp = Math.floor(Math.log10(Math.abs(n)||1));
+    const mantissa = (n/Math.pow(10,exp)).toFixed(2);
+    return `${mantissa}×10^${exp}`;
+  }
+  return n.toFixed(4);
+}
+
+// ══════════════════════
+// SECTION 2: DIPOLE POTENTIAL
+// ══════════════════════
+function updateDipole() {
+  const p = getV('dp') * 1e-8;
+  const theta = getV('dtheta') * Math.PI/180;
+  const r = getV('dr')/100;
+  document.getElementById('v-dp').textContent = getV('dp');
+  document.getElementById('v-dtheta').textContent = getV('dtheta') + '°';
+  document.getElementById('v-dr').textContent = getV('dr');
+
+  const k = 9e9;
+  const V = k * p * Math.cos(theta) / (r*r);
+
+  document.getElementById('dip-V').textContent = (V >= 0 ? '+' : '') + formatSci(V);
+  document.getElementById('dip-V').className = 'text-lg font-700 font-display ' + (V>=0 ? 'text-blue-700' : 'neg');
+
+  const th = getV('dtheta');
+  let cas = '';
+  if(th <= 5 || th >= 355) cas = 'Axial (+max)';
+  else if(th >= 175 && th <= 185) cas = 'Behind −q (−max)';
+  else if(th >= 85 && th <= 95) cas = 'Equatorial (V=0)';
+  else if(th >= 265 && th <= 275) cas = 'Equatorial (V=0)';
+  else if(V > 0) cas = 'Positive V';
+  else if(V < 0) cas = 'Negative V';
+  else cas = 'V = 0';
+  document.getElementById('dip-case').textContent = cas;
+
+  drawDipoleCanvas(p, theta, r, V);
+  drawVthetaCanvas(p, r, theta);
+}
+
+function drawDipoleCanvas(p, theta, r, V) {
+  const cv = document.getElementById('dipoleCanvas');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#fafaf8'; ctx.fillRect(0,0,W,H);
+
+  const cx = W/2, cy = H/2;
+  const scale = 60; // pixels per unit distance
+
+  // Draw potential field coloring (background)
+  const imgData = ctx.createImageData(W, H);
+  const maxV = 9e9 * p / (0.03*0.03);
+  for(let py=0;py<H;py+=2) {
+    for(let px=0;px<W;px+=2) {
+      const wx = (px-cx)/scale, wy = (cy-py)/scale;
+      const rr = Math.sqrt(wx*wx+wy*wy);
+      if(rr < 0.05) continue;
+      const th = Math.atan2(wy, wx);
+      const Vp = 9e9 * p * Math.cos(th) / (rr*rr);
+      const norm = Math.max(-1, Math.min(1, Vp/maxV));
+      let R=255,G=255,B=255;
+      if(norm>0) { R=255; G=Math.floor(255-norm*200); B=Math.floor(255-norm*200); }
+      else if(norm<0) { R=Math.floor(255+norm*200); G=Math.floor(255+norm*200); B=255; }
+      const idx = (py*W+px)*4;
+      imgData.data[idx]=R; imgData.data[idx+1]=G; imgData.data[idx+2]=B; imgData.data[idx+3]=140;
+      if(px+1<W) { imgData.data[idx+4]=R; imgData.data[idx+5]=G; imgData.data[idx+6]=B; imgData.data[idx+7]=140; }
+    }
+  }
+  ctx.putImageData(imgData,0,0);
+
+  // Dipole arrow
+  const da = 30;
+  ctx.strokeStyle='#374151'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(cx-da, cy); ctx.lineTo(cx+da,cy); ctx.stroke();
+  drawArrow(ctx, cx, cy, cx+da, cy, '#374151', 2);
+  drawCharge(ctx, cx-da, cy, -1, 14);
+  drawCharge(ctx, cx+da, cy, 1, 14);
+
+  // p arrow
+  ctx.fillStyle='#374151'; ctx.font='bold 12px Fira Code';
+  ctx.textAlign='center'; ctx.fillText('p⃗', cx, cy-42);
+  drawArrow(ctx, cx-20, cy-38, cx+20, cy-38, '#374151', 1.5);
+
+  // Point P
+  const Px = cx + r*scale*Math.cos(theta);
+  const Py = cy - r*scale*Math.sin(theta);
+  ctx.beginPath(); ctx.arc(Px, Py, 7, 0, Math.PI*2);
+  ctx.fillStyle = '#7c3aed'; ctx.fill();
+  ctx.strokeStyle='#fff'; ctx.lineWidth=2; ctx.stroke();
+
+  // r line
+  ctx.setLineDash([5,4]); ctx.strokeStyle='#7c3aed'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(Px, Py); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // theta arc
+  if(theta > 0.05) {
+    ctx.strokeStyle='#d97706'; ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.arc(cx, cy, 30, -theta, 0); ctx.stroke();
+    ctx.fillStyle='#d97706'; ctx.font='12px Fira Code';
+    const midA = -theta/2;
+    ctx.fillText('θ', cx+40*Math.cos(midA), cy+40*Math.sin(midA));
+  }
+
+  // P label and V value
+  ctx.fillStyle='#7c3aed'; ctx.font='bold 13px Nunito';
+  ctx.textAlign='left';
+  ctx.fillText('P', Px+10, Py-10);
+  const Vstr = formatSci(V);
+  ctx.fillStyle = V>=0 ? '#dc2626' : '#2563eb';
+  ctx.font='bold 12px Fira Code';
+  ctx.fillText('V = '+(V>=0?'+':'')+Vstr+' V', Px+10, Py+8);
+
+  // Axes labels
+  ctx.fillStyle='#9ca3af'; ctx.font='11px Fira Code'; ctx.textAlign='center';
+  ctx.fillText('+x (axial, V max)', cx+80, cy+14);
+  ctx.fillText('−x (V min)', cx-80, cy+14);
+  ctx.fillText('Equatorial: V=0', cx-70, cy-80);
+}
+
+function drawVthetaCanvas(p, r, curTheta) {
+  const cv = document.getElementById('vthetaCanvas');
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#fafaf8'; ctx.fillRect(0,0,W,H);
+
+  const pad={l:50,r:20,t:20,b:30};
+  const gW=W-pad.l-pad.r, gH=H-pad.t-pad.b;
+  const k=9e9, maxV=k*p/(r*r);
+
+  // Axes
+  ctx.strokeStyle='#9ca3af'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+gH); ctx.lineTo(pad.l+gW,pad.t+gH); ctx.stroke();
+  // Zero line at middle
+  const zeroY = pad.t + gH/2;
+  ctx.setLineDash([4,4]); ctx.strokeStyle='#d1d5db';
+  ctx.beginPath(); ctx.moveTo(pad.l,zeroY); ctx.lineTo(pad.l+gW,zeroY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // V vs theta curve
+  ctx.strokeStyle='#2563eb'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let px=0;px<=gW;px++) {
+    const th = (px/gW)*2*Math.PI;
+    const Vp = maxV * Math.cos(th);
+    const y = zeroY - (Vp/maxV)*gH*0.45;
+    if(px===0) ctx.moveTo(pad.l+px, y); else ctx.lineTo(pad.l+px, y);
+  }
+  ctx.stroke();
+
+  // Current theta dot
+  const curPx = (curTheta/(2*Math.PI))*gW;
+  const curV = maxV * Math.cos(curTheta);
+  const curY = zeroY - (curV/maxV)*gH*0.45;
+  ctx.beginPath(); ctx.arc(pad.l+curPx, curY, 6, 0, Math.PI*2);
+  ctx.fillStyle='#dc2626'; ctx.fill();
+
+  // Labels
+  ctx.fillStyle='#6b7280'; ctx.font='11px Fira Code'; ctx.textAlign='center';
+  ctx.fillText('0°', pad.l, pad.t+gH+14);
+  ctx.fillText('90°', pad.l+gW/4, pad.t+gH+14);
+  ctx.fillText('180°', pad.l+gW/2, pad.t+gH+14);
+  ctx.fillText('270°', pad.l+3*gW/4, pad.t+gH+14);
+  ctx.fillText('360°', pad.l+gW, pad.t+gH+14);
+  ctx.fillText('θ →', pad.l+gW/2, H-2);
+  ctx.fillStyle='#059669'; ctx.font='10px Fira Code';
+  ctx.fillText('V=0 (equatorial)', pad.l+gW/4, zeroY-5);
+  ctx.fillText('V=0 (equatorial)', pad.l+3*gW/4, zeroY-5);
+  ctx.fillStyle='#dc2626'; ctx.textAlign='left';
+  ctx.fillText('+max', pad.l+2, pad.t+8);
+  ctx.fillStyle='#2563eb';
+  ctx.fillText('−max', pad.l+2, pad.t+gH-4);
+}
+
+// ══════════════════════
+// SECTION 3: EQUIPOTENTIAL
+// ══════════════════════
+let eqMode = 'point';
+const eqDescriptions = {
+  point: 'Concentric spheres centered on the charge. Closer spacing = stronger field near charge.',
+  dipole: 'Complex shapes — elongated near axis, perpendicular at equator. Equatorial plane is V=0.',
+  twopos: 'Figure-8 pattern. Charges share no equipotential. "Saddle point" exists between them.',
+  uniform: 'Parallel planes perpendicular to field. Equal spacing = uniform field. Capacitor configuration.'
+};
+
+function setEqMode(mode, btn) {
+  eqMode = mode;
+  document.querySelectorAll('.eq-btn').forEach(b=>b.classList.remove('active-eq'));
+  btn.classList.add('active-eq');
+  document.getElementById('eq-desc').textContent = eqDescriptions[mode];
+  const labels = {point:'Point Charge', dipole:'Electric Dipole', twopos:'Two + Charges', uniform:'Uniform Field'};
+  document.getElementById('eq-mode-label').textContent = labels[mode];
+  drawEquipotential();
+}
+
+function drawEquipotential() {
+  const cv = document.getElementById('eqCanvas');
+  const ctx = cv.getContext('2d');
+  const W=cv.width, H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#f8fafc'; ctx.fillRect(0,0,W,H);
+
+  const levels = parseInt(document.getElementById('eqlvl').value);
+  document.getElementById('v-eqlvl').textContent = levels;
+  const showFL = document.getElementById('showFieldLines').checked;
+  const cx=W/2, cy=H/2;
+
+  if(eqMode==='point') drawEqPoint(ctx,W,H,cx,cy,levels,showFL);
+  else if(eqMode==='dipole') drawEqDipole(ctx,W,H,cx,cy,levels,showFL);
+  else if(eqMode==='twopos') drawEqTwoPos(ctx,W,H,cx,cy,levels,showFL);
+  else if(eqMode==='uniform') drawEqUniform(ctx,W,H,cx,cy,levels,showFL);
+}
+
+function potential_point(px,py,cx,cy,q) {
+  const dx=px-cx, dy=py-cy;
+  const r=Math.sqrt(dx*dx+dy*dy)/80;
+  if(r<0.05) return q*9e4;
+  return q*9e9*1e-9/r;
+}
+
+function drawEqPoint(ctx,W,H,cx,cy,levels,showFL) {
+  const Vmax=200;
+  // Draw equipotential circles
+  for(let i=1;i<=levels;i++) {
+    const r = 20 + i*(Math.min(W,H)*0.4/levels);
+    const alpha = 1 - i/levels*0.5;
+    const hue = 210 - i/(levels)*60;
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.strokeStyle=`hsla(${hue},80%,65%,${alpha})`;
+    ctx.lineWidth=1.5; ctx.stroke();
+
+    // V label
+    ctx.fillStyle=`hsla(${hue},80%,75%,0.9)`;
+    ctx.font='10px Fira Code'; ctx.textAlign='left';
+    const V = (Vmax/i).toFixed(0);
+    ctx.fillText('V='+V, cx+r+4, cy+4);
+  }
+
+  // Field lines
+  if(showFL) {
+    const nLines = 12;
+    for(let i=0;i<nLines;i++) {
+      const ang = i*2*Math.PI/nLines;
+      ctx.strokeStyle='rgba(180,110,0,0.6)'; ctx.lineWidth=1.2;
+      ctx.beginPath(); ctx.moveTo(cx,cy);
+      ctx.lineTo(cx+Math.cos(ang)*W*0.45, cy+Math.sin(ang)*W*0.45);
+      ctx.stroke();
+      // Arrow at mid
+      const mx=cx+Math.cos(ang)*W*0.2, my=cy+Math.sin(ang)*W*0.2;
+      drawArrow(ctx,mx-Math.cos(ang)*5,my-Math.sin(ang)*5,mx+Math.cos(ang)*5,my+Math.sin(ang)*5,'rgba(180,110,0,0.8)',1);
+    }
+  }
+
+  // Charge
+  ctx.beginPath(); ctx.arc(cx,cy,14,0,Math.PI*2);
+  ctx.fillStyle='rgba(220,38,38,0.3)'; ctx.fill();
+  ctx.strokeStyle='#dc2626'; ctx.lineWidth=2.5; ctx.stroke();
+  ctx.fillStyle='#fca5a5'; ctx.font='bold 14px Syne'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('+q', cx, cy); ctx.textBaseline='alphabetic';
+}
+
+function drawEqDipole(ctx,W,H,cx,cy,levels,showFL) {
+  const da=55;
+  // Compute V field and draw contours using marching approach (simplified color fill)
+  const step=3;
+  const Vmax=150;
+  for(let py=0;py<H;py+=step) {
+    for(let px=0;px<W;px+=step) {
+      const dx1=px-(cx-da), dy1=py-cy;
+      const r1=Math.sqrt(dx1*dx1+dy1*dy1); if(r1<8) continue;
+      const dx2=px-(cx+da), dy2=py-cy;
+      const r2=Math.sqrt(dx2*dx2+dy2*dy2); if(r2<8) continue;
+      const V = 9*(-1/r1 + 1/r2)*15;
+      const norm = Math.max(-1,Math.min(1,V/Vmax));
+      let R,G,B;
+      if(norm>0) {R=200+Math.floor(norm*55);G=50;B=50;}
+      else if(norm<0) {R=50;G=50;B=200+Math.floor(-norm*55);}
+      else {R=G=B=100;}
+      ctx.fillStyle=`rgba(${R},${G},${B},0.7)`;
+      ctx.fillRect(px,py,step,step);
+    }
+  }
+
+  // Equipotential contours using marching squares (simplified: draw circles distorted)
+  for(let lev=1;lev<=levels;lev++) {
+    const targetV = (lev - levels/2) * (Vmax*1.5/levels);
+    ctx.strokeStyle = targetV>0 ? `rgba(255,150,150,0.8)` : targetV<0 ? `rgba(150,150,255,0.8)` : `rgba(100,255,100,0.9)`;
+    ctx.lineWidth=1.5;
+    // Draw contour by tracing V=targetV
+    const pts=[];
+    for(let ang=0;ang<360;ang+=3) {
+      const a=ang*Math.PI/180;
+      for(let rr=10;rr<Math.min(W,H)/2-10;rr+=2) {
+        const ppx=cx+rr*Math.cos(a), ppy=cy+rr*Math.sin(a);
+        const dx1=ppx-(cx-da), dy1=ppy-cy; const r1=Math.sqrt(dx1*dx1+dy1*dy1)+0.01;
+        const dx2=ppx-(cx+da), dy2=ppy-cy; const r2=Math.sqrt(dx2*dx2+dy2*dy2)+0.01;
+        const V=9*(-1/r1+1/r2)*15;
+        if(Math.abs(V-targetV)<Math.abs(targetV)*0.15+3) { pts.push([ppx,ppy]); break; }
+      }
+    }
+    if(pts.length>5) {
+      ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]);
+      pts.forEach(p=>ctx.lineTo(p[0],p[1])); ctx.closePath(); ctx.stroke();
+    }
+  }
+
+  // Equatorial line (V=0)
+  ctx.strokeStyle='rgba(52,211,153,0.9)'; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+  ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#059669'; ctx.font='11px Fira Code'; ctx.textAlign='left';
+  ctx.fillText('V=0 (equatorial)', cx+5, 20);
+
+  // Charges
+  drawDarkCharge(ctx, cx-da, cy, -1, 16);
+  drawDarkCharge(ctx, cx+da, cy, 1, 16);
+  ctx.fillStyle='#374151'; ctx.font='12px Syne'; ctx.textAlign='center';
+  ctx.fillText('p\u20d7 →', cx, cy-35);
+}
+
+function drawEqTwoPos(ctx,W,H,cx,cy,levels,showFL) {
+  const da=80;
+  const step=3;
+  for(let py=0;py<H;py+=step) {
+    for(let px=0;px<W;px+=step) {
+      const dx1=px-(cx-da),dy1=py-cy; const r1=Math.sqrt(dx1*dx1+dy1*dy1)+1;
+      const dx2=px-(cx+da),dy2=py-cy; const r2=Math.sqrt(dx2*dx2+dy2*dy2)+1;
+      const V = 8*(1/r1+1/r2)*60;
+      const norm=Math.min(1,V/200);
+      const R=Math.floor(20+norm*80), G=Math.floor(20+norm*120), B=Math.floor(80+norm*160);
+      ctx.fillStyle=`rgba(${R},${G},${B},0.8)`;
+      ctx.fillRect(px,py,step,step);
+    }
+  }
+  for(let lev=1;lev<=levels;lev++) {
+    const targetV=(lev/levels)*300+20;
+    ctx.strokeStyle=`rgba(100,200,255,${0.4+lev/levels*0.5})`;
+    ctx.lineWidth=1.5;
+    const pts=[];
+    for(let ang=0;ang<360;ang+=2) {
+      const a=ang*Math.PI/180;
+      for(let rr=8;rr<Math.min(W,H)/2-5;rr+=2) {
+        const ppx=cx+rr*Math.cos(a),ppy=cy+rr*Math.sin(a);
+        const dx1=ppx-(cx-da),dy1=ppy-cy; const r1=Math.sqrt(dx1*dx1+dy1*dy1)+1;
+        const dx2=ppx-(cx+da),dy2=ppy-cy; const r2=Math.sqrt(dx2*dx2+dy2*dy2)+1;
+        const V=8*(1/r1+1/r2)*60;
+        if(Math.abs(V-targetV)<targetV*0.12+4){pts.push([ppx,ppy]);break;}
+      }
+    }
+    if(pts.length>5){
+      ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]);
+      pts.forEach(p=>ctx.lineTo(p[0],p[1])); ctx.closePath(); ctx.stroke();
+    }
+  }
+  // Saddle point
+  ctx.beginPath(); ctx.arc(cx,cy,5,0,Math.PI*2);
+  ctx.fillStyle='rgba(251,191,36,0.9)'; ctx.fill();
+  ctx.fillStyle='rgba(251,191,36,0.9)'; ctx.font='10px Fira Code'; ctx.textAlign='center';
+  ctx.fillText('saddle pt', cx, cy+18);
+
+  drawDarkCharge(ctx, cx-da, cy, 1, 16);
+  drawDarkCharge(ctx, cx+da, cy, 1, 16);
+}
+
+function drawEqUniform(ctx,W,H,cx,cy,levels,showFL) {
+  // Uniform field — parallel lines
+  const gap = H/(levels+1);
+  for(let i=1;i<=levels;i++) {
+    const y = i*gap;
+    const bright = Math.floor(100+i/(levels+1)*155);
+    ctx.strokeStyle='#3b82f6';
+    ctx.lineWidth=1.8;
+    ctx.beginPath(); ctx.moveTo(20,y); ctx.lineTo(W-20,y); ctx.stroke();
+    ctx.fillStyle='#1d4ed8'; ctx.font='10px Fira Code'; ctx.textAlign='right';
+    const V=(levels+1-i)*10;
+    ctx.fillText('V='+V+'V', W-24, y-3);
+  }
+
+  // Field lines (vertical arrows downward = E direction)
+  if(showFL) {
+    for(let i=1;i<=8;i++) {
+      const x=i*(W/9);
+      ctx.strokeStyle='rgba(180,110,0,0.6)'; ctx.lineWidth=1.5;
+      for(let ay=30;ay<H-30;ay+=60) {
+        drawArrow(ctx,x,ay,x,ay+40,'rgba(180,110,0,0.85)',1.5);
+      }
+    }
+  }
+  // Labels
+  ctx.fillStyle='#374151'; ctx.font='12px Fira Code'; ctx.textAlign='center';
+  ctx.fillText('E⃗ (uniform field pointing downward)', cx, H-10);
+  ctx.fillText('Closer plates above → higher V', cx, 14);
+}
+
+function drawDarkCharge(ctx,x,y,q,r) {
+  const color = q>0?'#f87171':'#60a5fa';
+  ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2);
+  ctx.fillStyle=color+'33'; ctx.fill();
+  ctx.strokeStyle=color; ctx.lineWidth=2; ctx.stroke();
+  ctx.fillStyle=color; ctx.font='bold 12px Syne'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(q>0?'+q':'−q', x, y); ctx.textBaseline='alphabetic';
+}
+
+// ══════════════════════
+// SECTION 4: DIPOLE IN FIELD
+// ══════════════════════
+let dipoleAnim = null;
+let dipoleAnimTheta = 0;
+
+function updateDipoleField() {
+  const theta = getV('ftheta') * Math.PI/180;
+  const p = getV('fp'), E = getV('fe');
+  document.getElementById('v-ftheta').textContent = getV('ftheta')+'°';
+  document.getElementById('v-fp').textContent = p;
+  document.getElementById('v-fe').textContent = E;
+
+  const tau = p * E * Math.sin(theta);
+  const U = -p * E * Math.cos(theta);
+  document.getElementById('f-torque').textContent = tau.toFixed(2);
+  document.getElementById('f-pe').textContent = (U>=0?'+':'')+U.toFixed(2);
+
+  const deg = getV('ftheta');
+  let equil='';
+  if(deg<5||deg>355) equil='STABLE (aligned with E)';
+  else if(deg>175&&deg<185) equil='UNSTABLE (anti-parallel to E)';
+  else equil='Rotating toward stable...';
+  document.getElementById('f-equil').textContent=equil;
+
+  drawFieldCanvas(theta, p, E);
+  drawTauCanvas(p, E, theta);
+}
+
+function drawFieldCanvas(theta, p, E) {
+  const cv=document.getElementById('fieldCanvas');
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#fafaf8'; ctx.fillRect(0,0,W,H);
+
+  const cx=W/2,cy=H/2;
+
+  // Background field (uniform E horizontal)
+  for(let x=30;x<W;x+=50) {
+    ctx.strokeStyle='rgba(37,99,235,0.15)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(x,20); ctx.lineTo(x,H-20); ctx.stroke();
+  }
+  for(let ay=50;ay<H;ay+=80) {
+    drawArrow(ctx,30,ay,W-30,ay,'rgba(37,99,235,0.3)',1.5);
+  }
+  ctx.fillStyle='rgba(37,99,235,0.5)'; ctx.font='12px Fira Code'; ctx.textAlign='left';
+  ctx.fillText('E⃗ →', 5, cy);
+
+  // Dipole
+  const da=55;
+  const negX=cx-da*Math.cos(theta), negY=cy+da*Math.sin(theta);
+  const posX=cx+da*Math.cos(theta), posY=cy-da*Math.sin(theta);
+
+  // Forces on charges
+  const fScale=25*E;
+  // Force on +q: F=qE in +x direction
+  drawArrow(ctx,posX,posY,posX+fScale,posY,'#dc2626',2.5);
+  ctx.fillStyle='#dc2626'; ctx.font='11px Fira Code'; ctx.textAlign='left';
+  ctx.fillText('F+',posX+fScale+4,posY-4);
+  // Force on -q: F=qE in -x direction
+  drawArrow(ctx,negX,negY,negX-fScale,negY,'#2563eb',2.5);
+  ctx.fillStyle='#2563eb'; ctx.textAlign='right';
+  ctx.fillText('F−',negX-fScale-4,negY-4);
+
+  // Dipole line
+  ctx.strokeStyle='#374151'; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(negX,negY); ctx.lineTo(posX,posY); ctx.stroke();
+  drawCharge(ctx,negX,negY,-1,16);
+  drawCharge(ctx,posX,posY,1,16);
+
+  // p arrow
+  drawArrow(ctx,cx-da*0.5*Math.cos(theta),cy+da*0.5*Math.sin(theta),cx+da*0.5*Math.cos(theta),cy-da*0.5*Math.sin(theta),'#374151',2);
+  ctx.fillStyle='#374151'; ctx.font='bold 13px Syne'; ctx.textAlign='center';
+  ctx.fillText('p⃗',cx+da*Math.cos(theta)+15,cy-da*Math.sin(theta)-15);
+
+  // Torque arc
+  const tau=p*E*Math.sin(theta);
+  if(Math.abs(tau)>0.05) {
+    const arcR=35;
+    const sweepDir = theta<Math.PI ? -1 : 1;
+    ctx.strokeStyle='#d97706'; ctx.lineWidth=2.5;
+    ctx.beginPath();
+    ctx.arc(cx,cy,arcR, Math.PI-theta, Math.PI, false);
+    ctx.stroke();
+    ctx.fillStyle='#d97706'; ctx.font='11px Fira Code'; ctx.textAlign='center';
+    ctx.fillText('τ='+Math.abs(tau).toFixed(1), cx-50, cy+5);
+  }
+
+  // Angle
+  ctx.strokeStyle='#d97706'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.arc(cx,cy,30, -Math.PI/2, -Math.PI/2+theta, theta>0); ctx.stroke();
+
+  // Theta label
+  ctx.fillStyle='#d97706'; ctx.font='12px Fira Code'; ctx.textAlign='center';
+  ctx.fillText('θ='+Math.round(theta*180/Math.PI)+'°', cx+50, cy+40);
+
+  // PE display
+  const U=-p*E*Math.cos(theta);
+  ctx.fillStyle=U<0?'#059669':'#dc2626';
+  ctx.font='bold 14px Syne'; ctx.textAlign='center';
+  ctx.fillText('U = −pE·cosθ = '+(U>=0?'+':'')+U.toFixed(2), cx, 25);
+}
+
+function drawTauCanvas(p, E, curTheta) {
+  const cv=document.getElementById('tauCanvas');
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#fafaf8'; ctx.fillRect(0,0,W,H);
+
+  const pad={l:40,r:10,t:15,b:30};
+  const gW=W-pad.l-pad.r, gH=H-pad.t-pad.b;
+  const zeroY=pad.t+gH/2;
+
+  ctx.strokeStyle='#d1d5db'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+gH); ctx.lineTo(pad.l+gW,pad.t+gH); ctx.stroke();
+  ctx.setLineDash([4,4]); ctx.strokeStyle='#e5e7eb';
+  ctx.beginPath(); ctx.moveTo(pad.l,zeroY); ctx.lineTo(pad.l+gW,zeroY); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Torque curve: pE sinθ
+  ctx.strokeStyle='#d97706'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let px=0;px<=gW;px++){
+    const th=(px/gW)*2*Math.PI;
+    const tau=p*E*Math.sin(th);
+    const y=zeroY-(tau/(p*E))*gH*0.42;
+    if(px===0) ctx.moveTo(pad.l+px,y); else ctx.lineTo(pad.l+px,y);
+  } ctx.stroke();
+
+  // PE curve: -pE cosθ
+  ctx.strokeStyle='#2563eb'; ctx.lineWidth=2;
+  ctx.beginPath();
+  for(let px=0;px<=gW;px++){
+    const th=(px/gW)*2*Math.PI;
+    const U=-p*E*Math.cos(th);
+    const y=zeroY-(U/(p*E))*gH*0.42;
+    if(px===0) ctx.moveTo(pad.l+px,y); else ctx.lineTo(pad.l+px,y);
+  } ctx.stroke();
+
+  // Current position marker
+  const curPx=(curTheta/(2*Math.PI))*gW;
+  const curTau=p*E*Math.sin(curTheta);
+  const curU=-p*E*Math.cos(curTheta);
+  const tauY=zeroY-(curTau/(p*E))*gH*0.42;
+  const UY=zeroY-(curU/(p*E))*gH*0.42;
+  ctx.beginPath(); ctx.arc(pad.l+curPx,tauY,5,0,Math.PI*2); ctx.fillStyle='#d97706'; ctx.fill();
+  ctx.beginPath(); ctx.arc(pad.l+curPx,UY,5,0,Math.PI*2); ctx.fillStyle='#dc2626'; ctx.fill();
+
+  // Angle labels
+  ctx.fillStyle='#9ca3af'; ctx.font='10px Fira Code'; ctx.textAlign='center';
+  ['0°','90°','180°','270°','360°'].forEach((l,i)=>{
+    ctx.fillText(l, pad.l+i*gW/4, pad.t+gH+14);
+  });
+
+  // Equilibrium markers
+  ctx.fillStyle='#059669'; ctx.font='10px Fira Code'; ctx.textAlign='center';
+  ctx.fillText('⬇stable', pad.l+2, pad.t+8);
+  ctx.fillStyle='#dc2626';
+  ctx.fillText('⬆unstable', pad.l+gW/2+2, pad.t+8);
+}
+
+function animateDipole() {
+  if(dipoleAnim) { cancelAnimationFrame(dipoleAnim); dipoleAnim=null; return; }
+  let t=getV('ftheta');
+  function step() {
+    t = (t+1.5)%360;
+    document.getElementById('ftheta').value=t;
+    updateDipoleField();
+    dipoleAnim=requestAnimationFrame(step);
+  }
+  dipoleAnim=requestAnimationFrame(step);
+}
+
+// ══════════════════════
+// SECTION 5: E-V RELATION
+// ══════════════════════
+let evMode='linear';
+
+function setEVMode(mode, btn) {
+  evMode=mode;
+  document.querySelectorAll('.ev-btn').forEach(b=>b.classList.remove('active-ev'));
+  btn.classList.add('active-ev');
+  updateEV();
+}
+
+function V_func(x) {
+  if(evMode==='linear') return -10*x+30;
+  if(evMode==='quadratic') return 2*x*x-5;
+  if(evMode==='coulomb') return x<0.1?900:90/x;
+  if(evMode==='custom') return 30*Math.sin(x)+10;
+}
+function E_func(x) {
+  if(evMode==='linear') return 10;
+  if(evMode==='quadratic') return -(4*x);
+  if(evMode==='coulomb') return x<0.1?9000:90/(x*x);
+  if(evMode==='custom') return -30*Math.cos(x);
+}
+
+function updateEV() {
+  const x=parseFloat(document.getElementById('xpos').value);
+  document.getElementById('v-xpos').textContent=x.toFixed(1);
+  const V=V_func(x), Ef=E_func(x);
+  document.getElementById('ev-V').textContent=V.toFixed(2);
+  document.getElementById('ev-E').textContent=(Ef>=0?'+':'')+Ef.toFixed(2);
+  drawEVCanvas(x);
+}
+
+function drawEVCanvas(curX) {
+  const cv=document.getElementById('evCanvas');
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#fafaf8'; ctx.fillRect(0,0,W,H);
+
+  const pad={l:55,r:15,t:20,b:40};
+  const gW=W-pad.l-pad.r, gH=H-pad.t-pad.b;
+  const xMin=0,xMax=10;
+
+  // Find V range
+  let Vmin=Infinity,Vmax=-Infinity,Emin=Infinity,Emax=-Infinity;
+  for(let i=0;i<=100;i++){
+    const x=xMin+i/100*(xMax-xMin);
+    const v=V_func(x),e=E_func(x);
+    Vmin=Math.min(Vmin,v); Vmax=Math.max(Vmax,v);
+    Emin=Math.min(Emin,e); Emax=Math.max(Emax,e);
+  }
+  const Vrange=Vmax-Vmin||1, Erange=Emax-Emin||1;
+
+  function xToP(x){return pad.l+(x-xMin)/(xMax-xMin)*gW;}
+  function vToP(v){return pad.t+gH-(v-Vmin)/Vrange*gH*0.8-gH*0.1;}
+  function eToP(e){return pad.t+gH-(e-Emin)/Erange*gH*0.8-gH*0.1;}
+
+  // Grid
+  ctx.strokeStyle='#e5e7eb'; ctx.lineWidth=1; ctx.setLineDash([3,4]);
+  for(let i=1;i<=9;i++){const x=pad.l+i*gW/10;ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,pad.t+gH);ctx.stroke();}
+  for(let i=1;i<=4;i++){const y=pad.t+i*gH/5;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+gW,y);ctx.stroke();}
+  ctx.setLineDash([]);
+
+  // Axes
+  ctx.strokeStyle='#9ca3af'; ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+gH);ctx.lineTo(pad.l+gW,pad.t+gH);ctx.stroke();
+
+  // V(x) curve
+  ctx.strokeStyle='#2563eb'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let px=0;px<=gW;px++){
+    const x=xMin+px/gW*(xMax-xMin);
+    const y=vToP(V_func(x));
+    if(px===0) ctx.moveTo(pad.l+px,y); else ctx.lineTo(pad.l+px,y);
+  } ctx.stroke();
+
+  // E(x) curve
+  ctx.strokeStyle='#dc2626'; ctx.lineWidth=2;
+  ctx.setLineDash([6,4]);
+  ctx.beginPath();
+  for(let px=0;px<=gW;px++){
+    const x=xMin+px/gW*(xMax-xMin);
+    const y=eToP(E_func(x));
+    if(px===0) ctx.moveTo(pad.l+px,y); else ctx.lineTo(pad.l+px,y);
+  } ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Tangent line at curX
+  const Vpx=xToP(curX), VcurY=vToP(V_func(curX));
+  const slope=E_func(curX);
+  const slopeNorm=slope/Vrange*gH*0.8;
+  const dx2=40;
+  ctx.strokeStyle='#d97706'; ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.moveTo(Vpx-dx2, VcurY+slopeNorm*(dx2/gW)*(xMax-xMin));
+  ctx.lineTo(Vpx+dx2, VcurY-slopeNorm*(dx2/gW)*(xMax-xMin));
+  ctx.stroke();
+
+  // Vertical line at x
+  ctx.strokeStyle='rgba(124,58,237,0.4)'; ctx.lineWidth=1.5; ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(Vpx,pad.t); ctx.lineTo(Vpx,pad.t+gH); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Points
+  ctx.beginPath(); ctx.arc(Vpx,VcurY,6,0,Math.PI*2); ctx.fillStyle='#2563eb'; ctx.fill();
+  ctx.beginPath(); ctx.arc(Vpx,eToP(E_func(curX)),6,0,Math.PI*2); ctx.fillStyle='#dc2626'; ctx.fill();
+
+  // Labels
+  ctx.fillStyle='#4b5563'; ctx.font='11px Fira Code'; ctx.textAlign='center';
+  ctx.fillText('x', pad.l+gW/2, pad.t+gH+28);
+  ctx.save(); ctx.translate(14,H/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('V / E', 0, 0); ctx.restore();
+
+  // Slope annotation
+  ctx.fillStyle='#d97706'; ctx.font='11px Fira Code'; ctx.textAlign='left';
+  ctx.fillText('slope = −E = '+(-E_func(curX)).toFixed(2), Vpx+8, VcurY-8);
+
+  // Formula label
+  ctx.fillStyle='#2563eb'; ctx.font='bold 12px Syne';
+  ctx.textAlign='right'; ctx.fillText('V(x)', pad.l+gW-5, pad.t+15);
+  ctx.fillStyle='#dc2626';
+  ctx.fillText('E(x) = −dV/dx', pad.l+gW-5, pad.t+30);
+}
+
+function drawPointCharge() {
+  const cv=document.getElementById('pointChargeCanvas');
+  const ctx=cv.getContext('2d');
+  const W=cv.width,H=cv.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#fafaf8'; ctx.fillRect(0,0,W,H);
+
+  const pad={l:45,r:20,t:20,b:30};
+  const gW=W-pad.l-pad.r, gH=H-pad.t-pad.b;
+
+  // Axes
+  ctx.strokeStyle='#9ca3af'; ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+gH);ctx.lineTo(pad.l+gW,pad.t+gH);ctx.stroke();
+
+  const k=90, rMin=0.5, rMax=10;
+  const Vmax=k/rMin, Emax=k/(rMin*rMin);
+
+  // V curve (1/r)
+  ctx.strokeStyle='#7c3aed'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  for(let px=0;px<=gW;px++){
+    const r=rMin+px/gW*(rMax-rMin);
+    const V=k/r;
+    const y=pad.t+gH-(V/Vmax)*gH*0.85;
+    if(px===0) ctx.moveTo(pad.l+px,y); else ctx.lineTo(pad.l+px,y);
+  } ctx.stroke();
+
+  // E curve (1/r²)
+  ctx.strokeStyle='#dc2626'; ctx.lineWidth=2;
+  ctx.setLineDash([5,4]);
+  ctx.beginPath();
+  for(let px=0;px<=gW;px++){
+    const r=rMin+px/gW*(rMax-rMin);
+    const E=k/(r*r);
+    const y=pad.t+gH-(E/Emax)*gH*0.85;
+    if(px===0) ctx.moveTo(pad.l+px,y); else ctx.lineTo(pad.l+px,y);
+  } ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Labels
+  ctx.fillStyle='#9ca3af'; ctx.font='11px Fira Code'; ctx.textAlign='center';
+  ctx.fillText('r (distance from charge)', pad.l+gW/2, H-5);
+  ctx.fillStyle='#7c3aed'; ctx.textAlign='left';
+  ctx.fillText('V ∝ 1/r', pad.l+10, pad.t+16);
+  ctx.fillStyle='#dc2626';
+  ctx.fillText('E ∝ 1/r²', pad.l+10, pad.t+30);
+  ctx.fillStyle='#4b5563'; ctx.font='10px Fira Code'; ctx.textAlign='center';
+  ctx.fillText('E falls FASTER than V', pad.l+gW/2, pad.t+16);
+}
+
+// ═══ INIT ═══
+updatePE();
+update3ch();
+drawEquipotential();
+updateDipoleField();
+updateEV();
+drawPointCharge();
+
+</script>
+</body>
+</html>

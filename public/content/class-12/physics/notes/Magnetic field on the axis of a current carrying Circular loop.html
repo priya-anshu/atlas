@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magnetic Field on Axis of Circular Loop — Full Derivation</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#fdf6ed;--surface:#fffaf3;--surface2:#fef0d8;
+  --amber:#c47f17;--amber-l:#faeeda;--amber-d:#7a4e0a;
+  --rust:#b84c1a;--rust-l:#fce0d2;
+  --teal:#0f766e;--teal-l:#ccfbf1;
+  --ink:#2e1f0e;--ink2:#5c3d1e;--ink3:#9c7a50;
+}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:var(--amber);border-radius:10px}
+
+/* ── Animations ── */
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes glow-amber{0%,100%{box-shadow:0 0 0 0 rgba(196,127,23,0)}50%{box-shadow:0 0 22px 5px rgba(196,127,23,0.22)}}
+@keyframes spin-loop{from{stroke-dashoffset:0}to{stroke-dashoffset:-200}}
+@keyframes field-flow{to{stroke-dashoffset:-30}}
+@keyframes fade-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse-dot{0%,100%{r:5;opacity:1}50%{r:8;opacity:.7}}
+@keyframes draw-line{from{stroke-dashoffset:300}to{stroke-dashoffset:0}}
+@keyframes wiggle{0%,100%{transform:rotate(0)}25%{transform:rotate(2deg)}75%{transform:rotate(-2deg)}}
+@keyframes counter-spin{from{transform:rotate(0deg)}to{transform:rotate(-360deg)}}
+
+.float{animation:float 3.5s ease-in-out infinite}
+.glow{animation:glow-amber 2.5s ease-in-out infinite}
+.field-anim{stroke-dasharray:6 4;animation:field-flow 1.3s linear infinite}
+.field-anim-rev{stroke-dasharray:6 4;animation:field-flow 1.3s linear infinite reverse}
+.field-slow{stroke-dasharray:6 4;animation:field-flow 2.2s linear infinite}
+.draw-in{stroke-dasharray:300;stroke-dashoffset:300;animation:draw-line 1.2s ease forwards}
+.fade-in{opacity:0;animation:fade-in .6s ease forwards}
+.loop-spin{stroke-dasharray:8 5;animation:spin-loop 2s linear infinite}
+.pulse{animation:pulse-dot 1.5s ease-in-out infinite}
+
+/* ── Nav ── */
+.step-btn{transition:all .2s ease;border:1px solid #e8d5b5}
+.step-btn:hover{background:#faeeda;border-color:var(--amber)}
+.step-btn.active{background:var(--amber);color:#fff;border-color:var(--amber);box-shadow:0 4px 14px rgba(196,127,23,.38)}
+
+/* ── Cards ── */
+.derive-card{background:rgba(255,255,255,.72);border:1px solid #f0dfc5;border-radius:16px;
+  backdrop-filter:blur(8px);transition:box-shadow .2s}
+.derive-card:hover{box-shadow:0 6px 24px rgba(196,127,23,.1)}
+.formula-block{background:linear-gradient(135deg,#fdf6ed,#faeeda);border:1px solid #e8d5b5;
+  border-left:4px solid var(--amber);border-radius:0 10px 10px 0}
+.insight-box{background:linear-gradient(135deg,#fef0d8,#fdf6ed);border:1px solid #e8a030;border-radius:10px}
+.why-box{background:rgba(15,118,110,.06);border:1px solid rgba(15,118,110,.2);border-radius:10px}
+.special-card{border-radius:16px;border:2px solid;transition:transform .2s,box-shadow .2s}
+.special-card:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(0,0,0,.1)}
+
+/* ── SVG canvas ── */
+.svg-wrap{background:linear-gradient(135deg,#fdf9f4,#fff);border:1px solid #f0dfc5;border-radius:14px;overflow:hidden}
+
+/* ── Scrollbar for step nav ── */
+.step-nav{display:flex;gap:6px;flex-wrap:wrap;padding:4px}
+
+input[type=range]{-webkit-appearance:none;height:4px;border-radius:2px;background:#e8d5b5;outline:none;width:100%}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--amber);cursor:pointer;box-shadow:0 2px 6px rgba(196,127,23,.4)}
+
+.tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;padding:2px 9px;border-radius:12px;font-weight:500}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section style="background:linear-gradient(160deg,#fdf6ed 0%,#faeeda 60%,#f5d9a8 100%);padding:48px 16px 32px">
+  <div style="max-width:860px;margin:0 auto;text-align:center">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(250,238,218,.9);border:1px solid #e8d5b5;border-radius:24px;padding:5px 18px;margin-bottom:18px">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#c47f17" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/></svg>
+      <span style="font-size:11px;font-weight:500;color:#c47f17;letter-spacing:2px;text-transform:uppercase">Physics · Class 12 · Chapter 4</span>
+    </div>
+    <h1 style="font-family:'Crimson Pro',serif;font-size:clamp(28px,5vw,48px);font-weight:300;color:#2e1f0e;line-height:1.2;margin-bottom:10px">
+      Magnetic Field on the Axis of a<br>
+      <span style="color:#c47f17;font-style:italic">Current-Carrying Circular Loop</span>
+    </h1>
+    <p style="font-size:14px;color:#7a4e0a;max-width:560px;margin:0 auto 24px;line-height:1.7">
+      Full derivation using Biot–Savart Law · Complete trigonometry explained · 
+      Special cases: x=0, x=a, x≫a · Interactive visualizations at every step
+    </p>
+
+    <!-- Hero SVG: animated circular loop -->
+    <div style="max-width:380px;margin:0 auto" class="svg-wrap float">
+      <svg viewBox="0 0 380 220" width="100%">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M2 2L8 5L2 8" fill="none" stroke="#c47f17" stroke-width="1.5" stroke-linecap="round"/>
+          </marker>
+          <marker id="arr-rust" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M2 2L8 5L2 8" fill="none" stroke="#b84c1a" stroke-width="1.5" stroke-linecap="round"/>
+          </marker>
+          <marker id="arr-teal" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+            <path d="M2 2L8 5L2 8" fill="none" stroke="#0f766e" stroke-width="1.5" stroke-linecap="round"/>
+          </marker>
+        </defs>
+        <!-- Axis -->
+        <line x1="30" y1="110" x2="355" y2="110" stroke="#9c7a50" stroke-width="1" stroke-dasharray="6 4" opacity=".5"/>
+        <text x="348" y="107" font-size="11" fill="#9c7a50" font-family="JetBrains Mono">x</text>
+        <!-- Loop (ellipse) -->
+        <ellipse cx="130" cy="110" rx="22" ry="75" fill="none" stroke="#c47f17" stroke-width="3" opacity=".9"/>
+        <!-- Current arrows on loop -->
+        <polygon points="108,80 114,65 118,82" fill="#c47f17" opacity=".85"/>
+        <polygon points="153,140 147,155 143,138" fill="#c47f17" opacity=".85"/>
+        <text x="158" y="94" font-size="11" fill="#c47f17" font-weight="500" font-family="Outfit">I ↻</text>
+        <!-- Radius R -->
+        <line x1="130" y1="110" x2="130" y2="35" stroke="#0f766e" stroke-width="1.5" stroke-dasharray="4 2"/>
+        <text x="137" y="72" font-size="11" fill="#0f766e" font-family="JetBrains Mono">a</text>
+        <!-- Point P on axis -->
+        <circle cx="280" cy="110" r="6" fill="#b84c1a"/>
+        <text x="287" y="107" font-size="12" fill="#b84c1a" font-weight="500" font-family="Outfit">P</text>
+        <!-- x distance -->
+        <line x1="130" y1="128" x2="280" y2="128" stroke="#9c7a50" stroke-width="1" marker-end="url(#arr)"/>
+        <text x="200" y="143" font-size="11" fill="#9c7a50" font-family="JetBrains Mono" text-anchor="middle">x</text>
+        <!-- dB vectors from top + bottom (symmetric) -->
+        <line x1="130" y1="35" x2="280" y2="110" stroke="#9c7a50" stroke-width="1" stroke-dasharray="4 2"/>
+        <text x="214" y="64" font-size="10" fill="#9c7a50" font-family="JetBrains Mono">√(x²+a²)</text>
+        <!-- dB at P (resultant along x) -->
+        <line x1="280" y1="110" x2="340" y2="110" stroke="#b84c1a" stroke-width="2.5" marker-end="url(#arr-rust)"/>
+        <text x="295" y="100" font-size="11" fill="#b84c1a" font-family="JetBrains Mono">B (net)</text>
+        <!-- dB components cancel symbol -->
+        <text x="268" y="90" font-size="18" fill="#b84c1a" opacity=".4">⊕</text>
+        <text x="268" y="132" font-size="18" fill="#b84c1a" opacity=".4">⊗</text>
+        <!-- B₀ at centre -->
+        <line x1="130" y1="110" x2="76" y2="110" stroke="#b84c1a" stroke-width="1.5" stroke-dasharray="3 2" opacity=".5"/>
+        <text x="52" y="106" font-size="10" fill="#b84c1a" font-family="JetBrains Mono" opacity=".6">B₀</text>
+        <!-- C label -->
+        <text x="120" y="116" font-size="11" fill="#2e1f0e" font-family="Outfit">C</text>
+      </svg>
+    </div>
+
+    <!-- Formula preview -->
+    <div style="display:inline-block;background:rgba(255,255,255,.8);border:2px solid #e8a030;border-radius:14px;padding:14px 28px;margin-top:16px" class="glow">
+      <div style="font-size:11px;color:#c47f17;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;font-weight:500">Final Result</div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:18px;color:#2e1f0e;font-weight:600">
+        B = μ₀Ia² / 2(x²+a²)<sup style="font-size:13px">3/2</sup>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ STEP NAV ══════════════ -->
+<nav style="position:sticky;top:0;z-index:50;background:rgba(253,246,237,.95);backdrop-filter:blur(12px);border-bottom:1px solid #f0dfc5;padding:10px 16px">
+  <div style="max-width:860px;margin:0 auto">
+    <div class="step-nav" id="step-nav">
+      <button class="step-btn active" onclick="goStep(0,this)" style="font-size:12px;padding:6px 14px;border-radius:20px;font-family:'Outfit',sans-serif;cursor:pointer;background:none">① Setup</button>
+      <button class="step-btn" onclick="goStep(1,this)" style="font-size:12px;padding:6px 14px;border-radius:20px;font-family:'Outfit',sans-serif;cursor:pointer;background:none">② Geometry</button>
+      <button class="step-btn" onclick="goStep(2,this)" style="font-size:12px;padding:6px 14px;border-radius:20px;font-family:'Outfit',sans-serif;cursor:pointer;background:none">③ Biot–Savart</button>
+      <button class="step-btn" onclick="goStep(3,this)" style="font-size:12px;padding:6px 14px;border-radius:20px;font-family:'Outfit',sans-serif;cursor:pointer;background:none">④ Components</button>
+      <button class="step-btn" onclick="goStep(4,this)" style="font-size:12px;padding:6px 14px;border-radius:20px;font-family:'Outfit',sans-serif;cursor:pointer;background:none">⑤ Cancellation</button>
+      <button class="step-btn" onclick="goStep(5,this)" style="font-size:12px;padding:6px 14px;border-radius:20px;font-family:'Outfit',sans-serif;cursor:pointer;background:none">⑥ Integration</button>
+      <button class="step-btn" onclick="goStep(6,this)" style="font-size:12px;padding:6px 14px;border-radius:20px;font-family:'Outfit',sans-serif;cursor:pointer;background:none">⑦ Final Formula</button>
+      <button class="step-btn" onclick="goStep(7,this)" style="font-size:12px;padding:6px 14px;border-radius:20px;font-family:'Outfit',sans-serif;cursor:pointer;background:none">⑧ Special Cases</button>
+      <button class="step-btn" onclick="goStep(8,this)" style="font-size:12px;padding:6px 14px;border-radius:20px;font-family:'Outfit',sans-serif;cursor:pointer;background:none">⑨ Interactive</button>
+    </div>
+  </div>
+</nav>
+
+<main style="max-width:860px;margin:0 auto;padding:24px 16px 60px">
+
+<!-- ══ STEP 0: Setup ══ -->
+<div class="step-panel" id="step-0">
+  <div class="derive-card p-6 mb-5">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <div style="width:32px;height:32px;border-radius:50%;background:#faeeda;color:#c47f17;font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;flex-shrink:0">1</div>
+      <h2 style="font-family:'Crimson Pro',serif;font-size:24px;font-weight:400;color:#2e1f0e">Setting Up the Problem</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div>
+        <p style="font-size:14px;color:#5c3d1e;line-height:1.8;margin-bottom:12px">
+          We have a circular loop of radius <b>a</b> carrying current <b>I</b>. 
+          The centre is at <b>C</b>. We want to find the magnetic field at point <b>P</b>, 
+          which lies on the axis of the loop at distance <b>x</b> from the centre.
+        </p>
+        <div class="insight-box p-4 mb-3">
+          <div style="font-size:12px;font-weight:600;color:#c47f17;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Known quantities</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#2e1f0e">a = radius of loop</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#2e1f0e">I = current in loop</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#2e1f0e">x = distance of P from centre C</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#2e1f0e">r = CP = √(x² + a²)</div>
+          </div>
+        </div>
+        <div class="why-box p-4">
+          <div style="font-size:12px;font-weight:600;color:#0f766e;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">💡 Why is the axis special?</div>
+          <p style="font-size:13px;color:#2e1f0e;line-height:1.7">
+            Every point on the loop is at the <b>same distance r = √(x²+a²)</b> from P. 
+            This symmetry is the key that makes the integration possible!
+          </p>
+        </div>
+      </div>
+      <div class="svg-wrap">
+        <svg viewBox="0 0 300 280" width="100%">
+          <!-- coordinate labels -->
+          <text x="12" y="18" font-size="11" fill="#9c7a50" font-family="Outfit">Setup diagram</text>
+          <!-- Axis -->
+          <line x1="20" y1="140" x2="280" y2="140" stroke="#9c7a50" stroke-width="1" stroke-dasharray="5 4" opacity=".6" marker-end="url(#arr)"/>
+          <text x="273" y="135" font-size="11" fill="#9c7a50" font-family="JetBrains Mono">x</text>
+          <!-- Loop -->
+          <ellipse cx="100" cy="140" rx="18" ry="80" fill="none" stroke="#c47f17" stroke-width="3"/>
+          <!-- Current direction arrows on loop -->
+          <polygon points="83,105 89,88 93,106" fill="#c47f17"/>
+          <polygon points="118,175 112,192 108,174" fill="#c47f17"/>
+          <text x="122" y="114" font-size="11" fill="#c47f17" font-family="Outfit">I</text>
+          <!-- Centre C -->
+          <circle cx="100" cy="140" r="4" fill="#c47f17"/>
+          <text x="88" y="157" font-size="12" fill="#2e1f0e" font-family="Outfit" font-weight="500">C</text>
+          <!-- Radius a -->
+          <line x1="100" y1="140" x2="100" y2="60" stroke="#0f766e" stroke-width="2"/>
+          <circle cx="100" cy="60" r="4" fill="#0f766e"/>
+          <text x="107" y="100" font-size="12" fill="#0f766e" font-family="JetBrains Mono">a</text>
+          <!-- x distance -->
+          <line x1="100" y1="158" x2="220" y2="158" stroke="#7a4e0a" stroke-width="1.5" stroke-dasharray="4 2"/>
+          <text x="158" y="173" font-size="11" fill="#7a4e0a" font-family="JetBrains Mono" text-anchor="middle">x</text>
+          <!-- Point P -->
+          <circle cx="220" cy="140" r="7" fill="#b84c1a"/>
+          <text x="230" y="137" font-size="13" fill="#b84c1a" font-family="Outfit" font-weight="600">P</text>
+          <!-- Hypotenuse LP -->
+          <line x1="100" y1="60" x2="220" y2="140" stroke="#9c7a50" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <text x="167" y="87" font-size="11" fill="#9c7a50" font-family="JetBrains Mono" text-anchor="middle" transform="rotate(-26,167,87)">√(x²+a²)</text>
+          <!-- Right angle at C -->
+          <rect x="100" y="140" width="10" height="-10" fill="none" stroke="#0f766e" stroke-width="1" opacity=".5"/>
+          <text x="112" y="136" font-size="9" fill="#0f766e" opacity=".7">90°</text>
+          <!-- Loop element dl at top -->
+          <circle cx="100" cy="60" r="4" fill="#0f766e"/>
+          <text x="85" y="54" font-size="10" fill="#0f766e" font-family="JetBrains Mono">dl</text>
+          <!-- N turns label -->
+          <text x="50" y="240" font-size="11" fill="#9c7a50" font-family="Outfit">For N turns: multiply B by N</text>
+          <!-- r label -->
+          <text x="30" y="270" font-size="11" fill="#9c7a50" font-family="JetBrains Mono">r = LP = MP = √(x²+a²)</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STEP 1: Geometry ══ -->
+<div class="step-panel hidden" id="step-1">
+  <div class="derive-card p-6 mb-5">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <div style="width:32px;height:32px;border-radius:50%;background:#faeeda;color:#c47f17;font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;flex-shrink:0">2</div>
+      <h2 style="font-family:'Crimson Pro',serif;font-size:24px;font-weight:400;color:#2e1f0e">Geometry — The Triangle LPC</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div>
+        <p style="font-size:14px;color:#5c3d1e;line-height:1.8;margin-bottom:12px">
+          Consider current element <b>Idl</b> at point <b>L</b> on top of the loop. 
+          P is on the axis. The triangle <b>LPC</b> is the core geometric structure.
+        </p>
+        <div class="insight-box p-4 mb-4">
+          <div style="font-size:12px;font-weight:600;color:#c47f17;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">Key geometric facts</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap-10px;align-items:flex-start;gap:8px">
+              <span style="background:#faeeda;color:#c47f17;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0">1</span>
+              <div style="font-size:13px;color:#2e1f0e"><b>LP ⊥ dl</b> — The current element dl is tangent to the loop. The line LP (from L to P) is not tangent. So the angle between dl and LP is <b>90°</b>. This means sin θ = sin 90° = 1 in Biot–Savart!</div>
+            </div>
+            <div style="display:flex;gap-10px;align-items:flex-start;gap:8px">
+              <span style="background:#faeeda;color:#c47f17;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0">2</span>
+              <div style="font-size:13px;color:#2e1f0e"><b>LC ⊥ CP</b> — The radius LC is perpendicular to the axis CP at C. This gives us the right angle at C.</div>
+            </div>
+            <div style="display:flex;gap-10px;align-items:flex-start;gap:8px">
+              <span style="background:#faeeda;color:#c47f17;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0">3</span>
+              <div style="font-size:13px;color:#2e1f0e"><b>LP = MP = √(x²+a²)</b> — All points on loop are equidistant from P (symmetry of circle).</div>
+            </div>
+          </div>
+        </div>
+        <div class="formula-block p-4">
+          <div style="font-size:12px;font-weight:600;color:#c47f17;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Why dl ⊥ LP?</div>
+          <p style="font-size:13px;color:#2e1f0e;line-height:1.7">The current element <b>dl</b> is always tangent to the circle at L. The vector <b>LP</b> is a secant line from L to a point on the axis. Since dl is tangent and the tangent ⊥ radius at L, and LP lies in the plane containing the axis and radius LC, we get <b>dl ⊥ LP</b>. Therefore the angle between dl and r̂ is 90°.</p>
+        </div>
+      </div>
+      <div class="svg-wrap">
+        <svg viewBox="0 0 290 280" width="100%">
+          <!-- Triangle LCP -->
+          <!-- C at (110,170), L at (110,70), P at (230,170) -->
+          <!-- Right angle marker at C -->
+          <rect x="110" y="160" width="12" height="-12" fill="none" stroke="#0f766e" stroke-width="1.5" opacity=".7"/>
+          <!-- Triangle sides -->
+          <line x1="110" y1="170" x2="110" y2="70" stroke="#0f766e" stroke-width="2.5"/>  <!-- LC = a -->
+          <line x1="110" y1="170" x2="230" y2="170" stroke="#7a4e0a" stroke-width="2.5"/>  <!-- CP = x -->
+          <line x1="110" y1="70"  x2="230" y2="170" stroke="#9c7a50" stroke-width="2" stroke-dasharray="5 3"/>  <!-- LP = r -->
+          <!-- Points -->
+          <circle cx="110" cy="70"  r="6" fill="#0f766e"/>
+          <circle cx="110" cy="170" r="6" fill="#c47f17"/>
+          <circle cx="230" cy="170" r="7" fill="#b84c1a"/>
+          <!-- Labels -->
+          <text x="95"  y="66"  font-size="13" fill="#0f766e" font-weight="600" font-family="Outfit">L (dl)</text>
+          <text x="94"  y="188" font-size="13" fill="#c47f17" font-weight="600" font-family="Outfit">C</text>
+          <text x="238" y="174" font-size="13" fill="#b84c1a" font-weight="600" font-family="Outfit">P</text>
+          <!-- Side labels -->
+          <text x="95"  y="122" font-size="12" fill="#0f766e" font-family="JetBrains Mono">a</text>
+          <text x="164" y="187" font-size="12" fill="#7a4e0a" font-family="JetBrains Mono">x</text>
+          <text x="176" y="108" font-size="11" fill="#9c7a50" font-family="JetBrains Mono" text-anchor="middle" transform="rotate(-42,176,108)">√(x²+a²)</text>
+          <!-- Angle phi at P -->
+          <path d="M220,170 A15,15,0,0,0,211,158" fill="none" stroke="#b84c1a" stroke-width="1.5"/>
+          <text x="207" y="153" font-size="11" fill="#b84c1a" font-family="JetBrains Mono">φ</text>
+          <!-- dl direction (perpendicular to plane, i.e., out of page at L) -->
+          <circle cx="110" cy="70" r="14" fill="none" stroke="#c47f17" stroke-width="1.5" stroke-dasharray="3 2"/>
+          <circle cx="110" cy="70" r="4" fill="#c47f17"/>
+          <text x="128"  y="58" font-size="10" fill="#c47f17" font-family="Outfit">dl ⊙ (out)</text>
+          <!-- 90 deg label at C -->
+          <text x="124" y="158" font-size="10" fill="#0f766e" opacity=".8">90°</text>
+          <!-- sin phi label -->
+          <text x="20" y="220" font-size="12" fill="#2e1f0e" font-family="JetBrains Mono">sin φ = a/√(x²+a²)</text>
+          <text x="20" y="240" font-size="12" fill="#2e1f0e" font-family="JetBrains Mono">cos φ = x/√(x²+a²)</text>
+          <!-- Pythagoras -->
+          <text x="20" y="265" font-size="11" fill="#9c7a50" font-family="JetBrains Mono">LP² = LC² + CP²</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STEP 2: Biot-Savart ══ -->
+<div class="step-panel hidden" id="step-2">
+  <div class="derive-card p-6 mb-5">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <div style="width:32px;height:32px;border-radius:50%;background:#faeeda;color:#c47f17;font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;flex-shrink:0">3</div>
+      <h2 style="font-family:'Crimson Pro',serif;font-size:24px;font-weight:400;color:#2e1f0e">Applying Biot–Savart Law</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div>
+        <div class="formula-block p-4 mb-4">
+          <div style="font-size:12px;font-weight:600;color:#c47f17;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Biot–Savart Law</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:15px;color:#2e1f0e;line-height:2">
+            dB = (μ₀/4π) · I·dl·sinθ / r²
+          </div>
+        </div>
+        <div class="insight-box p-4 mb-4">
+          <div style="font-size:12px;font-weight:600;color:#c47f17;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Substituting values</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="font-size:13px;color:#2e1f0e;line-height:1.7">
+              <b>θ = 90°</b> (dl ⊥ LP as proved in Step 2)<br>
+              So <b>sinθ = sin90° = 1</b>
+            </div>
+            <div style="font-size:13px;color:#2e1f0e;line-height:1.7">
+              <b>r = √(x² + a²)</b> (distance from dl to P)<br>
+              So <b>r² = x² + a²</b>
+            </div>
+          </div>
+        </div>
+        <div class="formula-block p-4 mb-4">
+          <div style="font-size:12px;font-weight:600;color:#c47f17;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">dB simplifies to</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#2e1f0e;line-height:2">
+            dB = μ₀I·dl / 4π(x²+a²)
+          </div>
+          <div style="font-size:12px;color:#9c7a50;margin-top:8px">sin90°=1 cancels, r² = x²+a²</div>
+        </div>
+        <div class="why-box p-4">
+          <div style="font-size:12px;font-weight:600;color:#0f766e;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px">💡 Key insight</div>
+          <p style="font-size:13px;color:#2e1f0e;line-height:1.7">
+            Because <b>θ = 90°</b> for every element dl on the loop, <b>every element contributes the same magnitude dB</b>. This is unique to the circular loop geometry!
+          </p>
+        </div>
+      </div>
+      <div class="svg-wrap">
+        <svg viewBox="0 0 290 280" width="100%">
+          <!-- Loop perspective -->
+          <ellipse cx="100" cy="140" rx="16" ry="70" fill="none" stroke="#c47f17" stroke-width="2.5"/>
+          <!-- dl at top -->
+          <line x1="84"  y1="70" x2="116" y2="70" stroke="#c47f17" stroke-width="3" stroke-linecap="round"/>
+          <polygon points="116,66 128,70 116,74" fill="#c47f17"/>
+          <text x="84" y="58" font-size="10" fill="#c47f17" font-family="JetBrains Mono">I·dl →</text>
+          <!-- Point P -->
+          <circle cx="230" cy="140" r="6" fill="#b84c1a"/>
+          <text x="238" y="137" font-size="12" fill="#b84c1a" font-family="Outfit" font-weight="600">P</text>
+          <!-- r vector -->
+          <line x1="100" y1="70" x2="230" y2="140" stroke="#9c7a50" stroke-width="1.5" stroke-dasharray="4 2"/>
+          <text x="172" y="95" font-size="10" fill="#9c7a50" font-family="JetBrains Mono" text-anchor="middle" transform="rotate(-28,172,95)">r=√(x²+a²)</text>
+          <!-- 90 degree angle box at dl -->
+          <rect x="100" y="70" width="10" height="10" fill="none" stroke="#2e1f0e" stroke-width="1.2"/>
+          <text x="112" y="88" font-size="10" fill="#2e1f0e">90°</text>
+          <text x="78"  y="88" font-size="10" fill="#2e1f0e" opacity=".5">θ=90°</text>
+          <!-- dB at P -->
+          <line x1="230" y1="140" x2="263" y2="110" stroke="#b84c1a" stroke-width="2.5" marker-end="url(#arr-rust)"/>
+          <text x="255" y="102" font-size="10" fill="#b84c1a" font-family="JetBrains Mono">dB</text>
+          <!-- Axis -->
+          <line x1="20" y1="140" x2="270" y2="140" stroke="#9c7a50" stroke-width="1" stroke-dasharray="5 3" opacity=".5"/>
+          <text x="262" y="135" font-size="10" fill="#9c7a50" font-family="JetBrains Mono">x</text>
+          <!-- Formula box -->
+          <rect x="10" y="220" width="270" height="52" rx="8" fill="#faeeda" stroke="#e8d5b5"/>
+          <text x="145" y="238" font-size="10" fill="#c47f17" text-anchor="middle" font-family="Outfit" font-weight="600">SUBSTITUTED FORMULA</text>
+          <text x="145" y="256" font-size="12" fill="#2e1f0e" text-anchor="middle" font-family="JetBrains Mono">dB = μ₀I·dl / 4π(x²+a²)</text>
+          <text x="145" y="268" font-size="10" fill="#9c7a50" text-anchor="middle" font-family="Outfit">θ=90° so sinθ=1; r²=x²+a²</text>
+          <!-- C label -->
+          <circle cx="100" cy="140" r="3" fill="#c47f17"/>
+          <text x="90" y="155" font-size="11" fill="#c47f17" font-family="Outfit">C</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STEP 3: Components ══ -->
+<div class="step-panel hidden" id="step-3">
+  <div class="derive-card p-6 mb-5">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <div style="width:32px;height:32px;border-radius:50%;background:#faeeda;color:#c47f17;font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;flex-shrink:0">4</div>
+      <h2 style="font-family:'Crimson Pro',serif;font-size:24px;font-weight:400;color:#2e1f0e">Resolving dB into Components</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div>
+        <p style="font-size:14px;color:#5c3d1e;line-height:1.8;margin-bottom:12px">
+          The vector <b>dB</b> at point P is perpendicular to the line LP. We resolve it into two components:
+        </p>
+        <div class="insight-box p-4 mb-4">
+          <div style="font-size:12px;font-weight:600;color:#c47f17;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">Two components of dB</div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="background:rgba(15,118,110,.08);border-radius:8px;padding:10px">
+              <div style="font-size:13px;font-weight:600;color:#0f766e">dBₓ = dB sinφ — along x-axis</div>
+              <div style="font-size:12px;color:#2e1f0e;margin-top:4px;line-height:1.6">This component is along the axis (horizontal). Due to symmetry, these add up from all elements → <b>NET CONTRIBUTION</b></div>
+            </div>
+            <div style="background:rgba(184,76,26,.08);border-radius:8px;padding:10px">
+              <div style="font-size:13px;font-weight:600;color:#b84c1a">dB_⊥ = dB cosφ — perpendicular to axis</div>
+              <div style="font-size:12px;color:#2e1f0e;margin-top:4px;line-height:1.6">This component is perpendicular (vertical). Components from opposite elements cancel → <b>ZERO NET</b></div>
+            </div>
+          </div>
+        </div>
+        <div class="formula-block p-4 mb-4">
+          <div style="font-size:12px;font-weight:600;color:#c47f17;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">sinφ from the triangle LCP</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#2e1f0e;line-height:2.2">
+            sinφ = LC/LP = a/√(x²+a²)<br>
+            cosφ = CP/LP = x/√(x²+a²)
+          </div>
+          <div style="font-size:12px;color:#9c7a50;margin-top:6px">From the right-angled triangle LCP (right angle at C)</div>
+        </div>
+        <div class="why-box p-4">
+          <div style="font-size:12px;font-weight:600;color:#0f766e;margin-bottom:6px">💡 Why does dB sinφ survive but dB cosφ cancels?</div>
+          <p style="font-size:13px;color:#2e1f0e;line-height:1.7">
+            The loop has 180° rotational symmetry. For every element at L on top, there's a matching element at M at the bottom. Their dB cosφ components point in <b>opposite directions</b> (one up, one down) so they cancel. Their dB sinφ components both point <b>along x-axis in the same direction</b>, so they add!
+          </p>
+        </div>
+      </div>
+      <div class="svg-wrap">
+        <svg viewBox="0 0 290 300" width="100%">
+          <!-- Axis -->
+          <line x1="20" y1="150" x2="270" y2="150" stroke="#9c7a50" stroke-width="1" stroke-dasharray="5 3" opacity=".5"/>
+          <!-- Loop -->
+          <ellipse cx="90" cy="150" rx="15" ry="70" fill="none" stroke="#c47f17" stroke-width="2"/>
+          <!-- Centre C -->
+          <circle cx="90" cy="150" r="3" fill="#c47f17"/>
+          <!-- P on axis -->
+          <circle cx="220" cy="150" r="6" fill="#b84c1a"/>
+          <text x="228" y="147" font-size="12" fill="#b84c1a" font-family="Outfit" font-weight="600">P</text>
+          <!-- L at top, M at bottom -->
+          <circle cx="90" cy="80"  r="5" fill="#0f766e"/>
+          <circle cx="90" cy="220" r="5" fill="#0f766e"/>
+          <text x="70" y="76" font-size="11" fill="#0f766e" font-family="Outfit">L</text>
+          <text x="70" y="226" font-size="11" fill="#0f766e" font-family="Outfit">M</text>
+          <!-- LP, MP dashed -->
+          <line x1="90" y1="80"  x2="220" y2="150" stroke="#9c7a50" stroke-width="1" stroke-dasharray="3 2"/>
+          <line x1="90" y1="220" x2="220" y2="150" stroke="#9c7a50" stroke-width="1" stroke-dasharray="3 2"/>
+          <!-- dB at P from L — decomposed -->
+          <!-- dB total from L (perpendicular to LP, pointing up-right) -->
+          <line x1="220" y1="150" x2="250" y2="120" stroke="#b84c1a" stroke-width="2" stroke-dasharray="3 2" marker-end="url(#arr-rust)"/>
+          <text x="248" y="115" font-size="10" fill="#b84c1a" font-family="JetBrains Mono">dB(L)</text>
+          <!-- dB from M (perpendicular to MP, pointing down-right) -->
+          <line x1="220" y1="150" x2="250" y2="180" stroke="#b84c1a" stroke-width="2" stroke-dasharray="3 2" marker-end="url(#arr-rust)"/>
+          <text x="248" y="192" font-size="10" fill="#b84c1a" font-family="JetBrains Mono">dB(M)</text>
+          <!-- dB sinφ components (both pointing right along axis) -->
+          <line x1="220" y1="150" x2="260" y2="150" stroke="#0f766e" stroke-width="3" marker-end="url(#arr-teal)"/>
+          <text x="222" y="138" font-size="10" fill="#0f766e" font-family="JetBrains Mono">dBsinφ+dBsinφ</text>
+          <!-- dB cosφ components (one up, one down - cancel) -->
+          <line x1="220" y1="150" x2="220" y2="120" stroke="#9c7a50" stroke-width="1.5" stroke-dasharray="2 2" opacity=".6" marker-end="url(#arr)"/>
+          <line x1="220" y1="150" x2="220" y2="180" stroke="#9c7a50" stroke-width="1.5" stroke-dasharray="2 2" opacity=".6" marker-end="url(#arr)"/>
+          <text x="224" y="108" font-size="9" fill="#9c7a50" font-family="JetBrains Mono">cosφ ↑ (cancel)</text>
+          <text x="224" y="196" font-size="9" fill="#9c7a50" font-family="JetBrains Mono">cosφ ↓ (cancel)</text>
+          <!-- Cancel X marks -->
+          <text x="200" y="110" font-size="16" fill="#9c7a50" opacity=".5">✕</text>
+          <text x="200" y="200" font-size="16" fill="#9c7a50" opacity=".5">✕</text>
+          <!-- angle phi label -->
+          <path d="M210,150 A14,14,0,0,0,203,140" fill="none" stroke="#b84c1a" stroke-width="1.2"/>
+          <text x="197" y="136" font-size="10" fill="#b84c1a" font-family="JetBrains Mono">φ</text>
+          <!-- Bottom summary -->
+          <rect x="10" y="252" width="270" height="40" rx="8" fill="#ccfbf1" stroke="rgba(15,118,110,.3)"/>
+          <text x="145" y="270" font-size="11" fill="#0f766e" text-anchor="middle" font-family="Outfit" font-weight="600">Net B = Σ dB·sinφ (cosφ components cancel)</text>
+          <text x="145" y="284" font-size="10" fill="#0f766e" text-anchor="middle" font-family="JetBrains Mono">B = ∮ dB sinφ  over full loop</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STEP 4: Cancellation ══ -->
+<div class="step-panel hidden" id="step-4">
+  <div class="derive-card p-6 mb-5">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <div style="width:32px;height:32px;border-radius:50%;background:#faeeda;color:#c47f17;font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;flex-shrink:0">5</div>
+      <h2 style="font-family:'Crimson Pro',serif;font-size:24px;font-weight:400;color:#2e1f0e">Why ⊥ Components Cancel — Visual Proof</h2>
+    </div>
+    <p style="font-size:14px;color:#5c3d1e;line-height:1.8;margin-bottom:16px">
+      This is the most elegant part of the derivation. The loop has perfect circular symmetry. For every current element, there exists a diametrically opposite element that kills the perpendicular component.
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:16px">
+      <div class="svg-wrap p-2">
+        <div style="font-size:11px;color:#9c7a50;text-align:center;padding:8px 0 4px;font-family:'Outfit',sans-serif;text-transform:uppercase;letter-spacing:1px">Front view of loop</div>
+        <svg viewBox="0 0 250 230" width="100%">
+          <!-- Loop circle -->
+          <circle cx="125" cy="115" r="85" fill="none" stroke="#c47f17" stroke-width="2.5"/>
+          <!-- Axis (going right into screen) shown as dot -->
+          <circle cx="125" cy="115" r="5" fill="#b84c1a"/>
+          <text x="132" y="113" font-size="11" fill="#b84c1a" font-family="Outfit">axis →</text>
+          <!-- 4 elements at top, bottom, left, right -->
+          <!-- Top element L -->
+          <circle cx="125" cy="30"  r="5" fill="#0f766e"/>
+          <text x="130" y="27" font-size="10" fill="#0f766e" font-family="Outfit">L</text>
+          <line x1="108" y1="30" x2="142" y2="30" stroke="#c47f17" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- dB from L (towards viewer = up from ground, i.e., along axis) -->
+          <line x1="125" y1="115" x2="125" y2="55" stroke="#0f766e" stroke-width="2" marker-end="url(#arr-teal)" stroke-dasharray="4 2"/>
+          <text x="130" y="82" font-size="9" fill="#0f766e" font-family="JetBrains Mono">dBsinφ</text>
+          <!-- Bottom element M -->
+          <circle cx="125" cy="200" r="5" fill="#0f766e"/>
+          <text x="130" y="205" font-size="10" fill="#0f766e" font-family="Outfit">M</text>
+          <line x1="108" y1="200" x2="142" y2="200" stroke="#c47f17" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- dB from M (also along axis same direction) -->
+          <line x1="125" y1="115" x2="125" y2="55" stroke="#0f766e" stroke-width="2" opacity=".4" stroke-dasharray="2 2"/>
+          <!-- cosφ from L (right) and M (left) — they cancel -->
+          <line x1="125" y1="115" x2="75" y2="115" stroke="#9c7a50" stroke-width="1.5" stroke-dasharray="3 2" marker-end="url(#arr)" opacity=".5"/>
+          <line x1="125" y1="115" x2="175" y2="115" stroke="#9c7a50" stroke-width="1.5" stroke-dasharray="3 2" marker-end="url(#arr)" opacity=".5"/>
+          <text x="38" y="112" font-size="9" fill="#9c7a50">← cosφ</text>
+          <text x="178" y="112" font-size="9" fill="#9c7a50">cosφ →</text>
+          <text x="100" y="140" font-size="11" fill="#9c7a50" opacity=".7">CANCEL ✕</text>
+          <!-- Net arrow -->
+          <line x1="125" y1="115" x2="125" y2="42" stroke="#b84c1a" stroke-width="3" marker-end="url(#arr-rust)"/>
+          <text x="106" y="36" font-size="11" fill="#b84c1a" font-family="Outfit" font-weight="600">B (net)</text>
+        </svg>
+      </div>
+      <div>
+        <div class="insight-box p-4 mb-4">
+          <div style="font-size:12px;font-weight:600;color:#c47f17;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px">The Cancellation Logic</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="font-size:13px;color:#2e1f0e;line-height:1.7;border-left:3px solid #c47f17;padding-left:10px">
+              For element at L (top): dB points in a direction that has component <b>UP</b> (⊥ to axis)
+            </div>
+            <div style="font-size:13px;color:#2e1f0e;line-height:1.7;border-left:3px solid #b84c1a;padding-left:10px">
+              For element at M (bottom, diametrically opposite): dB has component <b>DOWN</b> (⊥ to axis)
+            </div>
+            <div style="font-size:13px;color:#0f766e;line-height:1.7;border-left:3px solid #0f766e;padding-left:10px">
+              Both elements' dB components <b>along axis</b> point in the <b>same direction</b> → they add!
+            </div>
+          </div>
+        </div>
+        <div class="formula-block p-4 mb-4">
+          <div style="font-size:12px;font-weight:600;color:#c47f17;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px">Mathematical statement</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#2e1f0e;line-height:2.2">
+            ∮ dB cosφ = 0  (cancels)<br>
+            B = ∮ dB sinφ  (survives)
+          </div>
+        </div>
+        <div class="why-box p-4">
+          <div style="font-size:12px;font-weight:600;color:#0f766e;margin-bottom:6px">💡 Why both sinφ components are in same direction</div>
+          <p style="font-size:13px;color:#2e1f0e;line-height:1.7">
+            The current in the loop flows continuously in one direction (say anti-clockwise when viewed from P). So dB from any element always has its sinφ component pointing <b>towards P from the right</b> (towards +x direction). They all add constructively!
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STEP 5: Integration ══ -->
+<div class="step-panel hidden" id="step-5">
+  <div class="derive-card p-6 mb-5">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <div style="width:32px;height:32px;border-radius:50%;background:#faeeda;color:#c47f17;font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;flex-shrink:0">6</div>
+      <h2 style="font-family:'Crimson Pro',serif;font-size:24px;font-weight:400;color:#2e1f0e">The Integration — Step by Step</h2>
+    </div>
+    <p style="font-size:14px;color:#5c3d1e;line-height:1.8;margin-bottom:16px">
+      This is where all the pieces come together. We integrate dB·sinφ around the full loop.
+    </p>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <!-- Step A -->
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div style="width:36px;height:36px;border-radius:50%;background:#faeeda;color:#c47f17;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;border:2px solid #e8a030">A</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600;color:#2e1f0e;margin-bottom:6px">Start: net B = ∮ dB sinφ</div>
+          <div class="formula-block p-4">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#2e1f0e;line-height:2">
+              B = ∮ dB sinφ
+            </div>
+            <div style="font-size:12px;color:#9c7a50;margin-top:4px">Integrate over full loop; only sinφ component survives</div>
+          </div>
+        </div>
+      </div>
+      <!-- Step B -->
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div style="width:36px;height:36px;border-radius:50%;background:#faeeda;color:#c47f17;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;border:2px solid #e8a030">B</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600;color:#2e1f0e;margin-bottom:6px">Substitute dB and sinφ</div>
+          <div class="formula-block p-4">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#2e1f0e;line-height:2.2">
+              dB = μ₀I·dl / 4π(x²+a²)<br>
+              sinφ = a / √(x²+a²)
+            </div>
+          </div>
+          <div class="formula-block p-3 mt-2">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#2e1f0e;line-height:2">
+              B = ∮ [μ₀I·dl / 4π(x²+a²)] · [a/√(x²+a²)]
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Step C -->
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div style="width:36px;height:36px;border-radius:50%;background:#faeeda;color:#c47f17;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;border:2px solid #e8a030">C</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600;color:#2e1f0e;margin-bottom:6px">Pull constants outside integral</div>
+          <div class="why-box p-3 mb-3">
+            <p style="font-size:13px;color:#2e1f0e;line-height:1.7">
+              <b>x, a, μ₀, I</b> are all constants with respect to dl (they don't change as we go around the loop). So they come out of the integral!
+            </p>
+          </div>
+          <div class="formula-block p-4">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#2e1f0e;line-height:2">
+              B = (μ₀Ia / 4π) · [1/(x²+a²)^(3/2)] · ∮ dl
+            </div>
+            <div style="font-size:12px;color:#9c7a50;margin-top:4px">[x²+a²]^(3/2) = (x²+a²)·√(x²+a²) — combining the two denominators</div>
+          </div>
+        </div>
+      </div>
+      <!-- Step D -->
+      <div style="display:flex;gap:14px;align-items:flex-start">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#c47f17,#e8a030);color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'JetBrains Mono',monospace">D</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:600;color:#2e1f0e;margin-bottom:6px">Evaluate ∮ dl = 2πa (circumference!)</div>
+          <div class="why-box p-3 mb-3">
+            <p style="font-size:13px;color:#2e1f0e;line-height:1.7">
+              <b>∮ dl</b> means integrate the element length dl over the full closed circular loop. This is simply the <b>circumference = 2πa</b>. Beautiful!
+            </p>
+          </div>
+          <div style="background:linear-gradient(135deg,#faeeda,#fdf6ed);border:2px solid #c47f17;border-radius:12px;padding:16px" class="glow">
+            <div style="font-size:11px;color:#c47f17;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;font-weight:600">Final Result</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:18px;color:#2e1f0e;line-height:2;font-weight:600">
+              B = μ₀Ia² / 2(x²+a²)^(3/2)
+            </div>
+            <div style="font-size:12px;color:#9c7a50;margin-top:6px">
+              (μ₀Ia/4π) · (1/(x²+a²)^(3/2)) · 2πa = μ₀Ia²/2(x²+a²)^(3/2)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STEP 6: Final Formula ══ -->
+<div class="step-panel hidden" id="step-6">
+  <div class="derive-card p-6 mb-5">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+      <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c47f17,#e8a030);color:#fff;font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;flex-shrink:0">7</div>
+      <h2 style="font-family:'Crimson Pro',serif;font-size:24px;font-weight:400;color:#2e1f0e">The Complete Formula — All Forms</h2>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px">
+      <div style="background:linear-gradient(135deg,#faeeda,#fdf6ed);border:2px solid #c47f17;border-radius:14px;padding:16px;text-align:center" class="glow">
+        <div style="font-size:11px;color:#c47f17;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;font-weight:600">Single loop</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#2e1f0e;line-height:2;font-weight:600">B = μ₀Ia² / 2(x²+a²)^(3/2)</div>
+        <div style="font-size:11px;color:#9c7a50;margin-top:6px">N=1 turn</div>
+      </div>
+      <div style="background:linear-gradient(135deg,#fce0d2,#fdf6ed);border:2px solid #b84c1a;border-radius:14px;padding:16px;text-align:center">
+        <div style="font-size:11px;color:#b84c1a;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;font-weight:600">N-turn coil</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#2e1f0e;line-height:2;font-weight:600">B = μ₀NIa² / 2(x²+a²)^(3/2)</div>
+        <div style="font-size:11px;color:#9c7a50;margin-top:6px">multiply by N turns</div>
+      </div>
+      <div style="background:rgba(15,118,110,.07);border:2px solid rgba(15,118,110,.3);border-radius:14px;padding:16px;text-align:center">
+        <div style="font-size:11px;color:#0f766e;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;font-weight:600">At centre (x=0)</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#2e1f0e;line-height:2;font-weight:600">B₀ = μ₀I / 2a</div>
+        <div style="font-size:11px;color:#9c7a50;margin-top:6px">x=0, (a²)^(3/2)=a³, B=μ₀I/2a</div>
+      </div>
+    </div>
+
+    <!-- Direction -->
+    <div class="insight-box p-5 mb-5">
+      <div style="font-size:12px;font-weight:600;color:#c47f17;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Direction of B — Right Hand Rule</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div>
+          <p style="font-size:13px;color:#2e1f0e;line-height:1.7">
+            Curl the fingers of right hand in the direction of current flow in the loop → the thumb points in the direction of B on the axis.
+          </p>
+        </div>
+        <div class="svg-wrap" style="height:120px;padding:8px">
+          <svg viewBox="0 0 200 100" width="100%">
+            <ellipse cx="70" cy="50" rx="14" ry="42" fill="none" stroke="#c47f17" stroke-width="2"/>
+            <polygon points="57,22 63,8 66,24" fill="#c47f17"/>
+            <polygon points="84,78 78,92 74,76" fill="#c47f17"/>
+            <text x="90" y="46" font-size="10" fill="#c47f17" font-family="Outfit">I ↻</text>
+            <line x1="70" y1="50" x2="180" y2="50" stroke="#b84c1a" stroke-width="2.5" marker-end="url(#arr-rust)"/>
+            <text x="155" y="42" font-size="11" fill="#b84c1a" font-family="Outfit" font-weight="600">B →</text>
+            <text x="20" y="95" font-size="9" fill="#9c7a50" font-family="Outfit">Fingers curl with I → thumb → B</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Full derivation summary -->
+    <div style="background:#fff8f0;border:1px solid #e8d5b5;border-radius:14px;padding:20px">
+      <div style="font-size:13px;font-weight:600;color:#c47f17;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">Full Derivation in One Place</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <span class="tag" style="background:#faeeda;color:#c47f17">1</span>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#2e1f0e;line-height:1.8">dB = (μ₀/4π) · Idl·sin90° / (x²+a²) = μ₀Idl / 4π(x²+a²) &nbsp;&nbsp;<span style="color:#9c7a50">← Biot–Savart, θ=90°</span></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <span class="tag" style="background:#faeeda;color:#c47f17">2</span>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#2e1f0e;line-height:1.8">sinφ = a/√(x²+a²) &nbsp;&nbsp;<span style="color:#9c7a50">← from right triangle LCP</span></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <span class="tag" style="background:#faeeda;color:#c47f17">3</span>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#2e1f0e;line-height:1.8">B = ∮ dB·sinφ &nbsp;&nbsp;<span style="color:#9c7a50">← cosφ components cancel by symmetry</span></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <span class="tag" style="background:#faeeda;color:#c47f17">4</span>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#2e1f0e;line-height:1.8">B = (μ₀Ia / 4π(x²+a²)^(3/2)) · ∮dl &nbsp;&nbsp;<span style="color:#9c7a50">← pull constants out</span></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          <span class="tag" style="background:linear-gradient(135deg,#c47f17,#e8a030);color:#fff">✓</span>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:14px;color:#c47f17;line-height:1.8;font-weight:600">B = μ₀Ia² / 2(x²+a²)^(3/2) &nbsp;&nbsp;<span style="color:#9c7a50;font-size:12px">← ∮dl = 2πa</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STEP 7: Special Cases ══ -->
+<div class="step-panel hidden" id="step-7">
+  <div class="derive-card p-6 mb-5">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+      <div style="width:32px;height:32px;border-radius:50%;background:#faeeda;color:#c47f17;font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;flex-shrink:0">8</div>
+      <h2 style="font-family:'Crimson Pro',serif;font-size:24px;font-weight:400;color:#2e1f0e">Special Cases</h2>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px">
+      <!-- Case 1: x=0 -->
+      <div class="special-card" style="border-color:#c47f17;background:linear-gradient(160deg,#fdf6ed,#faeeda);padding:20px">
+        <div style="font-size:11px;font-weight:600;color:#c47f17;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">Case 1</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:20px;color:#2e1f0e;margin-bottom:12px">x = 0</div>
+        <div style="font-size:13px;color:#5c3d1e;line-height:1.7;margin-bottom:12px">
+          Point P is at the <b>centre</b> of the loop.
+        </div>
+        <div style="background:rgba(255,255,255,.7);border-radius:10px;padding:12px;margin-bottom:12px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#9c7a50;margin-bottom:4px">Substituting x=0:</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#2e1f0e;line-height:2">
+            B = μ₀Ia² / 2(0+a²)^(3/2)<br>
+            B = μ₀Ia² / 2·a³<br>
+            <span style="color:#c47f17;font-weight:600">B₀ = μ₀I / 2a</span>
+          </div>
+        </div>
+        <div class="why-box p-3">
+          <div style="font-size:12px;color:#0f766e;font-weight:500;margin-bottom:4px">Physical meaning</div>
+          <p style="font-size:12px;color:#2e1f0e;line-height:1.6">Maximum field. All elements at same distance a from centre. Every dB points along axis.</p>
+        </div>
+        <div class="svg-wrap mt-3">
+          <svg viewBox="0 0 180 90" width="100%">
+            <ellipse cx="90" cy="45" rx="12" ry="38" fill="none" stroke="#c47f17" stroke-width="2"/>
+            <circle cx="90" cy="45" r="5" fill="#b84c1a"/>
+            <text x="96" y="42" font-size="10" fill="#b84c1a" font-family="Outfit" font-weight="600">P=C</text>
+            <line x1="90" y1="45" x2="150" y2="45" stroke="#b84c1a" stroke-width="2.5" marker-end="url(#arr-rust)"/>
+            <text x="128" y="37" font-size="10" fill="#b84c1a" font-family="JetBrains Mono">B₀</text>
+            <text x="30" y="82" font-size="10" fill="#9c7a50" font-family="JetBrains Mono">B₀=μ₀I/2a</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Case 2: x=a -->
+      <div class="special-card" style="border-color:#b84c1a;background:linear-gradient(160deg,#fdf6ed,#fce0d2);padding:20px">
+        <div style="font-size:11px;font-weight:600;color:#b84c1a;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">Case 2</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:20px;color:#2e1f0e;margin-bottom:12px">x = a</div>
+        <div style="font-size:13px;color:#5c3d1e;line-height:1.7;margin-bottom:12px">
+          P is at distance <b>equal to radius</b> from centre.
+        </div>
+        <div style="background:rgba(255,255,255,.7);border-radius:10px;padding:12px;margin-bottom:12px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#9c7a50;margin-bottom:4px">Substituting x=a:</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#2e1f0e;line-height:2">
+            B = μ₀Ia² / 2(a²+a²)^(3/2)<br>
+            B = μ₀Ia² / 2(2a²)^(3/2)<br>
+            B = μ₀Ia² / 2·2√2·a³<br>
+            <span style="color:#b84c1a;font-weight:600">B = μ₀I / 4√2·a</span>
+          </div>
+        </div>
+        <div class="why-box p-3">
+          <div style="font-size:12px;color:#0f766e;font-weight:500;margin-bottom:4px">Compared to B₀</div>
+          <p style="font-size:12px;color:#2e1f0e;line-height:1.6">B(x=a) = B₀/(2√2) ≈ 0.354 × B₀. The field drops to about 35% of centre value.</p>
+        </div>
+        <div class="svg-wrap mt-3">
+          <svg viewBox="0 0 180 90" width="100%">
+            <ellipse cx="60" cy="45" rx="12" ry="38" fill="none" stroke="#c47f17" stroke-width="2"/>
+            <circle cx="60" cy="45" r="3" fill="#c47f17"/>
+            <circle cx="112" cy="45" r="5" fill="#b84c1a"/>
+            <text x="118" y="42" font-size="10" fill="#b84c1a" font-family="Outfit" font-weight="600">P</text>
+            <line x1="60" y1="55" x2="112" y2="55" stroke="#7a4e0a" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="85" y="66" font-size="10" fill="#7a4e0a" font-family="JetBrains Mono" text-anchor="middle">x=a</text>
+            <line x1="112" y1="45" x2="155" y2="45" stroke="#b84c1a" stroke-width="1.5" marker-end="url(#arr-rust)"/>
+            <text x="158" y="42" font-size="9" fill="#b84c1a" font-family="JetBrains Mono">B</text>
+            <text x="8" y="83" font-size="9" fill="#9c7a50" font-family="JetBrains Mono">B=μ₀I/4√2a≈0.35B₀</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Case 3: x>>a -->
+      <div class="special-card" style="border-color:#0f766e;background:linear-gradient(160deg,#fdf6ed,#ccfbf1);padding:20px">
+        <div style="font-size:11px;font-weight:600;color:#0f766e;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">Case 3</div>
+        <div style="font-family:'Crimson Pro',serif;font-size:20px;color:#2e1f0e;margin-bottom:12px">x ≫ a</div>
+        <div style="font-size:13px;color:#5c3d1e;line-height:1.7;margin-bottom:12px">
+          P is <b>very far</b> from loop — magnetic dipole approximation.
+        </div>
+        <div style="background:rgba(255,255,255,.7);border-radius:10px;padding:12px;margin-bottom:12px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#9c7a50;margin-bottom:4px">Since x≫a, neglect a²:</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:#2e1f0e;line-height:2">
+            (x²+a²)^(3/2) ≈ x³<br>
+            B ≈ μ₀Ia² / 2x³<br>
+            Let M = Iπa² (dipole moment):<br>
+            <span style="color:#0f766e;font-weight:600">B ≈ μ₀M / 2πx³</span>
+          </div>
+        </div>
+        <div class="why-box p-3">
+          <div style="font-size:12px;color:#0f766e;font-weight:500;margin-bottom:4px">Magnetic dipole!</div>
+          <p style="font-size:12px;color:#2e1f0e;line-height:1.6">At large distances B ∝ 1/x³ — same as electric dipole field. The loop acts as a magnetic dipole.</p>
+        </div>
+        <div class="svg-wrap mt-3">
+          <svg viewBox="0 0 180 90" width="100%">
+            <ellipse cx="28" cy="45" rx="8" ry="28" fill="none" stroke="#c47f17" stroke-width="2"/>
+            <circle cx="28" cy="45" r="2" fill="#c47f17"/>
+            <circle cx="155" cy="45" r="5" fill="#0f766e"/>
+            <text x="143" y="35" font-size="10" fill="#0f766e" font-family="Outfit" font-weight="600">P (far)</text>
+            <line x1="28" y1="56" x2="155" y2="56" stroke="#7a4e0a" stroke-width="1" stroke-dasharray="3 2"/>
+            <text x="90" y="68" font-size="10" fill="#7a4e0a" font-family="JetBrains Mono" text-anchor="middle">x ≫ a</text>
+            <line x1="155" y1="45" x2="172" y2="45" stroke="#0f766e" stroke-width="1.5" marker-end="url(#arr-teal)"/>
+            <text x="8" y="83" font-size="9" fill="#9c7a50" font-family="JetBrains Mono">B≈μ₀Ia²/2x³  (dipole)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison table -->
+    <div class="derive-card p-5">
+      <div style="font-size:13px;font-weight:600;color:#c47f17;text-transform:uppercase;letter-spacing:1px;margin-bottom:14px">Comparison at a Glance</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="background:#faeeda">
+              <th style="padding:10px 14px;text-align:left;font-family:'Outfit',sans-serif;color:#7a4e0a;font-weight:600;border-radius:8px 0 0 0">Condition</th>
+              <th style="padding:10px 14px;text-align:left;font-family:'JetBrains Mono',monospace;color:#7a4e0a;font-weight:600">Formula</th>
+              <th style="padding:10px 14px;text-align:left;font-family:'Outfit',sans-serif;color:#7a4e0a;font-weight:600">B/B₀</th>
+              <th style="padding:10px 14px;text-align:left;font-family:'Outfit',sans-serif;color:#7a4e0a;font-weight:600;border-radius:0 8px 0 0">Physical meaning</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #f0dfc5">
+              <td style="padding:10px 14px;color:#c47f17;font-weight:600;font-family:'JetBrains Mono',monospace">x = 0</td>
+              <td style="padding:10px 14px;font-family:'JetBrains Mono',monospace;color:#2e1f0e">B₀ = μ₀I/2a</td>
+              <td style="padding:10px 14px;font-family:'JetBrains Mono',monospace;color:#c47f17;font-weight:600">1.000 (max)</td>
+              <td style="padding:10px 14px;color:#5c3d1e">Centre of loop, maximum field</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f0dfc5;background:rgba(253,246,237,.4)">
+              <td style="padding:10px 14px;color:#b84c1a;font-weight:600;font-family:'JetBrains Mono',monospace">x = a</td>
+              <td style="padding:10px 14px;font-family:'JetBrains Mono',monospace;color:#2e1f0e">μ₀I/4√2·a</td>
+              <td style="padding:10px 14px;font-family:'JetBrains Mono',monospace;color:#b84c1a;font-weight:600">0.354</td>
+              <td style="padding:10px 14px;color:#5c3d1e">Distance = radius, field ≈ 35%</td>
+            </tr>
+            <tr style="border-bottom:1px solid #f0dfc5">
+              <td style="padding:10px 14px;color:#7a9e0a;font-weight:600;font-family:'JetBrains Mono',monospace">x = 2a</td>
+              <td style="padding:10px 14px;font-family:'JetBrains Mono',monospace;color:#2e1f0e">μ₀Ia²/2(5a²)^(3/2)</td>
+              <td style="padding:10px 14px;font-family:'JetBrains Mono',monospace;color:#7a9e0a;font-weight:600">0.089</td>
+              <td style="padding:10px 14px;color:#5c3d1e">Double radius, field ≈ 9%</td>
+            </tr>
+            <tr style="background:rgba(15,118,110,.05)">
+              <td style="padding:10px 14px;color:#0f766e;font-weight:600;font-family:'JetBrains Mono',monospace">x ≫ a</td>
+              <td style="padding:10px 14px;font-family:'JetBrains Mono',monospace;color:#2e1f0e">≈ μ₀Ia²/2x³</td>
+              <td style="padding:10px 14px;font-family:'JetBrains Mono',monospace;color:#0f766e;font-weight:600">→ 0 (1/x³)</td>
+              <td style="padding:10px 14px;color:#5c3d1e">Magnetic dipole regime</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STEP 8: Interactive ══ -->
+<div class="step-panel hidden" id="step-8">
+  <div class="derive-card p-6 mb-5">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+      <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c47f17,#e8a030);color:#fff;font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;flex-shrink:0">9</div>
+      <h2 style="font-family:'Crimson Pro',serif;font-size:24px;font-weight:400;color:#2e1f0e">Interactive — Explore B vs x</h2>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+      <div>
+        <div style="background:rgba(255,255,255,.55);border-radius:16px;padding:16px;border:1px solid #f0dfc5;margin-bottom:16px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <label style="font-size:12px;color:#7a4e0a;min-width:80px;font-family:'Outfit',sans-serif">Current I (A)</label>
+            <input type="range" id="iSlider" min="1" max="20" value="5" oninput="updateCalc()">
+            <span id="iVal" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c47f17;min-width:40px;text-align:right;font-weight:600">5 A</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <label style="font-size:12px;color:#7a4e0a;min-width:80px;font-family:'Outfit',sans-serif">Radius a (cm)</label>
+            <input type="range" id="aSlider" min="1" max="15" value="5" oninput="updateCalc()">
+            <span id="aVal" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c47f17;min-width:40px;text-align:right;font-weight:600">5 cm</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <label style="font-size:12px;color:#7a4e0a;min-width:80px;font-family:'Outfit',sans-serif">N (turns)</label>
+            <input type="range" id="nSlider" min="1" max="200" value="1" oninput="updateCalc()">
+            <span id="nVal" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#c47f17;min-width:40px;text-align:right;font-weight:600">1</span>
+          </div>
+        </div>
+
+        <!-- Live values -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+          <div style="background:linear-gradient(135deg,#faeeda,#fdf6ed);border:1.5px solid #e8a030;border-radius:12px;padding:12px;text-align:center" class="glow">
+            <div style="font-size:10px;color:#c47f17;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;font-weight:600">B at centre</div>
+            <div id="b0val" style="font-family:'JetBrains Mono',monospace;font-size:16px;color:#2e1f0e;font-weight:600">62.8 μT</div>
+            <div style="font-size:10px;color:#9c7a50;margin-top:2px">x = 0</div>
+          </div>
+          <div style="background:rgba(15,118,110,.07);border:1.5px solid rgba(15,118,110,.3);border-radius:12px;padding:12px;text-align:center">
+            <div style="font-size:10px;color:#0f766e;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;font-weight:600">B at x=a</div>
+            <div id="baval" style="font-family:'JetBrains Mono',monospace;font-size:16px;color:#2e1f0e;font-weight:600">22.2 μT</div>
+            <div style="font-size:10px;color:#9c7a50;margin-top:2px">x = a (35.4% of B₀)</div>
+          </div>
+        </div>
+
+        <!-- x position slider for point P -->
+        <div style="background:rgba(255,255,255,.55);border-radius:16px;padding:16px;border:1px solid #f0dfc5">
+          <div style="font-size:12px;font-weight:600;color:#7a4e0a;margin-bottom:10px;font-family:'Outfit',sans-serif">Position of point P</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <label style="font-size:12px;color:#7a4e0a;min-width:80px;font-family:'Outfit',sans-serif">x (cm)</label>
+            <input type="range" id="xSlider" min="0" max="30" value="0" step="0.5" oninput="updateCalc()">
+            <span id="xVal" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:#b84c1a;min-width:40px;text-align:right;font-weight:600">0</span>
+          </div>
+          <div style="background:linear-gradient(135deg,#fce0d2,#fdf6ed);border:1.5px solid #b84c1a;border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:10px;color:#b84c1a;margin-bottom:3px;font-weight:600;text-transform:uppercase;letter-spacing:1px">B at this x</div>
+            <div id="bxval" style="font-family:'JetBrains Mono',monospace;font-size:18px;color:#2e1f0e;font-weight:600">62.8 μT</div>
+            <div id="bxpct" style="font-size:11px;color:#9c7a50;margin-top:2px">100% of B₀</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- B vs x graph canvas -->
+      <div class="svg-wrap">
+        <div style="font-size:11px;color:#9c7a50;text-align:center;padding:8px 0 4px;font-family:'Outfit',sans-serif;text-transform:uppercase;letter-spacing:1px">B vs x graph (live)</div>
+        <canvas id="graphCanvas" width="360" height="320" style="width:100%;display:block"></canvas>
+      </div>
+    </div>
+
+    <!-- Active case indicator -->
+    <div id="caseIndicator" style="background:linear-gradient(135deg,#faeeda,#fdf6ed);border:2px solid #c47f17;border-radius:14px;padding:14px 18px;text-align:center">
+      <div style="font-size:11px;color:#c47f17;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;font-weight:600">Active case</div>
+      <div id="caseText" style="font-size:15px;color:#2e1f0e;font-family:'Outfit',sans-serif">x = 0 → At centre → B₀ = μ₀I/2a (maximum field)</div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- Footer -->
+<footer style="text-align:center;padding:20px 16px;font-size:11px;color:#9c7a50;border-top:1px solid #f0dfc5;font-family:'Outfit',sans-serif">
+  Chapter 4 · Magnetic Field on Axis of Circular Loop · CBSE &amp; ISC · Class 12 Physics
+</footer>
+
+<script>
+// ── Nav logic ──
+function goStep(idx, btn) {
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.add('hidden'));
+  document.querySelectorAll('.step-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('step-' + idx).classList.remove('hidden');
+  btn.classList.add('active');
+  // fade in
+  const panel = document.getElementById('step-' + idx);
+  panel.style.opacity = '0';
+  panel.style.transform = 'translateY(12px)';
+  panel.style.transition = 'opacity .35s ease, transform .35s ease';
+  requestAnimationFrame(() => {
+    panel.style.opacity = '1';
+    panel.style.transform = 'translateY(0)';
+  });
+  if (idx === 8) { setTimeout(drawGraph, 100); }
+}
+
+// ── Interactive calculator ──
+const mu0 = 4 * Math.PI * 1e-7;
+function calcB(I, a, x, N = 1) {
+  return (mu0 * N * I * a * a) / (2 * Math.pow(a * a + x * x, 1.5));
+}
+function fmtB(B) {
+  const bUT = B * 1e6;
+  if (bUT >= 1000) return (bUT / 1000).toFixed(2) + ' mT';
+  if (bUT >= 0.01) return bUT.toFixed(2) + ' μT';
+  return (B * 1e9).toFixed(2) + ' nT';
+}
+
+function updateCalc() {
+  const I = +document.getElementById('iSlider').value;
+  const a = +document.getElementById('aSlider').value / 100;
+  const N = +document.getElementById('nSlider').value;
+  const x = +document.getElementById('xSlider').value / 100;
+
+  document.getElementById('iVal').textContent = document.getElementById('iSlider').value + ' A';
+  document.getElementById('aVal').textContent = document.getElementById('aSlider').value + ' cm';
+  document.getElementById('nVal').textContent = document.getElementById('nSlider').value;
+  document.getElementById('xVal').textContent = document.getElementById('xSlider').value + ' cm';
+
+  const B0 = calcB(I, a, 0, N);
+  const Ba = calcB(I, a, a, N);
+  const Bx = calcB(I, a, x, N);
+
+  document.getElementById('b0val').textContent = fmtB(B0);
+  document.getElementById('baval').textContent = fmtB(Ba);
+  document.getElementById('bxval').textContent = fmtB(Bx);
+  document.getElementById('bxpct').textContent = (Bx / B0 * 100).toFixed(1) + '% of B₀';
+
+  // Case indicator
+  const xCm = +document.getElementById('xSlider').value;
+  const aCm = +document.getElementById('aSlider').value;
+  let caseMsg = '';
+  if (xCm === 0) caseMsg = 'x = 0 → At centre → B₀ = μ₀NI/2a (maximum field)';
+  else if (Math.abs(xCm - aCm) < 1) caseMsg = 'x ≈ a → B = μ₀NI/4√2a ≈ 35.4% of B₀';
+  else if (xCm > aCm * 5) caseMsg = 'x ≫ a → Dipole regime → B ≈ μ₀NIa²/2x³ ∝ 1/x³';
+  else caseMsg = `x = ${xCm}cm, a = ${aCm}cm → B = μ₀NIa² / 2(x²+a²)^(3/2)`;
+  document.getElementById('caseText').textContent = caseMsg;
+
+  drawGraph();
+}
+
+function drawGraph() {
+  const canvas = document.getElementById('graphCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const I  = +document.getElementById('iSlider').value;
+  const a  = +document.getElementById('aSlider').value / 100;
+  const N  = +document.getElementById('nSlider').value;
+  const xP = +document.getElementById('xSlider').value / 100;
+
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#fdf9f4';
+  ctx.fillRect(0, 0, W, H);
+
+  const pad = { l: 54, r: 20, t: 20, b: 40 };
+  const gW = W - pad.l - pad.r, gH = H - pad.t - pad.b;
+  const xMax = a * 8;
+  const B0 = calcB(I, a, 0, N);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(196,127,23,0.08)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 5; i++) {
+    const y = pad.t + (i / 5) * gH;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(W - pad.r, y); ctx.stroke();
+  }
+  for (let i = 0; i <= 8; i++) {
+    const x = pad.l + (i / 8) * gW;
+    ctx.beginPath(); ctx.moveTo(x, pad.t); ctx.lineTo(x, H - pad.b); ctx.stroke();
+  }
+
+  // Axes
+  ctx.strokeStyle = '#9c7a50';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(pad.l, pad.t); ctx.lineTo(pad.l, H - pad.b); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad.l, H - pad.b); ctx.lineTo(W - pad.r, H - pad.b); ctx.stroke();
+
+  // Axis labels
+  ctx.fillStyle = '#9c7a50';
+  ctx.font = '10px JetBrains Mono';
+  ctx.textAlign = 'center';
+  ctx.fillText('x (distance from centre)', pad.l + gW / 2, H - 4);
+  ctx.save(); ctx.translate(14, pad.t + gH / 2); ctx.rotate(-Math.PI / 2);
+  ctx.fillText('B (field strength)', 0, 0); ctx.restore();
+
+  // B(x) curve
+  ctx.strokeStyle = '#b84c1a';
+  ctx.lineWidth = 2.5;
+  ctx.lineJoin = 'round';
+  ctx.beginPath();
+  for (let i = 0; i <= gW; i += 2) {
+    const xM = (i / gW) * xMax;
+    const B  = calcB(I, a, xM, N);
+    const yPx = pad.t + gH - (B / B0) * gH * 0.92;
+    if (i === 0) ctx.moveTo(pad.l + i, yPx);
+    else ctx.lineTo(pad.l + i, yPx);
+  }
+  ctx.stroke();
+
+  // Tick marks: x=a and x=2a
+  [1, 2, 3, 4].forEach(n => {
+    const xPx = pad.l + (n * a / xMax) * gW;
+    ctx.strokeStyle = 'rgba(196,127,23,0.4)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath(); ctx.moveTo(xPx, pad.t); ctx.lineTo(xPx, H - pad.b); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#9c7a50';
+    ctx.font = '9px JetBrains Mono';
+    ctx.textAlign = 'center';
+    ctx.fillText(n + 'a', xPx, H - pad.b + 14);
+  });
+
+  // B₀ line
+  const b0Y = pad.t + gH * 0.08;
+  ctx.strokeStyle = 'rgba(196,127,23,0.3)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 3]);
+  ctx.beginPath(); ctx.moveTo(pad.l, b0Y); ctx.lineTo(W - pad.r, b0Y); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#c47f17';
+  ctx.font = '10px JetBrains Mono';
+  ctx.textAlign = 'left';
+  ctx.fillText('B₀', 2, b0Y + 4);
+
+  // Special case dots
+  const specials = [
+    { x: 0, label: 'x=0', col: '#c47f17' },
+    { x: a, label: 'x=a', col: '#b84c1a' },
+  ];
+  specials.forEach(s => {
+    const xPx = pad.l + (s.x / xMax) * gW;
+    const B   = calcB(I, a, s.x, N);
+    const yPx = pad.t + gH - (B / B0) * gH * 0.92;
+    ctx.fillStyle = s.col;
+    ctx.beginPath(); ctx.arc(xPx, yPx, 5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = s.col;
+    ctx.font = '10px Outfit';
+    ctx.textAlign = 'center';
+    ctx.fillText(s.label, xPx, yPx - 9);
+  });
+
+  // Current P marker
+  const xPPx = pad.l + (xP / xMax) * gW;
+  const bAtP = calcB(I, a, xP, N);
+  const yAtP = pad.t + gH - (bAtP / B0) * gH * 0.92;
+  ctx.fillStyle = '#0f766e';
+  ctx.beginPath(); ctx.arc(xPPx, yAtP, 7, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(xPPx, yAtP, 7, 0, Math.PI * 2); ctx.stroke();
+  ctx.fillStyle = '#0f766e';
+  ctx.font = 'bold 10px Outfit';
+  ctx.textAlign = 'center';
+  ctx.fillText('P', xPPx, yAtP - 11);
+
+  // Y-axis values
+  ctx.fillStyle = '#9c7a50';
+  ctx.font = '9px JetBrains Mono';
+  ctx.textAlign = 'right';
+  ['B₀', '0.75', '0.5', '0.25', '0'].forEach((label, i) => {
+    const y = pad.t + (i / 4) * gH;
+    ctx.fillText(label, pad.l - 4, y + 4);
+  });
+}
+
+// Init graph
+setTimeout(drawGraph, 200);
+
+// Keyboard navigation
+document.addEventListener('keydown', e => {
+  const btns = document.querySelectorAll('.step-btn');
+  const active = document.querySelector('.step-btn.active');
+  const idx = Array.from(btns).indexOf(active);
+  if (e.key === 'ArrowRight' && idx < btns.length - 1) btns[idx + 1].click();
+  if (e.key === 'ArrowLeft'  && idx > 0)               btns[idx - 1].click();
+});
+</script>
+</body>
+</html>
